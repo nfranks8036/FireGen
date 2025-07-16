@@ -1,0 +1,2 @@
+# FireGen
+Firewatch call generator
