@@ -22,10 +22,11 @@ repositories {
 javafx {
     platform = 'win'
     version = "22"
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 dependencies {
     implementation project(":common")
     implementation 'org.openjfx:javafx-controls:22'
+    implementation 'org.openjfx:javafx-fxml:22'
 }

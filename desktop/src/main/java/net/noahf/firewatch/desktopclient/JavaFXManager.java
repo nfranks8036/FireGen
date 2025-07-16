@@ -9,7 +9,7 @@ import net.noahf.firewatch.desktopclient.displays.CallListScreen;
 
 public class JavaFXManager extends Application {
 
-    public static final double WINDOW_SIZE = 800D;
+    public final double window = 800D;
 
     private Stage stage;
     private GUIPage currentPage;
@@ -24,13 +24,19 @@ public class JavaFXManager extends Application {
         Main.fx = this;
         this.stage = stage;
 
-        stage.setTitle("FireGen");
-        this.currentPage = new CallListScreen(this);
-        stage.show();
+        this.stage.setTitle("FireGen");
+        this.setNewPage(new CallListScreen());
+        this.stage.setResizable(false);
+        this.stage.show();
     }
 
     public Stage getStage() {
         return this.stage;
+    }
+
+    public void setNewPage(GUIPage page) {
+        this.currentPage = page;
+        this.currentPage.show();
     }
 
 }

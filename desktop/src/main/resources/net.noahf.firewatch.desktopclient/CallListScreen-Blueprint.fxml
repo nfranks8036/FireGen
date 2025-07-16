@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Scene xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <AnchorPane prefHeight="800.0" prefWidth="800.0">
+      <children>
+         <VBox layoutX="-1.0" prefHeight="801.0" prefWidth="800.0">
+            <children>
+               <TabPane prefHeight="31.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+                 <tabs>
+                   <Tab text="Active Calls (0)" />
+                   <Tab text="Untitled Tab 2" />
+                 </tabs>
+               </TabPane>
+               <Label text="Active Calls (0)">
+                  <font>
+                     <Font size="36.0" />
+                  </font>
+                  <padding>
+                     <Insets left="20.0" top="20.0" />
+                  </padding>
+               </Label>
+               <TableView prefHeight="570.0" prefWidth="800.0">
+                 <columns>
+                     <TableColumn prefWidth="112.0" text="Incident Number" />
+                   <TableColumn prefWidth="75.0" text="Time" />
+                   <TableColumn prefWidth="92.0" text="Call Type" />
+                     <TableColumn prefWidth="360.0" text="Address" />
+                     <TableColumn minWidth="1.0" prefWidth="123.0" text="Units" />
+                 </columns>
+                  <VBox.margin>
+                     <Insets />
+                  </VBox.margin>
+                  <padding>
+                     <Insets left="20.0" right="20.0" top="20.0" />
+                  </padding>
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor>
+               </TableView>
+               <HBox alignment="CENTER" prefHeight="70.0" prefWidth="800.0">
+                  <children>
+                     <Button accessibleText="Creates a new call" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="211.0" text="CREATE NEW CALL">
+                        <font>
+                           <Font size="15.0" />
+                        </font>
+                        <cursor>
+                           <Cursor fx:constant="HAND" />
+                        </cursor>
+                     </Button>
+                  </children>
+               </HBox>
+            </children></VBox>
+      </children></AnchorPane>
+</Scene>

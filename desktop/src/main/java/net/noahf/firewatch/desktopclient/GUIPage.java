@@ -6,15 +6,15 @@ import javafx.stage.Stage;
 
 public abstract class GUIPage {
 
-    protected final JavaFXManager fx;
-
-    public GUIPage(JavaFXManager fx) {
-        this.fx = fx;
-    }
-
     public void show() {
-        Stage stage = this.fx.getStage();
-        stage.setScene(new Scene(this.gui(stage), JavaFXManager.WINDOW_SIZE, JavaFXManager.WINDOW_SIZE));
+        Stage stage = Main.fx.getStage();
+
+        Parent root = this.gui(stage);
+        if (root == null) {
+            throw new IllegalStateException("No root provided for GUIPage [" + this.getClass().getCanonicalName() + "]");
+        }
+
+        stage.setScene(new Scene(root, Main.fx.window, Main.fx.window));
         stage.show();
     }
 

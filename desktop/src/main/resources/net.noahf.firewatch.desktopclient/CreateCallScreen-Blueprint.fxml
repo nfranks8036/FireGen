@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Scene xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <AnchorPane prefHeight="800.0" prefWidth="800.0">
+        <children>
+            <VBox layoutX="-1.0" prefHeight="801.0" prefWidth="800.0">
+                <children>
+                    <Label text="Create New Call">
+                        <font>
+                            <Font size="36.0" />
+                        </font>
+                        <padding>
+                            <Insets left="20.0" top="20.0" />
+                        </padding>
+                    </Label>
+               <HBox alignment="CENTER" prefHeight="302.0" prefWidth="800.0">
+                  <children>
+                     <GridPane alignment="CENTER" prefHeight="164.0" prefWidth="350.0">
+                       <columnConstraints>
+                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="435.0" minWidth="10.0" prefWidth="308.0" />
+                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="413.0" minWidth="10.0" prefWidth="292.0" />
+                       </columnConstraints>
+                       <rowConstraints>
+                         <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                         <RowConstraints maxHeight="100.0" minHeight="1.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                         <RowConstraints maxHeight="100.0" minHeight="0.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                       </rowConstraints>
+                        <children>
+                           <Label alignment="CENTER" contentDisplay="CENTER" text="Call Type" textAlignment="CENTER">
+                              <font>
+                                 <Font size="17.0" />
+                              </font>
+                           </Label>
+                           <ChoiceBox prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                           <Label text="Street Address" textAlignment="CENTER" GridPane.rowIndex="1">
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Label>
+                           <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                           <TextField alignment="CENTER" prefHeight="25.0" prefWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                           <Label layoutX="50.0" layoutY="80.0" text="ZIP Code" textAlignment="CENTER" GridPane.rowIndex="2">
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Label>
+                        </children>
+                     </GridPane>
+                  </children>
+                  <VBox.margin>
+                     <Insets top="40.0" />
+                  </VBox.margin>
+               </HBox>
+               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <children>
+                     <Button mnemonicParsing="false" text="CREATE">
+                        <font>
+                           <Font size="18.0" />
+                        </font>
+                     </Button>
+                  </children>
+               </HBox>
+                </children>
+            </VBox>
+        </children>
+    </AnchorPane>
+</Scene>

@@ -1,4 +1,4 @@
-package net.noahf.firewatch.common.calls;
+package net.noahf.firewatch.common.incidents;
 
 public class Address {
 
@@ -45,4 +45,8 @@ public class Address {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public String toString() {
+        return this.streetAddress() + ", " + this.town() + ", " + this.state() + " " + this.zipCode();
+    }
 }

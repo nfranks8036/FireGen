@@ -1,6 +1,6 @@
-package net.noahf.firewatch.common.calls;
+package net.noahf.firewatch.common.incidents;
 
-public enum EmergencyCallType {
+public enum IncidentType {
 
     FIRE_SERVICE_CALL,
 
@@ -23,5 +23,10 @@ public enum EmergencyCallType {
     EMS_DELTA,
 
     EMS_ECHO;
+
+    @Override
+    public String toString() {
+        return this.name().replace("_", " ");
+    }
 
 }

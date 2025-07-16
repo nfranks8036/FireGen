@@ -4,11 +4,11 @@ import net.noahf.firewatch.common.FireGen;
 
 public class Main {
 
-    public static FireGen fireGen;
+    public static FireGen firegen;
     public static JavaFXManager fx;
 
     public static void main(String[] args) {
-        Main.fireGen = new FireGen();
+        Main.firegen = new FireGen();
         Main.fx = new JavaFXManager(args);
     }
 }
