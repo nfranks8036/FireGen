@@ -1,0 +1,31 @@
+plugins {
+    id 'application'
+    id 'idea'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+group = 'net.noahf.firewatch.desktopclient'
+version = '1.0.0'
+
+mainClassName = "net.noahf.firewatch.desktopclient.Main"
+
+idea {
+    module {
+        downloadSources = true
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+javafx {
+    platform = 'win'
+    version = "22"
+    modules = [ 'javafx.controls' ]
+}
+
+dependencies {
+    implementation project(":common")
+    implementation 'org.openjfx:javafx-controls:22'
+}
