@@ -30,8 +30,8 @@
                      <TableColumn prefWidth="112.0" text="Incident Number" />
                    <TableColumn prefWidth="75.0" text="Time" />
                    <TableColumn prefWidth="92.0" text="Call Type" />
-                     <TableColumn prefWidth="360.0" text="Address" />
-                     <TableColumn minWidth="1.0" prefWidth="123.0" text="Units" />
+                     <TableColumn prefWidth="158.0" text="Priority" />
+                     <TableColumn prefWidth="323.0" text="Address" />
                  </columns>
                   <VBox.margin>
                      <Insets />

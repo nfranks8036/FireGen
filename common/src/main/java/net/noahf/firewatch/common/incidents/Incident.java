@@ -40,6 +40,7 @@ public class Incident {
     public IncidentType incidentType() {
         return this.type;
     }
+    public void incidentType(IncidentType newType) { this.type = newType; }
 
     public IncidentPriority incidentPriority() {
         return this.priority;

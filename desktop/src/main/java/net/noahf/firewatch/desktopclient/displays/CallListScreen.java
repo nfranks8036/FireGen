@@ -6,7 +6,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -18,10 +17,7 @@ import net.noahf.firewatch.common.IncidentManager;
 import net.noahf.firewatch.common.incidents.Incident;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import net.noahf.firewatch.desktopclient.displays.callviewer.CallViewer;
 
 public class CallListScreen extends GUIPage {
 
@@ -96,13 +92,13 @@ public class CallListScreen extends GUIPage {
         third.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(cell.getValue().incidentType().toString()));
         third.setPrefWidth(92.0D);
 
-        TableColumn<Incident, String> fourth = new TableColumn<>("Address");
-        fourth.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(cell.getValue().address().toString()));
-        fourth.setPrefWidth(360.0D);
+        TableColumn<Incident, String> fourth = new TableColumn<>("Priority");
+        fourth.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(cell.getValue().incidentPriority().toString()));
+        fourth.setPrefWidth(140.0D);
 
-        TableColumn<Incident, String> fifth = new TableColumn<>("Units");
-        fifth.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(Arrays.toString(cell.getValue().units())));
-        fifth.setPrefWidth(123.0D);
+        TableColumn<Incident, String> fifth = new TableColumn<>("Address");
+        fifth.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(cell.getValue().address().toString()));
+        fifth.setPrefWidth(341.0D);
 
         table.getColumns().addAll(first, second, third, fourth, fifth);
     }

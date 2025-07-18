@@ -38,12 +38,22 @@ public enum IncidentPriority {
         return this.name().replace("_", " ");
     }
 
+    public boolean isFire() { return this.fire; }
+    public boolean isEMS() { return this.ems; }
+
     public static String[] asFormattedStrings() {
         String[] incidents = new String[IncidentPriority.values().length];
         for (int i = 0; i < incidents.length; i++) {
             incidents[i] = IncidentPriority.values()[i].toString();
         }
         return incidents;
+    }
+
+    public static String[] asFormattedStringsFilter(Predicate<IncidentPriority> filter) {
+        return Arrays.stream(IncidentPriority.values())
+                .filter(filter)
+                .map(IncidentPriority::toString)
+                .toArray(String[]::new);
     }
 
 }

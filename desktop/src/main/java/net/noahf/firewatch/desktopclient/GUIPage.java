@@ -16,14 +16,16 @@ import javafx.util.Duration;
 import net.noahf.firewatch.desktopclient.objects.Arrow;
 
 import javax.tools.Tool;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class GUIPage {
 
-    private final String title;
+    private Supplier<String> title;
     private final GUIPage back;
 
     public GUIPage(String title) {
-        this.title = title;
+        this.title = () -> title;
         this.back = Main.fx.getCurrentPage();
     }
 
@@ -41,7 +43,7 @@ public abstract class GUIPage {
 
             Node[] root = this.gui(stage);
             if (root == null) {
-                throw new IllegalStateException("No root provided for GUIPage [" + this.getClass().getCanonicalName() + "]");
+                throw new IllegalStateException("No root(s) provided for [" + this.getClass().getCanonicalName() + "]");
             }
 
             titleContainer.getChildren().addAll(root);
@@ -53,6 +55,10 @@ public abstract class GUIPage {
     }
 
     public abstract Node[] gui(Stage stage);
+
+    protected void setDynamicTitle(Supplier<String> dynamicTitle) {
+        this.title = dynamicTitle;
+    }
 
     private void loading(Stage stage) {
         AnchorPane anchor = new AnchorPane();
@@ -100,7 +106,7 @@ public abstract class GUIPage {
             titleBar.getChildren().add(goBackContainer);
         }
 
-        Label titleText = new Label(this.title);
+        Label titleText = new Label(this.title.get());
         titleText.setFont(new Font(36.0));
         titleText.setPadding(new Insets(20.0, 0.0, 0.0, 20.0));
         titleBar.getChildren().add(titleText);
