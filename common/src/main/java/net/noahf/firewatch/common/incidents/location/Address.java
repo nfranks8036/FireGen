@@ -1,4 +1,4 @@
-package net.noahf.firewatch.common.incidents;
+package net.noahf.firewatch.common.incidents.location;
 
 public class Address {
 
@@ -6,7 +6,7 @@ public class Address {
     private int zipCode;
 
     private String town;
-    private String state;
+    private State state;
 
     public String streetAddress() {
         return this.streetAddress;
@@ -32,11 +32,11 @@ public class Address {
         this.town = town;
     }
 
-    public String state() {
+    public State state() {
         return this.state;
     }
 
-    public void state(String state) {
+    public void state(State state) {
         this.state = state;
     }
 
@@ -47,6 +47,6 @@ public class Address {
 
     @Override
     public String toString() {
-        return this.streetAddress() + ", " + this.town() + ", " + this.state() + " " + this.zipCode();
+        return this.streetAddress() + ", " + this.town() + ", " + this.state().abbreviate() + " " + this.zipCode();
     }
 }

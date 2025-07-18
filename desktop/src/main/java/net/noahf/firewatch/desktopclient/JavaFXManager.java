@@ -39,4 +39,8 @@ public class JavaFXManager extends Application {
         this.currentPage.show();
     }
 
+    public GUIPage getCurrentPage() {
+        return this.currentPage;
+    }
+
 }

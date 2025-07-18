@@ -1,16 +1,16 @@
 package net.noahf.firewatch.common.incidents;
 
-public enum IncidentType {
+public enum CallerType {
 
-    FIRE_ALARM,
+    INDIVIDUAL,
 
-    STRUCTURE_FIRE,
+    PASSERBY,
 
-    WORKING_FIRE,
+    LAW_ENFORCEMENT,
 
-    MOTOR_VEHICLE_CRASH,
+    ALARM_COMPANY,
 
-    EMS;
+    SEE_NARRATIVE;
 
     @Override
     public String toString() {
@@ -18,9 +18,9 @@ public enum IncidentType {
     }
 
     public static String[] asFormattedStrings() {
-        String[] incidents = new String[IncidentType.values().length];
+        String[] incidents = new String[CallerType.values().length];
         for (int i = 0; i < incidents.length; i++) {
-            incidents[i] = IncidentType.values()[i].toString();
+            incidents[i] = CallerType.values()[i].toString();
         }
         return incidents;
     }
