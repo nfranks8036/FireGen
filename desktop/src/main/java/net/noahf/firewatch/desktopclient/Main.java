@@ -1,6 +1,9 @@
 package net.noahf.firewatch.desktopclient;
 
 import net.noahf.firewatch.common.FireGen;
+import net.noahf.firewatch.desktopclient.utils.ObjectDuplicator;
+
+import java.util.Arrays;
 
 public class Main {
 
