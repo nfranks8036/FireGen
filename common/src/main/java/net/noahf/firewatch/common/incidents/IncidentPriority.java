@@ -1,7 +1,7 @@
 package net.noahf.firewatch.common.incidents;
 
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.Locale;
 import java.util.function.Predicate;
 
 public enum IncidentPriority {
@@ -26,7 +26,8 @@ public enum IncidentPriority {
 
     EMS_ECHO (false, true);
 
-    final boolean fire, ems;
+    final boolean fire;
+    final boolean ems;
 
     IncidentPriority(boolean fire, boolean ems) {
         this.fire = fire;
@@ -47,6 +48,10 @@ public enum IncidentPriority {
             incidents[i] = IncidentPriority.values()[i].toString();
         }
         return incidents;
+    }
+
+    public static IncidentPriority valueOfFormatted(String key) {
+        return IncidentPriority.valueOf(key.replace(" ", "_").toUpperCase(Locale.ROOT));
     }
 
     public static String[] asFormattedStringsFilter(Predicate<IncidentPriority> filter) {

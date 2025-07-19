@@ -29,8 +29,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.function.Function;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class CallViewer extends GUIPage {
@@ -183,14 +184,23 @@ public class CallViewer extends GUIPage {
         ChoiceBox<String> incidentType = this.choices(176.0, 26.0, new Insets(0.0, 0.0, 0.0, 0.0));
         incidentType.getItems().addAll(IncidentType.asFormattedStrings());
         incidentType.setValue(this.tryGet(() -> this.incident.incidentType().toString()));
-        incidentType.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.CALL_TYPE);
+        incidentType.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.INCIDENT_TYPE);
         callDataForm.add(incidentTypeLabel, 0, 1);
         callDataForm.add(incidentType, 1, 1);
 
         Label priorityLabel = this.formText("Priority");
         ChoiceBox<String> priority = this.choices(176.0, 26.0, new Insets(0.0, 0.0, 0.0, 0.0));
-        priority.getItems().addAll(IncidentPriority.asFormattedStringsFilter((ip) -> (ip.isFire() && incident.incidentType().isFire()) || (ip.isEMS() && incident.incidentType().isEMS())));
+        List<String> priorities = new ArrayList<>();
+        for (IncidentPriority p : IncidentPriority.values()) {
+            if (this.incident.incidentType().isEMS() && p.isEMS()) {
+                priorities.add(p.toString());
+            } else if (this.incident.incidentType().isFire() && p.isFire()) {
+                priorities.add(p.toString());
+            }
+        }
+        priority.getItems().addAll(priorities);
         priority.setValue(this.tryGet(() -> this.incident.incidentPriority().toString()));
+        priority.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.INCIDENT_PRIORITY);
         callDataForm.add(priorityLabel, 0, 2);
         callDataForm.add(priority, 1, 2);
 
@@ -198,6 +208,7 @@ public class CallViewer extends GUIPage {
         ChoiceBox<String> callerType = this.choices(176.0, 26.0, new Insets(0.0, 0.0, 0.0, 0.0));
         callerType.getItems().addAll(CallerType.asFormattedStrings());
         callerType.setValue(this.tryGet(() -> this.incident.callerType().toString()));
+        callerType.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.INCIDENT_CALLER);
         callDataForm.add(callerTypeLabel, 0, 3);
         callDataForm.add(callerType, 1, 3);
 

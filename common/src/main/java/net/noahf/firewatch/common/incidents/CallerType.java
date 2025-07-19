@@ -1,5 +1,7 @@
 package net.noahf.firewatch.common.incidents;
 
+import java.util.Locale;
+
 public enum CallerType {
 
     INDIVIDUAL,
@@ -15,6 +17,10 @@ public enum CallerType {
     @Override
     public String toString() {
         return this.name().replace("_", " ");
+    }
+
+    public static CallerType valueOfFormatted(String key) {
+        return CallerType.valueOf(key.replace(" ", "_").toUpperCase(Locale.ROOT));
     }
 
     public static String[] asFormattedStrings() {

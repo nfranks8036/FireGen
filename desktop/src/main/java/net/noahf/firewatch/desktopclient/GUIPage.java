@@ -97,7 +97,7 @@ public abstract class GUIPage {
                 event.consume();
             });
 
-            Tooltip tooltip = new Tooltip("Go Back\nTo \"" + this.back.title +"\"");
+            Tooltip tooltip = new Tooltip("Go Back\nTo \"" + this.back.title.get() +"\"");
             tooltip.setFont(new Font(20.0));
             tooltip.setShowDelay(Duration.millis(100.0));
             tooltip.setHideDelay(Duration.millis(2.5));

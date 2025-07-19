@@ -12,7 +12,7 @@ public enum IncidentType {
 
     MOTOR_VEHICLE_CRASH (true, true),
 
-    EMS (true, true);
+    EMS (false, true);
 
     private final boolean fire, ems;
 

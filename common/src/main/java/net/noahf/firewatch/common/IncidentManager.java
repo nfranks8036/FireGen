@@ -27,6 +27,19 @@ public class IncidentManager {
                 CallerType.ALARM_COMPANY,
                 address,
                 new Unit[]{}));
+
+        address = new Address();
+        address.streetAddress("4111 Blue View Dr");
+        address.zipCode(24012);
+        address.town("Roanoke County");
+        address.state(State.VIRGINIA);
+        this.active.add(new Incident(
+                System.currentTimeMillis() - (1000 * 50),
+                IncidentType.EMS,
+                IncidentPriority.EMS_BRAVO,
+                CallerType.INDIVIDUAL,
+                address,
+                new Unit[]{}));
     }
 
     public Incident getIncident(String incidentNumber) {

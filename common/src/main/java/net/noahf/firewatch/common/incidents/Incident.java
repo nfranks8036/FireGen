@@ -45,12 +45,14 @@ public class Incident {
     public IncidentPriority incidentPriority() {
         return this.priority;
     }
+    public void incidentPriority(IncidentPriority newPriority) { this.priority = newPriority; }
 
     public Narrative narrative() { return this.narrative; }
 
     public CallerType callerType() {
         return this.callerType;
     }
+    public void callerType(CallerType newCallerType) { this.callerType = newCallerType; }
 
     public Address address() {
         return this.address;
