@@ -33,9 +33,8 @@ public class Incident {
         return FireGenInternalHelper.firegen.getCurrentYear() + "-" + this.incidentNumber;
     }
 
-    public long dispatchTime() {
-        return this.dispatchTime;
-    }
+    public long dispatchTime() { return this.dispatchTime; }
+    public void dispatchTime(long newDispatchTime) { this.dispatchTime = newDispatchTime; }
 
     public IncidentType incidentType() {
         return this.type;

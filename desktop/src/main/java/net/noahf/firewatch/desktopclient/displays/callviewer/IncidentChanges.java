@@ -18,14 +18,14 @@ public class IncidentChanges {
     static ChangeListener<String> INCIDENT_PRIORITY = (observable, oldValue, newValue) -> {
         if (Main.fx.getCurrentPage() instanceof CallViewer callViewer) {
             callViewer.incident.incidentPriority(IncidentPriority.valueOfFormatted(newValue));
-            callViewer.show();
+            callViewer.populateCallData(callViewer.viewer);
         }
     };
 
     static ChangeListener<String> INCIDENT_CALLER = (observable, oldValue, newValue) -> {
         if (Main.fx.getCurrentPage() instanceof CallViewer callViewer) {
             callViewer.incident.callerType(CallerType.valueOfFormatted(newValue));
-            callViewer.show();
+            callViewer.populateCallData(callViewer.viewer);
         }
     };
 

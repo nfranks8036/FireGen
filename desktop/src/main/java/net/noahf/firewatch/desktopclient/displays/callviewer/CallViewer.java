@@ -8,6 +8,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
@@ -17,6 +18,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 import net.noahf.firewatch.common.incidents.*;
 import net.noahf.firewatch.common.incidents.location.Address;
 import net.noahf.firewatch.common.incidents.location.State;
@@ -27,8 +29,10 @@ import net.noahf.firewatch.desktopclient.GUIPage;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +41,7 @@ import java.util.function.Supplier;
 public class CallViewer extends GUIPage {
 
     final Incident incident;
+    GridPane viewer;
 
     public CallViewer(Incident incident) {
         super(incident.incidentType().toString());
@@ -46,29 +51,29 @@ public class CallViewer extends GUIPage {
 
     @Override
     public Node[] gui(Stage stage) {
-        GridPane viewerContainer = new GridPane();
-        viewerContainer.setPrefWidth(800.0D);
-        viewerContainer.setPrefHeight(710.0D);
-        VBox.setMargin(viewerContainer, new Insets(20.0, 0.0, 0.0, 0.0));
+        this.viewer = new GridPane();
+        this.viewer.setPrefWidth(800.0D);
+        this.viewer.setPrefHeight(710.0D);
+        VBox.setMargin(this.viewer, new Insets(20.0, 0.0, 0.0, 0.0));
 
-        this.populateLocationData(viewerContainer);
-        this.populateCallData(viewerContainer);
-        this.populateNarrative(viewerContainer);
+        this.populateLocationData(this.viewer);
+        this.populateCallData(this.viewer);
+        this.populateNarrative(this.viewer);
 
-        viewerContainer.getColumnConstraints().setAll(
+        this.viewer.getColumnConstraints().setAll(
                 new ColumnConstraints(10.0D, 498.6D, 498.6D, Priority.SOMETIMES, HPos.CENTER, true),
                 new ColumnConstraints(10.0D, 301.0D, 401.4D, Priority.SOMETIMES, HPos.CENTER, true)
         );
-        viewerContainer.getRowConstraints().setAll(
+        this.viewer.getRowConstraints().setAll(
                 new ObjectDuplicator<>(
                         new RowConstraints(10.0D, 367.0D, 367.0D, Priority.SOMETIMES, VPos.CENTER, true)
                 ).duplicate(2)
         );
 
-        return new GridPane[] {viewerContainer};
+        return new GridPane[] {this.viewer};
     }
 
-    private void populateLocationData(GridPane viewer) {
+    void populateLocationData(GridPane viewer) {
         VBox root = new VBox();
         root.setLayoutX(411.0);
         root.setLayoutY(10.0);
@@ -111,7 +116,12 @@ public class CallViewer extends GUIPage {
         addressForm.add(city, 1, 1);
 
         Label stateLabel = this.formText("State");
-        ChoiceBox<String> state = this.choices(229.0, 26.0, new Insets(0.0, 5.0, 0.0, 5.0));
+        ComboBox<String> state = new ComboBox<>();
+        state.setPrefWidth(229.0);
+        state.setPrefHeight(26.0);
+        state.setPadding(new Insets(0.0, 5.0, 0.0, 5.0));
+        GridPane.setValignment(state, VPos.CENTER);
+        GridPane.setHalignment(state, HPos.CENTER);
         state.getItems().addAll(State.asFormattedStrings());
         state.setValue(this.tryGet(() -> prefilledAddress.state().toString()));
         addressForm.add(stateLabel, 0, 2);
@@ -138,7 +148,7 @@ public class CallViewer extends GUIPage {
         root.getChildren().addAll(temporaryWebViewInsteadOfGpsContainer, addressForm);
         viewer.add(root, 0, 0);
     }
-    private void populateCallData(GridPane viewer) {
+    void populateCallData(GridPane viewer) {
         VBox root = new VBox();
         root.setPrefHeight(362.0);
         root.setPrefWidth(357.0);
@@ -181,7 +191,7 @@ public class CallViewer extends GUIPage {
         callDataForm.add(incidentNumber, 1, 0);
 
         Label incidentTypeLabel = this.formText("Type");
-        ChoiceBox<String> incidentType = this.choices(176.0, 26.0, new Insets(0.0, 0.0, 0.0, 0.0));
+        ChoiceBox<String> incidentType = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
         incidentType.getItems().addAll(IncidentType.asFormattedStrings());
         incidentType.setValue(this.tryGet(() -> this.incident.incidentType().toString()));
         incidentType.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.INCIDENT_TYPE);
@@ -189,7 +199,7 @@ public class CallViewer extends GUIPage {
         callDataForm.add(incidentType, 1, 1);
 
         Label priorityLabel = this.formText("Priority");
-        ChoiceBox<String> priority = this.choices(176.0, 26.0, new Insets(0.0, 0.0, 0.0, 0.0));
+        ChoiceBox<String> priority = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
         List<String> priorities = new ArrayList<>();
         for (IncidentPriority p : IncidentPriority.values()) {
             if (this.incident.incidentType().isEMS() && p.isEMS()) {
@@ -205,21 +215,79 @@ public class CallViewer extends GUIPage {
         callDataForm.add(priority, 1, 2);
 
         Label callerTypeLabel = this.formText("Caller");
-        ChoiceBox<String> callerType = this.choices(176.0, 26.0, new Insets(0.0, 0.0, 0.0, 0.0));
+        ChoiceBox<String> callerType = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
         callerType.getItems().addAll(CallerType.asFormattedStrings());
         callerType.setValue(this.tryGet(() -> this.incident.callerType().toString()));
         callerType.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.INCIDENT_CALLER);
         callDataForm.add(callerTypeLabel, 0, 3);
         callDataForm.add(callerType, 1, 3);
 
+        // ---------------- DATE AND TIME -----------------
         Label dispatchTimeLabel = this.formText("Time");
-        DatePicker dispatchTime = new DatePicker(this.tryGet(() -> LocalDate.ofInstant(new Date(this.incident.dispatchTime()).toInstant(), ZoneId.systemDefault())));
-        dispatchTime.setPrefHeight(26.0);
-        dispatchTime.setPrefWidth(180.0);
-        GridPane.setHalignment(dispatchTime, HPos.CENTER);
-        GridPane.setValignment(dispatchTime, VPos.CENTER);
         callDataForm.add(dispatchTimeLabel, 0, 4);
-        callDataForm.add(dispatchTime, 1, 4);
+
+        HBox dateAndTimeContainer = new HBox();
+        dateAndTimeContainer.setAlignment(Pos.CENTER);
+        dateAndTimeContainer.setPrefHeight(100.0);
+        dateAndTimeContainer.setPrefWidth(200.0);
+        GridPane.setHalignment(dateAndTimeContainer, HPos.CENTER);
+        GridPane.setValignment(dateAndTimeContainer, VPos.CENTER);
+
+        Date date = new Date(this.incident.dispatchTime());
+
+        DatePicker dispatchDatePicker = new DatePicker(this.tryGet(() -> LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault())));
+        dispatchDatePicker.setPrefHeight(26.0);
+        dispatchDatePicker.setPrefWidth(89.0);
+        dispatchDatePicker.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(LocalDate object) {
+                return new SimpleDateFormat("MM/dd/yy").format(Date.from(object.atTime(12, 0, 0).toInstant(ZoneOffset.UTC)));
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                try {
+                    return LocalDate.ofInstant(new SimpleDateFormat("MM/dd/yy").parse(string).toInstant(), ZoneId.systemDefault());
+                } catch (Exception exception) {
+                    return null;
+                }
+            }
+        });
+        dispatchDatePicker.setPromptText("Date");
+
+        TextField dispatchTimePicker = new TextField();
+        dispatchTimePicker.setPrefHeight(26.0);
+        dispatchTimePicker.setPrefWidth(58.0);
+        dispatchTimePicker.setPromptText("Time");
+        dispatchTimePicker.setText(this.tryGet(() -> new SimpleDateFormat("HH:mm:ss").format(date)));
+        HBox.setMargin(dispatchTimePicker, new Insets(0.0, 2.0, 0.0, 2.0));
+
+        Button dispatchDateTimeNow = new Button("N");
+        dispatchDateTimeNow.setMnemonicParsing(false);
+        dispatchDateTimeNow.setPrefHeight(26.0);
+        dispatchDateTimeNow.setPrefWidth(27.0);
+        dispatchDateTimeNow.setOnMouseClicked((e) -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                this.incident.dispatchTime(System.currentTimeMillis());
+                this.populateCallData(viewer);
+            }
+            e.consume();
+        });
+
+        dateAndTimeContainer.getChildren().addAll(dispatchDatePicker, dispatchTimePicker, dispatchDateTimeNow);
+        callDataForm.add(dateAndTimeContainer, 1, 4);
+
+        // ---------------- DATE AND TIME (END) ----------------
+
+        Label unitsLabel = this.formText("Units");
+        Button units = this.button("Edit units");
+        callDataForm.add(unitsLabel, 0, 5);
+        callDataForm.add(units, 1, 5);
+
+        Label shareIncidentLabel = this.formText("Share");
+        Button shareIncident = this.button("Share this incident");
+        callDataForm.add(shareIncidentLabel, 0, 6);
+        callDataForm.add(shareIncident, 1, 6);
 
         // ---------------- CALL DATA FORM (END) ----------------
 
@@ -268,10 +336,17 @@ public class CallViewer extends GUIPage {
         GridPane.setValignment(label, VPos.CENTER);
         return label;
     }
-    private <T> ChoiceBox<T> choices(double prefWidth, double prefHeight, Insets padding) {
+    private Button button(String text) {
+        Button button = new Button(text);
+        button.setMnemonicParsing(false);
+        GridPane.setHalignment(button, HPos.CENTER);
+        GridPane.setValignment(button, VPos.CENTER);
+        return button;
+    }
+    private <T> ChoiceBox<T> choices(Insets padding) {
         ChoiceBox<T> choices = new ChoiceBox<>();
-        choices.setPrefWidth(prefWidth);
-        choices.setPrefHeight(prefHeight);
+        choices.setPrefWidth(176.0);
+        choices.setPrefHeight(26.0);
         choices.setPadding(padding);
         GridPane.setValignment(choices, VPos.CENTER);
         GridPane.setHalignment(choices, HPos.CENTER);
