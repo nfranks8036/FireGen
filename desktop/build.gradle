@@ -30,4 +30,6 @@ dependencies {
     implementation 'org.openjfx:javafx-controls:22'
     implementation 'org.openjfx:javafx-fxml:22'
     implementation 'org.openjfx:javafx-web:22'
+
+    implementation("com.sothawo:mapjfx:3.1.0")
 }

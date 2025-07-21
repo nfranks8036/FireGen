@@ -2,23 +2,26 @@ package net.noahf.firewatch.common.incidents;
 
 import java.util.Locale;
 
+import static net.noahf.firewatch.common.incidents.IncidentPriority.*;
+
 public enum IncidentType {
 
-    FIRE_ALARM (true, false),
+    FIRE_SERVICE_CALL (NON_EMERGENCY_RESPONSE, EMERGENCY_RESPONSE),
 
-    STRUCTURE_FIRE (true, true),
+    FIRE_ALARM (EMERGENCY_RESPONSE),
 
-    WORKING_FIRE (true, true),
+    STRUCTURE_FIRE (EMERGENCY_RESPONSE),
 
-    MOTOR_VEHICLE_CRASH (true, true),
+    WORKING_FIRE (EMERGENCY_RESPONSE),
 
-    EMS (false, true);
+    MOTOR_VEHICLE_CRASH (MVC_INJURIES, MVC_NO_INJURIES),
 
-    private final boolean fire, ems;
+    EMS (EMS_OMEGA, EMS_ALPHA, EMS_BRAVO, EMS_CHARLIE, EMS_DELTA, EMS_ECHO, STANDBY);
 
-    IncidentType(boolean fire, boolean ems) {
-        this.fire = fire;
-        this.ems = ems;
+    private final IncidentPriority[] supportedPriorities;
+
+    IncidentType(IncidentPriority... supportedPriorities) {
+        this.supportedPriorities = supportedPriorities;
     }
 
     @Override
@@ -26,8 +29,9 @@ public enum IncidentType {
         return this.name().replace("_", " ");
     }
 
-    public boolean isFire() { return this.fire; }
-    public boolean isEMS() { return this.ems; }
+    public IncidentPriority[] supportedPriorityResponses() {
+        return this.supportedPriorities;
+    }
 
     public static IncidentType valueOfFormatted(String key) {
         return IncidentType.valueOf(key.replace(" ", "_").toUpperCase(Locale.ROOT));

@@ -13,7 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import net.noahf.firewatch.common.IncidentManager;
+import net.noahf.firewatch.common.incidents.IncidentManager;
 import net.noahf.firewatch.common.incidents.Incident;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;
@@ -41,12 +41,12 @@ public class CallListScreen extends GUIPage {
     };
 
     public CallListScreen() {
-        super("Active Calls (" + (Main.firegen.getCallManager().active.size()) + ")");
+        super("Active Calls (" + (Main.firegen.callManager().active.size()) + ")");
     }
 
     @Override
     public Node[] gui(Stage stage) {
-        IncidentManager calls = Main.firegen.getCallManager();
+        IncidentManager calls = Main.firegen.callManager();
 
         TableView<Incident> table = new TableView<>();
         table.setRowFactory(this.clickRowEvent);

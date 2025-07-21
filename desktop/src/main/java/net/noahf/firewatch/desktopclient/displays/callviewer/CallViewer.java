@@ -1,6 +1,12 @@
 package net.noahf.firewatch.desktopclient.displays.callviewer;
 
+import com.sothawo.mapjfx.*;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,17 +20,21 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import net.noahf.firewatch.common.geolocation.IncidentAddress;
+import net.noahf.firewatch.common.geolocation.exceptions.GeoLocatorException;
 import net.noahf.firewatch.common.incidents.*;
-import net.noahf.firewatch.common.incidents.location.Address;
-import net.noahf.firewatch.common.incidents.location.State;
+import net.noahf.firewatch.common.geolocation.GeoAddress;
+import net.noahf.firewatch.common.geolocation.State;
 import net.noahf.firewatch.common.incidents.narrative.NarrativeEntry;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
+import net.noahf.firewatch.common.utils.TimeHelper;
 import net.noahf.firewatch.desktopclient.GUIPage;
+import net.noahf.firewatch.desktopclient.Main;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -33,9 +43,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class CallViewer extends GUIPage {
@@ -44,9 +53,8 @@ public class CallViewer extends GUIPage {
     GridPane viewer;
 
     public CallViewer(Incident incident) {
-        super(incident.incidentType().toString());
+        super(generateTitle(incident).get());
         this.incident = incident;
-        this.setDynamicTitle(() -> this.incident.incidentType().toString());
     }
 
     @Override
@@ -82,38 +90,99 @@ public class CallViewer extends GUIPage {
 
         // ---------------- MAPS ----------------
 
-        StackPane temporaryWebViewInsteadOfGpsContainer = new StackPane();
-        temporaryWebViewInsteadOfGpsContainer.setPrefWidth(180.0);
-        temporaryWebViewInsteadOfGpsContainer.setPrefHeight(180.0);
+        StackPane mapContainer = new StackPane();
+        mapContainer.setPrefWidth(180.0);
+        mapContainer.setPrefHeight(180.0);
 
-        WebView temporaryWebViewInsteadOfGps = new WebView();
-        temporaryWebViewInsteadOfGps.setPrefWidth(180.0);
-        temporaryWebViewInsteadOfGps.setPrefHeight(180.0);
-        StackPane.setMargin(temporaryWebViewInsteadOfGps, new Insets(10.0, 10.0, 10.0, 10.0));
+        IncidentAddress incidentAddress = this.incident.address();
+        GeoAddress determineGeoAddress = null;
 
-        temporaryWebViewInsteadOfGpsContainer.getChildren().add(temporaryWebViewInsteadOfGps);
+        try {
+            determineGeoAddress = incidentAddress.geoAddress(Main.firegen.geoLocator());
+
+            MapView map = new MapView();
+            StackPane.setMargin(map, new Insets(10.0, 10.0, 10.0, 10.0));
+            map.setPrefWidth(180.0);
+            map.setPrefHeight(180.0);
+            map.setMapType(MapType.OSM);
+            map.setCenter(new Coordinate(determineGeoAddress.coords().latitude(), determineGeoAddress.coords().longitude()));
+            map.initialize(Configuration.builder().interactive(true).showZoomControls(true).build());
+
+            mapContainer.getChildren().add(map);
+        } catch (GeoLocatorException exception) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid address!\n\nCorrect the address and press 'SEARCH' again.\n\nError: '" + exception.getMessage() + "'", ButtonType.OK);
+            alert.showAndWait();
+        }
+        if (determineGeoAddress != null) {
+            incidentAddress.copyFrom(determineGeoAddress);
+        }
 
         // ---------------- MAPS (END) ----------------
 
 
         // ---------------- ADDRESS FIELDS ----------------
         GridPane addressForm = new GridPane();
-        addressForm.setPrefHeight(155.0);
+        addressForm.setPrefHeight(255.0);
         addressForm.setPrefWidth(400.0);
         addressForm.setAlignment(Pos.CENTER);
         addressForm.setPadding(new Insets(0.0, 10.0, 5.0, 10.0));
 
-        Address prefilledAddress = this.incident.address();
+        Label commonNameLabel = this.formText("Common Name");
+        TextField commonName = this.textField("Common Name", incidentAddress::commonName);
+        commonName.textProperty().addListener((e, old, now) -> {
+            this.incident.address().commonName(now);
+        });
+        addressForm.add(commonNameLabel, 0, 0);
+        addressForm.add(commonName, 1, 0);
 
         Label streetAddressLabel = formText("Street Address");
-        TextField streetAddress = this.textField("Street Address", prefilledAddress::streetAddress);
-        addressForm.add(streetAddressLabel, 0, 0);
-        addressForm.add(streetAddress, 1, 0);
+        HBox streetAddress = new HBox(5);
+        streetAddress.setPrefWidth(230);
+        streetAddress.setMaxWidth(230);
+        streetAddress.setMinWidth(230);
 
-        Label cityLabel = formText("City or Town");
-        TextField city = this.textField("City or Town", prefilledAddress::town);
-        addressForm.add(cityLabel, 0, 1);
-        addressForm.add(city, 1, 1);
+        TextField houseNumbers = new TextField(this.tryGet(incidentAddress::houseNumbers));
+        houseNumbers.setFont(new Font(14.0));
+        houseNumbers.setPromptText("#");
+        houseNumbers.setAlignment(Pos.CENTER);
+        Text textMeasurer = new Text(this.tryGet(incidentAddress::houseNumbers));
+        textMeasurer.setFont(houseNumbers.getFont());
+        houseNumbers.textProperty().addListener((e, old, now) -> {
+            this.incident.address().houseNumbers(now);
+            textMeasurer.setText(now);
+            textMeasurer.applyCss();
+        });
+        houseNumbers.prefWidthProperty().bind(Bindings.createDoubleBinding(() -> {
+            double textWidth = textMeasurer.getLayoutBounds().getWidth();
+            textMeasurer.setText("0".repeat(2));
+            double minWidth = textMeasurer.getLayoutBounds().getWidth() + 20;
+            textMeasurer.setText("0".repeat(7));
+            double maxWidth = textMeasurer.getLayoutBounds().getWidth() + 20;
+            textMeasurer.setText(houseNumbers.getText());
+            return Math.min(Math.max(textWidth + 20, minWidth), maxWidth);
+        }, textMeasurer.layoutBoundsProperty(), houseNumbers.textProperty()));
+        streetAddress.getChildren().add(houseNumbers);
+
+        TextField streetName = new TextField(this.tryGet(incidentAddress::streetName));
+        streetName.setPromptText("Street");
+        streetName.setFont(new Font(14.0));
+        streetName.textProperty().addListener((e, old, now) -> {
+            this.incident.address().streetName(now);
+        });
+        streetName.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(streetName, Priority.ALWAYS);
+        streetAddress.getChildren().add(streetName);
+
+        addressForm.add(streetAddressLabel, 0, 1);
+        addressForm.add(streetAddress, 1, 1);
+
+        Label cityLabel = formText("City");
+        TextField city = this.textField("City", incidentAddress::city);
+        city.textProperty().addListener((e, old, now) -> {
+            this.incident.address().city(now);
+        });
+        addressForm.add(cityLabel, 0, 2);
+        addressForm.add(city, 1, 2);
 
         Label stateLabel = this.formText("State");
         ComboBox<String> state = new ComboBox<>();
@@ -123,14 +192,33 @@ public class CallViewer extends GUIPage {
         GridPane.setValignment(state, VPos.CENTER);
         GridPane.setHalignment(state, HPos.CENTER);
         state.getItems().addAll(State.asFormattedStrings());
-        state.setValue(this.tryGet(() -> prefilledAddress.state().toString()));
-        addressForm.add(stateLabel, 0, 2);
-        addressForm.add(state, 1, 2);
+        state.setValue(this.tryGet(() -> incidentAddress.state().toString()));
+        state.getSelectionModel().selectedItemProperty().addListener((e, old, now) -> {
+            this.incident.address().state(State.valueOf(now.toUpperCase().replace(" ", "_")));
+        });
+        addressForm.add(stateLabel, 0, 3);
+        addressForm.add(state, 1, 3);
 
         Label zipLabel = this.formText("ZIP Code");
-        TextField zip = this.textField("ZIP Code", () -> String.valueOf(prefilledAddress.zipCode()));
-        addressForm.add(zipLabel, 0, 3);
-        addressForm.add(zip, 1, 3);
+        TextField zip = this.textField("ZIP Code", () -> String.valueOf(incidentAddress.zip()));
+        zipLabel.textProperty().addListener((e, old, now) -> {
+            try {
+                this.incident.address().zip(Integer.parseInt(now));
+            } catch (NumberFormatException error) {
+                zip.setText(old);
+            }
+        });
+        addressForm.add(zipLabel, 0, 4);
+        addressForm.add(zip, 1, 4);
+
+        Button searchButton = this.button("SEARCH");
+        searchButton.setOnMouseClicked((e) -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                this.populateLocationData(this.viewer);
+            }
+            e.consume();
+        });
+        addressForm.add(searchButton, 1, 5, 1, 1);
 
         addressForm.getColumnConstraints().setAll(
                 new ObjectDuplicator<>(
@@ -139,22 +227,18 @@ public class CallViewer extends GUIPage {
         );
         addressForm.getRowConstraints().setAll(
                 new ObjectDuplicator<>(
-                        new RowConstraints(10.0, 30.0, 30.0, Priority.SOMETIMES, VPos.CENTER, true)
+                        new RowConstraints(10.0, 50.0, 30.0, Priority.SOMETIMES, VPos.CENTER, true)
                 ).duplicate(4)
         );
 
         // ---------------- ADDRESS FIELDS (END) ----------------
 
-        root.getChildren().addAll(temporaryWebViewInsteadOfGpsContainer, addressForm);
+        root.getChildren().addAll(mapContainer, addressForm);
         viewer.add(root, 0, 0);
     }
     void populateCallData(GridPane viewer) {
         VBox root = new VBox();
         root.setPrefHeight(362.0);
-        root.setPrefWidth(357.0);
-        VBox.setMargin(root, new Insets(20.0, 0.0, 0.0, 0.0));
-
-        // ---------------- CALL DATA FORM ----------------
         GridPane callDataForm = new GridPane();
         callDataForm.setAlignment(Pos.CENTER);
         callDataForm.setPrefHeight(321.0);
@@ -194,23 +278,23 @@ public class CallViewer extends GUIPage {
         ChoiceBox<String> incidentType = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
         incidentType.getItems().addAll(IncidentType.asFormattedStrings());
         incidentType.setValue(this.tryGet(() -> this.incident.incidentType().toString()));
-        incidentType.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.INCIDENT_TYPE);
+        incidentType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            this.incident.incidentType(IncidentType.valueOfFormatted(newValue));
+            this.setDynamicTitle(generateTitle(this.incident));
+            this.populateCallData(this.viewer);
+        });
         callDataForm.add(incidentTypeLabel, 0, 1);
         callDataForm.add(incidentType, 1, 1);
 
         Label priorityLabel = this.formText("Priority");
         ChoiceBox<String> priority = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
-        List<String> priorities = new ArrayList<>();
-        for (IncidentPriority p : IncidentPriority.values()) {
-            if (this.incident.incidentType().isEMS() && p.isEMS()) {
-                priorities.add(p.toString());
-            } else if (this.incident.incidentType().isFire() && p.isFire()) {
-                priorities.add(p.toString());
-            }
-        }
-        priority.getItems().addAll(priorities);
+        priority.getItems().addAll(Arrays.stream(this.incident.incidentType().supportedPriorityResponses()).toList().stream().map(IncidentPriority::toString).toList());
         priority.setValue(this.tryGet(() -> this.incident.incidentPriority().toString()));
-        priority.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.INCIDENT_PRIORITY);
+        priority.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            this.incident.incidentPriority(IncidentPriority.valueOfFormatted(newValue));
+            this.setDynamicTitle(generateTitle(this.incident));
+            this.populateCallData(this.viewer);
+        });
         callDataForm.add(priorityLabel, 0, 2);
         callDataForm.add(priority, 1, 2);
 
@@ -249,7 +333,7 @@ public class CallViewer extends GUIPage {
                 try {
                     return LocalDate.ofInstant(new SimpleDateFormat("MM/dd/yy").parse(string).toInstant(), ZoneId.systemDefault());
                 } catch (Exception exception) {
-                    return null;
+                    return LocalDate.of(TimeHelper.getCurrentYear(), 1, 1);
                 }
             }
         });
@@ -306,7 +390,7 @@ public class CallViewer extends GUIPage {
         title.setFont(new Font(19.0));
 
         TableView<NarrativeEntry> narrativeTable = new TableView<>();
-        narrativeTable.setPrefHeight(327.0);
+        narrativeTable.setPrefHeight(275.0);
         narrativeTable.setPrefWidth(400.0);
         narrativeTable.setPlaceholder(new Label("No narrative written about this incident yet"));
         VBox.setMargin(narrativeTable, new Insets(5.0, 10.0, 5.0, 10.0));
@@ -367,6 +451,18 @@ public class CallViewer extends GUIPage {
         } catch (Exception exception) {
             return null;
         }
+    }
+
+    private static Supplier<String> generateTitle(Incident incident) {
+        IncidentType type = incident.incidentType();
+        IncidentPriority priority = incident.incidentPriority();
+        if (type == IncidentType.EMS) {
+            return () -> type + ", " + priority.toString().replace("EMS ", "") + (priority.toString().contains("EMS") ? " RESPONSE" : "");
+        } else if (type == IncidentType.MOTOR_VEHICLE_CRASH) {
+            return () -> "MVC " + priority.toString().replace("MVC ", "");
+        }
+
+        return () -> incident.incidentType().toString();
     }
 
 }

@@ -24,6 +24,8 @@ public abstract class GUIPage {
     private Supplier<String> title;
     private final GUIPage back;
 
+    private Label titleText;
+
     public GUIPage(String title) {
         this.title = () -> title;
         this.back = Main.fx.getCurrentPage();
@@ -58,6 +60,7 @@ public abstract class GUIPage {
 
     protected void setDynamicTitle(Supplier<String> dynamicTitle) {
         this.title = dynamicTitle;
+        this.titleText.setText(dynamicTitle.get());
     }
 
     private void loading(Stage stage) {
@@ -106,10 +109,10 @@ public abstract class GUIPage {
             titleBar.getChildren().add(goBackContainer);
         }
 
-        Label titleText = new Label(this.title.get());
-        titleText.setFont(new Font(36.0));
-        titleText.setPadding(new Insets(20.0, 0.0, 0.0, 20.0));
-        titleBar.getChildren().add(titleText);
+        this.titleText = new Label(this.title.get());
+        this.titleText.setFont(new Font(36.0));
+        this.titleText.setPadding(new Insets(20.0, 0.0, 0.0, 20.0));
+        titleBar.getChildren().add(this.titleText);
 
         titleContainer.getChildren().add(titleBar);
 

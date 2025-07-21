@@ -6,41 +6,32 @@ import java.util.function.Predicate;
 
 public enum IncidentPriority {
 
-    STANDBY (true, true),
+    STANDBY,
 
-    SERVICE_CALL (true, true),
+    EMERGENCY_RESPONSE,
 
-    EMERGENCY_RESPONSE (true, false),
+    NON_EMERGENCY_RESPONSE,
 
-    NON_EMERGENCY_RESPONSE (true, false),
+    MVC_NO_INJURIES,
 
-    EMS_OMEGA (false, true),
+    MVC_INJURIES,
 
-    EMS_ALPHA (false, true),
+    EMS_OMEGA,
 
-    EMS_BRAVO (false, true),
+    EMS_ALPHA,
 
-    EMS_CHARLIE (false, true),
+    EMS_BRAVO,
 
-    EMS_DELTA (false, true),
+    EMS_CHARLIE,
 
-    EMS_ECHO (false, true);
+    EMS_DELTA,
 
-    final boolean fire;
-    final boolean ems;
-
-    IncidentPriority(boolean fire, boolean ems) {
-        this.fire = fire;
-        this.ems = ems;
-    }
+    EMS_ECHO;
 
     @Override
     public String toString() {
         return this.name().replace("_", " ");
     }
-
-    public boolean isFire() { return this.fire; }
-    public boolean isEMS() { return this.ems; }
 
     public static String[] asFormattedStrings() {
         String[] incidents = new String[IncidentPriority.values().length];

@@ -35,6 +35,9 @@ public class JavaFXManager extends Application {
     }
 
     public void setNewPage(GUIPage page) {
+        if (page == null) {
+            throw new IllegalArgumentException("page != null");
+        }
         this.currentPage = page;
         this.currentPage.show();
     }

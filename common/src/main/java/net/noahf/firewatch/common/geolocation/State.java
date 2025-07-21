@@ -1,6 +1,4 @@
-package net.noahf.firewatch.common.incidents.location;
-
-import net.noahf.firewatch.common.incidents.CallerType;
+package net.noahf.firewatch.common.geolocation;
 
 public enum State {
 

@@ -1,10 +1,12 @@
 package net.noahf.firewatch.common.incidents;
 
-import net.noahf.firewatch.common.utils.FireGenInternalHelper;
-import net.noahf.firewatch.common.incidents.location.Address;
+import net.noahf.firewatch.common.geolocation.GeoAddress;
+import net.noahf.firewatch.common.geolocation.IncidentAddress;
 import net.noahf.firewatch.common.incidents.narrative.Narrative;
 import net.noahf.firewatch.common.units.Unit;
+import net.noahf.firewatch.common.utils.TimeHelper;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Incident {
@@ -15,10 +17,10 @@ public class Incident {
     private IncidentPriority priority;
     private Narrative narrative;
     private CallerType callerType;
-    private Address address;
+    private IncidentAddress address;
     private Unit[] units;
 
-    public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, CallerType caller, Address address, Unit[] units) {
+    public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, CallerType caller, IncidentAddress address, Unit[] units) {
         this.incidentNumber = new Random().nextLong(100000000, 1000000000);
         this.dispatchTime = dispatchTime;
         this.type = type;
@@ -30,7 +32,7 @@ public class Incident {
     }
 
     public String getIncidentNumber() {
-        return FireGenInternalHelper.firegen.getCurrentYear() + "-" + this.incidentNumber;
+        return TimeHelper.getCurrentYear() + "-" + this.incidentNumber;
     }
 
     public long dispatchTime() { return this.dispatchTime; }
@@ -39,7 +41,13 @@ public class Incident {
     public IncidentType incidentType() {
         return this.type;
     }
-    public void incidentType(IncidentType newType) { this.type = newType; }
+    public void incidentType(IncidentType newType) {
+        this.type = newType;
+        if (!Arrays.stream(this.type.supportedPriorityResponses()).toList().contains(this.incidentPriority())) {
+            // reset priority if the new IncidentType doesn't support a previous priority response
+            this.priority = this.type.supportedPriorityResponses()[0];
+        }
+    }
 
     public IncidentPriority incidentPriority() {
         return this.priority;
@@ -53,7 +61,7 @@ public class Incident {
     }
     public void callerType(CallerType newCallerType) { this.callerType = newCallerType; }
 
-    public Address address() {
+    public IncidentAddress address() {
         return this.address;
     }
 

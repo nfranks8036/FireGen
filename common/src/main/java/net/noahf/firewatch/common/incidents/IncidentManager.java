@@ -1,8 +1,9 @@
-package net.noahf.firewatch.common;
+package net.noahf.firewatch.common.incidents;
 
-import net.noahf.firewatch.common.incidents.*;
-import net.noahf.firewatch.common.incidents.location.Address;
-import net.noahf.firewatch.common.incidents.location.State;
+import net.noahf.firewatch.common.FireGen;
+import net.noahf.firewatch.common.geolocation.GeoAddress;
+import net.noahf.firewatch.common.geolocation.IncidentAddress;
+import net.noahf.firewatch.common.geolocation.State;
 import net.noahf.firewatch.common.units.Unit;
 
 import java.util.ArrayList;
@@ -15,11 +16,7 @@ public class IncidentManager {
     public IncidentManager() {
         this.active = new ArrayList<>();
 
-        Address address = new Address();
-        address.streetAddress("120 W Jackson Ave");
-        address.zipCode(24179);
-        address.town("Vinton");
-        address.state(State.VIRGINIA);
+        IncidentAddress address = IncidentAddress.address("110", "W Jackson Ave", "Vinton", State.VIRGINIA, 24179);
         this.active.add(new Incident(
                 System.currentTimeMillis(),
                 IncidentType.FIRE_ALARM,
@@ -28,11 +25,7 @@ public class IncidentManager {
                 address,
                 new Unit[]{}));
 
-        address = new Address();
-        address.streetAddress("4111 Blue View Dr");
-        address.zipCode(24012);
-        address.town("Roanoke County");
-        address.state(State.VIRGINIA);
+        address = IncidentAddress.address("4111", "Blue View Dr", "Roanoke", State.VIRGINIA, 24012);
         this.active.add(new Incident(
                 System.currentTimeMillis() - (1000 * 50),
                 IncidentType.EMS,
