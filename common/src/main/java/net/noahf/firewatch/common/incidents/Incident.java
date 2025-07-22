@@ -7,6 +7,7 @@ import net.noahf.firewatch.common.units.Unit;
 import net.noahf.firewatch.common.utils.TimeHelper;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class Incident {
@@ -18,9 +19,9 @@ public class Incident {
     private Narrative narrative;
     private CallerType callerType;
     private IncidentAddress address;
-    private Unit[] units;
+    private List<Unit> units;
 
-    public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, CallerType caller, IncidentAddress address, Unit[] units) {
+    public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, CallerType caller, IncidentAddress address, Unit... units) {
         this.incidentNumber = new Random().nextLong(100000000, 1000000000);
         this.dispatchTime = dispatchTime;
         this.type = type;
@@ -28,7 +29,7 @@ public class Incident {
         this.narrative = new Narrative();
         this.callerType = caller;
         this.address = address;
-        this.units = units;
+        this.units = Arrays.stream(units).toList();
     }
 
     public String getIncidentNumber() {
@@ -65,7 +66,7 @@ public class Incident {
         return this.address;
     }
 
-    public Unit[] units() {
+    public List<Unit> units() {
         return this.units;
     }
 

@@ -17,7 +17,6 @@ import net.noahf.firewatch.common.incidents.IncidentManager;
 import net.noahf.firewatch.common.incidents.Incident;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;
-import net.noahf.firewatch.desktopclient.displays.callviewer.CallViewer;
 
 public class CallListScreen extends GUIPage {
 

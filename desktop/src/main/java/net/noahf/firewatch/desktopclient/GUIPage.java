@@ -23,17 +23,25 @@ public abstract class GUIPage {
 
     private Supplier<String> title;
     private final GUIPage back;
+    private final Stage stage;
+    private final boolean backFunctionality;
 
     private Label titleText;
 
     public GUIPage(String title) {
+        this(title, () -> Main.fx.getStage(), true);
+    }
+
+    public GUIPage(String title, Supplier<Stage> customStage, boolean backFunctionality) {
         this.title = () -> title;
-        this.back = Main.fx.getCurrentPage();
+        this.back = (backFunctionality ? Main.fx.getCurrentPage() : Main.fx.getCurrentPage().back);
+        this.stage = customStage.get();
+        this.backFunctionality = backFunctionality;
+
+        stage.setTitle("FireGen - " + this.getTitle());
     }
 
     public void show() {
-        Stage stage = Main.fx.getStage();
-
         this.loading(stage);
 
         Platform.runLater(() -> {
@@ -63,6 +71,8 @@ public abstract class GUIPage {
         this.titleText.setText(dynamicTitle.get());
     }
 
+    protected String getTitle() { return this.title.get(); }
+
     private void loading(Stage stage) {
         AnchorPane anchor = new AnchorPane();
         anchor.setPrefWidth(800.0);
@@ -85,7 +95,7 @@ public abstract class GUIPage {
         titleBar.setPrefWidth(Main.fx.window);
         titleBar.setPrefHeight(20 + 36);
 
-        if (this.back != null) {
+        if (this.backFunctionality && this.back != null) {
             StackPane goBackContainer = new StackPane();
             goBackContainer.setPadding(new Insets(20.0, 0.0, 0.0, 20.0));
 

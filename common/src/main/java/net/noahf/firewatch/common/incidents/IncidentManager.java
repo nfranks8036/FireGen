@@ -16,23 +16,23 @@ public class IncidentManager {
     public IncidentManager() {
         this.active = new ArrayList<>();
 
-        IncidentAddress address = IncidentAddress.address("110", "W Jackson Ave", "Vinton", State.VIRGINIA, 24179);
+            IncidentAddress address = IncidentAddress.address("310", "Alumni Mall", "Blacksburg", State.VIRGINIA, 24061);
         this.active.add(new Incident(
                 System.currentTimeMillis(),
                 IncidentType.FIRE_ALARM,
                 IncidentPriority.EMERGENCY_RESPONSE,
                 CallerType.ALARM_COMPANY,
-                address,
-                new Unit[]{}));
+                address
+        ));
 
-        address = IncidentAddress.address("4111", "Blue View Dr", "Roanoke", State.VIRGINIA, 24012);
+        address = IncidentAddress.address("190", "W Campus Dr", "Blacksburg", State.VIRGINIA, 24061);
         this.active.add(new Incident(
                 System.currentTimeMillis() - (1000 * 50),
                 IncidentType.EMS,
                 IncidentPriority.EMS_BRAVO,
                 CallerType.INDIVIDUAL,
-                address,
-                new Unit[]{}));
+                address
+        ));
     }
 
     public Incident getIncident(String incidentNumber) {

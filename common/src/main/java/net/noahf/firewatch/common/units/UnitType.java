@@ -2,20 +2,41 @@ package net.noahf.firewatch.common.units;
 
 public enum UnitType {
 
-    FIRE_ENGINE,
+    FIRE_ENGINE ("E", "Engine"),
 
-    FIRE_LADDER,
+    FIRE_LADDER ("L", "Ladder"),
 
-    FIRE_TANKER,
+    FIRE_TANKER ("T", "Tanker"),
 
-    FIRE_UTILITY,
+    FIRE_UTILITY ("U", "Utility"),
 
-    FIRE_BATTALION_CHIEF,
+    FIRE_RESPONSE("RESP", "Response"),
 
-    EMS_RESCUE,
+    FIRE_ATTACK("ATT", "Attack"),
 
-    EMS_MEDIC,
+    FIRE_BRUSH("BR", "Brush"),
 
-    EMS_SUPERVISOR;
+    FIRE_HAZMAT("HAZM", "Hazmat"),
+
+    FIRE_AIR("AIR", "Air"),
+
+    FIRE_BATTALION_CHIEF (null, "Battalion Chief"),
+
+    EMS_RESCUE ("R", "Rescue"),
+
+    EMS_MEDIC ("M", "Medic"),
+
+    EMS_SUPERVISOR (null, "Supervisor");
+
+    private final String callsignPrefix;
+    private final String callsignFull;
+
+    UnitType(String callsignPrefix, String callsignFull) {
+        this.callsignPrefix = callsignPrefix;
+        this.callsignFull = callsignFull;
+    }
+
+    public String callsignPrefix() { return this.callsignPrefix; }
+    public String callsignFull() { return this.callsignFull; }
 
 }

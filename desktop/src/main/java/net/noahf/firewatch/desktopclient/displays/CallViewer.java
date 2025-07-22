@@ -1,12 +1,8 @@
-package net.noahf.firewatch.desktopclient.displays.callviewer;
+package net.noahf.firewatch.desktopclient.displays;
 
 import com.sothawo.mapjfx.*;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -31,6 +27,7 @@ import net.noahf.firewatch.common.incidents.*;
 import net.noahf.firewatch.common.geolocation.GeoAddress;
 import net.noahf.firewatch.common.geolocation.State;
 import net.noahf.firewatch.common.incidents.narrative.NarrativeEntry;
+import net.noahf.firewatch.common.units.UnitStatus;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
 import net.noahf.firewatch.common.utils.TimeHelper;
 import net.noahf.firewatch.desktopclient.GUIPage;
@@ -98,17 +95,17 @@ public class CallViewer extends GUIPage {
         GeoAddress determineGeoAddress = null;
 
         try {
-            determineGeoAddress = incidentAddress.geoAddress(Main.firegen.geoLocator());
+//            determineGeoAddress = incidentAddress.geoAddress(Main.firegen.geoLocator());
 
-            MapView map = new MapView();
-            StackPane.setMargin(map, new Insets(10.0, 10.0, 10.0, 10.0));
-            map.setPrefWidth(180.0);
-            map.setPrefHeight(180.0);
-            map.setMapType(MapType.OSM);
-            map.setCenter(new Coordinate(determineGeoAddress.coords().latitude(), determineGeoAddress.coords().longitude()));
-            map.initialize(Configuration.builder().interactive(true).showZoomControls(true).build());
+//            MapView map = new MapView();
+//            StackPane.setMargin(map, new Insets(10.0, 10.0, 10.0, 10.0));
+//            map.setPrefWidth(180.0);
+//            map.setPrefHeight(180.0);
+//            map.setMapType(MapType.OSM);
+//            map.setCenter(new Coordinate(determineGeoAddress.coords().latitude(), determineGeoAddress.coords().longitude()));
+//            map.initialize(Configuration.builder().interactive(true).showZoomControls(true).build());
 
-            mapContainer.getChildren().add(map);
+//            mapContainer.getChildren().add(map);
         } catch (GeoLocatorException exception) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid address!\n\nCorrect the address and press 'SEARCH' again.\n\nError: '" + exception.getMessage() + "'", ButtonType.OK);
             alert.showAndWait();
@@ -302,7 +299,10 @@ public class CallViewer extends GUIPage {
         ChoiceBox<String> callerType = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
         callerType.getItems().addAll(CallerType.asFormattedStrings());
         callerType.setValue(this.tryGet(() -> this.incident.callerType().toString()));
-        callerType.getSelectionModel().selectedItemProperty().addListener(IncidentChanges.INCIDENT_CALLER);
+        callerType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            this.incident.callerType(CallerType.valueOfFormatted(newValue));
+            this.populateCallData(this.viewer);
+        });
         callDataForm.add(callerTypeLabel, 0, 3);
         callDataForm.add(callerType, 1, 3);
 
@@ -365,6 +365,19 @@ public class CallViewer extends GUIPage {
 
         Label unitsLabel = this.formText("Units");
         Button units = this.button("Edit units");
+        units.setOnMouseClicked((e) -> {
+            UnitStatus[] statuses = { UnitStatus.IN_SERVICE, UnitStatus.RESPONDING, UnitStatus.ON_SCENE };
+            IncidentType type = this.incident.incidentType();
+            if (type == IncidentType.EMS || type == IncidentType.MOTOR_VEHICLE_CRASH) {
+                statuses = new UnitStatus[]{
+                        UnitStatus.IN_SERVICE, UnitStatus.RESPONDING, UnitStatus.ON_SCENE,
+                        UnitStatus.TRANSPORTING_SECONDARY, UnitStatus.ARRIVED_SECONDARY
+                };
+            }
+
+            UnitList unitList = new UnitList("Units (" + generateTitle(this.incident).get() + ")", statuses);
+            unitList.show();
+        });
         callDataForm.add(unitsLabel, 0, 5);
         callDataForm.add(units, 1, 5);
 
@@ -453,7 +466,7 @@ public class CallViewer extends GUIPage {
         }
     }
 
-    private static Supplier<String> generateTitle(Incident incident) {
+    public static Supplier<String> generateTitle(Incident incident) {
         IncidentType type = incident.incidentType();
         IncidentPriority priority = incident.incidentPriority();
         if (type == IncidentType.EMS) {
