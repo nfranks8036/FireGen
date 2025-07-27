@@ -57,7 +57,7 @@ public abstract class Address {
 
     public static String formString(String commonName, String houseNumbers, String streetName, String city, State state, int zip) {
         StringJoiner joiner = new StringJoiner(", ");
-        if (commonName != null)
+        if (commonName != null && !commonName.isBlank())
             joiner.add(commonName);
 
         StringJoiner streetAddress = new StringJoiner(" ");

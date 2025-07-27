@@ -15,24 +15,6 @@ public class IncidentManager {
 
     public IncidentManager() {
         this.active = new ArrayList<>();
-
-            IncidentAddress address = IncidentAddress.address("310", "Alumni Mall", "Blacksburg", State.VIRGINIA, 24061);
-        this.active.add(new Incident(
-                System.currentTimeMillis(),
-                IncidentType.FIRE_ALARM,
-                IncidentPriority.EMERGENCY_RESPONSE,
-                CallerType.ALARM_COMPANY,
-                address
-        ));
-
-        address = IncidentAddress.address("190", "W Campus Dr", "Blacksburg", State.VIRGINIA, 24061);
-        this.active.add(new Incident(
-                System.currentTimeMillis() - (1000 * 50),
-                IncidentType.EMS,
-                IncidentPriority.EMS_BRAVO,
-                CallerType.INDIVIDUAL,
-                address
-        ));
     }
 
     public Incident getIncident(String incidentNumber) {
@@ -42,6 +24,11 @@ public class IncidentManager {
             }
         }
         return null;
+    }
+
+    public Incident post(Incident incident) {
+        this.active.add(incident);
+        return incident;
     }
 
 

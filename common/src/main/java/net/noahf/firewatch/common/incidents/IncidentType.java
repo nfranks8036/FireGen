@@ -16,7 +16,9 @@ public enum IncidentType {
 
     MOTOR_VEHICLE_CRASH (MVC_INJURIES, MVC_NO_INJURIES),
 
-    EMS (EMS_OMEGA, EMS_ALPHA, EMS_BRAVO, EMS_CHARLIE, EMS_DELTA, EMS_ECHO, STANDBY);
+    EMS (MEDICAL_CALL),
+
+    STANDBY (STANDBY_EMS, STANDBY_FIRE, STANDBY_OTHER);
 
     private final IncidentPriority[] supportedPriorities;
 

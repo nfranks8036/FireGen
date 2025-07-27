@@ -5,7 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.noahf.firewatch.common.geolocation.exceptions.GeoLocatorException;
 import net.noahf.firewatch.common.geolocation.exceptions.NoAddressAtLocationException;
-import net.noahf.firewatch.common.geolocation.exceptions.NoDataGivenException;
+import net.noahf.firewatch.common.geolocation.exceptions.NoDataProvidedException;
+import net.noahf.firewatch.common.geolocation.exceptions.NoDataReturnedException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 public class GeoLocator {
@@ -27,13 +27,26 @@ public class GeoLocator {
         this.knownAddresses = new HashMap<>();
     }
 
-    public GeoAddress find(String commonName, String houseNumbers, String streetAddress, String town, State state, int zipCode) {
-        return this.find(Address.formString(commonName, houseNumbers, streetAddress, town, state, zipCode));
+    public GeoAddress find(boolean searchOnline, String commonName, String houseNumbers, String streetAddress, String town, State state, int zipCode) {
+        String stringAddress = Address.formString(commonName, houseNumbers, streetAddress, town, state, zipCode);
+        if (searchOnline) {
+            return this.find(stringAddress);
+        } else {
+            return this.get(stringAddress);
+        }
+    }
+
+    public GeoAddress get(String query) {
+        return knownAddresses.getOrDefault(query, null);
     }
 
     public GeoAddress find(String query) {
+        if (query.replace(",", "").isBlank()) {
+            throw new NoDataProvidedException(query, "No data provided to search with");
+        }
+
         if (knownAddresses.containsKey(query.toLowerCase())) {
-            return knownAddresses.get(query.toLowerCase());
+            return this.get(query);
         }
 
         try {
@@ -42,7 +55,7 @@ public class GeoLocator {
             BufferedReader reader = new BufferedReader(new InputStreamReader(uri.toURL().openStream()));
             JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
             if (array.isEmpty()) {
-                throw new NoDataGivenException(query, "No items in array from " + uri.toString());
+                throw new NoDataReturnedException(query, "No valid coordinates returned from " + uri.toString());
             }
             JsonObject object = array.get(0).getAsJsonObject();
 
@@ -65,6 +78,10 @@ public class GeoLocator {
             int zipCode = this.tryOrElse(() -> jsonAddress.get("postcode").getAsInt(), 0);
 
             reader.close();
+
+            if (name.equalsIgnoreCase(road)) {
+                name = null;
+            }
 
             GeoAddress address = new GeoAddress(name, houseNumber, road, city, state, zipCode, coords);
             this.knownAddresses.put(query.toLowerCase(Locale.ROOT), address);

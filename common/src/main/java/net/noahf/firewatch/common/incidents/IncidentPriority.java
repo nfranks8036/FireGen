@@ -6,8 +6,6 @@ import java.util.function.Predicate;
 
 public enum IncidentPriority {
 
-    STANDBY,
-
     EMERGENCY_RESPONSE,
 
     NON_EMERGENCY_RESPONSE,
@@ -16,17 +14,13 @@ public enum IncidentPriority {
 
     MVC_INJURIES,
 
-    EMS_OMEGA,
+    MEDICAL_CALL,
 
-    EMS_ALPHA,
+    STANDBY_OTHER,
 
-    EMS_BRAVO,
+    STANDBY_EMS,
 
-    EMS_CHARLIE,
-
-    EMS_DELTA,
-
-    EMS_ECHO;
+    STANDBY_FIRE;
 
     @Override
     public String toString() {

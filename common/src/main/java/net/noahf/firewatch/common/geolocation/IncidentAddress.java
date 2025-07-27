@@ -6,6 +6,10 @@ public class IncidentAddress extends Address {
         return new IncidentAddress(houseNumbers, streetName, city, state, zip);
     }
 
+    public static IncidentAddress blankAddress() {
+        return new IncidentAddress(null, null, null, null, 0);
+    }
+
     private IncidentAddress(String houseNumbers, String streetName, String city, State state, int zip) {
         super(houseNumbers, streetName, city, state, zip);
     }
@@ -36,8 +40,8 @@ public class IncidentAddress extends Address {
         super.zip(newZip);
     }
 
-    public GeoAddress geoAddress(GeoLocator geoLocator) {
-        return geoLocator.find(this.commonName(), this.houseNumbers(), this.streetName(), this.city(), this.state(), this.zip());
+    public GeoAddress geoAddress(GeoLocator geoLocator, boolean searchOnline) {
+        return geoLocator.find(searchOnline, this.commonName(), this.houseNumbers(), this.streetName(), this.city(), this.state(), this.zip());
     }
 
 }

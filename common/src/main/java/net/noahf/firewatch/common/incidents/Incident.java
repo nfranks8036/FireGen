@@ -1,5 +1,6 @@
 package net.noahf.firewatch.common.incidents;
 
+import net.noahf.firewatch.common.agency.Agency;
 import net.noahf.firewatch.common.geolocation.GeoAddress;
 import net.noahf.firewatch.common.geolocation.IncidentAddress;
 import net.noahf.firewatch.common.incidents.narrative.Narrative;
@@ -19,7 +20,6 @@ public class Incident {
     private Narrative narrative;
     private CallerType callerType;
     private IncidentAddress address;
-    private List<Unit> units;
 
     public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, CallerType caller, IncidentAddress address, Unit... units) {
         this.incidentNumber = new Random().nextLong(100000000, 1000000000);
@@ -29,7 +29,6 @@ public class Incident {
         this.narrative = new Narrative();
         this.callerType = caller;
         this.address = address;
-        this.units = Arrays.stream(units).toList();
     }
 
     public String getIncidentNumber() {
@@ -63,11 +62,9 @@ public class Incident {
     public void callerType(CallerType newCallerType) { this.callerType = newCallerType; }
 
     public IncidentAddress address() {
+        if (this.address == null)
+            this.address = IncidentAddress.blankAddress();
         return this.address;
-    }
-
-    public List<Unit> units() {
-        return this.units;
     }
 
 }

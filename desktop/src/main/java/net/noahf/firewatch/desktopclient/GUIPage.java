@@ -37,8 +37,6 @@ public abstract class GUIPage {
         this.back = (backFunctionality ? Main.fx.getCurrentPage() : Main.fx.getCurrentPage().back);
         this.stage = customStage.get();
         this.backFunctionality = backFunctionality;
-
-        stage.setTitle("FireGen - " + this.getTitle());
     }
 
     public void show() {
@@ -60,6 +58,7 @@ public abstract class GUIPage {
             masterRoot.getChildren().add(titleContainer);
 
             stage.setScene(new Scene(masterRoot, Main.fx.window, Main.fx.window));
+            stage.setTitle("FireGen - " + this.title.get());
             stage.show();
         });
     }
@@ -78,11 +77,12 @@ public abstract class GUIPage {
         anchor.setPrefWidth(800.0);
         anchor.setPrefHeight(800.0);
         Label label = new Label("Loading your content...");
-        label.setFont(new Font(30.0));
+        label.setFont(new Font(36.0));
         label.setPadding(new Insets(20.0, 0.0, 0.0, 20.0));
         anchor.getChildren().addAll(label);
         Scene loading = new Scene(anchor);
         loading.setCursor(Cursor.WAIT);
+        stage.setTitle("FireGen - " + this.getTitle() + " - Loading...");
         stage.setScene(loading);
     }
 

@@ -1,39 +1,40 @@
 package net.noahf.firewatch.desktopclient.displays;
 
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import net.noahf.firewatch.common.incidents.Incident;
-import net.noahf.firewatch.common.incidents.IncidentType;
 import net.noahf.firewatch.common.units.Unit;
 import net.noahf.firewatch.common.units.UnitStatus;
+import net.noahf.firewatch.common.units.UnitType;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;
 
-import java.io.InputStream;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class UnitList extends GUIPage {
 
     public static final int WIDTH = 1400;
     public static final int HEIGHT = 700;
 
-    public UnitList(String title, UnitStatus... statuses) {
+    public UnitList(String title, CallViewer callViewer, UnitStatus... statuses) {
         super(
                 title,
                 () -> {
@@ -46,51 +47,111 @@ public class UnitList extends GUIPage {
                 }, false
         );
         this.statuses = statuses;
+        this.callViewer = callViewer;
     }
 
     private final UnitStatus[] statuses;
+    private final CallViewer callViewer;
 
     private GridPane viewer;
     private int index;
 
+    private List<TilePane> columns;
+    private Map<String, Predicate<Unit>> filters;
+
     @Override
     public Node[] gui(Stage stage) {
+        this.columns = new ArrayList<>();
+        this.filters = new HashMap<>();
+
         this.viewer = new GridPane();
         this.viewer.setAlignment(Pos.CENTER);
         this.viewer.setPrefHeight(HEIGHT - 68.0);
         this.viewer.setPrefWidth(WIDTH);
 
         this.index = 0;
-        TilePane[] panes = new TilePane[this.statuses.length];
         for (UnitStatus status : this.statuses) {
-            panes[this.index] = this.createUnitDisplayForStatus(status);
+            this.createUnitDisplayForStatus(status);
         }
 
-        for (TilePane target : panes) {
-            for (TilePane other : panes) {
-                if (target != other) {
-                    this.setupDropHandling(target, other);
-                    this.setupDropHandling(other, target);
-                }
-            }
-        }
+        this.viewer.add(this.createFilterOptions(), 0, 0, this.index, 1);
 
         this.viewer.getColumnConstraints().setAll(
                 new ObjectDuplicator<>(
                         new ColumnConstraints(WIDTH / (double)this.index)
                 ).duplicate(this.index)
         );
+        // 692
         this.viewer.getRowConstraints().setAll(
                 new RowConstraints(35.0, 35.0, 35.0, Priority.SOMETIMES, VPos.CENTER, true),
-                new RowConstraints(692.0, 692.0, 692.0, Priority.SOMETIMES, VPos.CENTER, true)
+                new RowConstraints(35.0, 35.0, 35.0, Priority.SOMETIMES, VPos.CENTER, true),
+                new RowConstraints(600.0, 692.0, 692.0, Priority.SOMETIMES, VPos.CENTER, true)
         );
 
         return new Node[] { this.viewer };
     }
 
-    private TilePane createUnitDisplayForStatus(UnitStatus status) {
+    private HBox createFilterOptions() {
+        HBox topBar = new HBox(10);
+        topBar.setPrefWidth(WIDTH);
+        topBar.setPrefHeight(35.0);
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        topBar.setPadding(new Insets(0.0, 23.0, 0.0, 23.0));
+
+        Label searchLabel = new Label("Search Unit: ");
+        searchLabel.setFont(new Font(16.0));
+
+        TextField search = new TextField();
+        search.setFont(new Font(12.0));
+        search.setPromptText("Unit Callsign");
+        search.setAlignment(Pos.CENTER);
+        search.setPrefWidth(100);
+        search.textProperty().addListener((e, old, now) -> {
+            if (now == null || now.isBlank()) {
+                this.filter("search", null);
+                return;
+            }
+            this.filter("search", (u) -> u.matches(now));
+        });
+
+        Label unitTypeLabel = new Label("Unit Type: ");
+        unitTypeLabel.setFont(new Font(16.0));
+
+        ComboBox<String> unitType = new ComboBox<>();
+        unitType.getItems().add(" ");
+        unitType.getItems().addAll(Arrays.stream(UnitType.values()).map(Enum::name).map(str -> str.replace("_", " ")).toList());
+        unitType.setValue(" ");
+        unitType.setPrefWidth(150);
+        unitType.getSelectionModel().selectedItemProperty().addListener((e, old, now) -> {
+            if (now.isBlank()) {
+                this.filter("unitType", null);
+                return;
+            }
+            this.filter("unitType", (u) -> u.unitType().name().equalsIgnoreCase(unitType.valueProperty().get().replace(" ", "_").toUpperCase()));
+        });
+
+        Button clear = new Button("Clear Filters");
+        clear.setFont(new Font(14.0));
+        clear.setPrefHeight(20.0);
+        clear.visibleProperty().bind(Bindings.or(
+                search.textProperty().isNotEmpty(),
+                unitType.valueProperty().isNotEqualTo(" ")
+        ));
+        clear.setOnMouseClicked((e) -> {
+            search.setText(null);
+            search.deselect();
+            unitType.setValue(" ");
+            this.filters.clear();
+        });
+
+        topBar.getChildren().addAll(searchLabel, search, unitTypeLabel, unitType, clear);
+
+        return topBar;
+    }
+
+    private void createUnitDisplayForStatus(UnitStatus status) {
         Label titleLabel = this.createTitleCard(status.toString());
-        this.viewer.add(titleLabel, this.index, 0);
+        this.viewer.add(titleLabel, this.index, 1);
 
         TilePane tiles = new TilePane();
         tiles.setHgap(10.0);
@@ -102,20 +163,55 @@ public class UnitList extends GUIPage {
         tiles.setPrefTileHeight(120);
         tiles.setId(status.name());
 
-        tiles.getChildren().addAll(
-                Main.firegen.unitManager().getAllUnits(status).stream()
-                        .map(unit -> this.createTileUnit(tiles, unit))
-                        .toList()
+        tiles.getChildren().addAll(Main.firegen
+                .agencyManager()
+                .allUnits(status)
+                .stream()
+                .map(u -> this.createTileUnit(tiles, u))
+                .toList()
         );
+
+        this.columns.add(tiles);
 
         ScrollPane scrollPane = new ScrollPane(tiles);
         scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(false);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        this.viewer.add(scrollPane, this.index, 1);
-        this.index++;
+        this.setupDropHandling(scrollPane, tiles);
 
-        return tiles;
+        this.viewer.add(scrollPane, this.index, 2);
+        this.index++;
+    }
+
+    private void filter(String id, Predicate<Unit> predicate) {
+        if (predicate != null) {
+            this.filters.put(id, predicate);
+        } else {
+            this.filters.remove(id);
+        }
+
+        for (TilePane column : this.columns) {
+            column.getChildren().removeAll(column.getChildren());
+            UnitStatus status = UnitStatus.valueOf(column.getId());
+
+            List<Predicate<Unit>> filters = new ArrayList<>(this.filters.values());
+            List<Unit> units = new ArrayList<>(Main.firegen.agencyManager().allUnits(status));
+            List<VBox> box = new ArrayList<>();
+
+            if (filters.isEmpty()) {
+                filters.add((u) -> true);
+            }
+
+            for (Predicate<Unit> filter : filters) {
+                box = units.stream()
+                        .filter(filter)
+                        .map(u -> this.createTileUnit(column, u))
+                        .toList();
+            }
+
+            column.getChildren().addAll(box);
+        }
     }
 
     private VBox createTileUnit(TilePane tiles, Unit unit) {
@@ -131,6 +227,10 @@ public class UnitList extends GUIPage {
 
         Label label = new Label(unit.callsign().fullCallsign());
         label.setFont(new Font(15.0));
+        Text text = asText(label);
+        if (text.getLayoutBounds().getWidth() >= 100) {
+            label.setText(unit.callsign().primaryCallsign());
+        }
 
         VBox box = new VBox(5, icon, label);
         box.setStyle("-fx-background-color: transparent");
@@ -147,63 +247,57 @@ public class UnitList extends GUIPage {
             box.getProperties().put("self", box);
             box.getProperties().put("index", tiles.getChildren().indexOf(box));
 
-            tiles.getChildren().remove(box);
-
             e.consume();
-        });
-        box.setOnDragDone(e -> {
-            boolean success = e.isDropCompleted();
-            if (!success) {
-                TilePane sourcePane = (TilePane) box.getProperties().get("source");
-                sourcePane.getChildren().add((int) box.getProperties().get("index"), box);
-            }
         });
 
         return box;
     }
 
-    private void setupDropHandling(TilePane target, TilePane other) {
-        target.setOnDragOver(e -> {
-            if (e.getGestureSource() != target && e.getDragboard().hasString()) {
-                e.acceptTransferModes(TransferMode.MOVE);
+    private void setupDropHandling(ScrollPane eventHandler, TilePane target) {
+        eventHandler.addEventFilter(DragEvent.DRAG_OVER, e -> {
+            if (e.getGestureSource() instanceof VBox sourceNode && e.getDragboard().hasString()) {
+                if (sourceNode.getParent() != target) {
+                    e.acceptTransferModes(TransferMode.MOVE);
+                }
             }
-            e.consume();
         });
-        target.setOnDragDropped(e -> {
+        eventHandler.addEventFilter(DragEvent.DRAG_DROPPED, e -> {
             Dragboard dragboard = e.getDragboard();
             boolean success = false;
 
             if (dragboard.hasString()) {
-                String itemText = dragboard.getString();
+                String unitCallsign = dragboard.getString();
+                VBox sourceNode = (VBox) e.getGestureSource();
 
-                TextInputDialog noteInput = new TextInputDialog();
-                noteInput.setTitle("Add Narrative");
-                noteInput.setHeaderText("Add additional information about this status update");
-                noteInput.setContentText(itemText + " " + UnitStatus.valueOf(target.getId()));
+                TilePane source = (TilePane) sourceNode.getParent();
 
-                Optional<String> result = noteInput.showAndWait();
-                result.ifPresent(n -> {
-                    VBox source = null;
-                    for (var node : other.getChildren()) {
-                        if (node instanceof VBox src && src.getId().equalsIgnoreCase(itemText)) {
-                            source = src;
-                            break;
-                        }
-                    }
+                if (source != null && source != target) {
+                    source.getChildren().remove(sourceNode);
+                    target.getChildren().add(sourceNode);
 
-                    if (source != null) {
-                        Unit unit = Main.firegen.unitManager().match(source.getId()).getFirst();
-                        other.getChildren().remove(source);
-                        VBox newBox = this.createTileUnit(target, unit);
-                        other.getChildren().add(newBox);
-                    }
-                });
+                    Unit unit = Main.firegen.agencyManager().allUnits(unitCallsign).getFirst();
+                    UnitStatus newStatus = UnitStatus.valueOf(target.getId());
+
+                    unit.status(newStatus);
+
+                    Platform.runLater(() -> {
+                        TextInputDialog noteInput = new TextInputDialog();
+                        noteInput.setTitle("Add Narrative");
+                        noteInput.setHeaderText("Add additional information about this status update");
+                        noteInput.setContentText(unitCallsign + " " + UnitStatus.valueOf(target.getId()).narrativeSuffix("") + ": ");
+
+                        String result = noteInput.showAndWait().orElse(null);
+                        String narrative = ":" + unit.callsign().primaryCallsign() + " " + newStatus.narrativeSuffix(result);
+
+                        this.callViewer.incident.narrative().add(narrative);
+                        this.callViewer.populateNarrative(this.callViewer.viewer);
+                    });
+                }
 
                 success = true;
             }
 
             e.setDropCompleted(success);
-            e.consume();
         });
 
     }
@@ -215,6 +309,12 @@ public class UnitList extends GUIPage {
         GridPane.setHalignment(label, HPos.CENTER);
         GridPane.setValignment(label, VPos.CENTER);
         return label;
+    }
+
+    private Text asText(Label label) {
+        Text text = new Text(label.getText());
+        text.setFont(label.getFont());
+        return text;
     }
 
 }

@@ -1,10 +1,8 @@
 package net.noahf.firewatch.desktopclient;
 
 import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import net.noahf.firewatch.common.units.UnitStatus;
 import net.noahf.firewatch.desktopclient.displays.CallListScreen;
 
 public class JavaFXManager extends Application {
@@ -23,6 +21,9 @@ public class JavaFXManager extends Application {
     public void start(Stage stage) throws Exception {
         Main.fx = this;
         this.stage = stage;
+
+        Main.firegen.agencyManager().allUnits(UnitStatus.OUT_OF_SERVICE)
+                .forEach(u -> u.status(UnitStatus.IN_SERVICE));
 
         this.stage.setTitle("FireGen");
         this.setNewPage(new CallListScreen());

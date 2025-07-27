@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Narrative {
 
-    private List<NarrativeEntry> entries;
+    private final List<NarrativeEntry> entries;
 
     public Narrative() {
         this.entries = new ArrayList<>();
