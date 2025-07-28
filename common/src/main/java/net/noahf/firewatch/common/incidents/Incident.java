@@ -13,11 +13,11 @@ import java.util.Random;
 
 public class Incident {
 
-    private long incidentNumber;
+    private final long incidentNumber;
     private long dispatchTime;
     private IncidentType type;
     private IncidentPriority priority;
-    private Narrative narrative;
+    private final Narrative narrative;
     private CallerType callerType;
     private IncidentAddress address;
 

@@ -58,6 +58,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("Convert2MethodRef")
@@ -96,12 +97,12 @@ public class CallViewer extends GUIPage {
     }
 
     void populateLocationData(GridPane viewer) {
-        VBox root = new VBox();
+        VBox root = this.createRoot("locationData");
+
         root.setLayoutX(411.0);
         root.setLayoutY(10.0);
         root.setPrefHeight(200.0);
         root.setPrefWidth(100.0);
-
         // ---------------- MAPS ----------------
 
         StackPane mapContainer = new StackPane();
@@ -115,6 +116,10 @@ public class CallViewer extends GUIPage {
             determineGeoAddress = incidentAddress.geoAddress(Main.firegen.geoLocator(), true);
             GeoAddress finalDetermineGeoAddress = determineGeoAddress;
             Platform.runLater(() -> {
+                if (finalDetermineGeoAddress == null) {
+                    return;
+                }
+
                 MapView map = new MapView();
                 StackPane.setMargin(map, new Insets(10.0, 10.0, 10.0, 10.0));
                 map.setPrefWidth(180.0);
@@ -254,8 +259,10 @@ public class CallViewer extends GUIPage {
         viewer.add(root, 0, 0);
     }
     void populateCallData(GridPane viewer) {
-        VBox root = new VBox();
+        VBox root = this.createRoot("callData");
+
         root.setPrefHeight(362.0);
+
         GridPane callDataForm = new GridPane();
         callDataForm.setAlignment(Pos.CENTER);
         callDataForm.setPrefHeight(321.0);
@@ -346,7 +353,7 @@ public class CallViewer extends GUIPage {
                     if (empty || item == null) {
                         setText(null);
                     } else {
-                      setText(item.protocol() + " - " + item.toString());
+                      setText(item.protocol() + " - " + item);
                     }
                 }
             });
@@ -495,10 +502,11 @@ public class CallViewer extends GUIPage {
         // ---------------- CALL DATA FORM (END) ----------------
 
         root.getChildren().add(callDataForm);
-        viewer.add(callDataForm, 1, 0);
+        viewer.add(root, 1, 0);
     }
     void populateNarrative(GridPane viewer) {
-        VBox root = new VBox();
+        VBox root = this.createRoot("narrative");
+
         root.setAlignment(Pos.CENTER);
         root.setPrefHeight(22.0);
         root.setPrefWidth(400.0);
@@ -558,6 +566,18 @@ public class CallViewer extends GUIPage {
 
         root.getChildren().addAll(narrativeHeader, narrativeTable);
         viewer.add(root, 0, 1, 2, 1);
+    }
+
+    private VBox createRoot(String methodId) {
+        List<Node> nodes = this.viewer.getChildren().stream().filter(n -> n.getId().equalsIgnoreCase(methodId)).toList();
+        if (!nodes.isEmpty()) {
+            for (Node node : nodes) {
+                this.viewer.getChildren().remove(node);
+            }
+        }
+        VBox root = new VBox();
+        root.setId(methodId);
+        return root;
     }
 
     private Label formText(String text) {
