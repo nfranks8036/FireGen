@@ -3,30 +3,34 @@ package net.noahf.firewatch.common.incidents;
 import net.noahf.firewatch.common.agency.Agency;
 import net.noahf.firewatch.common.geolocation.GeoAddress;
 import net.noahf.firewatch.common.geolocation.IncidentAddress;
+import net.noahf.firewatch.common.incidents.medical.MedicalCallDetail;
 import net.noahf.firewatch.common.incidents.narrative.Narrative;
 import net.noahf.firewatch.common.units.Unit;
 import net.noahf.firewatch.common.utils.TimeHelper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class Incident {
 
     private final long incidentNumber;
+    private final Narrative narrative;
+    private MedicalCallDetail medicalCallDetails;
     private long dispatchTime;
     private IncidentType type;
     private IncidentPriority priority;
-    private final Narrative narrative;
     private CallerType callerType;
     private IncidentAddress address;
 
-    public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, CallerType caller, IncidentAddress address, Unit... units) {
+    public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, CallerType caller, IncidentAddress address) {
         this.incidentNumber = new Random().nextLong(100000000, 1000000000);
+        this.narrative = new Narrative();
+        this.medicalCallDetails = null;
         this.dispatchTime = dispatchTime;
         this.type = type;
         this.priority = priority;
-        this.narrative = new Narrative();
         this.callerType = caller;
         this.address = address;
     }
@@ -65,6 +69,13 @@ public class Incident {
         if (this.address == null)
             this.address = IncidentAddress.blankAddress();
         return this.address;
+    }
+
+    public Optional<MedicalCallDetail> ems() {
+        if (this.type == IncidentType.EMS && this.medicalCallDetails == null) {
+            this.medicalCallDetails = new MedicalCallDetail();
+        }
+        return Optional.ofNullable(this.medicalCallDetails);
     }
 
 }

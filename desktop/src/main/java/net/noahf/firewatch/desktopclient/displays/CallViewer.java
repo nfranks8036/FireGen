@@ -36,6 +36,7 @@ import net.noahf.firewatch.common.geolocation.exceptions.NoDataReturnedException
 import net.noahf.firewatch.common.incidents.*;
 import net.noahf.firewatch.common.geolocation.GeoAddress;
 import net.noahf.firewatch.common.geolocation.State;
+import net.noahf.firewatch.common.incidents.medical.MedicalCallDetail;
 import net.noahf.firewatch.common.incidents.medical.MedicalPriority;
 import net.noahf.firewatch.common.incidents.medical.MedicalProtocol;
 import net.noahf.firewatch.common.incidents.narrative.NarrativeEntry;
@@ -58,6 +59,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -327,14 +329,15 @@ public class CallViewer extends GUIPage {
             });
             callDataForm.add(priority, 1, 2);
         } else {
+            MedicalCallDetail medicalDetail = this.incident.ems().orElseThrow();
             HBox medicalDispatch = new HBox(10);
             GridPane.setHalignment(medicalDispatch, HPos.CENTER);
             GridPane.setValignment(medicalDispatch, VPos.CENTER);
             medicalDispatch.setAlignment(Pos.CENTER);
             medicalDispatch.setMaxWidth(176.0);
 
-            ComboBox<MedicalProtocol> medicalProtocol = this.combo(true);
-            medicalProtocol.setConverter(new StringConverter<MedicalProtocol>() {
+            ComboBox<MedicalProtocol> medicalProtocol = this.combo(false);
+            medicalProtocol.setConverter(new StringConverter<>() {
                 @Override
                 public String toString(MedicalProtocol object) {
                     if (object == null) return "";
@@ -343,32 +346,57 @@ public class CallViewer extends GUIPage {
 
                 @Override
                 public MedicalProtocol fromString(String string) {
-                    return null;
+                    System.out.println("fromString");
+                    if (string == null || string.isBlank()) return null;
+                    return MedicalProtocol.values()[Integer.parseInt(string.split(" - ")[0])];
                 }
             });
+            AtomicBoolean suppress = new AtomicBoolean(false);
             medicalProtocol.setCellFactory(lv -> new ListCell<>() {
                 @Override
                 protected void updateItem(MedicalProtocol item, boolean empty) {
+                    suppress.set(true);
                     super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                    } else {
-                      setText(item.protocol() + " - " + item);
-                    }
+                    setText(empty || item == null ? null : item.protocol() + " - " + item.toString());
+                    suppress.set(false);
                 }
             });
             medicalProtocol.setButtonCell(new ListCell<>() {
                 @Override
                 protected void updateItem(MedicalProtocol item, boolean empty) {
+                    suppress.set(true);
                     super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                    } else {
-                        setText(String.valueOf(item.protocol())); // Only number in collapsed view
-                    }
+                    setText(empty || item == null ? null : String.valueOf(item.protocol()));
+                    suppress.set(false);
                 }
             });
+            medicalProtocol.getEditor().textProperty().addListener((obs, oldText, newText) -> {
+                System.out.println("listener: " + oldText + " -> " + newText + "; " + suppress.get());
+                if (suppress.get()) return;
+
+                if (!medicalProtocol.isShowing()) medicalProtocol.show();
+
+                ObservableList<MedicalProtocol> filtered = FXCollections.observableArrayList();
+                for (MedicalProtocol protocol : MedicalProtocol.values()) {
+                    String combined = protocol.protocol() + " - " + protocol;
+                    if (combined.toLowerCase().contains(newText.toLowerCase())) {
+                        filtered.add(protocol);
+                    }
+                }
+
+                medicalProtocol.setItems(filtered);
+            });
+            medicalProtocol.setOnAction(e -> {
+                System.out.println("onAction");
+                MedicalProtocol selected = medicalProtocol.getSelectionModel().getSelectedItem();
+                medicalProtocol.setItems(FXCollections.observableArrayList(MedicalProtocol.values()));
+                medicalProtocol.getSelectionModel().select(selected);
+            });
+            medicalProtocol.setEditable(true);
             medicalProtocol.getItems().addAll(MedicalProtocol.values());
+            medicalProtocol.getSelectionModel().selectedItemProperty().addListener((obs, old, now) -> {
+                System.out.println(old + " -> " + now);
+            });
             medicalDispatch.getChildren().add(medicalProtocol);
 
             ComboBox<String> medicalPriority = this.combo();
@@ -615,18 +643,38 @@ public class CallViewer extends GUIPage {
         if (searchable.length > 0 && searchable[0]) {
             combo.setEditable(true);
             combo.getEditor().textProperty().addListener((obs, old, query) -> {
+                ObservableList<T> originalList = (ObservableList<T>) combo.getProperties().getOrDefault("original", null);
+                if (originalList == null) {
+                    combo.getProperties().put("original", combo.getItems());
+                    originalList = combo.getItems();
+                }
+
                 if (!combo.isShowing()) combo.show();
 
+                ObservableList<T> filtered = FXCollections.observableArrayList();
+                for (T search : originalList) {
+                    if (search.toString().toLowerCase().contains(query.toLowerCase())) {
+                        filtered.add(search);
+                    }
+                }
+
+                combo.setItems(filtered);
             });
             combo.setOnAction((e) -> {
-                T selected = combo.getSelectionModel().getSelectedItem();
-                try {
-                    combo.setItems((ObservableList<T>) combo.getProperties().getOrDefault("original_items", combo.getItems()));
-                } catch (Exception ex) {
-                    ex.printStackTrace(System.err);
-                    // ignored, if it can't do it- then oh well, user needs to refresh
+                if (!combo.getProperties().containsKey("original")) {
+                    return;
                 }
-                combo.getSelectionModel().select(selected);
+
+                Platform.runLater(() ->{
+                    T selected = combo.getSelectionModel().getSelectedItem();
+                    try {
+                        combo.setItems((ObservableList<T>) combo.getProperties().getOrDefault("original", combo.getItems()));
+                    } catch (Exception ex) {
+                        ex.printStackTrace(System.err);
+                        // ignored, if it can't do it- then oh well, user needs to refresh
+                    }
+                    combo.getSelectionModel().select(selected);
+                });
             });
         }
         return combo;
