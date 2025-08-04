@@ -5,17 +5,17 @@ import java.util.regex.Pattern;
 
 public enum UnitStatus {
 
-    OUT_OF_SERVICE ("out-of-service"),
+    OUT_OF_SERVICE ("OUT-OF-SERVICE"),
 
-    IN_SERVICE ("clear"),
+    IN_SERVICE ("IN-SERVICE"),
 
-    RESPONDING ("responding"),
+    RESPONDING ("RESPONDING"),
 
-    ON_SCENE ("on-scene"),
+    ON_SCENE ("ON-SCENE"),
 
-    TRANSPORTING_SECONDARY ((str) -> "transporting " + str),
+    TRANSPORTING_SECONDARY ((str) -> "TRANSPORTING " + str),
 
-    ARRIVED_SECONDARY ((str) -> "arrived " + str);
+    ARRIVED_SECONDARY ((str) -> "ARRIVED " + str);
 
     private final Function<String, String> narrativeSuffix;
     private final boolean useInput;
