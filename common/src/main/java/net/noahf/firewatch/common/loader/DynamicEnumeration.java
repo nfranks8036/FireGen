@@ -7,7 +7,4 @@ public interface DynamicEnumeration {
 
     String name();
 
-
-
-
 }
