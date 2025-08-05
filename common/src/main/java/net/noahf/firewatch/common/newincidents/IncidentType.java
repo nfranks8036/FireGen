@@ -1,0 +1,39 @@
+package net.noahf.firewatch.common.newincidents;
+
+import net.noahf.firewatch.common.newincidents.lists.StructureObject;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class IncidentType implements StructureObject {
+
+    static final Set<IncidentPriority> allPriorities = new HashSet<>();
+
+    private String name;
+    private List<String> priorities;
+
+    private List<IncidentPriority> incidentPriorities;
+
+
+    @Override public String getName() { return this.name; }
+    @Override public String getFormatted() { return this.name.replace("_", " "); }
+
+    public List<IncidentPriority> getIncidentPriorities() { return this.incidentPriorities; }
+
+    @Override
+    public String toString() {
+        return this.getName().replace("_", " ");
+    }
+
+    void postDeserialize() {
+        for (String p : this.priorities) {
+            IncidentPriority incidentPriority = new IncidentPriority();
+            incidentPriority.setName(p);
+
+            incidentPriorities.add(incidentPriority);
+            allPriorities.add(incidentPriority);
+        }
+    }
+
+}

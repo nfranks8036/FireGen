@@ -10,7 +10,11 @@ public class Main {
     public static JavaFXManager fx;
 
     public static void main(String[] args) {
-        Main.firegen = new FireGen();
+        final String INCIDENT_STRUCTURE = "incident_structure.json";
+
+        Main.firegen = new FireGen(INCIDENT_STRUCTURE);
         Main.fx = new JavaFXManager(args);
+
+
     }
 }
