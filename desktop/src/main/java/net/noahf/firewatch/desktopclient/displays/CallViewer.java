@@ -40,6 +40,8 @@ import net.noahf.firewatch.common.incidents.medical.MedicalCallDetail;
 import net.noahf.firewatch.common.incidents.medical.MedicalPriority;
 import net.noahf.firewatch.common.incidents.medical.MedicalProtocol;
 import net.noahf.firewatch.common.incidents.narrative.NarrativeEntry;
+import net.noahf.firewatch.common.newincidents.IncidentPriority;
+import net.noahf.firewatch.common.newincidents.IncidentType;
 import net.noahf.firewatch.common.units.UnitStatus;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
 import net.noahf.firewatch.common.utils.TimeHelper;
@@ -300,34 +302,41 @@ public class CallViewer extends GUIPage {
         callDataForm.add(incidentNumberLabel, 0, 0);
         callDataForm.add(incidentNumber, 1, 0);
 
+        Label incidentStatusLabel = this.formText("Status");
+        ChoiceBox<String> incidentStatus = this.choices(new Insets(0.0));
+        incidentStatus.getItems().addAll("NEW", "DISPATCHED", "IN PROGRESS", "RESOLVED");
+        incidentStatus.setValue("NEW");
+        callDataForm.add(incidentStatusLabel, 0, 1);
+        callDataForm.add(incidentStatus, 1, 1);
+
         Label incidentTypeLabel = this.formText("Type");
         ChoiceBox<String> incidentType = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
-        incidentType.getItems().addAll(IncidentType.asFormattedStrings());
-        incidentType.setValue(SupplierUtils.tryGet(() -> this.incident.incidentType().toString()));
+        incidentType.getItems().addAll(Main.firegen.incidentStructure().getIncidentTypes().asFormatted());
+        incidentType.setValue(SupplierUtils.tryGet(() -> this.incident.incidentType().getFormatted()));
         incidentType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            this.incident.incidentType(IncidentType.valueOfFormatted(newValue));
+            this.incident.incidentType(Main.firegen.incidentStructure().getIncidentTypes().getFromFormatted(newValue));
             this.setDynamicTitle(generateTitle(this.incident));
             this.populateCallData(this.viewer);
         });
-        callDataForm.add(incidentTypeLabel, 0, 1);
-        callDataForm.add(incidentType, 1, 1);
+        callDataForm.add(incidentTypeLabel, 0, 2);
+        callDataForm.add(incidentType, 1, 2);
 
         // ------------------- INCIDENT PRIORITY -------------------
 
         Label priorityLabel = this.formText("Priority");
-        if (this.incident.incidentType() != IncidentType.EMS) {
+        if (this.incident.incidentType() == null || !this.incident.incidentType().isEms()) {
             ChoiceBox<String> priority = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
-            List<String> prioritiesForCall = SupplierUtils.tryGet(() -> Arrays.stream(this.incident.incidentType().supportedPriorityResponses()).map(IncidentPriority::toString).toList());
+            List<String> prioritiesForCall = SupplierUtils.tryGet(() -> Arrays.stream(this.incident.incidentType().getIncidentPriorities().asFormatted()).toList());
             if (prioritiesForCall != null) {
                 priority.getItems().addAll(prioritiesForCall);
             }
             priority.setValue(SupplierUtils.tryGet(() -> this.incident.incidentPriority().toString()));
             priority.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                this.incident.incidentPriority(IncidentPriority.valueOfFormatted(newValue));
+                this.incident.incidentPriority(Main.firegen.incidentStructure().getIncidentPriorities().getFromFormatted(newValue));
                 this.setDynamicTitle(generateTitle(this.incident));
                 this.populateCallData(this.viewer);
             });
-            callDataForm.add(priority, 1, 2);
+            callDataForm.add(priority, 1, 3);
         } else {
             MedicalCallDetail medicalDetail = this.incident.ems().orElseThrow();
             HBox medicalDispatch = new HBox(10);
@@ -403,9 +412,9 @@ public class CallViewer extends GUIPage {
             medicalPriority.getItems().addAll(Arrays.stream(MedicalPriority.values()).map(mp -> mp.toString()).toList());
             medicalDispatch.getChildren().add(medicalPriority);
 
-            callDataForm.add(medicalDispatch, 1, 2);
+            callDataForm.add(medicalDispatch, 1, 3);
         }
-        callDataForm.add(priorityLabel, 0, 2);
+        callDataForm.add(priorityLabel, 0, 3);
 
         // ------------------- INCIDENT PRIORITY (END) -------------------
 
@@ -417,8 +426,8 @@ public class CallViewer extends GUIPage {
             this.incident.callerType(CallerType.valueOfFormatted(newValue));
             this.populateCallData(this.viewer);
         });
-        callDataForm.add(callerTypeLabel, 0, 3);
-        callDataForm.add(callerType, 1, 3);
+        callDataForm.add(callerTypeLabel, 0, 4);
+        callDataForm.add(callerType, 1, 4);
 
         Label agencyLabel = this.formText("Agencies");
         CheckComboBox<Agency> agency = new CheckComboBox<>();
@@ -444,12 +453,12 @@ public class CallViewer extends GUIPage {
 //            this.incident.callerType(CallerType.valueOfFormatted(newValue));
 //            this.populateCallData(this.viewer);
 //        });
-        callDataForm.add(agencyLabel, 0, 4);
-        callDataForm.add(agency, 1, 4);
+        callDataForm.add(agencyLabel, 0, 5);
+        callDataForm.add(agency, 1, 5);
 
         // ---------------- DATE AND TIME -----------------
         Label dispatchTimeLabel = this.formText("Time");
-        callDataForm.add(dispatchTimeLabel, 0, 5);
+        callDataForm.add(dispatchTimeLabel, 0, 6);
 
         HBox dateAndTimeContainer = new HBox();
         dateAndTimeContainer.setAlignment(Pos.CENTER);
@@ -500,7 +509,7 @@ public class CallViewer extends GUIPage {
         });
 
         dateAndTimeContainer.getChildren().addAll(dispatchDatePicker, dispatchTimePicker, dispatchDateTimeNow);
-        callDataForm.add(dateAndTimeContainer, 1, 5);
+        callDataForm.add(dateAndTimeContainer, 1, 6);
 
         // ---------------- DATE AND TIME (END) ----------------
 
@@ -509,23 +518,17 @@ public class CallViewer extends GUIPage {
         units.setOnMouseClicked((e) -> {
             UnitStatus[] statuses = { UnitStatus.IN_SERVICE, UnitStatus.RESPONDING, UnitStatus.ON_SCENE };
             IncidentType type = this.incident.incidentType();
-            if (type == IncidentType.EMS || type == IncidentType.MOTOR_VEHICLE_CRASH) {
-                statuses = new UnitStatus[]{
-                        UnitStatus.IN_SERVICE, UnitStatus.RESPONDING, UnitStatus.ON_SCENE,
-                        UnitStatus.TRANSPORTING_SECONDARY, UnitStatus.ARRIVED_SECONDARY
-                };
-            }
 
             UnitList unitList = new UnitList("Units (" + generateTitle(this.incident).get() + ")", this, statuses);
             unitList.show();
         });
-        callDataForm.add(unitsLabel, 0, 6);
-        callDataForm.add(units, 1, 6);
+        callDataForm.add(unitsLabel, 0, 7);
+        callDataForm.add(units, 1, 7);
 
         Label shareIncidentLabel = this.formText("Share");
         Button shareIncident = this.button("Share this incident");
-        callDataForm.add(shareIncidentLabel, 0, 7);
-        callDataForm.add(shareIncident, 1, 7);
+        callDataForm.add(shareIncidentLabel, 0, 8);
+        callDataForm.add(shareIncident, 1, 8);
 
         // ---------------- CALL DATA FORM (END) ----------------
 
@@ -690,13 +693,8 @@ public class CallViewer extends GUIPage {
 
     public static Supplier<String> generateTitle(Incident incident) {
         IncidentType type = incident.incidentType();
-        IncidentPriority priority = incident.incidentPriority();
         if (type == null) {
             return () -> "* NEW *";
-        } else if (type == IncidentType.EMS) {
-            return () -> type + ", " + priority.toString().replace("EMS ", "") + (priority.toString().contains("EMS") ? " RESPONSE" : "");
-        } else if (type == IncidentType.MOTOR_VEHICLE_CRASH) {
-            return () -> "MVC " + priority.toString().replace("MVC ", "");
         }
 
         return () -> incident.incidentType().toString();

@@ -46,6 +46,10 @@ public class StructureList<T extends StructureObject> {
         return this.objs.size();
     }
 
+    public boolean contains(T object) {
+        return this.objs.contains(object);
+    }
+
     public StructureList<T> filter(Predicate<T> filter) {
         return new StructureList<>(this.objs.stream().filter(filter).toList());
     }

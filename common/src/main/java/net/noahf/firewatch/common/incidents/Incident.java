@@ -5,6 +5,8 @@ import net.noahf.firewatch.common.geolocation.GeoAddress;
 import net.noahf.firewatch.common.geolocation.IncidentAddress;
 import net.noahf.firewatch.common.incidents.medical.MedicalCallDetail;
 import net.noahf.firewatch.common.incidents.narrative.Narrative;
+import net.noahf.firewatch.common.newincidents.IncidentPriority;
+import net.noahf.firewatch.common.newincidents.IncidentType;
 import net.noahf.firewatch.common.units.Unit;
 import net.noahf.firewatch.common.utils.TimeHelper;
 
@@ -47,9 +49,9 @@ public class Incident {
     }
     public void incidentType(IncidentType newType) {
         this.type = newType;
-        if (!Arrays.stream(this.type.supportedPriorityResponses()).toList().contains(this.incidentPriority())) {
+        if (!this.type.getIncidentPriorities().contains(this.incidentPriority())) {
             // reset priority if the new IncidentType doesn't support a previous priority response
-            this.priority = this.type.supportedPriorityResponses()[0];
+            this.priority = this.type.getIncidentPriorities().asArray()[0];
         }
     }
 
@@ -72,7 +74,7 @@ public class Incident {
     }
 
     public Optional<MedicalCallDetail> ems() {
-        if (this.type == IncidentType.EMS && this.medicalCallDetails == null) {
+        if (this.type.isEms() && this.medicalCallDetails == null) {
             this.medicalCallDetails = new MedicalCallDetail();
         }
         return Optional.ofNullable(this.medicalCallDetails);

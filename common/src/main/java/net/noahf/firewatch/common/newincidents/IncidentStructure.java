@@ -17,8 +17,9 @@ import java.util.List;
 public class IncidentStructure implements StructureObject {
 
     public static IncidentStructure create(String file) {
+        Class<IncidentStructure> ic = IncidentStructure.class;
         try (
-                InputStream stream = IncidentStructure.class.getResourceAsStream(file)
+                InputStream stream = ic.getClassLoader().getResourceAsStream(file)
         ) {
             if (stream == null) {
                 throw new FileNotFoundException(file);
@@ -27,10 +28,10 @@ public class IncidentStructure implements StructureObject {
             ) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+                IncidentStructure structure = gson.fromJson(input, IncidentStructure.class);
+
                 stream.close();
                 input.close();
-
-                IncidentStructure structure = gson.fromJson(input, IncidentStructure.class);
 
                 structure.postDeserialize();
 

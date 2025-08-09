@@ -35,7 +35,6 @@
         },
         {
             "name": "EMS",
-			"ems": true,
             "priorities": [
                 "MEDICAL_CALL"
             ]
