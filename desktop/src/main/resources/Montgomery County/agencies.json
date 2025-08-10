@@ -1,6 +1,7 @@
 {
   "BLACKSBURG_VOLUNTEER_FIRE_DEPARTMENT": {
     "name": "Blacksburg Volunteer Fire Department",
+	"simplified": "Blacksburg Fire",
     "abbreviation": "BFD",
     "agency_type": "FIRE",
     "units": [
@@ -46,6 +47,7 @@
   },
   "BLACKSBURG_VOLUNTEER_RESCUE_SQUAD": {
     "name": "Blacksburg Volunteer Rescue Squad",
+	"simplified": "Blacksburg Rescue",
     "abbreviation": "BVRS",
     "agency_type": "EMS",
     "units": [
