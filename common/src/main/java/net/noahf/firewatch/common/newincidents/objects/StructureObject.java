@@ -1,4 +1,4 @@
-package net.noahf.firewatch.common.newincidents.lists;
+package net.noahf.firewatch.common.newincidents.objects;
 
 public interface StructureObject {
 

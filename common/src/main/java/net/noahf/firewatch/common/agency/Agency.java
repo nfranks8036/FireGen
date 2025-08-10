@@ -1,80 +1,23 @@
 package net.noahf.firewatch.common.agency;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.noahf.firewatch.common.newincidents.AgencyType;
+import net.noahf.firewatch.common.newincidents.IncidentStructure;
 import net.noahf.firewatch.common.units.Unit;
 import net.noahf.firewatch.common.units.UnitStatus;
 import net.noahf.firewatch.common.units.UnitType;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public class Agency {
-
-    public static Agency BLACKSBURG_VOLUNTEER_FIRE_DEPARTMENT = new Agency()
-            .name("Blacksburg Volunteer Fire Department")
-            .abbreviation("BFD")
-            .agencyType(AgencyType.FIRE)
-            .units(
-                    new Unit(19, UnitType.FIRE_ENGINE),
-                    new Unit(17, UnitType.FIRE_ENGINE),
-                    new Unit(13, UnitType.FIRE_ENGINE),
-                    new Unit(12, UnitType.FIRE_ENGINE),
-                    new Unit(11, UnitType.FIRE_ENGINE),
-                    new Unit(10, UnitType.FIRE_ENGINE),
-
-                    new Unit(12, UnitType.FIRE_LADDER),
-                    new Unit(11, UnitType.FIRE_LADDER),
-
-                    new Unit(13, UnitType.FIRE_TANKER),
-                    new Unit(12, UnitType.FIRE_TANKER),
-                    new Unit(11, UnitType.FIRE_TANKER),
-
-                    new Unit(13, UnitType.FIRE_BRUSH),
-                    new Unit(12, UnitType.FIRE_BRUSH),
-                    new Unit(11, UnitType.FIRE_BRUSH),
-
-                    new Unit(11, UnitType.FIRE_ATTACK),
-
-                    new Unit(13, UnitType.FIRE_RESPONSE),
-                    new Unit(12, UnitType.FIRE_RESPONSE),
-                    new Unit(11, UnitType.FIRE_RESPONSE),
-
-                    new Unit(12, UnitType.FIRE_AIR),
-
-                    new Unit(11, UnitType.FIRE_HAZMAT),
-
-                    new Unit(100, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(101, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(102, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(103, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(104, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(105, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(106, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(107, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(108, UnitType.FIRE_BATTALION_CHIEF),
-                    new Unit(109, UnitType.FIRE_BATTALION_CHIEF)
-            );
-
-    public static Agency BLACKSBURG_VOLUNTEER_RESCUE_SQUAD = new Agency()
-            .name("Blacksburg Volunteer Rescue Squad")
-            .abbreviation("BVRS")
-            .agencyType(AgencyType.EMS)
-            .units(
-                    new Unit(51, UnitType.EMS_RESCUE),
-                    new Unit(52, UnitType.EMS_RESCUE),
-                    new Unit(53, UnitType.EMS_RESCUE),
-                    new Unit(54, UnitType.EMS_RESCUE),
-                    new Unit(55, UnitType.EMS_RESCUE),
-                    new Unit(56, UnitType.EMS_RESCUE),
-
-                    new Unit(51, UnitType.EMS_MEDIC),
-                    new Unit(52, UnitType.EMS_MEDIC),
-                    new Unit(53, UnitType.EMS_MEDIC),
-                    new Unit(54, UnitType.EMS_MEDIC),
-                    new Unit(55, UnitType.EMS_MEDIC),
-                    new Unit(56, UnitType.EMS_MEDIC)
-            );
 
     private Unit[] units;
     private String name;
@@ -85,7 +28,7 @@ public class Agency {
         this.units = new Unit[]{};
         this.name = "Unspecified-Agency-" + UUID.randomUUID();
         this.abbreviation = this.name.split("-")[2];
-        this.agencyType = AgencyType.OTHER;
+        this.agencyType = null;
     }
 
     public String name() { return this.name; }

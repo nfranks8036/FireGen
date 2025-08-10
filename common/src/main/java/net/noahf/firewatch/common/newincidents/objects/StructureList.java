@@ -1,15 +1,33 @@
-package net.noahf.firewatch.common.newincidents.lists;
+package net.noahf.firewatch.common.newincidents.objects;
 
 import java.util.Collection;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unchecked")
 public class StructureList<T extends StructureObject> {
 
+    public static final Function<String, StructureObject> BASIC_STRING =
+            s -> new StructureObject() {
+                @Override
+                public String getName() {
+                    return s;
+                }
+
+                @Override
+                public String getFormatted() {
+                    return s.replace("_", " ");
+                }
+            };
+
     private final Collection<T> objs;
 
     public StructureList(Collection<T> objs) {
         this.objs = objs;
+    }
+
+    public <R> StructureList(Collection<R> objs, Function<? super R, T> mapper) {
+        this.objs = objs.stream().map(mapper).toList();
     }
 
     public Collection<T> asCollection() { return this.objs; }

@@ -1,7 +1,7 @@
 package net.noahf.firewatch.common.newincidents;
 
-import net.noahf.firewatch.common.newincidents.lists.StructureList;
-import net.noahf.firewatch.common.newincidents.lists.StructureObject;
+import net.noahf.firewatch.common.newincidents.objects.StructureList;
+import net.noahf.firewatch.common.newincidents.objects.StructureObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,22 +24,13 @@ public class IncidentType implements StructureObject {
 
     public boolean isEms() { return this.ems; }
 
-    public StructureList<IncidentPriority> getIncidentPriorities() { return new StructureList<>(this.incidentPriorities); }
+    public StructureList<IncidentPriority> getIncidentPriorities() {
+        return new StructureList<>(this.incidentPriorities);
+    }
 
     @Override
     public String toString() {
         return this.getName().replace("_", " ");
-    }
-
-    void postDeserialize() {
-        this.incidentPriorities = new ArrayList<>();
-        for (String p : this.priorities) {
-            IncidentPriority incidentPriority = new IncidentPriority();
-            incidentPriority.setName(p);
-
-            incidentPriorities.add(incidentPriority);
-            allPriorities.add(incidentPriority);
-        }
     }
 
 }

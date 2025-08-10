@@ -12,10 +12,6 @@ public class AgencyManager {
 
     public AgencyManager() {
         this.agencies = new ArrayList<>();
-
-        this.agencies.addAll(List.of(
-                Agency.BLACKSBURG_VOLUNTEER_FIRE_DEPARTMENT, Agency.BLACKSBURG_VOLUNTEER_RESCUE_SQUAD
-        ));
     }
 
     public List<Agency> agencies() { return this.agencies; }

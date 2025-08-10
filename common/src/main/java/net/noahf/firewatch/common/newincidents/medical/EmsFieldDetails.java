@@ -1,6 +1,6 @@
 package net.noahf.firewatch.common.newincidents.medical;
 
-import net.noahf.firewatch.common.newincidents.lists.StructureObject;
+import net.noahf.firewatch.common.newincidents.objects.StructureObject;
 
 public class EmsFieldDetails implements StructureObject {
 

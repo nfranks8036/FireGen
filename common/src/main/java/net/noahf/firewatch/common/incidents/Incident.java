@@ -1,17 +1,13 @@
 package net.noahf.firewatch.common.incidents;
 
-import net.noahf.firewatch.common.agency.Agency;
-import net.noahf.firewatch.common.geolocation.GeoAddress;
 import net.noahf.firewatch.common.geolocation.IncidentAddress;
 import net.noahf.firewatch.common.incidents.medical.MedicalCallDetail;
 import net.noahf.firewatch.common.incidents.narrative.Narrative;
 import net.noahf.firewatch.common.newincidents.IncidentPriority;
 import net.noahf.firewatch.common.newincidents.IncidentType;
-import net.noahf.firewatch.common.units.Unit;
+import net.noahf.firewatch.common.newincidents.objects.StructureObject;
 import net.noahf.firewatch.common.utils.TimeHelper;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -23,10 +19,10 @@ public class Incident {
     private long dispatchTime;
     private IncidentType type;
     private IncidentPriority priority;
-    private CallerType callerType;
+    private StructureObject callerType;
     private IncidentAddress address;
 
-    public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, CallerType caller, IncidentAddress address) {
+    public Incident(long dispatchTime, IncidentType type, IncidentPriority priority, StructureObject caller, IncidentAddress address) {
         this.incidentNumber = new Random().nextLong(100000000, 1000000000);
         this.narrative = new Narrative();
         this.medicalCallDetails = null;
@@ -62,10 +58,10 @@ public class Incident {
 
     public Narrative narrative() { return this.narrative; }
 
-    public CallerType callerType() {
+    public StructureObject callerType() {
         return this.callerType;
     }
-    public void callerType(CallerType newCallerType) { this.callerType = newCallerType; }
+    public void callerType(StructureObject newCallerType) { this.callerType = newCallerType; }
 
     public IncidentAddress address() {
         if (this.address == null)

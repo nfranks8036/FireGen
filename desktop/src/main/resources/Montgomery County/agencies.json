@@ -1,0 +1,67 @@
+{
+  "BLACKSBURG_VOLUNTEER_FIRE_DEPARTMENT": {
+    "name": "Blacksburg Volunteer Fire Department",
+    "abbreviation": "BFD",
+    "agency_type": "FIRE",
+    "units": [
+      { "number": 19, "unit_type": "FIRE_ENGINE" },
+      { "number": 17, "unit_type": "FIRE_ENGINE" },
+      { "number": 13, "unit_type": "FIRE_ENGINE" },
+      { "number": 12, "unit_type": "FIRE_ENGINE" },
+      { "number": 11, "unit_type": "FIRE_ENGINE" },
+      { "number": 10, "unit_type": "FIRE_ENGINE" },
+
+      { "number": 12, "unit_type": "FIRE_LADDER" },
+      { "number": 11, "unit_type": "FIRE_LADDER" },
+
+      { "number": 13, "unit_type": "FIRE_TANKER" },
+      { "number": 12, "unit_type": "FIRE_TANKER" },
+      { "number": 11, "unit_type": "FIRE_TANKER" },
+
+      { "number": 13, "unit_type": "FIRE_BRUSH" },
+      { "number": 12, "unit_type": "FIRE_BRUSH" },
+      { "number": 11, "unit_type": "FIRE_BRUSH" },
+
+      { "number": 11, "unit_type": "FIRE_ATTACK" },
+
+      { "number": 13, "unit_type": "FIRE_RESPONSE" },
+      { "number": 12, "unit_type": "FIRE_RESPONSE" },
+      { "number": 11, "unit_type": "FIRE_RESPONSE" },
+
+      { "number": 12, "unit_type": "FIRE_AIR" },
+
+      { "number": 11, "unit_type": "FIRE_HAZMAT" },
+
+      { "number": 100, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 101, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 102, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 103, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 104, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 105, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 106, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 107, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 108, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 109, "unit_type": "FIRE_BATTALION_CHIEF" }
+    ]
+  },
+  "BLACKSBURG_VOLUNTEER_RESCUE_SQUAD": {
+    "name": "Blacksburg Volunteer Rescue Squad",
+    "abbreviation": "BVRS",
+    "agency_type": "EMS",
+    "units": [
+      { "number": 51, "unit_type": "EMS_RESCUE" },
+      { "number": 52, "unit_type": "EMS_RESCUE" },
+      { "number": 53, "unit_type": "EMS_RESCUE" },
+      { "number": 54, "unit_type": "EMS_RESCUE" },
+      { "number": 55, "unit_type": "EMS_RESCUE" },
+      { "number": 56, "unit_type": "EMS_RESCUE" },
+
+      { "number": 51, "unit_type": "EMS_MEDIC" },
+      { "number": 52, "unit_type": "EMS_MEDIC" },
+      { "number": 53, "unit_type": "EMS_MEDIC" },
+      { "number": 54, "unit_type": "EMS_MEDIC" },
+      { "number": 55, "unit_type": "EMS_MEDIC" },
+      { "number": 56, "unit_type": "EMS_MEDIC" }
+    ]
+  }
+}

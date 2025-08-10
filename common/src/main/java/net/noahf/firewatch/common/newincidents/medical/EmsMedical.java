@@ -1,5 +1,7 @@
 package net.noahf.firewatch.common.newincidents.medical;
 
+import net.noahf.firewatch.common.newincidents.IncidentStructure;
+
 import java.util.List;
 import java.util.Map;
 

@@ -1,5 +1,6 @@
 {
-    "municipality": "MONTGOMERY_COUNTY",
+	"municipality": "Montgomery County",
+	"incident_statuses": ["NEW", "DISPATCHED", "IN_PROGRESS", "RESOLVED"],
     "incident_types": [
         {
             "name": "FIRE_SERVICE_CALL",
@@ -330,5 +331,25 @@
         "POLICE",
         "SHERIFFS_OFFICE",
         "OTHER"
-    ]
+    ],
+	"radio_channels": [
+		"Mont F/R 1",
+		"Mont F/R South 3",
+		"Mont F/R South 5",
+		"Mont F/R South 7",
+		"Mont F/R South 9",
+		"Mont F/R South 11",
+		"MontSO Disp",
+		"MontSO Court",
+		"MontSO Jail",
+		"Blacksburg FD 1",
+		"Blacksburg FD 3",
+		"Blacksburg RS 1",
+		"BlacksburgPD Dsp",
+		"ChristiansburgFD",
+		"ChristiansburgPD",
+		"VT Resc Sq 1",
+		"VT Resc Sq 3",
+		"VT Police 1"
+	]
 }

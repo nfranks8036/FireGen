@@ -1,6 +1,6 @@
 package net.noahf.firewatch.common.newincidents;
 
-import net.noahf.firewatch.common.newincidents.lists.StructureObject;
+import net.noahf.firewatch.common.newincidents.objects.StructureObject;
 
 import java.util.regex.Pattern;
 

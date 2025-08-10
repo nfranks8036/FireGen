@@ -420,10 +420,10 @@ public class CallViewer extends GUIPage {
 
         Label callerTypeLabel = this.formText("Caller");
         ChoiceBox<String> callerType = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
-        callerType.getItems().addAll(CallerType.asFormattedStrings());
-        callerType.setValue(SupplierUtils.tryGet(() -> this.incident.callerType().toString()));
+        callerType.getItems().addAll(Main.firegen.incidentStructure().getCallerTypes().asFormatted());
+        callerType.setValue(SupplierUtils.tryGet(() -> this.incident.callerType().getFormatted()));
         callerType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            this.incident.callerType(CallerType.valueOfFormatted(newValue));
+            this.incident.callerType(Main.firegen.incidentStructure().getCallerTypes().getFromFormatted(newValue));
             this.populateCallData(this.viewer);
         });
         callDataForm.add(callerTypeLabel, 0, 4);

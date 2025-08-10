@@ -10,11 +10,9 @@ public class Main {
     public static JavaFXManager fx;
 
     public static void main(String[] args) {
-        final String INCIDENT_STRUCTURE = "incident_structure.json";
+        final String FOLDER = "Montgomery County";
 
-        Main.firegen = new FireGen(INCIDENT_STRUCTURE);
+        Main.firegen = new FireGen(FOLDER);
         Main.fx = new JavaFXManager(args);
-
-
     }
 }
