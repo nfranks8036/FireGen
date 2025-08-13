@@ -1,8 +1,8 @@
 {
 	"municipality": "Montgomery County",
-	"incident_statuses": ["NEW", "DISPATCHED", "IN_PROGRESS", "RESOLVED", "CLOSED"],
-	"assignment_statuses": ["ASSIGNED", "EN_ROUTE", "ON_SCENE", "TRANSPORTING_SECONDARY", "ARRIVED_SECONDARY", "AVAILABLE" ]
-	"unit_operation_statuses": ["OUT_OF_SERVICE", "IN_SERVICE", "ASSIGNED_INCIDENT"]
+	"incident_statuses": ["*NEW", "DISPATCHED", "IN_PROGRESS", "RESOLVED", "!CLOSED"],
+	"unit_assignment_statuses": ["*ASSIGNED", "EN_ROUTE", "ON_SCENE", "TRANSPORTING_SECONDARY", "ARRIVED_SECONDARY", "!AVAILABLE"],
+	"unit_operation_statuses": ["*IN_SERVICE", "!OUT_OF_SERVICE", "ASSIGNED_INCIDENT"],
     "incident_types": [
         {
             "name": "FIRE_SERVICE_CALL",

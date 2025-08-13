@@ -7,10 +7,10 @@ public class AgencyType extends StructureObject {
     private final String agencyType;
 
     AgencyType(String agencyType) {
-        this.agencyType = agencyType;
+        this.agencyType = agencyType.replace("*", "");
     }
 
-    @Override public String getName() { return agencyType; }
-    @Override public String getFormatted() { return agencyType.replace("_", " "); }
+    @Override public String name() { return agencyType; }
+    @Override public String formatted() { return agencyType.replace("_", " "); }
 
 }

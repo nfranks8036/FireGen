@@ -29,11 +29,15 @@ public abstract class GUIPage {
     private Label titleText;
 
     public GUIPage(String title) {
+        this(() -> title);
+    }
+
+    public GUIPage(Supplier<String> title) {
         this(title, () -> Main.fx.getStage(), true);
     }
 
-    public GUIPage(String title, Supplier<Stage> customStage, boolean backFunctionality) {
-        this.title = () -> title;
+    public GUIPage(Supplier<String> title, Supplier<Stage> customStage, boolean backFunctionality) {
+        this.title = title;
         this.back = (backFunctionality ? Main.fx.getCurrentPage() : Main.fx.getCurrentPage().back);
         this.stage = customStage.get();
         this.backFunctionality = backFunctionality;
@@ -68,6 +72,7 @@ public abstract class GUIPage {
     protected void setDynamicTitle(Supplier<String> dynamicTitle) {
         this.title = dynamicTitle;
         this.titleText.setText(dynamicTitle.get());
+        this.stage.setTitle("FireGen - " + this.title.get());
     }
 
     protected String getTitle() { return this.title.get(); }

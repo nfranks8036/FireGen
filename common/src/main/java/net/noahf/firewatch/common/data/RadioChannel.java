@@ -10,7 +10,7 @@ public class RadioChannel extends StructureObject {
         this.radioChannel = radioChannel;
     }
 
-    @Override public String getName() { return radioChannel; }
-    @Override public String getFormatted() { return radioChannel; }
+    @Override public String name() { return radioChannel; }
+    @Override public String formatted() { return radioChannel; }
 
 }

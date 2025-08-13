@@ -8,8 +8,8 @@ public class EmsFieldDetails extends StructureObject {
     private String description;
     private String abbreviation;
 
-    @Override public String getName() { return this.name; }
-    @Override public String getFormatted() { return this.name.replace("_", " "); }
+    @Override public String name() { return this.name; }
+    @Override public String formatted() { return this.name.replace("_", " "); }
 
     public String getDescription() { return this.description; }
     public String getAbbreviation() { return this.abbreviation; }

@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import net.noahf.firewatch.common.incidents.Incident;
+import net.noahf.firewatch.common.incidents.IncidentManager;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;
 import net.noahf.firewatch.desktopclient.utils.SupplierUtils;
@@ -34,15 +35,14 @@ public class CallListScreen extends GUIPage {
 
     private final EventHandler<MouseEvent> clickCreateCallButton = event -> {
         if (event.getButton().equals(MouseButton.PRIMARY)) {
-            Incident incident = new Incident(System.currentTimeMillis(), null, null, null, null);
-            Main.firegen.incidentManager().post(incident);
+            Incident incident = Main.firegen.incidentManager().generate();
             Main.fx.setNewPage(new CallViewer(incident));
         }
         event.consume();
     };
 
     public CallListScreen() {
-        super("Active Calls (" + (Main.firegen.incidentManager().active.size()) + ")");
+        super(() -> "Active Calls (" + (Main.firegen.incidentManager().countActive()) + ")");
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CallListScreen extends GUIPage {
         table.setPrefWidth(800.0D);
         table.setPlaceholder(new Label("No active calls"));
         this.addColumns(table);
-        for (Incident activeIncident : calls.active) {
+        for (Incident activeIncident : calls.findActive()) {
             table.getItems().add(activeIncident);
         }
 
@@ -84,25 +84,25 @@ public class CallListScreen extends GUIPage {
     private void addColumns(TableView<Incident> table) {
         TableColumn<Incident, String> first = new TableColumn<>("Incident Number");
         first.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
-                SupplierUtils.tryGet(() -> cell.getValue().getIncidentNumber())
+                SupplierUtils.tryGet(() -> cell.getValue().identifier().display())
         ));
         first.setPrefWidth(112.0D);
 
         TableColumn<Incident, String> second = new TableColumn<>("Time");
         second.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
-                SupplierUtils.tryGet(() -> String.valueOf(cell.getValue().dispatchTime()))
+                SupplierUtils.tryGet(() -> String.valueOf(cell.getValue().created().toString()))
         ));
         second.setPrefWidth(75.0D);
 
         TableColumn<Incident, String> third = new TableColumn<>("Call Type");
         third.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
-                SupplierUtils.tryGet(() -> cell.getValue().incidentType().toString(), "* NEW *")
+                SupplierUtils.tryGet(() -> cell.getValue().type().formatted(), "* NEW *")
         ));
         third.setPrefWidth(92.0D);
 
         TableColumn<Incident, String> fourth = new TableColumn<>("Priority");
         fourth.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
-                SupplierUtils.tryGet(() -> cell.getValue().incidentPriority().toString())
+                SupplierUtils.tryGet(() -> cell.getValue().priority().formatted())
         ));
         fourth.setPrefWidth(140.0D);
 

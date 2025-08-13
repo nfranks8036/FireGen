@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Roanoke County Fire & Rescue Department",
+	"simplified": "Roanoke County Fire & Rescue",
+    "abbreviation": "RCFRD",
+    "agency_type": "FIRE_AND_EMS",
+    "units": [
+      { "number": 1, "unit_type": "FIRE_ENGINE" },
+      { "number": 2, "unit_type": "FIRE_ENGINE" },
+      { "number": 3, "unit_type": "FIRE_ENGINE" },
+      { "number": 4, "unit_type": "FIRE_ENGINE" },
+      { "number": 5, "unit_type": "FIRE_ENGINE" },
+      { "number": 6, "unit_type": "FIRE_ENGINE" },
+      { "number": 7, "unit_type": "FIRE_ENGINE" },
+      { "number": 8, "unit_type": "FIRE_ENGINE" },
+      { "number": 9, "unit_type": "FIRE_ENGINE" },
+      { "number": 10, "unit_type": "FIRE_ENGINE" },
+      { "number": 11, "unit_type": "FIRE_ENGINE" },
+      { "number": 12, "unit_type": "FIRE_ENGINE" },
+      
+	  { "number": 1, "unit_type": "EMS_MEDIC" },
+      { "number": 2, "unit_type": "EMS_MEDIC" },
+      { "number": 3, "unit_type": "EMS_MEDIC" },
+      { "number": 4, "unit_type": "EMS_MEDIC" },
+      { "number": 5, "unit_type": "EMS_MEDIC" },
+      { "number": 6, "unit_type": "EMS_MEDIC" },
+      { "number": 7, "unit_type": "EMS_MEDIC" },
+      { "number": 8, "unit_type": "EMS_MEDIC" },
+      { "number": 9, "unit_type": "EMS_MEDIC" },
+      { "number": 10, "unit_type": "EMS_MEDIC" },
+      { "number": 11, "unit_type": "EMS_MEDIC" },
+      { "number": 12, "unit_type": "EMS_MEDIC" },
+	  
+      { "number": 1, "unit_type": "FIRE_BATTALION_CHIEF" },
+      { "number": 2, "unit_type": "EMS_SUPERVISOR" }
+    ]
+  },
+  {
+    "name": "Vinton First Aid Crew",
+	"simplified": "Vinton Rescue",
+    "abbreviation": "VFAC",
+    "agency_type": "EMS",
+    "units": [
+      { "number": 21, "unit_type": "EMS_RESCUE" },
+      { "number": 22, "unit_type": "EMS_RESCUE" },
+      { "number": 23, "unit_type": "EMS_RESCUE" },
+      { "number": 20, "unit_type": "EMS_RESPONSE_CAR" }
+    ]
+  }
+]

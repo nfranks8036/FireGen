@@ -6,8 +6,8 @@ public class IncidentPriority extends StructureObject {
 
     private String name;
 
-    @Override public String getName() { return this.name; }
-    @Override public String getFormatted() { return this.name.replace("_", " "); }
+    @Override public String name() { return this.name; }
+    @Override public String formatted() { return this.name.replace("_", " "); }
 
     void setName(String name) { this.name = name; }
 
@@ -22,6 +22,6 @@ public class IncidentPriority extends StructureObject {
 
     @Override
     public String toString() {
-        return this.getName().replace("_", " ");
+        return this.name().replace("_", " ");
     }
 }

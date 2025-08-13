@@ -1,84 +1,94 @@
 {
-    "municipality": "MONTGOMERY_COUNTY",
+	"municipality": "Roanoke County",
+	"incident_statuses": ["*NEW", "DISPATCHED", "IN_PROGRESS", "RESOLVED", "!CLOSED"],
+	"unit_assignment_statuses": ["*ASSIGNED", "EN_ROUTE", "ON_SCENE", "TRANSPORTING_SECONDARY", "ARRIVED_SECONDARY", "!AVAILABLE"],
+	"unit_operation_statuses": ["*IN_SERVICE", "!OUT_OF_SERVICE", "ASSIGNED_INCIDENT"],
     "incident_types": [
         {
-            "name": "FIRE_SERVICE_CALL",
+            "name": "FSERVICE",
             "priorities": [
                 "NON_EMERGENCY_RESPONSE",
                 "EMERGENCY_RESPONSE"
             ]
         },
         {
-            "name": "FIRE_ALARM",
+            "name": "STRUCTR",
             "priorities": [
                 "EMERGENCY_RESPONSE"
             ]
         },
         {
-            "name": "STRUCTURE_FIRE",
+            "name": "STRUCTC",
             "priorities": [
                 "EMERGENCY_RESPONSE"
             ]
         },
         {
-            "name": "WORKING_FIRE",
+            "name": "ACCIDENT_PERSONAL_INJURY",
             "priorities": [
                 "EMERGENCY_RESPONSE"
             ]
         },
         {
-            "name": "MOTOR_VEHICLE_CRASH",
+            "name": "ACCIDENT_SERIES_INJURY",
             "priorities": [
-                "MVC_INJURIES",
-                "MVC_NO_INJURIES"
+                "EMERGENCY_RESPONSE"
             ]
         },
         {
-            "name": "EMS",
+            "name": "ALSPD",
             "priorities": [
-                "MEDICAL_CALL"
+                "EMERGENCY_RESPONSE"
             ]
         },
         {
-            "name": "STANDBY",
+            "name": "ALSC",
             "priorities": [
-                "STANDBY_EMS",
-                "STANDBY_FIRE",
-                "STANDBY_OTHER"
+                "EMERGENCY_RESPONSE"
             ]
-        }
-    ],
-    "unit_statuses": [
-        {
-            "name": "OUT_OF_SERVICE",
-            "narrative": "OUT OF SERVICE"
         },
         {
-            "name": "IN_SERVICE",
-            "narrative": "IN SERVICE"
+            "name": "ALS",
+            "priorities": [
+                "EMERGENCY_RESPONSE"
+            ]
         },
         {
-            "name": "RESPONDING",
-            "narrative": "RESPONDING"
+            "name": "BLS",
+            "priorities": [
+                "EMERGENCY_RESPONSE"
+            ]
         },
         {
-            "name": "ON_SCENE",
-            "narrative": "ON-SCENE"
+            "name": "ESERVICE",
+            "priorities": [
+                "NON_EMERGENCY_RESPONSE"
+            ]
         },
         {
-            "name": "TRANSPORTING_SECONDARY",
-            "narrative": "TRANSPORTING {0}"
+            "name": "VEHICLE",
+            "priorities": [
+                "EMERGENCY_RESPONSE"
+            ]
         },
         {
-            "name": "ARRIVED_SECONDARY",
-            "narrative": "ARRIVED {0}"
+            "name": "GASC",
+            "priorities": [
+                "EMERGENCY_RESPONSE"
+            ]
+        },
+        {
+            "name": "GASR",
+            "priorities": [
+                "EMERGENCY_RESPONSE"
+            ]
         }
     ],
     "unit_types": [
         {
             "name": "FIRE_ENGINE",
-            "callsign": "ENGINE",
-            "alphabetical": "E"
+            "callsign": "WAGON",
+            "alphabetical": "W"
         },
         {
             "name": "FIRE_LADDER",
@@ -88,7 +98,7 @@
         {
             "name": "FIRE_TANKER",
             "callsign": "TANKER",
-            "alphabetical": "T"
+            "alphabetical": "TANK"
         },
         {
             "name": "FIRE_UTILITY",
@@ -98,7 +108,7 @@
         {
             "name": "FIRE_RESPONSE_CAR",
             "callsign": "RESPONSE",
-            "alphabetical": "RESP"
+            "alphabetical": "CAR"
         },
         {
             "name": "FIRE_ATTACK",
@@ -123,7 +133,7 @@
         {
             "name": "FIRE_BATTALION_CHIEF",
             "callsign": "BATTALION CHIEF",
-            "alphabetical": null
+            "alphabetical": "BATT"
         },
         {
             "name": "EMS_RESCUE",
@@ -138,7 +148,12 @@
         {
             "name": "EMS_SUPERVISOR",
             "callsign": "SUPERVISOR",
-            "alphabetical": null
+            "alphabetical": "EMS"
+        },
+        {
+            "name": "EMS_RESPONSE_CAR",
+            "callsign": "RESPONSE",
+            "alphabetical": "CAR"
         }
     ],
     "caller_types": [
@@ -151,28 +166,24 @@
     "ems_medical": {
         "field:priority": [
             {
-                "name": "OMEGA",
-                "abbreviation": "O"
-            },
-            {
-                "name": "ALPHA",
-                "abbreviation": "A"
-            },
-            {
-                "name": "BRAVO",
-                "abbreviation": "B"
-            },
-            {
-                "name": "CHARLIE",
-                "abbreviation": "C"
-            },
-            {
-                "name": "DELTA",
-                "abbreviation": "D"
-            },
-            {
-                "name": "ECHO",
+                "name": "ESERVICE",
                 "abbreviation": "E"
+            },
+			{
+                "name": "BLS",
+                "abbreviation": "BLS"
+            },
+			{
+                "name": "ALS",
+                "abbreviation": "ALS"
+            },
+			{
+                "name": "ALSC",
+                "abbreviation": "ALSC"
+            },
+			{
+                "name": "ALSPD",
+                "abbreviation": "ALSPD"
             }
         ],
         "field:chief_complaint": [
@@ -329,5 +340,14 @@
         "POLICE",
         "SHERIFFS_OFFICE",
         "OTHER"
-    ]
+    ],
+	"radio_channels": [
+		"FIRE TAC 1",
+		"FIRE TAC 2",
+		"FIRE TAC 3",
+		"FIRE TAC 4",
+		"FIRE TAC 5",
+		"FIRE TAC 6",
+		"FIRE TAC 7"
+	]
 }

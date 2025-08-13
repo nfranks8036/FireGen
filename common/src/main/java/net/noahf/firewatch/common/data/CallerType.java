@@ -10,7 +10,7 @@ public class CallerType extends StructureObject {
         this.callerType = callerType;
     }
 
-    @Override public String getName() { return callerType; }
-    @Override public String getFormatted() { return callerType.replace("_", " "); }
+    @Override public String name() { return callerType; }
+    @Override public String formatted() { return callerType.replace("_", " "); }
 
 }

@@ -27,19 +27,16 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
-import net.noahf.firewatch.common.agency.Agency;
+import net.noahf.firewatch.common.data.ems.EmsMedical;
 import net.noahf.firewatch.common.geolocation.IncidentAddress;
 import net.noahf.firewatch.common.geolocation.exceptions.GeoLocatorException;
 import net.noahf.firewatch.common.geolocation.exceptions.NoDataProvidedException;
 import net.noahf.firewatch.common.data.*;
 import net.noahf.firewatch.common.geolocation.GeoAddress;
 import net.noahf.firewatch.common.geolocation.State;
-import net.noahf.firewatch.common.data.medical.MedicalCallDetail;
-import net.noahf.firewatch.common.data.medical.MedicalPriority;
-import net.noahf.firewatch.common.data.medical.MedicalProtocol;
-import net.noahf.firewatch.common.data.narrative.NarrativeEntry;
 import net.noahf.firewatch.common.incidents.Incident;
-import net.noahf.firewatch.common.units.UnitStatus;
+import net.noahf.firewatch.common.narrative.NarrativeEntry;
+import net.noahf.firewatch.common.units.Agency;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
 import net.noahf.firewatch.common.utils.TimeHelper;
 import net.noahf.firewatch.desktopclient.GUIPage;
@@ -278,7 +275,7 @@ public class CallViewer extends GUIPage {
         );
 
         Label incidentNumberLabel = this.formText("Incident #");
-        Label incidentNumber = this.formText(String.valueOf(this.incident.getIncidentNumber()));
+        Label incidentNumber = this.formText(String.valueOf(this.incident.identifier().display()));
         incidentNumber.setCursor(Cursor.HAND);
         Tooltip tooltip = new Tooltip("Click to copy!");
         tooltip.setHideDelay(Duration.millis(2.5));
@@ -288,7 +285,7 @@ public class CallViewer extends GUIPage {
         incidentNumber.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                StringSelection string = new StringSelection(this.incident.getIncidentNumber());
+                StringSelection string = new StringSelection(this.incident.identifier().display());
                 clipboard.setContents(string, string);
                 tooltip.setText("Copied!");
             }
@@ -299,10 +296,10 @@ public class CallViewer extends GUIPage {
 
         Label incidentTypeLabel = this.formText("Type");
         ChoiceBox<String> incidentType = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
-        incidentType.getItems().addAll(IncidentType.asFormattedStrings());
-        incidentType.setValue(SupplierUtils.tryGet(() -> this.incident.incidentType().toString()));
+        incidentType.getItems().addAll(Main.firegen.incidentStructure().incidentTypes().asFormatted());
+        incidentType.setValue(SupplierUtils.tryGet(() -> this.incident.type().formatted()));
         incidentType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            this.incident.incidentType(IncidentType.valueOfFormatted(newValue));
+            this.incident.type(Main.firegen.incidentStructure().incidentTypes().getFromFormatted(newValue));
             this.setDynamicTitle(generateTitle(this.incident));
             this.populateCallData(this.viewer);
         });
@@ -312,93 +309,26 @@ public class CallViewer extends GUIPage {
         // ------------------- INCIDENT PRIORITY -------------------
 
         Label priorityLabel = this.formText("Priority");
-        if (this.incident.incidentType() != IncidentType.EMS) {
+        if (this.incident.type() == null || !this.incident.type().isEms()) {
             ChoiceBox<String> priority = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
-            List<String> prioritiesForCall = SupplierUtils.tryGet(() -> Arrays.stream(this.incident.incidentType().supportedPriorityResponses()).map(IncidentPriority::toString).toList());
+            List<String> prioritiesForCall = SupplierUtils.tryGet(() -> this.incident.type().getIncidentPriorities().asCollection().stream().map(IncidentPriority::formatted).toList());
             if (prioritiesForCall != null) {
                 priority.getItems().addAll(prioritiesForCall);
             }
-            priority.setValue(SupplierUtils.tryGet(() -> this.incident.incidentPriority().toString()));
+            priority.setValue(SupplierUtils.tryGet(() -> this.incident.priority().formatted()));
             priority.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                this.incident.incidentPriority(IncidentPriority.valueOfFormatted(newValue));
+                this.incident.priority(Main.firegen.incidentStructure().incidentPriorities().getFromFormatted(newValue));
                 this.setDynamicTitle(generateTitle(this.incident));
                 this.populateCallData(this.viewer);
             });
             callDataForm.add(priority, 1, 2);
         } else {
-            MedicalCallDetail medicalDetail = this.incident.ems().orElseThrow();
+            EmsMedical medicalDetail = this.incident.type().ems();
             HBox medicalDispatch = new HBox(10);
             GridPane.setHalignment(medicalDispatch, HPos.CENTER);
             GridPane.setValignment(medicalDispatch, VPos.CENTER);
             medicalDispatch.setAlignment(Pos.CENTER);
             medicalDispatch.setMaxWidth(176.0);
-
-            ComboBox<MedicalProtocol> medicalProtocol = this.combo(false);
-            medicalProtocol.setConverter(new StringConverter<>() {
-                @Override
-                public String toString(MedicalProtocol object) {
-                    if (object == null) return "";
-                    return String.valueOf(object.protocol());
-                }
-
-                @Override
-                public MedicalProtocol fromString(String string) {
-                    System.out.println("fromString");
-                    if (string == null || string.isBlank()) return null;
-                    return MedicalProtocol.values()[Integer.parseInt(string.split(" - ")[0])];
-                }
-            });
-            AtomicBoolean suppress = new AtomicBoolean(false);
-            medicalProtocol.setCellFactory(lv -> new ListCell<>() {
-                @Override
-                protected void updateItem(MedicalProtocol item, boolean empty) {
-                    suppress.set(true);
-                    super.updateItem(item, empty);
-                    setText(empty || item == null ? null : item.protocol() + " - " + item.toString());
-                    suppress.set(false);
-                }
-            });
-            medicalProtocol.setButtonCell(new ListCell<>() {
-                @Override
-                protected void updateItem(MedicalProtocol item, boolean empty) {
-                    suppress.set(true);
-                    super.updateItem(item, empty);
-                    setText(empty || item == null ? null : String.valueOf(item.protocol()));
-                    suppress.set(false);
-                }
-            });
-            medicalProtocol.getEditor().textProperty().addListener((obs, oldText, newText) -> {
-                System.out.println("listener: " + oldText + " -> " + newText + "; " + suppress.get());
-                if (suppress.get()) return;
-
-                if (!medicalProtocol.isShowing()) medicalProtocol.show();
-
-                ObservableList<MedicalProtocol> filtered = FXCollections.observableArrayList();
-                for (MedicalProtocol protocol : MedicalProtocol.values()) {
-                    String combined = protocol.protocol() + " - " + protocol;
-                    if (combined.toLowerCase().contains(newText.toLowerCase())) {
-                        filtered.add(protocol);
-                    }
-                }
-
-                medicalProtocol.setItems(filtered);
-            });
-            medicalProtocol.setOnAction(e -> {
-                System.out.println("onAction");
-                MedicalProtocol selected = medicalProtocol.getSelectionModel().getSelectedItem();
-                medicalProtocol.setItems(FXCollections.observableArrayList(MedicalProtocol.values()));
-                medicalProtocol.getSelectionModel().select(selected);
-            });
-            medicalProtocol.setEditable(true);
-            medicalProtocol.getItems().addAll(MedicalProtocol.values());
-            medicalProtocol.getSelectionModel().selectedItemProperty().addListener((obs, old, now) -> {
-                System.out.println(old + " -> " + now);
-            });
-            medicalDispatch.getChildren().add(medicalProtocol);
-
-            ComboBox<String> medicalPriority = this.combo();
-            medicalPriority.getItems().addAll(Arrays.stream(MedicalPriority.values()).map(mp -> mp.toString()).toList());
-            medicalDispatch.getChildren().add(medicalPriority);
 
             callDataForm.add(medicalDispatch, 1, 2);
         }
@@ -408,10 +338,10 @@ public class CallViewer extends GUIPage {
 
         Label callerTypeLabel = this.formText("Caller");
         ChoiceBox<String> callerType = this.choices(new Insets(0.0, 0.0, 0.0, 0.0));
-        callerType.getItems().addAll(CallerType.asFormattedStrings());
-        callerType.setValue(SupplierUtils.tryGet(() -> this.incident.callerType().toString()));
+        callerType.getItems().addAll(Main.firegen.incidentStructure().callerTypes().asFormatted());
+        callerType.setValue(SupplierUtils.tryGet(() -> this.incident.callerType().formatted()));
         callerType.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            this.incident.callerType(CallerType.valueOfFormatted(newValue));
+            this.incident.callerType(Main.firegen.incidentStructure().callerTypes().getFromFormatted(newValue));
             this.populateCallData(this.viewer);
         });
         callDataForm.add(callerTypeLabel, 0, 3);
@@ -424,7 +354,7 @@ public class CallViewer extends GUIPage {
         agency.setPadding(new Insets(0.0));
         GridPane.setValignment(agency, VPos.CENTER);
         GridPane.setHalignment(agency, HPos.CENTER);
-        agency.setConverter(new StringConverter<Agency>() {
+        agency.setConverter(new StringConverter<>() {
             @Override
             public String toString(Agency object) {
                 return object.abbreviation();
@@ -432,10 +362,10 @@ public class CallViewer extends GUIPage {
 
             @Override
             public Agency fromString(String string) {
-                return Main.firegen.agencyManager().findAgency(string);
+                return Main.firegen.agencyManager().findAgencyByAbbreviation(string);
             }
         });
-        agency.getItems().addAll(Main.firegen.agencyManager().agencies());
+        agency.getItems().addAll(Main.firegen.agencyManager().findAgencies());
 //        agency.setValue(this.tryGet(() -> this.incident.callerType().toString()));
 //        agency.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 //            this.incident.callerType(CallerType.valueOfFormatted(newValue));
@@ -444,9 +374,36 @@ public class CallViewer extends GUIPage {
         callDataForm.add(agencyLabel, 0, 4);
         callDataForm.add(agency, 1, 4);
 
+        Label radioChannelLabel = this.formText("Radio Ch");
+        CheckComboBox<RadioChannel> radioChannel = new CheckComboBox<>();
+        radioChannel.setPrefHeight(26.0);
+        radioChannel.setPrefWidth(176.0);
+        radioChannel.setPadding(new Insets(0.0));
+        GridPane.setValignment(radioChannel, VPos.CENTER);
+        GridPane.setHalignment(radioChannel, HPos.CENTER);
+        radioChannel.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(RadioChannel object) {
+                return object.formatted();
+            }
+
+            @Override
+            public RadioChannel fromString(String string) {
+                return Main.firegen.incidentStructure().radioChannels().getFromFormatted(string);
+            }
+        });
+        radioChannel.getItems().addAll(Main.firegen.incidentStructure().radioChannels().asCollection());
+//        agency.setValue(this.tryGet(() -> this.incident.callerType().toString()));
+//        agency.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+//            this.incident.callerType(CallerType.valueOfFormatted(newValue));
+//            this.populateCallData(this.viewer);
+//        });
+        callDataForm.add(radioChannelLabel, 0, 5);
+        callDataForm.add(radioChannel, 1, 5);
+
         // ---------------- DATE AND TIME -----------------
         Label dispatchTimeLabel = this.formText("Time");
-        callDataForm.add(dispatchTimeLabel, 0, 5);
+        callDataForm.add(dispatchTimeLabel, 0, 6);
 
         HBox dateAndTimeContainer = new HBox();
         dateAndTimeContainer.setAlignment(Pos.CENTER);
@@ -455,7 +412,7 @@ public class CallViewer extends GUIPage {
         GridPane.setHalignment(dateAndTimeContainer, HPos.CENTER);
         GridPane.setValignment(dateAndTimeContainer, VPos.CENTER);
 
-        Date date = new Date(this.incident.dispatchTime());
+        Date date = Date.from(this.incident.created());
 
         DatePicker dispatchDatePicker = new DatePicker(SupplierUtils.tryGet(() -> LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault())));
         dispatchDatePicker.setPrefHeight(26.0);
@@ -484,45 +441,33 @@ public class CallViewer extends GUIPage {
         dispatchTimePicker.setText(SupplierUtils.tryGet(() -> new SimpleDateFormat("HH:mm:ss").format(date)));
         HBox.setMargin(dispatchTimePicker, new Insets(0.0, 2.0, 0.0, 2.0));
 
-        Button dispatchDateTimeNow = new Button("N");
-        dispatchDateTimeNow.setMnemonicParsing(false);
-        dispatchDateTimeNow.setPrefHeight(26.0);
-        dispatchDateTimeNow.setPrefWidth(27.0);
-        dispatchDateTimeNow.setOnMouseClicked((e) -> {
-            if (e.getButton() == MouseButton.PRIMARY) {
-                this.incident.dispatchTime(System.currentTimeMillis());
-                this.populateCallData(viewer);
-            }
-            e.consume();
-        });
-
-        dateAndTimeContainer.getChildren().addAll(dispatchDatePicker, dispatchTimePicker, dispatchDateTimeNow);
-        callDataForm.add(dateAndTimeContainer, 1, 5);
+        dateAndTimeContainer.getChildren().addAll(dispatchDatePicker, dispatchTimePicker);
+        callDataForm.add(dateAndTimeContainer, 1, 6);
 
         // ---------------- DATE AND TIME (END) ----------------
 
         Label unitsLabel = this.formText("Units");
         Button units = this.button("Edit units");
         units.setOnMouseClicked((e) -> {
-            UnitStatus[] statuses = { UnitStatus.IN_SERVICE, UnitStatus.RESPONDING, UnitStatus.ON_SCENE };
-            IncidentType type = this.incident.incidentType();
-            if (type == IncidentType.EMS || type == IncidentType.MOTOR_VEHICLE_CRASH) {
-                statuses = new UnitStatus[]{
-                        UnitStatus.IN_SERVICE, UnitStatus.RESPONDING, UnitStatus.ON_SCENE,
-                        UnitStatus.TRANSPORTING_SECONDARY, UnitStatus.ARRIVED_SECONDARY
-                };
-            }
-
-            UnitList unitList = new UnitList("Units (" + generateTitle(this.incident).get() + ")", this, statuses);
-            unitList.show();
+//            UnitStatus[] statuses = { UnitStatus.IN_SERVICE, UnitStatus.RESPONDING, UnitStatus.ON_SCENE };
+//            IncidentType type = this.incident.incidentType();
+//            if (type == IncidentType.EMS || type == IncidentType.MOTOR_VEHICLE_CRASH) {
+//                statuses = new UnitStatus[]{
+//                        UnitStatus.IN_SERVICE, UnitStatus.RESPONDING, UnitStatus.ON_SCENE,
+//                        UnitStatus.TRANSPORTING_SECONDARY, UnitStatus.ARRIVED_SECONDARY
+//                };
+//            }
+//
+//            UnitList unitList = new UnitList("Units (" + generateTitle(this.incident).get() + ")", this, statuses);
+//            unitList.show();
         });
-        callDataForm.add(unitsLabel, 0, 6);
-        callDataForm.add(units, 1, 6);
+        callDataForm.add(unitsLabel, 0, 7);
+        callDataForm.add(units, 1, 7);
 
         Label shareIncidentLabel = this.formText("Share");
         Button shareIncident = this.button("Share this incident");
-        callDataForm.add(shareIncidentLabel, 0, 7);
-        callDataForm.add(shareIncident, 1, 7);
+        callDataForm.add(shareIncidentLabel, 0, 8);
+        callDataForm.add(shareIncident, 1, 8);
 
         // ---------------- CALL DATA FORM (END) ----------------
 
@@ -562,7 +507,7 @@ public class CallViewer extends GUIPage {
                 if (n.isBlank()) {
                     return;
                 }
-                this.incident.narrative().add(n);
+                this.incident.narrative().insert(n);
                 this.populateNarrative(this.viewer);
             });
         });
@@ -686,17 +631,13 @@ public class CallViewer extends GUIPage {
     }
 
     public static Supplier<String> generateTitle(Incident incident) {
-        IncidentType type = incident.incidentType();
-        IncidentPriority priority = incident.incidentPriority();
+        IncidentType type = incident.type();
+        IncidentPriority priority = incident.priority();
         if (type == null) {
             return () -> "* NEW *";
-        } else if (type == IncidentType.EMS) {
-            return () -> type + ", " + priority.toString().replace("EMS ", "") + (priority.toString().contains("EMS") ? " RESPONSE" : "");
-        } else if (type == IncidentType.MOTOR_VEHICLE_CRASH) {
-            return () -> "MVC " + priority.toString().replace("MVC ", "");
         }
 
-        return () -> incident.incidentType().toString();
+        return () -> type.formatted();
     }
 
 }

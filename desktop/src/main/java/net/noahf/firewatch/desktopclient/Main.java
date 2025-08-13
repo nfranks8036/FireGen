@@ -10,7 +10,7 @@ public class Main {
     public static JavaFXManager fx;
 
     public static void main(String[] args) {
-        Main.firegen = new FireGen();
+        Main.firegen = FireGen.start("Roanoke County");
         Main.fx = new JavaFXManager(args);
     }
 }

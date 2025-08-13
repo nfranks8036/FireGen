@@ -1,23 +1,51 @@
 package net.noahf.firewatch.common.data.objects;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Spliterator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 public class StructureList<T extends StructureObject> implements Iterable<T> {
 
     private final Collection<T> objs;
+    private final List<StructureListMarkedObject<T>> markedObjects;
 
-    public StructureList(Collection<T> objs) {
-        this.objs = objs;
+    public StructureList(Collection<T> objs, ListMark<T>... markedObjects) {
+        this(objs, (i) -> i);
     }
 
     public <R> StructureList(Collection<R> objs, Function<? super R, T> mapper) {
+        this(objs, mapper, (ListMark<R>) null);
+    }
+
+    public <R> StructureList(Collection<R> objs, Function<? super R, T> mapper, ListMark<R>... markedObjects) {
         this.objs = objs.stream().map(mapper).toList();
+
+        if (markedObjects != null && markedObjects.length > 0) {
+            this.markedObjects = new ArrayList<>();
+            for (ListMark<R> mark : markedObjects) {
+                if (mark == null) {
+                    continue;
+                }
+
+                StructureListMarkedObject<T> markedObject = new StructureListMarkedObject<>(mark.name, objs.stream().filter(mark.filter).map(mapper).toList());
+                if (markedObject.all().size() > mark.max) {
+                    System.err.println("ListMark has reached max (" + markedObject.all().size() + " > " + mark.max + ") for filter '" + mark.name + "'");
+                    continue;
+                }
+                this.markedObjects.add(markedObject);
+            }
+        } else this.markedObjects = null;
+    }
+
+    private StructureList(Collection<T> objs, StructureList<T> original) {
+        this.objs = objs;
+        this.markedObjects = original.markedObjects;
     }
 
     public Collection<T> asCollection() { return this.objs; }
@@ -25,16 +53,16 @@ public class StructureList<T extends StructureObject> implements Iterable<T> {
 
     public String[] asNames() {
         return this.objs.stream()
-                .map(StructureObject::getName).toArray(String[]::new);
+                .map(StructureObject::name).toArray(String[]::new);
     }
     public String[] asFormatted() {
         return this.objs.stream()
-                .map(StructureObject::getFormatted).toArray(String[]::new);
+                .map(StructureObject::formatted).toArray(String[]::new);
     }
 
     public T getFromName(String name) {
         for (T obj : this.asCollection()) {
-            if (obj.getName().equalsIgnoreCase(name)) {
+            if (obj.name().equalsIgnoreCase(name)) {
                 return obj;
             }
         }
@@ -43,11 +71,15 @@ public class StructureList<T extends StructureObject> implements Iterable<T> {
 
     public T getFromFormatted(String format) {
         for (T obj : this.asCollection()) {
-            if (obj.getFormatted().equalsIgnoreCase(format)) {
+            if (obj.formatted().equalsIgnoreCase(format)) {
                 return obj;
             }
         }
         return null;
+    }
+
+    public StructureListMarkedObject<T> marked(String id) {
+        return this.markedObjects.stream().filter(obj -> obj.id().equalsIgnoreCase(id)).findFirst().orElse(null);
     }
 
     public int count() {
@@ -59,14 +91,14 @@ public class StructureList<T extends StructureObject> implements Iterable<T> {
     }
 
     public StructureList<T> filter(Predicate<T> filter) {
-        return new StructureList<>(this.objs.stream().filter(filter).toList());
+        return new StructureList<>(this.objs.stream().filter(filter).toList(), this);
     }
 
 
 
 
     @Override
-    public Iterator<T> iterator() {
+    public @NotNull Iterator<T> iterator() {
         return this.objs.iterator();
     }
 

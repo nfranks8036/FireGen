@@ -8,8 +8,8 @@ public class UnitType extends StructureObject {
     private String callsign;
     private String abbreviation;
 
-    @Override public String getName() { return this.name; }
-    @Override public String getFormatted() { return this.name.replace("_", " "); }
+    @Override public String name() { return this.name; }
+    @Override public String formatted() { return this.name.replace("_", " "); }
     public String getCallsign() { return this.callsign; }
     public String getAbbreviation() { return this.abbreviation; }
 

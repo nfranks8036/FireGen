@@ -16,4 +16,6 @@ public class IncidentNarrative {
         this.entries.add(new NarrativeEntry(Instant.now(), narrative));
     }
 
+    public List<NarrativeEntry> entries() { return new ArrayList<>(this.entries); }
+
 }
