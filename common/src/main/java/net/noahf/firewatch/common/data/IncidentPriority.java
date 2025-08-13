@@ -2,7 +2,7 @@ package net.noahf.firewatch.common.data;
 
 import net.noahf.firewatch.common.data.objects.StructureObject;
 
-public class IncidentPriority implements StructureObject {
+public class IncidentPriority extends StructureObject {
 
     private String name;
 

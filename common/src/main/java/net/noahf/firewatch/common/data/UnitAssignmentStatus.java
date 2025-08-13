@@ -2,7 +2,7 @@ package net.noahf.firewatch.common.data;
 
 import net.noahf.firewatch.common.data.objects.StructureObject;
 
-public class UnitAssignmentStatus implements StructureObject {
+public class UnitAssignmentStatus extends StructureObject {
 
     private final String unitAssignmentStatus;
 

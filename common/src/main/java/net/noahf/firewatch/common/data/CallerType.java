@@ -2,7 +2,7 @@ package net.noahf.firewatch.common.data;
 
 import net.noahf.firewatch.common.data.objects.StructureObject;
 
-public class CallerType implements StructureObject {
+public class CallerType extends StructureObject {
 
     private final String callerType;
 

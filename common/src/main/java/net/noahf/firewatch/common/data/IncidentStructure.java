@@ -8,7 +8,7 @@ import net.noahf.firewatch.common.data.objects.StructureObject;
 
 import java.util.List;
 
-public class IncidentStructure implements StructureObject {
+public class IncidentStructure extends StructureObject {
 
     private String municipality;
     private List<String> incident_statuses;

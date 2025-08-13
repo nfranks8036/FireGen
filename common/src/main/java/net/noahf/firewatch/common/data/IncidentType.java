@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class IncidentType implements StructureObject {
+public class IncidentType extends StructureObject {
 
     static final Set<IncidentPriority> allPriorities = new HashSet<>();
 
