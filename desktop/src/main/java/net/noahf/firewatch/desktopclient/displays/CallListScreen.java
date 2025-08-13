@@ -13,7 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import net.noahf.firewatch.common.incidents.IncidentManager;
+import net.noahf.firewatch.common.data.IncidentManager;
 import net.noahf.firewatch.common.incidents.Incident;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;

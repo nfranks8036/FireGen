@@ -1,31 +1,25 @@
 package net.noahf.firewatch.common;
 
-import net.noahf.firewatch.common.agency.AgencyManager;
+import net.noahf.firewatch.common.data.IncidentStructure;
+import net.noahf.firewatch.common.data.loader.JsonImporter;
 import net.noahf.firewatch.common.geolocation.GeoLocator;
-import net.noahf.firewatch.common.incidents.IncidentManager;
 
 public class FireGen {
 
-    private final IncidentManager incidentManager;
     private final GeoLocator geoLocator;
-    private final AgencyManager agencyManager;
+    private final IncidentStructure structure;
 
-    public FireGen() {
-        this.incidentManager = new IncidentManager();
+    public FireGen(String municipality) {
+        JsonImporter importer = new JsonImporter(municipality);
+
         this.geoLocator = new GeoLocator();
-        this.agencyManager = new AgencyManager();
-    }
-
-    public IncidentManager incidentManager() {
-        return this.incidentManager;
+        this.structure = importer.importedIncidentStructure();
     }
 
     public GeoLocator geoLocator() {
         return this.geoLocator;
     }
 
-    public AgencyManager agencyManager() { return this.agencyManager; }
-
-
+    public IncidentStructure incidentStructure() { return this.structure; }
 
 }
