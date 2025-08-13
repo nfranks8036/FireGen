@@ -1,5 +1,5 @@
-{
-  "BLACKSBURG_VOLUNTEER_FIRE_DEPARTMENT": {
+[
+  {
     "name": "Blacksburg Volunteer Fire Department",
 	"simplified": "Blacksburg Fire",
     "abbreviation": "BFD",
@@ -45,7 +45,7 @@
       { "number": 109, "unit_type": "FIRE_BATTALION_CHIEF" }
     ]
   },
-  "BLACKSBURG_VOLUNTEER_RESCUE_SQUAD": {
+  {
     "name": "Blacksburg Volunteer Rescue Squad",
 	"simplified": "Blacksburg Rescue",
     "abbreviation": "BVRS",
@@ -66,4 +66,4 @@
       { "number": 56, "unit_type": "EMS_MEDIC" }
     ]
   }
-}
+]

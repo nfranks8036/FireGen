@@ -33,4 +33,19 @@ public class IncidentType implements StructureObject {
         return this.getName().replace("_", " ");
     }
 
+    public void finalizeDeserialize() {
+        if (this.incidentPriorities != null) {
+            throw new IllegalStateException("Already finalized and posted.");
+        }
+
+        this.incidentPriorities = new ArrayList<>();
+        for (String p : this.priorities) {
+            IncidentPriority incidentPriority = new IncidentPriority();
+            incidentPriority.setName(p);
+
+            incidentPriorities.add(incidentPriority);
+            allPriorities.add(incidentPriority);
+        }
+    }
+
 }

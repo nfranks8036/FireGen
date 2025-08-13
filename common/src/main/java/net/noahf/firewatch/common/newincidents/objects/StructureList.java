@@ -1,11 +1,14 @@
 package net.noahf.firewatch.common.newincidents.objects;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unchecked")
-public class StructureList<T extends StructureObject> {
+public class StructureList<T extends StructureObject> implements Iterable<T> {
 
     public static final Function<String, StructureObject> BASIC_STRING =
             s -> new StructureObject() {
@@ -72,4 +75,21 @@ public class StructureList<T extends StructureObject> {
         return new StructureList<>(this.objs.stream().filter(filter).toList());
     }
 
+
+
+
+    @Override
+    public Iterator<T> iterator() {
+        return this.objs.iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super T> action) {
+        this.objs.forEach(action);
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return this.objs.spliterator();
+    }
 }

@@ -3,6 +3,7 @@ package net.noahf.firewatch.common;
 import net.noahf.firewatch.common.agency.AgencyManager;
 import net.noahf.firewatch.common.geolocation.GeoLocator;
 import net.noahf.firewatch.common.incidents.IncidentManager;
+import net.noahf.firewatch.common.loader.JsonImporter;
 import net.noahf.firewatch.common.newincidents.IncidentStructure;
 
 public class FireGen {
@@ -13,8 +14,10 @@ public class FireGen {
     private final GeoLocator geoLocator;
 
     public FireGen(String municipality) {
-        this.incidentStructure = IncidentStructure.create(municipality);
-        this.agencyManager = new AgencyManager();
+        JsonImporter importer = new JsonImporter(municipality);
+        this.incidentStructure = importer.importedIncidentStructure();
+        this.agencyManager = importer.importedAgencyManager();
+
         this.incidentManager = new IncidentManager();
         this.geoLocator = new GeoLocator();
     }

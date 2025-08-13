@@ -20,8 +20,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import net.noahf.firewatch.common.units.Unit;
-import net.noahf.firewatch.common.units.UnitStatus;
-import net.noahf.firewatch.common.units.UnitType;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;

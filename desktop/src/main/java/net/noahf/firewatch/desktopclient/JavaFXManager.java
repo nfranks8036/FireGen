@@ -2,7 +2,6 @@ package net.noahf.firewatch.desktopclient;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import net.noahf.firewatch.common.units.UnitStatus;
 import net.noahf.firewatch.desktopclient.displays.CallListScreen;
 
 public class JavaFXManager extends Application {

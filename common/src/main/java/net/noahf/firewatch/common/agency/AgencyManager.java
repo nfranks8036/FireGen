@@ -1,7 +1,6 @@
 package net.noahf.firewatch.common.agency;
 
 import net.noahf.firewatch.common.units.Unit;
-import net.noahf.firewatch.common.units.UnitStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +9,8 @@ public class AgencyManager {
 
     private final List<Agency> agencies;
 
-    public AgencyManager() {
-        this.agencies = new ArrayList<>();
+    public AgencyManager(List<Agency> agencies) {
+        this.agencies = new ArrayList<>(agencies);
     }
 
     public List<Agency> agencies() { return this.agencies; }
