@@ -1,4 +1,4 @@
-package net.noahf.firewatch.common.incidents.narrative;
+package net.noahf.firewatch.common.newincidents.narrative;
 
 public class NarrativeEntry {
 

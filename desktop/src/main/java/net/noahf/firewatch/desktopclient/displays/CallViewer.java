@@ -37,7 +37,7 @@ import net.noahf.firewatch.common.geolocation.State;
 import net.noahf.firewatch.common.incidents.medical.MedicalCallDetail;
 import net.noahf.firewatch.common.incidents.medical.MedicalPriority;
 import net.noahf.firewatch.common.incidents.medical.MedicalProtocol;
-import net.noahf.firewatch.common.incidents.narrative.NarrativeEntry;
+import net.noahf.firewatch.common.newincidents.narrative.NarrativeEntry;
 import net.noahf.firewatch.common.newincidents.IncidentType;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
 import net.noahf.firewatch.common.utils.TimeHelper;

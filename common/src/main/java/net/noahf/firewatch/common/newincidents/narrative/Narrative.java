@@ -1,6 +1,5 @@
-package net.noahf.firewatch.common.incidents.narrative;
+package net.noahf.firewatch.common.newincidents.narrative;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -2,7 +2,7 @@ package net.noahf.firewatch.common.incidents;
 
 import net.noahf.firewatch.common.geolocation.IncidentAddress;
 import net.noahf.firewatch.common.incidents.medical.MedicalCallDetail;
-import net.noahf.firewatch.common.incidents.narrative.Narrative;
+import net.noahf.firewatch.common.newincidents.narrative.Narrative;
 import net.noahf.firewatch.common.newincidents.IncidentPriority;
 import net.noahf.firewatch.common.newincidents.IncidentType;
 import net.noahf.firewatch.common.newincidents.objects.StructureObject;
