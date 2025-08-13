@@ -27,6 +27,7 @@ javafx {
 
 dependencies {
     implementation project(":common")
+
     implementation 'org.openjfx:javafx-controls:22'
     implementation 'org.openjfx:javafx-fxml:22'
     implementation 'org.openjfx:javafx-web:22'

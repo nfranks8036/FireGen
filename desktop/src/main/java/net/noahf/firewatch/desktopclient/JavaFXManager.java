@@ -6,7 +6,7 @@ import net.noahf.firewatch.desktopclient.displays.CallListScreen;
 
 public class JavaFXManager extends Application {
 
-    public final double window = 800D;
+    public static final String APPLICATION_NAME = "FireGen";
 
     private Stage stage;
     private GUIPage currentPage;
@@ -21,9 +21,10 @@ public class JavaFXManager extends Application {
         Main.fx = this;
         this.stage = stage;
 
-        this.stage.setTitle("FireGen");
+        this.stage.setTitle(APPLICATION_NAME);
+        this.stage.setMaximized(true);
         this.setNewPage(new CallListScreen());
-        this.stage.setResizable(false);
+        this.stage.setResizable(true);
         this.stage.show();
     }
 

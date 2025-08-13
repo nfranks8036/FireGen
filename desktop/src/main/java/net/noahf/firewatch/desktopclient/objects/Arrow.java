@@ -34,7 +34,6 @@ public class Arrow extends Group {
                 x, y + arrowHeight / 2               // tip (left)
         );
 
-        // Subtract arrow from circle
         Shape cutout = Shape.subtract(circle, arrow);
 
         getChildren().add(cutout);

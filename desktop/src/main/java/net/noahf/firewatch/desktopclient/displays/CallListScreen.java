@@ -52,9 +52,9 @@ public class CallListScreen extends GUIPage {
         TableView<Incident> table = new TableView<>();
         table.setRowFactory(this.clickRowEvent);
         table.setPadding(new Insets(20.0D, 20.0D, 0.0D, 20.0D));
-        table.setPrefHeight(616.0D);
-        table.setPrefWidth(800.0D);
         table.setPlaceholder(new Label("No active calls"));
+        table.prefWidthProperty().bind(this.width());
+        table.prefHeightProperty().bind(this.height().subtract(70D * 2));
         this.addColumns(table);
         for (Incident activeIncident : calls.findActive()) {
             table.getItems().add(activeIncident);
@@ -62,19 +62,17 @@ public class CallListScreen extends GUIPage {
 
         HBox createCallContainer = new HBox();
         createCallContainer.setAlignment(Pos.CENTER);
-        createCallContainer.setPrefHeight(70.0D);
-        createCallContainer.setPrefWidth(800.0D);
+        createCallContainer.setPrefHeight(70D);
 
         Button createCall = new Button("CREATE NEW CALL");
-        createCall.setAlignment(Pos.CENTER);
-        createCall.setContentDisplay(ContentDisplay.CENTER);
         createCall.setGraphicTextGap(0.0D);
         createCall.setMnemonicParsing(false);
         createCall.setPrefHeight(31.0);
-        createCall.setPrefWidth(211.0);
+        createCall.prefWidthProperty().bind(table.prefWidthProperty().multiply(211D / 800D));
         createCall.setFont(new Font(15.0D));
         createCall.setCursor(Cursor.HAND);
         createCall.setOnMouseClicked(this.clickCreateCallButton);
+        createCall.setAlignment(Pos.CENTER);
         createCallContainer.getChildren().add(createCall);
 
         return new Node[] { table, createCallContainer };
@@ -86,31 +84,31 @@ public class CallListScreen extends GUIPage {
         first.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
                 SupplierUtils.tryGet(() -> cell.getValue().identifier().display())
         ));
-        first.setPrefWidth(112.0D);
+        first.prefWidthProperty().bind(table.widthProperty().multiply(112D / 800D));
 
         TableColumn<Incident, String> second = new TableColumn<>("Time");
         second.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
-                SupplierUtils.tryGet(() -> String.valueOf(cell.getValue().created().toString()))
+                SupplierUtils.tryGet(() -> cell.getValue().created().toString())
         ));
-        second.setPrefWidth(75.0D);
+        second.prefWidthProperty().bind(table.widthProperty().multiply(75D / 800D));
 
         TableColumn<Incident, String> third = new TableColumn<>("Call Type");
         third.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
                 SupplierUtils.tryGet(() -> cell.getValue().type().formatted(), "* NEW *")
         ));
-        third.setPrefWidth(92.0D);
+        third.prefWidthProperty().bind(table.widthProperty().multiply(92D / 800D));
 
         TableColumn<Incident, String> fourth = new TableColumn<>("Priority");
         fourth.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
                 SupplierUtils.tryGet(() -> cell.getValue().priority().formatted())
         ));
-        fourth.setPrefWidth(140.0D);
+        fourth.prefWidthProperty().bind(table.widthProperty().multiply(140D / 800D));
 
         TableColumn<Incident, String> fifth = new TableColumn<>("Address");
         fifth.setCellValueFactory((cell) -> new ReadOnlyStringWrapper(
                 SupplierUtils.tryGet(() -> cell.getValue().address().toString())
         ));
-        fifth.setPrefWidth(341.0D);
+        fifth.prefWidthProperty().bind(table.widthProperty().multiply(341D / 800));
 
         table.getColumns().addAll(first, second, third, fourth, fifth);
     }

@@ -21,6 +21,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -71,39 +73,39 @@ public class CallViewer extends GUIPage {
     @Override
     public Node[] gui(Stage stage) {
         this.viewer = new GridPane();
-        this.viewer.setPrefWidth(800.0D);
-        this.viewer.setPrefHeight(710.0D);
+        this.viewer.prefWidthProperty().bind(this.width());
+        this.viewer.prefHeightProperty().bind(this.height());
+        this.viewer.setGridLinesVisible(true);
         VBox.setMargin(this.viewer, new Insets(20.0, 0.0, 0.0, 0.0));
 
         this.populateLocationData(this.viewer);
         this.populateCallData(this.viewer);
         this.populateNarrative(this.viewer);
 
-        this.viewer.getColumnConstraints().setAll(
-                new ColumnConstraints(10.0D, 498.6D, 498.6D, Priority.SOMETIMES, HPos.CENTER, true),
-                new ColumnConstraints(10.0D, 301.0D, 401.4D, Priority.SOMETIMES, HPos.CENTER, true)
-        );
-        this.viewer.getRowConstraints().setAll(
-                new ObjectDuplicator<>(
-                        new RowConstraints(10.0D, 367.0D, 367.0D, Priority.SOMETIMES, VPos.CENTER, true)
-                ).duplicate(2)
-        );
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.prefWidthProperty().bind(this.width().multiply(0.5));
+        this.viewer.getColumnConstraints().setAll(new ObjectDuplicator<>(columnConstraints).duplicate(2));
+
+        RowConstraints rowConstraints = new RowConstraints();
+        rowConstraints.prefHeightProperty().bind(this.height().multiply(0.5));
+        this.viewer.getRowConstraints().setAll(new ObjectDuplicator<>(rowConstraints).duplicate(2));
 
         return new GridPane[] {this.viewer};
     }
 
     void populateLocationData(GridPane viewer) {
-        VBox root = this.createRoot("locationData");
+        HBox root = this.createRoot("locationData", () -> new HBox());
 
-        root.setLayoutX(411.0);
-        root.setLayoutY(10.0);
-        root.setPrefHeight(200.0);
-        root.setPrefWidth(100.0);
+        root.prefHeightProperty().bind(this.height().multiply(1 / 2));
+        root.prefWidthProperty().bind(this.width().multiply(1 / 2));
         // ---------------- MAPS ----------------
 
         StackPane mapContainer = new StackPane();
-        mapContainer.setPrefWidth(180.0);
-        mapContainer.setPrefHeight(180.0);
+        mapContainer.prefHeightProperty().bind(this.height().multiply(0.25));
+        mapContainer.minWidthProperty().bind(this.width().multiply(0.25));
+        mapContainer.maxWidthProperty().bind(this.width().multiply(0.25));
+        mapContainer.setAlignment(Pos.CENTER);
+        mapContainer.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         IncidentAddress incidentAddress = this.incident.address();
         GeoAddress determineGeoAddress = incidentAddress.geoAddress(Main.firegen.geoLocator(), false);
@@ -255,7 +257,7 @@ public class CallViewer extends GUIPage {
         viewer.add(root, 0, 0);
     }
     void populateCallData(GridPane viewer) {
-        VBox root = this.createRoot("callData");
+        VBox root = this.createRoot("callData", () -> new VBox());
 
         root.setPrefHeight(362.0);
 
@@ -475,7 +477,7 @@ public class CallViewer extends GUIPage {
         viewer.add(root, 1, 0);
     }
     void populateNarrative(GridPane viewer) {
-        VBox root = this.createRoot("narrative");
+        VBox root = (VBox) this.createRoot("narrative", () -> new VBox());
 
         root.setAlignment(Pos.CENTER);
         root.setPrefHeight(22.0);
@@ -535,17 +537,20 @@ public class CallViewer extends GUIPage {
         narrativeTable.getItems().addAll(this.incident.narrative().entries());
 
         root.getChildren().addAll(narrativeHeader, narrativeTable);
-        viewer.add(root, 0, 1, 2, 1);
+        viewer.add(root, 0, 1);
     }
 
-    private VBox createRoot(String methodId) {
-        List<Node> nodes = this.viewer.getChildren().stream().filter(n -> n.getId().equalsIgnoreCase(methodId)).toList();
+    private <T extends Pane> T createRoot(String methodId, Supplier<T> obj) {
+        List<Node> nodes = this.viewer.getChildren().stream()
+                .filter(n -> n.getId() != null)
+                .filter(n -> n.getId().equalsIgnoreCase(methodId))
+                .toList();
         if (!nodes.isEmpty()) {
             for (Node node : nodes) {
                 this.viewer.getChildren().remove(node);
             }
         }
-        VBox root = new VBox();
+        T root = obj.get();
         root.setId(methodId);
         return root;
     }

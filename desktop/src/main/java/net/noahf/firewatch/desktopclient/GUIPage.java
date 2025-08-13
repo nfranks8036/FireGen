@@ -1,10 +1,10 @@
 package net.noahf.firewatch.desktopclient;
 
 import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -15,11 +15,15 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.noahf.firewatch.desktopclient.objects.Arrow;
 
-import javax.tools.Tool;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static net.noahf.firewatch.desktopclient.JavaFXManager.APPLICATION_NAME;
+
 public abstract class GUIPage {
+
+    private static final int TITLE_HEIGHT = 20 + 36;
+    private static final double TITLE_ELEMENT_SIZES = 36.0;
+    private static final Insets TITLE_PADDING = new Insets(20.0, 0.0, 0.0, 20.0);
 
     private Supplier<String> title;
     private final GUIPage back;
@@ -48,8 +52,6 @@ public abstract class GUIPage {
 
         Platform.runLater(() -> {
             AnchorPane masterRoot = new AnchorPane();
-            masterRoot.setPrefWidth(Main.fx.window);
-            masterRoot.setPrefHeight(Main.fx.window);
 
             VBox titleContainer = this.constructTitleBar();
 
@@ -61,8 +63,8 @@ public abstract class GUIPage {
             titleContainer.getChildren().addAll(root);
             masterRoot.getChildren().add(titleContainer);
 
-            stage.setScene(new Scene(masterRoot, Main.fx.window, Main.fx.window));
-            stage.setTitle("FireGen - " + this.title.get());
+            stage.setScene(new Scene(masterRoot));
+            stage.setTitle(APPLICATION_NAME + " - " + this.title.get());
             stage.show();
         });
     }
@@ -72,39 +74,45 @@ public abstract class GUIPage {
     protected void setDynamicTitle(Supplier<String> dynamicTitle) {
         this.title = dynamicTitle;
         this.titleText.setText(dynamicTitle.get());
-        this.stage.setTitle("FireGen - " + this.title.get());
+        this.stage.setTitle(APPLICATION_NAME + " - " + this.title.get());
     }
 
-    protected String getTitle() { return this.title.get(); }
+    protected String title() { return this.title.get(); }
+
+    public DoubleBinding width() { return this.stage.widthProperty().add(0); }
+    public DoubleBinding height() {
+        return this.stage.heightProperty().subtract(TITLE_HEIGHT);
+    }
 
     private void loading(Stage stage) {
         AnchorPane anchor = new AnchorPane();
-        anchor.setPrefWidth(800.0);
-        anchor.setPrefHeight(800.0);
+        if (this.back != null) {
+            this.stage.setWidth(this.back.stage.getWidth());
+            this.stage.setHeight(this.back.stage.getHeight());
+        }
+
         Label label = new Label("Loading your content...");
-        label.setFont(new Font(36.0));
-        label.setPadding(new Insets(20.0, 0.0, 0.0, 20.0));
+        label.setFont(new Font(TITLE_ELEMENT_SIZES));
+        label.setPadding(TITLE_PADDING);
         anchor.getChildren().addAll(label);
         Scene loading = new Scene(anchor);
         loading.setCursor(Cursor.WAIT);
-        stage.setTitle("FireGen - " + this.getTitle() + " - Loading...");
+        stage.setTitle(APPLICATION_NAME + " - " + this.title() + " - Loading...");
         stage.setScene(loading);
     }
 
     private VBox constructTitleBar() {
         VBox titleContainer = new VBox();
-        titleContainer.setPrefHeight(Main.fx.window);
-        titleContainer.setPrefWidth(Main.fx.window);
 
         HBox titleBar = new HBox();
-        titleBar.setPrefWidth(Main.fx.window);
-        titleBar.setPrefHeight(20 + 36);
+//        titleBar.setPrefWidth(Main.fx.window);
+        titleBar.setPrefHeight(TITLE_HEIGHT);
 
         if (this.backFunctionality && this.back != null) {
             StackPane goBackContainer = new StackPane();
-            goBackContainer.setPadding(new Insets(20.0, 0.0, 0.0, 20.0));
+            goBackContainer.setPadding(TITLE_PADDING);
 
-            Arrow goBack = new Arrow(36.0);
+            Arrow goBack = new Arrow(TITLE_ELEMENT_SIZES);
             goBackContainer.getChildren().add(goBack);
 
             goBackContainer.setCursor(Cursor.CLOSED_HAND);
@@ -125,8 +133,8 @@ public abstract class GUIPage {
         }
 
         this.titleText = new Label(this.title.get());
-        this.titleText.setFont(new Font(36.0));
-        this.titleText.setPadding(new Insets(20.0, 0.0, 0.0, 20.0));
+        this.titleText.setFont(new Font(TITLE_ELEMENT_SIZES));
+        this.titleText.setPadding(TITLE_PADDING);
         titleBar.getChildren().add(this.titleText);
 
         titleContainer.getChildren().add(titleBar);
