@@ -64,16 +64,16 @@ public class GeoLocator {
                     object.get("lon").getAsDouble()
             );
 
-            String name = this.tryOrNull(() -> object.get("name").getAsString());
+            String name = this.tryOrNull(() -> object.get("name").getAsString()).toUpperCase();
 
             JsonObject jsonAddress = this.tryOrNull(() -> object.get("address").getAsJsonObject());
             if (jsonAddress == null) {
                 throw new NoAddressAtLocationException(query, "No address found at given input");
             }
 
-            String houseNumber = this.tryOrNull(() -> jsonAddress.get("house_number").getAsString());
-            String road = this.tryOrNull(() -> jsonAddress.get("road").getAsString());
-            String city = this.tryOrNull(() -> jsonAddress.get("city").getAsString());
+            String houseNumber = this.tryOrNull(() -> jsonAddress.get("house_number").getAsString()).toUpperCase();
+            String road = this.tryOrNull(() -> jsonAddress.get("road").getAsString()).toUpperCase();
+            String city = this.tryOrNull(() -> jsonAddress.get("city").getAsString()).toUpperCase();
             State state = this.tryOrNull(() -> State.valueOf(jsonAddress.get("state").getAsString().toUpperCase(Locale.ROOT)));
             int zipCode = this.tryOrElse(() -> jsonAddress.get("postcode").getAsInt(), 0);
 

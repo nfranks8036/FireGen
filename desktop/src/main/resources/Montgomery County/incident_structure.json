@@ -29,6 +29,13 @@
                 "EMERGENCY_RESPONSE"
             ]
         },
+		{
+			"name": "ELECTRICAL_HAZARD",
+			"priorities": [
+				"EMERGENCY_RESPONSE",
+				"NON_EMERGENCY_RESPONSE"
+			]
+		},
         {
             "name": "MOTOR_VEHICLE_CRASH",
             "priorities": [
