@@ -7,6 +7,7 @@ import com.sothawo.mapjfx.MapView;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -194,15 +195,22 @@ public class CallViewer extends GUIPage {
                         textMeasurer.setText(now);
                         textMeasurer.applyCss();
                     });
-                    houseNumbers.prefWidthProperty().bind(Bindings.createDoubleBinding(() -> {
-                        double textWidth = textMeasurer.getLayoutBounds().getWidth();
-                        textMeasurer.setText("0".repeat(2));
-                        double minWidth = textMeasurer.getLayoutBounds().getWidth() + 20;
-                        textMeasurer.setText("0".repeat(7));
-                        double maxWidth = textMeasurer.getLayoutBounds().getWidth() + 20;
-                        textMeasurer.setText(houseNumbers.getText());
-                        return Math.min(Math.max(textWidth, minWidth), maxWidth);
-                    }, textMeasurer.layoutBoundsProperty(), houseNumbers.textProperty()));
+                    ObservableValue<? extends Number> observable =
+                            Bindings.createDoubleBinding(() -> {
+                                double textWidth = textMeasurer.getLayoutBounds().getWidth();
+                                textMeasurer.setText("0".repeat(2));
+                                double minWidth = textMeasurer.getLayoutBounds().getWidth() * 4;
+                                textMeasurer.setText("0".repeat(7));
+                                double maxWidth = textMeasurer.getLayoutBounds().getWidth() + (minWidth * 4);
+                                textMeasurer.setText(houseNumbers.getText());
+                                System.out.println(textWidth + ", " + minWidth + " -> " + maxWidth);
+                                double finalV = Math.min(Math.max(textWidth, minWidth), maxWidth);
+                                System.out.println("final: " + finalV);
+                                return finalV;
+                            }, textMeasurer.layoutBoundsProperty(), houseNumbers.textProperty());
+                    houseNumbers.prefWidthProperty().bind(observable);
+                    houseNumbers.maxWidthProperty().bind(observable);
+                    houseNumbers.minWidthProperty().bind(observable);
                     field.getChildren().add(houseNumbers);
                     // end measuring text code
 
