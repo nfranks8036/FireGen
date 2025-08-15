@@ -140,10 +140,22 @@ public class CallViewer extends GUIPage {
 
         // ---------------- ADDRESS FIELDS ----------------
         GridPane addressForm = new GridPane();
+        addressForm.setGridLinesVisible(true);
         addressForm.setPrefHeight(255.0);
         addressForm.setPrefWidth(400.0);
         addressForm.setAlignment(Pos.CENTER);
         addressForm.setPadding(new Insets(0.0, 10.0, 5.0, 10.0));
+
+        addressForm.getColumnConstraints().setAll(
+                new ObjectDuplicator<>(
+                        new ColumnConstraints(10.0, 249.3, 249.3, Priority.SOMETIMES, HPos.CENTER, true)
+                ).duplicate(2)
+        );
+        addressForm.getRowConstraints().setAll(
+                new ObjectDuplicator<>(
+                        new RowConstraints(10.0, 50.0, 30.0, Priority.SOMETIMES, VPos.CENTER, true)
+                ).duplicate(4)
+        );
 
         FormInput.text(() -> incidentAddress.commonName())
                 .title("Common Name")
@@ -156,14 +168,16 @@ public class CallViewer extends GUIPage {
 
         FormInput.custom(() -> {
                     HBox box = new HBox(5);
-                    box.setPrefWidth(230);
-                    box.setMaxWidth(230);
-                    box.setMinWidth(230);
+                    box.setPrefWidth(150);
+                    box.setMaxWidth(150);
+                    box.setMinWidth(150);
                     return box;
                 })
                 .title("Street Address")
                 .add(1, addressForm)
                 .update((field) -> {
+                    field.prefWidthProperty().bind(addressForm.getColumnConstraints().get(1).prefWidthProperty());
+
                     TextField houseNumbers = FormInput
                             .text(() -> SupplierUtils.tryGet(() -> incidentAddress.houseNumbers()))
                             .title("#")
@@ -187,7 +201,7 @@ public class CallViewer extends GUIPage {
                         textMeasurer.setText("0".repeat(7));
                         double maxWidth = textMeasurer.getLayoutBounds().getWidth() + 20;
                         textMeasurer.setText(houseNumbers.getText());
-                        return Math.min(Math.max(textWidth + 20, minWidth), maxWidth);
+                        return Math.min(Math.max(textWidth, minWidth), maxWidth);
                     }, textMeasurer.layoutBoundsProperty(), houseNumbers.textProperty()));
                     field.getChildren().add(houseNumbers);
                     // end measuring text code
@@ -253,17 +267,6 @@ public class CallViewer extends GUIPage {
                         e.consume();
                     });
                 });
-
-        addressForm.getColumnConstraints().setAll(
-                new ObjectDuplicator<>(
-                        new ColumnConstraints(10.0, 249.3, 249.3, Priority.SOMETIMES, HPos.CENTER, true)
-                ).duplicate(2)
-        );
-        addressForm.getRowConstraints().setAll(
-                new ObjectDuplicator<>(
-                        new RowConstraints(10.0, 50.0, 30.0, Priority.SOMETIMES, VPos.CENTER, true)
-                ).duplicate(4)
-        );
 
         // ---------------- ADDRESS FIELDS (END) ----------------
 
