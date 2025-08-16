@@ -4,6 +4,13 @@ import java.util.function.Predicate;
 
 public class ListMark<T> {
 
+    public static String removeKeys(String value, String... keys) {
+        for (String key : keys) {
+            value = value.replace(key, "");
+        }
+        return value;
+    }
+
     public static <T> ListMark<T> of(String name, Predicate<T> filter, int max) {
         return new ListMark<>(name, filter, max);
     }

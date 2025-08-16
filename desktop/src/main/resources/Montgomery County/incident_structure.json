@@ -80,67 +80,67 @@
         {
             "name": "FIRE_ENGINE",
             "callsign": "ENGINE",
-            "alphabetical": "E"
+            "abbreviation": "E"
         },
         {
             "name": "FIRE_LADDER",
             "callsign": "LADDER",
-            "alphabetical": "L"
+            "abbreviation": "L"
         },
         {
             "name": "FIRE_TANKER",
             "callsign": "TANKER",
-            "alphabetical": "T"
+            "abbreviation": "T"
         },
         {
             "name": "FIRE_UTILITY",
             "callsign": "UTILITY",
-            "alphabetical": "U"
+            "abbreviation": "U"
         },
         {
-            "name": "FIRE_RESPONSE_CAR",
+            "name": "FIRE_RESPONSE",
             "callsign": "RESPONSE",
-            "alphabetical": "RESP"
+            "abbreviation": "RESP"
         },
         {
             "name": "FIRE_ATTACK",
             "callsign": "ATTACK",
-            "alphabetical": "ATT"
+            "abbreviation": "ATT"
         },
         {
             "name": "FIRE_BRUSH",
             "callsign": "BRUSH",
-            "alphabetical": "BR"
+            "abbreviation": "BR"
         },
         {
             "name": "FIRE_HAZMAT",
             "callsign": "HAZMAT",
-            "alphabetical": "HAZM"
+            "abbreviation": "HAZM"
         },
         {
             "name": "FIRE_AIR",
             "callsign": "AIR",
-            "alphabetical": "AIR"
+            "abbreviation": "AIR"
         },
         {
             "name": "FIRE_BATTALION_CHIEF",
             "callsign": "BATTALION CHIEF",
-            "alphabetical": null
+            "abbreviation": null
         },
         {
             "name": "EMS_RESCUE",
             "callsign": "RESCUE",
-            "alphabetical": "R"
+            "abbreviation": "R"
         },
         {
             "name": "EMS_MEDIC",
             "callsign": "MEDIC",
-            "alphabetical": "M"
+            "abbreviation": "M"
         },
         {
             "name": "EMS_SUPERVISOR",
             "callsign": "SUPERVISOR",
-            "alphabetical": null
+            "abbreviation": null
         }
     ],
     "caller_types": [
@@ -377,23 +377,23 @@
         "OTHER"
     ],
     "radio_channels": [
-        "Mont F/R 1",
-        "Mont F/R South 3",
-        "Mont F/R South 5",
-        "Mont F/R South 7",
-        "Mont F/R South 9",
-        "Mont F/R South 11",
+        "F/R 1",
+        "South 3",
+        "South 5",
+        "South 7",
+        "South 9",
+        "South 11",
         "MontSO Disp",
         "MontSO Court",
         "MontSO Jail",
-        "Blacksburg FD 1",
-        "Blacksburg FD 3",
-        "Blacksburg RS 1",
-        "BlacksburgPD Dsp",
-        "ChristiansburgFD",
-        "ChristiansburgPD",
-        "VT Resc Sq 1",
-        "VT Resc Sq 3",
-        "VT Police 1"
+        "BFD 1",
+        "BFD 3",
+        "BRS 1",
+        "BPD",
+        "CFD",
+        "CPD",
+        "VTRS 1",
+        "VTRS 3",
+        "VTPD"
     ]
 }

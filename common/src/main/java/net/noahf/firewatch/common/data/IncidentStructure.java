@@ -57,6 +57,8 @@ public class IncidentStructure extends StructureObject {
         return new StructureList<>(this.incident_types, (i) -> i);
     }
 
+    public StructureList<UnitType> unitTypes() { return new StructureList<>(this.unit_types); }
+
     public StructureList<CallerType> callerTypes() {
         return new StructureList<>(this.caller_types, CallerType::new);
     }

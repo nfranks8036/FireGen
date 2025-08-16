@@ -319,7 +319,7 @@ public class CallViewer extends GUIPage {
         callDataForm.getRowConstraints().addAll(
                 new ObjectDuplicator<>(
                         new RowConstraints(10.0, 89.0, 89.0, Priority.SOMETIMES, VPos.CENTER, true)
-                ).duplicate(7)
+                ).duplicate(8)
         );
 
 //        Label incidentNumberLabel = this.formText("Incident #");
@@ -343,8 +343,22 @@ public class CallViewer extends GUIPage {
 //        callDataForm.add(incidentNumber, 1, 0);
 
         FormInput.choices(String.class)
-                .title("Type")
+                .title("Status")
                 .add(1, callDataForm)
+                .update((status) -> {
+                    status.setPadding(new Insets(0));
+                    status.getItems().addAll(Main.firegen.incidentStructure().incidentStatuses().asFormatted());
+                    status.setValue(SupplierUtils.tryGet(() -> this.incident.status().formatted()));
+                    status.getSelectionModel().selectedItemProperty().addListener((obs, old, now) -> {
+                        this.incident.status(Main.firegen.incidentStructure().incidentStatuses().getFromFormatted(now));
+                        this.setDynamicTitle(generateTitle(this.incident));
+                        this.populateCallData(this.viewer);
+                    });
+                });
+
+        FormInput.choices(String.class)
+                .title("Type")
+                .add(2, callDataForm)
                 .update((box) -> {
                     box.setPadding(new Insets(0));
                     box.getItems().addAll(Main.firegen.incidentStructure().incidentTypes().asFormatted());
@@ -359,7 +373,7 @@ public class CallViewer extends GUIPage {
         // ------------------ INCIDENT PRIORITY ------------------
         FormInput.custom(() -> new HBox())
                 .title("Priority")
-                .add(2, callDataForm)
+                .add(3, callDataForm)
                 .update((box) -> {
                     if (this.incident.type() == null || !this.incident.type().isEms()) {
                         // ------------------ NON-EMS INCIDENT ------------------
@@ -420,7 +434,7 @@ public class CallViewer extends GUIPage {
 
         FormInput.choices(String.class)
                 .title("Caller")
-                .add(3, callDataForm)
+                .add(4, callDataForm)
                 .update((caller) -> {
                     caller.getItems().addAll(Main.firegen.incidentStructure().callerTypes().asFormatted());
                     caller.setValue(SupplierUtils.tryGet(() -> this.incident.callerType().formatted()));
@@ -432,7 +446,7 @@ public class CallViewer extends GUIPage {
 
         FormInput.check(Agency.class)
                 .title("Agencies")
-                .add(4, callDataForm)
+                .add(5, callDataForm)
                 .update((agency) -> {
                     agency.setConverter(new StringConverter<>() {
                         @Override
@@ -459,7 +473,7 @@ public class CallViewer extends GUIPage {
 
         FormInput.check(RadioChannel.class)
                 .title("Radio Tac")
-                .add(5, callDataForm)
+                .add(6, callDataForm)
                 .update((radio) -> {
                     radio.setConverter(createStringConverter(Main.firegen.incidentStructure().radioChannels()));
                     radio.getItems().addAll(Main.firegen.incidentStructure().radioChannels().asCollection());
@@ -472,6 +486,20 @@ public class CallViewer extends GUIPage {
 
                         this.incident.radioChannels(new HashSet<>(realRadioChannelList));
                     });
+                });
+
+        FormInput.button()
+                .title("Edit Units")
+                .add((label, button) -> callDataForm.add(button, 0, 7, 2, 1))
+                .update(units -> {
+                    // UnitList initializer
+                });
+
+        FormInput.button()
+                .title("Share Incident")
+                .add((label, button) -> callDataForm.add(button, 0, 8, 2, 1))
+                .update(share -> {
+                    // ShareIncident initializer
                 });
 
         // ---------------- CALL DATA FORM (END) ----------------

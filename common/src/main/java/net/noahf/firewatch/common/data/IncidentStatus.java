@@ -1,5 +1,6 @@
 package net.noahf.firewatch.common.data;
 
+import net.noahf.firewatch.common.data.objects.ListMark;
 import net.noahf.firewatch.common.data.objects.StructureObject;
 
 public class IncidentStatus extends StructureObject {
@@ -10,7 +11,7 @@ public class IncidentStatus extends StructureObject {
     private final String incidentStatus;
 
     IncidentStatus(String incidentStatus) {
-        this.incidentStatus = incidentStatus.replace("*", "");
+        this.incidentStatus = ListMark.removeKeys(incidentStatus, "*", "!");
     }
 
     @Override public String name() { return incidentStatus; }

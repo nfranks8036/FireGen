@@ -10,7 +10,7 @@ public class UnitType extends StructureObject {
 
     @Override public String name() { return this.name; }
     @Override public String formatted() { return this.name.replace("_", " "); }
-    public String getCallsign() { return this.callsign; }
-    public String getAbbreviation() { return this.abbreviation; }
+    public String callsign() { return this.callsign; }
+    public String abbreviation() { return this.abbreviation; }
 
 }
