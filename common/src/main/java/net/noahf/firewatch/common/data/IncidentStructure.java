@@ -1,15 +1,11 @@
 package net.noahf.firewatch.common.data;
 
-import com.google.gson.annotations.JsonAdapter;
-import net.noahf.firewatch.common.data.ems.EmsMedical;
-import net.noahf.firewatch.common.data.ems.EmsMedicalDeserializer;
+import net.noahf.firewatch.common.data.ems.EmsField;
 import net.noahf.firewatch.common.data.objects.ListMark;
 import net.noahf.firewatch.common.data.objects.StructureList;
 import net.noahf.firewatch.common.data.objects.StructureObject;
-import net.noahf.firewatch.common.units.UnitAssignment;
 
 import java.util.List;
-import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
 public class IncidentStructure extends StructureObject {
@@ -21,8 +17,7 @@ public class IncidentStructure extends StructureObject {
     private List<IncidentType> incident_types;
     private List<UnitType> unit_types;
     private List<String> caller_types;
-    @JsonAdapter(EmsMedicalDeserializer.class)
-    private EmsMedical ems_medical;
+    private EmsField ems_medical;
     private List<String> agency_types;
     private List<String> radio_channels;
 
@@ -66,7 +61,7 @@ public class IncidentStructure extends StructureObject {
         return new StructureList<>(this.caller_types, CallerType::new);
     }
 
-    public EmsMedical emsMedical() {
+    public EmsField emsMedical() {
         return this.ems_medical;
     }
 

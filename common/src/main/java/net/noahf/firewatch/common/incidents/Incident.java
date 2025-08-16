@@ -1,15 +1,14 @@
 package net.noahf.firewatch.common.incidents;
 
 import net.noahf.firewatch.common.FireGen;
-import net.noahf.firewatch.common.data.CallerType;
-import net.noahf.firewatch.common.data.IncidentPriority;
-import net.noahf.firewatch.common.data.IncidentStatus;
-import net.noahf.firewatch.common.data.IncidentType;
+import net.noahf.firewatch.common.data.*;
 import net.noahf.firewatch.common.geolocation.IncidentAddress;
 import net.noahf.firewatch.common.narrative.IncidentNarrative;
+import net.noahf.firewatch.common.units.Agency;
 import net.noahf.firewatch.common.units.Unit;
 import net.noahf.firewatch.common.units.UnitAssignment;
 import net.noahf.firewatch.common.utils.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -23,8 +22,11 @@ public class Incident {
     private IncidentPriority priority;
     private IncidentAddress address;
     private IncidentNarrative narrative;
+    private IncidentEms ems;
     private CallerType callerType;
     private Instant created, closed;
+    private Set<RadioChannel> radioChannels;
+    private Set<Agency> agencies;
     private Set<UnitAssignment> assignments;
 
     public Incident() {
@@ -34,8 +36,11 @@ public class Incident {
         this.priority = null;
         this.address = IncidentAddress.blankAddress();
         this.narrative = new IncidentNarrative();
+        this.ems = null;
         this.created = Instant.now();
         this.closed = null;
+        this.radioChannels = new HashSet<>();
+        this.agencies = new HashSet<>();
         this.assignments = new HashSet<>();
     }
 
@@ -69,10 +74,26 @@ public class Incident {
 
     public IncidentNarrative narrative() { return this.narrative; }
 
+    public @Nullable IncidentEms ems() {
+        if (!this.type.isEms()) {
+            return null;
+        }
+        if (this.ems == null) {
+            this.ems = new IncidentEms();
+        }
+        return this.ems;
+    }
+
     public CallerType callerType() { return this.callerType; }
     public void callerType(CallerType newCallerType) { this.callerType = newCallerType; }
 
     public Instant created() { return this.created; }
     public Instant closed() { return this.closed; }
+
+    public Set<RadioChannel> radioChannels() { return this.radioChannels; }
+    public void radioChannels(Set<RadioChannel> assignedRadioChannels) { this.radioChannels = assignedRadioChannels; }
+
+    public Set<Agency> agencies() { return this.agencies; }
+    public void agencies(Set<Agency> assignedAgencies) { this.agencies = assignedAgencies; }
 
 }

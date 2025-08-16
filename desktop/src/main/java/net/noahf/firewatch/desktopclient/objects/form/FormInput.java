@@ -5,12 +5,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import net.noahf.firewatch.desktopclient.utils.SupplierUtils;
+import org.controlsfx.control.CheckComboBox;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
@@ -33,7 +35,7 @@ public abstract class FormInput<T extends Node> {
         };
     }
 
-    public static <R> FormInput<ChoiceBox<R>> choices() {
+    public static <R> FormInput<ChoiceBox<R>> choices(Class<R> type) {
         return new FormInput<>() {
             @Override
             public ChoiceBox<R> findOriginalNode() {
@@ -47,7 +49,7 @@ public abstract class FormInput<T extends Node> {
         };
     }
 
-    public static <R> FormInput<ComboBox<R>> combo(boolean searchable) {
+    public static <R> FormInput<ComboBox<R>> combo(Class<R> type, boolean searchable) {
         return new FormInput<>() {
             @SuppressWarnings("unchecked")
             @Override
@@ -95,6 +97,19 @@ public abstract class FormInput<T extends Node> {
                         });
                     });
                 }
+                return combo;
+            }
+        };
+    }
+
+    public static <R> FormInput<CheckComboBox<R>> check(Class<R> type) {
+        return new FormInput<>() {
+            @Override
+            public CheckComboBox<R> findOriginalNode() {
+                CheckComboBox<R> combo = new CheckComboBox<>();
+                combo.setPadding(new Insets(0));
+                GridPane.setValignment(combo, VPos.CENTER);
+                GridPane.setHalignment(combo, HPos.CENTER);
                 return combo;
             }
         };

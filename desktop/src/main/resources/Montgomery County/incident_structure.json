@@ -1,8 +1,25 @@
 {
-	"municipality": "Montgomery County",
-	"incident_statuses": ["*NEW", "DISPATCHED", "IN_PROGRESS", "RESOLVED", "!CLOSED"],
-	"unit_assignment_statuses": ["*ASSIGNED", "EN_ROUTE", "ON_SCENE", "TRANSPORTING_SECONDARY", "ARRIVED_SECONDARY", "!AVAILABLE"],
-	"unit_operation_statuses": ["*IN_SERVICE", "!OUT_OF_SERVICE", "ASSIGNED_INCIDENT"],
+    "municipality": "Montgomery County",
+    "incident_statuses": [
+        "*NEW",
+        "DISPATCHED",
+        "IN_PROGRESS",
+        "RESOLVED",
+        "!CLOSED"
+    ],
+    "unit_assignment_statuses": [
+        "*ASSIGNED",
+        "EN_ROUTE",
+        "ON_SCENE",
+        "TRANSPORTING_SECONDARY",
+        "ARRIVED_SECONDARY",
+        "!AVAILABLE"
+    ],
+    "unit_operation_statuses": [
+        "*IN_SERVICE",
+        "!OUT_OF_SERVICE",
+        "ASSIGNED_INCIDENT"
+    ],
     "incident_types": [
         {
             "name": "FIRE_SERVICE_CALL",
@@ -29,13 +46,13 @@
                 "EMERGENCY_RESPONSE"
             ]
         },
-		{
-			"name": "ELECTRICAL_HAZARD",
-			"priorities": [
-				"EMERGENCY_RESPONSE",
-				"NON_EMERGENCY_RESPONSE"
-			]
-		},
+        {
+            "name": "ELECTRICAL_HAZARD",
+            "priorities": [
+                "EMERGENCY_RESPONSE",
+                "NON_EMERGENCY_RESPONSE"
+            ]
+        },
         {
             "name": "MOTOR_VEHICLE_CRASH",
             "priorities": [
@@ -45,7 +62,7 @@
         },
         {
             "name": "EMS",
-			"ems": true,
+            "ems": true,
             "priorities": [
                 "MEDICAL_CALL"
             ]
@@ -134,176 +151,220 @@
         "SEE_NARRATIVE"
     ],
     "ems_medical": {
-        "field:priority": [
+        "fields": [
             {
-                "name": "OMEGA",
-                "abbreviation": "O"
+                "name": "Priority",
+                "items": [
+                    {
+                        "name": "OMEGA",
+                        "abbreviation": "O"
+                    },
+                    {
+                        "name": "ALPHA",
+                        "abbreviation": "A"
+                    },
+                    {
+                        "name": "BRAVO",
+                        "abbreviation": "B"
+                    },
+                    {
+                        "name": "CHARLIE",
+                        "abbreviation": "C"
+                    },
+                    {
+                        "name": "DELTA",
+                        "abbreviation": "D"
+                    },
+                    {
+                        "name": "ECHO",
+                        "abbreviation": "E"
+                    }
+                ]
             },
             {
-                "name": "ALPHA",
-                "abbreviation": "A"
-            },
-            {
-                "name": "BRAVO",
-                "abbreviation": "B"
-            },
-            {
-                "name": "CHARLIE",
-                "abbreviation": "C"
-            },
-            {
-                "name": "DELTA",
-                "abbreviation": "D"
-            },
-            {
-                "name": "ECHO",
-                "abbreviation": "E"
-            }
-        ],
-        "field:chief_complaint": [
-            {
-                "name": "ABDOMINAL_PAIN",
-                "description": "Abdominal Pain / Problems"
-            },
-            {
-                "name": "ALLERGIC_REACTION",
-                "description": "Allergic Reaction / Envenomations"
-            },
-            {
-                "name": "ANIMAL_BITE",
-                "description": "Animal Bite / Attack"
-            },
-            {
-                "name": "ASSAULT",
-                "description": "Assault / Sexual Assault / Stun Gun"
-            },
-            {
-                "name": "BACK_PAIN",
-                "description": "Back Pain"
-            },
-            {
-                "name": "BREATHING_PROBLEM",
-                "description": "Breathing Problem"
-            },
-            {
-                "name": "BURN_SUBJECT",
-                "description": "Burns / Explosions"
-            },
-            {
-                "name": "HAZARDOUS_EXPOSURE",
-                "description": "Hazardous Exposure"
-            },
-            {
-                "name": "CARDIAC_ARREST",
-                "description": "Cardiac or Respiratory Arrest"
-            },
-            {
-                "name": "CHEST_PAIN",
-                "description": "Chest Pain"
-            },
-            {
-                "name": "CHOKING",
-                "description": "Choking"
-            },
-            {
-                "name": "SEIZURES",
-                "description": "Convulsions / Seizures"
-            },
-            {
-                "name": "DIABETIC_PROBLEMS",
-                "description": "Diabetic Problems"
-            },
-            {
-                "name": "DROWNING",
-                "description": "Drowning"
-            },
-            {
-                "name": "ELECTROCUTION",
-                "description": "Electrocution / Lightning"
-            },
-            {
-                "name": "EYE_PROBLEM",
-                "description": "Eye Problems"
-            },
-            {
-                "name": "FALLS",
-                "description": "Falls"
-            },
-            {
-                "name": "HEADACHE",
-                "description": "Headache"
-            },
-            {
-                "name": "HEART_PROBLEM",
-                "description": "Heart Problems"
-            },
-            {
-                "name": "ENVIRONMENTAL_EXPOSURE",
-                "description": "Heat / Cold Exposure"
-            },
-            {
-                "name": "HEMORRHAGE",
-                "description": "Hemorrhage / Lacerations"
-            },
-            {
-                "name": "ENTRAPMENTS",
-                "description": "Entrapments"
-            },
-            {
-                "name": "OVERDOSE",
-                "description": "Overdose / Poisoning"
-            },
-            {
-                "name": "PREGNANCY",
-                "description": "Pregnancy / Childbirth / Miscarriage"
-            },
-            {
-                "name": "PSYCHIATRIC_PROBLEM",
-                "description": "Psychiatric / Suicide Attempt"
-            },
-            {
-                "name": "SICK_PERSON",
-                "description": "Sick Person"
-            },
-            {
-                "name": "PENETRATING_TRAUMA",
-                "description": "Stab / Gunshot / Penetrating Trauma"
-            },
-            {
-                "name": "STROKE",
-                "description": "Stroke / Transient Ischemic Attack"
-            },
-            {
-                "name": "MOTOR_VEHICLE_CRASH",
-                "description": "Motor Vehicle Crash"
-            },
-            {
-                "name": "TRAUMATIC_INJURY",
-                "description": "Traumatic Injury"
-            },
-            {
-                "name": "SUBJECT_UNCONSCIOUS",
-                "description": "Unconscious / Fainting"
-            },
-            {
-                "name": "UNKNOWN_MEDICAL_PROBLEM",
-                "description": "Unknown Medical Problem"
-            },
-            {
-                "name": "INTER_FACILITY_TRANSFER",
-                "description": "Inter-Facility Transfer / Palliative Care"
-            },
-            {
-                "name": "AUTOMATIC_CRASH_NOTIFICATION",
-                "description": "Automatic Crash Notification"
-            },
-            {
-                "name": "HCP_REFERRAL",
-                "description": "HCP Referral (UK)"
-            },
-            {
-                "name": "OUTBREAK",
-                "description": "Pandemic / Epidemic / Outbreak"
+                "name": "Chief Complaint",
+                "items": [
+                    {
+                        "name": "ABDOMINAL_PAIN",
+                        "description": "Abdominal Pain / Problems",
+                        "abbreviation": "1"
+                    },
+                    {
+                        "name": "ALLERGIC_REACTION",
+                        "description": "Allergic Reaction / Envenomations",
+                        "abbreviation": "2"
+                    },
+                    {
+                        "name": "ANIMAL_BITE",
+                        "description": "Animal Bite / Attack",
+                        "abbreviation": "3"
+                    },
+                    {
+                        "name": "ASSAULT",
+                        "description": "Assault / Sexual Assault / Stun Gun",
+                        "abbreviation": "4"
+                    },
+                    {
+                        "name": "BACK_PAIN",
+                        "description": "Back Pain",
+                        "abbreviation": "5"
+                    },
+                    {
+                        "name": "BREATHING_PROBLEM",
+                        "description": "Breathing Problem",
+                        "abbreviation": "6"
+                    },
+                    {
+                        "name": "BURN_SUBJECT",
+                        "description": "Burns / Explosions",
+                        "abbreviation": "7"
+                    },
+                    {
+                        "name": "HAZARDOUS_EXPOSURE",
+                        "description": "Hazardous Exposure",
+                        "abbreviation": "8"
+                    },
+                    {
+                        "name": "CARDIAC_ARREST",
+                        "description": "Cardiac or Respiratory Arrest",
+                        "abbreviation": "9"
+                    },
+                    {
+                        "name": "CHEST_PAIN",
+                        "description": "Chest Pain",
+                        "abbreviation": "10"
+                    },
+                    {
+                        "name": "CHOKING",
+                        "description": "Choking",
+                        "abbreviation": "11"
+                    },
+                    {
+                        "name": "SEIZURES",
+                        "description": "Convulsions / Seizures",
+                        "abbreviation": "12"
+                    },
+                    {
+                        "name": "DIABETIC_PROBLEMS",
+                        "description": "Diabetic Problems",
+                        "abbreviation": "13"
+                    },
+                    {
+                        "name": "DROWNING",
+                        "description": "Drowning",
+                        "abbreviation": "14"
+                    },
+                    {
+                        "name": "ELECTROCUTION",
+                        "description": "Electrocution / Lightning",
+                        "abbreviation": "15"
+                    },
+                    {
+                        "name": "EYE_PROBLEM",
+                        "description": "Eye Problems",
+                        "abbreviation": "16"
+                    },
+                    {
+                        "name": "FALLS",
+                        "description": "Falls",
+                        "abbreviation": "17"
+                    },
+                    {
+                        "name": "HEADACHE",
+                        "description": "Headache",
+                        "abbreviation": "18"
+                    },
+                    {
+                        "name": "HEART_PROBLEM",
+                        "description": "Heart Problems",
+                        "abbreviation": "19"
+                    },
+                    {
+                        "name": "ENVIRONMENTAL_EXPOSURE",
+                        "description": "Heat / Cold Exposure",
+                        "abbreviation": "20"
+                    },
+                    {
+                        "name": "HEMORRHAGE",
+                        "description": "Hemorrhage / Lacerations",
+                        "abbreviation": "21"
+                    },
+                    {
+                        "name": "ENTRAPMENTS",
+                        "description": "Entrapments",
+                        "abbreviation": "22"
+                    },
+                    {
+                        "name": "OVERDOSE",
+                        "description": "Overdose / Poisoning",
+                        "abbreviation": "23"
+                    },
+                    {
+                        "name": "PREGNANCY",
+                        "description": "Pregnancy / Childbirth / Miscarriage",
+                        "abbreviation": "24"
+                    },
+                    {
+                        "name": "PSYCHIATRIC_PROBLEM",
+                        "description": "Psychiatric / Suicide Attempt",
+                        "abbreviation": "25"
+                    },
+                    {
+                        "name": "SICK_PERSON",
+                        "description": "Sick Person",
+                        "abbreviation": "26"
+                    },
+                    {
+                        "name": "PENETRATING_TRAUMA",
+                        "description": "Stab / Gunshot / Penetrating Trauma",
+                        "abbreviation": "27"
+                    },
+                    {
+                        "name": "STROKE",
+                        "description": "Stroke / Transient Ischemic Attack",
+                        "abbreviation": "28"
+                    },
+                    {
+                        "name": "MOTOR_VEHICLE_CRASH",
+                        "description": "Motor Vehicle Crash",
+                        "abbreviation": "29"
+                    },
+                    {
+                        "name": "TRAUMATIC_INJURY",
+                        "description": "Traumatic Injury",
+                        "abbreviation": "30"
+                    },
+                    {
+                        "name": "SUBJECT_UNCONSCIOUS",
+                        "description": "Unconscious / Fainting",
+                        "abbreviation": "31"
+                    },
+                    {
+                        "name": "UNKNOWN_MEDICAL_PROBLEM",
+                        "description": "Unknown Medical Problem",
+                        "abbreviation": "32"
+                    },
+                    {
+                        "name": "INTER_FACILITY_TRANSFER",
+                        "description": "Inter-Facility Transfer / Palliative Care",
+                        "abbreviation": "33"
+                    },
+                    {
+                        "name": "AUTOMATIC_CRASH_NOTIFICATION",
+                        "description": "Automatic Crash Notification",
+                        "abbreviation": "34"
+                    },
+                    {
+                        "name": "HCP_REFERRAL",
+                        "description": "HCP Referral (UK)",
+                        "abbreviation": "35"
+                    },
+                    {
+                        "name": "OUTBREAK",
+                        "description": "Pandemic / Epidemic / Outbreak",
+                        "abbreviation": "36"
+                    }
+                ]
             }
         ]
     },
@@ -315,24 +376,24 @@
         "SHERIFFS_OFFICE",
         "OTHER"
     ],
-	"radio_channels": [
-		"Mont F/R 1",
-		"Mont F/R South 3",
-		"Mont F/R South 5",
-		"Mont F/R South 7",
-		"Mont F/R South 9",
-		"Mont F/R South 11",
-		"MontSO Disp",
-		"MontSO Court",
-		"MontSO Jail",
-		"Blacksburg FD 1",
-		"Blacksburg FD 3",
-		"Blacksburg RS 1",
-		"BlacksburgPD Dsp",
-		"ChristiansburgFD",
-		"ChristiansburgPD",
-		"VT Resc Sq 1",
-		"VT Resc Sq 3",
-		"VT Police 1"
-	]
+    "radio_channels": [
+        "Mont F/R 1",
+        "Mont F/R South 3",
+        "Mont F/R South 5",
+        "Mont F/R South 7",
+        "Mont F/R South 9",
+        "Mont F/R South 11",
+        "MontSO Disp",
+        "MontSO Court",
+        "MontSO Jail",
+        "Blacksburg FD 1",
+        "Blacksburg FD 3",
+        "Blacksburg RS 1",
+        "BlacksburgPD Dsp",
+        "ChristiansburgFD",
+        "ChristiansburgPD",
+        "VT Resc Sq 1",
+        "VT Resc Sq 3",
+        "VT Police 1"
+    ]
 }

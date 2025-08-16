@@ -1,7 +1,5 @@
 package net.noahf.firewatch.common.data;
 
-import net.noahf.firewatch.common.data.ems.EmsFieldDetails;
-import net.noahf.firewatch.common.data.ems.EmsMedical;
 import net.noahf.firewatch.common.data.objects.ListMark;
 import net.noahf.firewatch.common.data.objects.StructureList;
 import net.noahf.firewatch.common.data.objects.StructureObject;
@@ -19,24 +17,14 @@ public class IncidentType extends StructureObject {
     private boolean ems;
     private List<String> priorities;
 
-    private EmsMedical emsPriorities;
     private List<IncidentPriority> incidentPriorities;
 
 
     @Override public String name() { return this.name; }
     @Override public String formatted() { return this.name.replace("_", " "); }
 
-    public boolean isEms() { return this.ems; }
-    public EmsMedical ems() {
-        if (!this.isEms()) {
-            throw new IllegalStateException("Incident is not of type 'EMS'");
-        }
-        if (this.emsPriorities == null) {
-//            this.emsPriorities = new EmsMedical(
-//                    // TO BE CONTINUED
-//            );
-        }
-        return this.emsPriorities;
+    public boolean isEms() {
+        return this.ems;
     }
 
     @SuppressWarnings("unchecked")
