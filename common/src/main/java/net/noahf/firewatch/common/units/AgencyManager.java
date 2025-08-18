@@ -1,11 +1,9 @@
 package net.noahf.firewatch.common.units;
 
-import net.noahf.firewatch.common.utils.Identifier;
+import net.noahf.firewatch.common.data.units.UnitStatus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AgencyManager {
 
@@ -36,6 +34,25 @@ public class AgencyManager {
         return this.units;
     }
 
+    public List<Unit> findUnitsByStatus(UnitStatus status) {
+        return this.units.stream()
+                .filter(unit -> unit.operation().equals(status) || (unit.assignment() != null && unit.assignment().equals(status)))
+                .toList();
+    }
+
+    public Unit findUnitByCallsign(String callsign) {
+        return this.units.stream()
+                .filter(unit -> unit.matches(callsign))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Unit findUnitByCallsign(String callsign, boolean abbreviated, boolean space) {
+        return this.units.stream()
+                .filter(unit -> unit.callsign(abbreviated, space).equalsIgnoreCase(callsign))
+                .findFirst()
+                .orElse(null);
+    }
 
     public List<Agency> findAgencies() { return this.agencies; }
 

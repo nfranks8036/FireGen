@@ -1,7 +1,7 @@
 package net.noahf.firewatch.common.units;
 
 import net.noahf.firewatch.common.FireGen;
-import net.noahf.firewatch.common.data.UnitAssignmentStatus;
+import net.noahf.firewatch.common.data.units.UnitAssignmentStatus;
 import net.noahf.firewatch.common.incidents.Incident;
 import net.noahf.firewatch.common.utils.Identifier;
 import org.jetbrains.annotations.Nullable;

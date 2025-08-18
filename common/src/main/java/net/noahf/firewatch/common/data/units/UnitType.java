@@ -1,4 +1,4 @@
-package net.noahf.firewatch.common.data;
+package net.noahf.firewatch.common.data.units;
 
 import net.noahf.firewatch.common.data.objects.StructureObject;
 

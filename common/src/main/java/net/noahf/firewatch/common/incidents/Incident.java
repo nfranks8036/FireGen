@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Incident {
@@ -95,5 +96,7 @@ public class Incident {
 
     public Set<Agency> agencies() { return this.agencies; }
     public void agencies(Set<Agency> assignedAgencies) { this.agencies = assignedAgencies; }
+
+    public Set<UnitAssignment> unitAssignments() { return this.assignments; }
 
 }

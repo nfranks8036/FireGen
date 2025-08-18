@@ -492,7 +492,13 @@ public class CallViewer extends GUIPage {
                 .title("Edit Units")
                 .add((label, button) -> callDataForm.add(button, 0, 7, 2, 1))
                 .update(units -> {
-                    // UnitList initializer
+                    units.setOnMouseClicked((event) -> {
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            UnitList unitList = new UnitList("Units (" + this.title() + ")", this);
+                            unitList.show();
+                        }
+                        event.consume();
+                    });
                 });
 
         FormInput.button()

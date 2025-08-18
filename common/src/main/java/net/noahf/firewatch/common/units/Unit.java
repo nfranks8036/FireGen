@@ -1,9 +1,8 @@
 package net.noahf.firewatch.common.units;
 
 import net.noahf.firewatch.common.FireGen;
-import net.noahf.firewatch.common.data.UnitOperationStatus;
-import net.noahf.firewatch.common.data.UnitType;
-import net.noahf.firewatch.common.utils.Identifier;
+import net.noahf.firewatch.common.data.units.UnitOperationStatus;
+import net.noahf.firewatch.common.data.units.UnitType;
 import org.jetbrains.annotations.Nullable;
 
 public class Unit {
@@ -31,6 +30,9 @@ public class Unit {
         return FireGen.get().incidentStructure().unitTypes().getFromName(this.unit_type);
     }
 
+    public void operation(UnitOperationStatus operation) { this.operationStatus = operation; }
+    public UnitOperationStatus operation() { return this.operationStatus; }
+
     public void assignment(UnitAssignment assignment) { this.assignmentStatus = assignment; }
     public UnitAssignment assignment() { return this.assignmentStatus; }
 
@@ -47,6 +49,17 @@ public class Unit {
             callsignBuilder.append(" ");
 
         return callsignBuilder.append(this.number).toString();
+    }
+
+    public boolean matches(String text) {
+        if (text.startsWith(":")) {
+            text = text.substring(1);
+        }
+
+        return callsign(false, false).equalsIgnoreCase(text)
+                || callsign(true, false).equalsIgnoreCase(text)
+                || callsign(false, true).equalsIgnoreCase(text)
+                || callsign(true, true).equalsIgnoreCase(text);
     }
 
     @Override

@@ -4,7 +4,12 @@ import net.noahf.firewatch.common.data.ems.EmsField;
 import net.noahf.firewatch.common.data.objects.ListMark;
 import net.noahf.firewatch.common.data.objects.StructureList;
 import net.noahf.firewatch.common.data.objects.StructureObject;
+import net.noahf.firewatch.common.data.units.UnitAssignmentStatus;
+import net.noahf.firewatch.common.data.units.UnitOperationStatus;
+import net.noahf.firewatch.common.data.units.UnitStatus;
+import net.noahf.firewatch.common.data.units.UnitType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -51,6 +56,17 @@ public class IncidentStructure extends StructureObject {
                 ListMark.of(UnitOperationStatus.IN_SERVICE, (s) -> s.contains("*")),
                 ListMark.of(UnitOperationStatus.OUT_OF_SERVICE, (s) -> s.contains("!"))
         );
+    }
+
+    public StructureList<UnitStatus> combineUnitStatuses() {
+        List<UnitStatus> all = new ArrayList<>();
+        List<UnitAssignmentStatus> assignments = new ArrayList<>(this.unitAssignmentStatuses().asCollection());
+        List<UnitOperationStatus> operations = new ArrayList<>(this.unitOperationStatuses().asCollection());
+
+        all.addAll(assignments);
+        all.addAll(operations);
+
+        return new StructureList<>(all);
     }
 
     public StructureList<IncidentType> incidentTypes() {

@@ -1,6 +1,6 @@
 package net.noahf.firewatch.common.units;
 
-import net.noahf.firewatch.common.data.UnitAssignmentStatus;
+import net.noahf.firewatch.common.data.units.UnitAssignmentStatus;
 
 import java.time.Instant;
 

@@ -19,10 +19,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import net.noahf.firewatch.common.data.UnitAssignmentStatus;
-import net.noahf.firewatch.common.data.UnitOperationStatus;
-import net.noahf.firewatch.common.data.UnitStatus;
+import jdk.dynalink.Operation;
+import net.noahf.firewatch.common.data.units.UnitAssignmentStatus;
+import net.noahf.firewatch.common.data.units.UnitOperationStatus;
+import net.noahf.firewatch.common.data.units.UnitStatus;
+import net.noahf.firewatch.common.data.units.UnitStatusType;
 import net.noahf.firewatch.common.units.Unit;
+import net.noahf.firewatch.common.units.UnitAssignment;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;
@@ -119,7 +122,7 @@ public class UnitList extends GUIPage {
 
         ComboBox<String> unitType = new ComboBox<>();
         unitType.getItems().add(" ");
-        unitType.getItems().addAll(Arrays.stream(UnitType.values()).map(Enum::name).map(str -> str.replace("_", " ")).toList());
+        unitType.getItems().addAll(Main.firegen.incidentStructure().unitTypes().asFormatted());
         unitType.setValue(" ");
         unitType.setPrefWidth(150);
         unitType.getSelectionModel().selectedItemProperty().addListener((e, old, now) -> {
@@ -150,7 +153,7 @@ public class UnitList extends GUIPage {
     }
 
     private void createUnitDisplayForStatus(UnitStatus status) {
-        Label titleLabel = this.createTitleCard(status.toString());
+        Label titleLabel = this.createTitleCard(status.formatted());
         this.viewer.add(titleLabel, this.index, 1);
 
         TilePane tiles = new TilePane();
@@ -165,7 +168,7 @@ public class UnitList extends GUIPage {
 
         tiles.getChildren().addAll(Main.firegen
                 .agencyManager()
-                .allUnits(status)
+                .findUnitsByStatus(status)
                 .stream()
                 .map(u -> this.createTileUnit(tiles, u))
                 .toList()
@@ -192,12 +195,15 @@ public class UnitList extends GUIPage {
         }
 
         for (TilePane column : this.columns) {
+            System.out.println("column is: " + column.toString());
             column.getChildren().removeAll(column.getChildren());
-            UnitStatus status = UnitStatus.valueOf(column.getId());
+            UnitStatus status = Main.firegen.incidentStructure().combineUnitStatuses().getFromName(column.getId());
 
             List<Predicate<Unit>> filters = new ArrayList<>(this.filters.values());
-            List<Unit> units = new ArrayList<>(Main.firegen.agencyManager().allUnits(status));
+            List<Unit> units = new ArrayList<>(Main.firegen.agencyManager().findUnitsByStatus(status));
             List<VBox> box = new ArrayList<>();
+
+            System.out.println("Finding units by " + status.formatted());
 
             if (filters.isEmpty()) {
                 filters.add((u) -> true);
@@ -225,21 +231,21 @@ public class UnitList extends GUIPage {
         icon.setFitWidth(64);
         icon.setFitHeight(64);
 
-        Label label = new Label(unit.callsign().fullCallsign());
+        Label label = new Label(unit.callsign(false, true));
         label.setFont(new Font(15.0));
         Text text = asText(label);
         if (text.getLayoutBounds().getWidth() >= 100) {
-            label.setText(unit.callsign().primaryCallsign());
+            label.setText(unit.callsign(true, true));
         }
 
         VBox box = new VBox(5, icon, label);
         box.setStyle("-fx-background-color: transparent");
         box.setAlignment(Pos.CENTER);
-        box.setId(unit.callsign().primaryCallsign());
+        box.setId(unit.callsign(true, false));
         box.setOnDragDetected((e) -> {
             Dragboard dragboard = box.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString(unit.callsign().primaryCallsign());
+            content.putString(unit.callsign(true, false));
             dragboard.setContent(content);
             dragboard.setDragView(box.snapshot(null, null));
 
@@ -275,23 +281,36 @@ public class UnitList extends GUIPage {
                     source.getChildren().remove(sourceNode);
                     target.getChildren().add(sourceNode);
 
-                    Unit unit = Main.firegen.agencyManager().allUnits(unitCallsign).getFirst();
-                    UnitStatus newStatus = UnitStatus.valueOf(target.getId());
+                    Unit unit = Main.firegen.agencyManager().findUnitByCallsign(unitCallsign);
+                    UnitStatus newStatus = Main.firegen.incidentStructure().combineUnitStatuses().getFromFormatted(target.getId());
 
-                    unit.status(newStatus);
-
+                    var narrative = new Object() {
+                        String value = null;
+                    };
                     Platform.runLater(() -> {
+                        final String prefix = "=" + unitCallsign + " " + newStatus.formatted() + ": ";
+
                         TextInputDialog noteInput = new TextInputDialog();
                         noteInput.setTitle("Add Narrative");
                         noteInput.setHeaderText("Add additional information about this status update");
-                        noteInput.setContentText(unitCallsign + " " + UnitStatus.valueOf(target.getId()).narrativeSuffix("") + ": ");
+                        noteInput.setContentText(prefix);
 
                         String result = noteInput.showAndWait().orElse(null);
-                        String narrative = ":" + unit.callsign().primaryCallsign() + " " + newStatus.narrativeSuffix(result);
 
-                        this.callViewer.incident.narrative().add(narrative);
-                        this.callViewer.populateNarrative(this.callViewer.viewer);
+                        narrative.value = prefix + " " + result;
                     });
+
+                    if (newStatus.statusType() == UnitStatusType.ASSIGNMENT) {
+                        if (unit.assignment() == null) {
+                            unit.assignment(new UnitAssignment(this.callViewer.incident, unit, false));
+                        }
+                        //noinspection DataFlowIssue (we just set the value one line above this line)
+                        unit.assignment().updateStatus((UnitAssignmentStatus) newStatus, narrative.value);
+                    } else { // newStatus is of type OPERATION
+                        unit.operation((UnitOperationStatus) newStatus);
+                    }
+
+                    this.callViewer.populateNarrative(this.callViewer.viewer);
                 }
 
                 success = true;
