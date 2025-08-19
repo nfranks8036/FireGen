@@ -1,13 +1,32 @@
+I want to make a system in Java that parses through a properties file. It could look something like this, and this is how I want it to chain the methods:
+
 <INCICDENT> = incident.toString()
 
-<INCIDENT.narrative.entries.get:0> = incident.narrative().entries().get(0).toString()
+<INCIDENT.narrative.entries.get#0> = incident.narrative().entries().get(0).toString()
 
-<INCIDENT.agencies.get:0.simplified> = incident.agencies().stream().toList().get(0).simplified()
+<INCIDENT.agencies.get#0.simplified> = incident.agencies().stream().toList().get(0).simplified()
 
 <INCIDENT.agencies.CONCAT.simplified> = Blacksburg Fire and Blacksburg Rescue
 
+<INCIDENT.agencies.size == 1 ? was : were> = incident.agencies().size() == 1 ? "was" : "were"
+
+<INCIDENT.agenices.isEmpty ? No agencies : <INCIDENT.agencies.size> agencies>
+
 INCIDENT = gets the current incident
 CONCAT = concat a Collection<?> into a Stringified list based on the conditions that follow it
-method:0,1 = method(0, 1)
+method#0,1 = method(0, 1)
 
 valid types: int, double, string
+
+lowercase = method call from object 
+UPPERCASE = custom method 
+
+Basically everything MUST end with a string (or the program automatically calls toString). It should use reflections to go through from one object to another. For example, the class Incident has the method agencies(), and agencies() is a Set, so the program knows FOR ANY COLLECTION it must stream it to a list then it uses that method to get(0) the first item, then it simplifies it. 
+
+anything in uppercase should be custom provided by the program. so INCIDENT is provided. CONCAT will automatically call the methods after it on each of its items and concatanate them nicely (so obj1, obj2, and obj3 become just that "obj1, obj2, and obj3" as output). 
+
+The program must also be able to find these instances of expressions in other text (e.g., "This is the first narrative entry: <INCIDENT.narrative.entries.get#0>") and parse it, perhaps it could also just cache it like "This is the first narrative entry: {}" and only reevaluate it from there or something.
+
+This needs to be done in Java.
+
+How do I do this
