@@ -2,7 +2,6 @@
     "municipality": "Montgomery County",
     "incident_statuses": [
         "*NEW",
-        "DISPATCHED",
         "IN_PROGRESS",
         "RESOLVED",
         "!CLOSED"
@@ -61,10 +60,10 @@
             ]
         },
         {
-            "name": "EMS",
+            "name": "MEDICAL_CALL",
             "ems": true,
             "priorities": [
-                "MEDICAL_CALL"
+                "EMS"
             ]
         },
         {

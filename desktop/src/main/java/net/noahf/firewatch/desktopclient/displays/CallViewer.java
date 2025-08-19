@@ -50,6 +50,7 @@ import net.noahf.firewatch.desktopclient.objects.form.FormInput;
 import net.noahf.firewatch.desktopclient.utils.SupplierUtils;
 import net.noahf.firewatch.desktopclient.objects.PlusSign;
 import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;

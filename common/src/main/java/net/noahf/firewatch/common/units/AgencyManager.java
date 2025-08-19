@@ -1,5 +1,6 @@
 package net.noahf.firewatch.common.units;
 
+import net.noahf.firewatch.common.data.units.UnitOperationStatus;
 import net.noahf.firewatch.common.data.units.UnitStatus;
 
 import java.util.ArrayList;

@@ -1,0 +1,13 @@
+<INCICDENT> = incident.toString()
+
+<INCIDENT.narrative.entries.get:0> = incident.narrative().entries().get(0).toString()
+
+<INCIDENT.agencies.get:0.simplified> = incident.agencies().stream().toList().get(0).simplified()
+
+<INCIDENT.agencies.CONCAT.simplified> = Blacksburg Fire and Blacksburg Rescue
+
+INCIDENT = gets the current incident
+CONCAT = concat a Collection<?> into a Stringified list based on the conditions that follow it
+method:0,1 = method(0, 1)
+
+valid types: int, double, string

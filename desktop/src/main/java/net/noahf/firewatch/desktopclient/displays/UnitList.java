@@ -29,9 +29,13 @@ import net.noahf.firewatch.common.units.UnitAssignment;
 import net.noahf.firewatch.common.utils.ObjectDuplicator;
 import net.noahf.firewatch.desktopclient.GUIPage;
 import net.noahf.firewatch.desktopclient.Main;
+import net.noahf.firewatch.desktopclient.objects.NarrativeInputDialog;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.logging.Filter;
+import java.util.stream.Stream;
 
 public class UnitList extends GUIPage {
 
@@ -73,6 +77,7 @@ public class UnitList extends GUIPage {
         this.viewer.setPrefWidth(WIDTH);
 
         this.index = 0;
+        this.createUnitDisplayForStatus(Main.firegen.incidentStructure().unitOperationStatuses().marked(UnitOperationStatus.IN_SERVICE).one());
         for (UnitAssignmentStatus assignment : Main.firegen.incidentStructure().unitAssignmentStatuses()) {
             this.createUnitDisplayForStatus(assignment);
         }
@@ -168,7 +173,7 @@ public class UnitList extends GUIPage {
 
         tiles.getChildren().addAll(Main.firegen
                 .agencyManager()
-                .findUnitsByStatus(status)
+                        .findUnitsByStatus(status)
                 .stream()
                 .map(u -> this.createTileUnit(tiles, u))
                 .toList()
@@ -208,6 +213,8 @@ public class UnitList extends GUIPage {
             if (filters.isEmpty()) {
                 filters.add((u) -> true);
             }
+
+            System.out.println("Found " + units.size() + " units");
 
             for (Predicate<Unit> filter : filters) {
                 box = units.stream()
@@ -282,7 +289,8 @@ public class UnitList extends GUIPage {
                     target.getChildren().add(sourceNode);
 
                     Unit unit = Main.firegen.agencyManager().findUnitByCallsign(unitCallsign);
-                    UnitStatus newStatus = Main.firegen.incidentStructure().combineUnitStatuses().getFromFormatted(target.getId());
+                    UnitStatus newStatus = Main.firegen.incidentStructure().combineUnitStatuses().getFromName(target.getId());
+                    System.out.println(unitCallsign + " moved to " + target.getId());
 
                     var narrative = new Object() {
                         String value = null;
@@ -290,7 +298,7 @@ public class UnitList extends GUIPage {
                     Platform.runLater(() -> {
                         final String prefix = "=" + unitCallsign + " " + newStatus.formatted() + ": ";
 
-                        TextInputDialog noteInput = new TextInputDialog();
+                        NarrativeInputDialog noteInput = new NarrativeInputDialog();
                         noteInput.setTitle("Add Narrative");
                         noteInput.setHeaderText("Add additional information about this status update");
                         noteInput.setContentText(prefix);
