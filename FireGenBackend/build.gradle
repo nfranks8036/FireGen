@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.springframework.boot' version '3.5.9'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.freefair.lombok' version '9.1.0'
+}
+
+group = 'net.noahf.firegen.backend'
+version = '1.0.0'
+description = 'The backend for the FireGen web service '
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation 'dev.morphia.morphia:morphia-core:2.5.1'
+
+    implementation 'com.google.code.gson:gson:2.13.2'
+
+    implementation 'de.danielbechler:java-object-diff:0.95'
+}
+
+idea {
+    module {
+        downloadSources = true
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
