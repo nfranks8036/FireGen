@@ -2,6 +2,7 @@ package net.noahf.firegen.backend.access.controllers;
 
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.DiffNode;
 import net.noahf.firegen.backend.access.IncidentManagerService;
 import net.noahf.firegen.backend.database.structure.Incident;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -50,17 +52,21 @@ public class IncidentController {
             Incident current = this.incidentManagerService.getIncidentById(id);
             ObjectDiffer differ = ObjectDifferBuilder.startBuilding()
                     .inclusion().exclude()
-                    .propertyName("fullId").propertyName("incidentNumber").propertyName("incidentYear").propertyName("created").and()
+                        .propertyName("fullId").propertyName("incidentNumber").propertyName("incidentYear").propertyName("created").and()
                     .comparison()
-                    .ofType(String.class).toUseEqualsMethod().and()
+                        .ofType(String.class).toUseEqualsMethod().and()
                     .build();
             DiffNode diff = differ.compare(incident, dummy);
 
             StringJoiner joiner = new StringJoiner(",", "Diff[", "]");
             diff.visit((node, visit) -> {
-                if (!node.isRootNode() && node.hasChanges()) {
-                    joiner.add(node.getPath().toString().substring(1) + "=" + node.canonicalGet(current) + "->" + node.canonicalGet(incident));
-                    node.canonicalSet(current, node.canonicalGet(incident));
+                try {
+                    if (!node.isRootNode() && node.hasChanges()) {
+                        joiner.add(node.getPath().toString().substring(1) + "=" + node.canonicalGet(current) + "->" + node.canonicalGet(incident));
+                        node.canonicalSet(current, node.canonicalGet(incident));
+                    }
+                } catch (Exception exception) {
+                    System.err.println("ERROR FINDING CHANGES: " + exception);
                 }
             });
 

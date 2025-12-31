@@ -8,6 +8,14 @@ import java.time.Instant;
 @Entity
 public class IncidentLogEntry {
 
+    public static IncidentLogEntry of(IncidentLogType logType, String text) {
+        IncidentLogEntry entry = new IncidentLogEntry();
+        entry.time = Instant.now();
+        entry.text = text;
+        entry.logType = logType;
+        return entry;
+    }
+
     public Instant time;
     public String text;
 

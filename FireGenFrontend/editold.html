@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Edit Incident</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    body {
+        background-color: #121212;
+        color: white;
+        padding: 20px;
+    }
+    label {
+        color: #bbb;
+    }
+    input, textarea, select {
+        background-color: #1c1c1c !important;
+        color: white !important;
+        border: 1px solid #444 !important;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Edit Incident</h2>
+    <p class="text-secondary" id="incident-id">Loading...</p>
+
+    <form id="incident-form" class="row g-3">
+
+        <div class="col-md-6">
+            <label class="form-label">Incident Type</label>
+            <input type="text" class="form-control" name="incidentType">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Priority</label>
+            <input type="text" class="form-control" name="incidentPriority">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Incident Status</label>
+            <input type="text" class="form-control" name="incidentStatus">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Caller Type</label>
+            <input type="text" class="form-control" name="callerType">
+        </div>
+
+        <div class="col-md-12">
+            <label class="form-label">Location (Shown Value)</label>
+            <input type="text" class="form-control" name="location.shownValue">
+        </div>
+
+    </form>
+</div>
+
+<script>
+const API_BASE = "http://localhost:8080/api/v1/incidents";
+const params = new URLSearchParams(window.location.search);
+let incidentId = params.get("incident");
+let debounceTimer = null;
+
+/* -------------------------
+   Helpers
+--------------------------*/
+
+// Set nested JSON value from "a.b.c"
+function setNested(obj, path, value) {
+    const keys = path.split(".");
+    let cur = obj;
+    keys.slice(0, -1).forEach(k => {
+        if (!cur[k]) cur[k] = {};
+        cur = cur[k];
+    });
+    cur[keys[keys.length - 1]] = value;
+}
+
+// Read nested JSON value
+function getNested(obj, path) {
+    return path.split(".").reduce((o,k)=>o?.[k], obj);
+}
+
+// Debounced live update
+function scheduleUpdate() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(sendUpdate, 500);
+}
+
+/* -------------------------
+   Create OR Load Incident
+--------------------------*/
+
+async function createIncident() {
+    const res = await fetch(`${API_BASE}/create`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({})
+    });
+    const data = await res.json();
+
+    console.log(data);
+    if (!data.success) {
+        alert("Failed to create incident");
+        return;
+    }
+
+    incidentId = data.message.split(":")[1];
+
+    // Update URL without reload
+    params.set("incident", incidentId);
+    window.history.replaceState({}, "", `?${params.toString()}`);
+
+    document.getElementById("incident-id").textContent = `Incident: ${incidentId}`;
+}
+
+async function loadIncident() {
+    const res = await fetch(`${API_BASE}/${incidentId}`);
+    const incident = await res.json();
+
+    document.getElementById("incident-id").textContent = `Incident: ${incidentId}`;
+
+    // Populate form
+    document.querySelectorAll("[name]").forEach(input => {
+        const val = getNested(incident, input.name);
+        if (val !== undefined) input.value = val;
+        console.log(input.value + "= " + val);
+    });
+}
+
+/* -------------------------
+   Live PUT Updates
+--------------------------*/
+
+async function sendUpdate() {
+    if (!incidentId) return;
+
+    const payload = {};
+    document.querySelectorAll("[name]").forEach(input => {
+        if (input.value !== "") {
+            setNested(payload, input.name, input.value);
+        }
+    });
+
+    await fetch(`${API_BASE}/id/${incidentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+}
+
+/* -------------------------
+   Event Wiring
+--------------------------*/
+
+document.querySelectorAll("input, textarea, select").forEach(el => {
+    el.addEventListener("input", scheduleUpdate);
+});
+
+/* -------------------------
+   Init
+--------------------------*/
+
+(async function init() {
+    if (!incidentId) {
+        await createIncident();
+    }
+    await loadIncident();
+})();
+</script>
+
+</body>
+</html>

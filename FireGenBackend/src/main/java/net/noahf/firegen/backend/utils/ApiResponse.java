@@ -44,6 +44,7 @@ public class ApiResponse<T> {
                 response = new ApiResponse<>(false, (error.getCause() != null ? error.getCause().toString() : error.getReason()));
                 response.status = error.getStatusCode();
             }
+            exception.printStackTrace(System.err);
             return response.complete();
         }
     }

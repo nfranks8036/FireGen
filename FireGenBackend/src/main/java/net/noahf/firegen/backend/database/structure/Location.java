@@ -3,6 +3,9 @@ package net.noahf.firegen.backend.database.structure;
 import dev.morphia.annotations.Entity;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Entity
 @Getter
 public class Location {
@@ -11,11 +14,11 @@ public class Location {
 
     public Double mileMarker = null;
 
-    public String[] intersection = null;
+    public List<String> intersection = null;
 
     public String shownValue = "<UNKNOWN>";
 
-    public String[] crossStreets = null;
+    public List<String> crossStreets = null;
     public String commonName = "";
     public String venue = "";
     public String state = "VA";
@@ -28,7 +31,7 @@ public class Location {
     }
 
     public void setIntersection(String... intersection) {
-        this.intersection = intersection;
+        this.intersection = Arrays.stream(intersection).toList();
 
         this.shownValue = String.join(" / ", intersection);
     }

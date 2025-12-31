@@ -1,12 +1,13 @@
 package net.noahf.firegen.backend.access;
 
 import dev.morphia.InsertOneOptions;
-import dev.morphia.InsertOptions;
 import dev.morphia.UpdateOptions;
 import dev.morphia.query.Query;
 import dev.morphia.query.filters.Filter;
 import net.noahf.firegen.backend.Main;
 import net.noahf.firegen.backend.database.structure.Incident;
+import net.noahf.firegen.backend.database.structure.IncidentLogEntry;
+import net.noahf.firegen.backend.database.structure.helper.IncidentLogType;
 import net.noahf.firegen.backend.database.structure.helper.IncidentStatus;
 import net.noahf.firegen.backend.utils.Identifier;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class IncidentManagerService {
         return Main.db.datastore().find(Incident.class)
                 .filter(
                         or(
-                                eq("incidentStatus", IncidentStatus.NEW.name()),
+                                eq("incidentStatus", IncidentStatus.PENDING.name()),
                                 eq("incidentStatus", IncidentStatus.RESOLVED.name()),
                                 eq("incidentStatus", IncidentStatus.IN_PROGRESS.name())
                         )
@@ -55,6 +56,7 @@ public class IncidentManagerService {
     }
 
     public boolean createIncident(Incident incident) {
+        incident.log.add(IncidentLogEntry.of(IncidentLogType.INCIDENT_CREATED, "Created incident with ID " + incident.getFullId()));
         Main.db.datastore().insert(incident);
         return true;
     }

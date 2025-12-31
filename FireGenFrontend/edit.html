@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Incident Details</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body {
+        background-color: #121212;
+        color: #ffffff;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+    h1, h2, h3 {
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+    .loc {
+        color: rgb(197, 197, 197);
+    }
+    .call-type {
+        color: rgb(230, 230, 230);
+    }
+    .sect-title {
+        color: rgb(230, 230, 230);
+    }
+    .info-label {
+        color: #888888; /* gray labels */
+    }
+    .info-value {
+        color: #ffffff; /* white values */
+    }
+    .info-grid .col {
+        margin-bottom: 10px;
+    }
+    .narrative-table, .apparatus-table {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+    .table-dark-custom {
+        background-color: #1c1c1c;
+    }
+    .table-dark-custom th {
+        background-color: #444444;
+        color: #e0e0e0;
+    }
+    .table-dark-custom td {
+        color: #ffffff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    .card {
+        background-color: #1c1c1c;
+        border: 1px solid #444;
+        margin-bottom: 20px;
+    }
+    .card-body {
+        padding: 15px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Main Info Section -->
+    <div class="card">
+        <div class="card-body">
+            <div class="card-body">
+                <h2 class="sect-title">Location</h2>
+
+                <!-- Location Mode -->
+                <div class="row g-2 mb-3">
+                    <div class="col">
+                    <input type="radio" class="btn-check" name="locMode" id="loc-latlng" value="LATLNG">
+                    <label class="btn btn-outline-light w-100" for="loc-latlng">LAT / LONG</label>
+                    </div>
+                    <div class="col">
+                    <input type="radio" class="btn-check" name="locMode" id="loc-street" value="STREET">
+                    <label class="btn btn-outline-light w-100" for="loc-street">STREET ADDRESS</label>
+                    </div>
+                    <div class="col">
+                    <input type="radio" class="btn-check" name="locMode" id="loc-mile" value="MILE">
+                    <label class="btn btn-outline-light w-100" for="loc-mile">MILE MARKER</label>
+                    </div>
+                    <div class="col">
+                    <input type="radio" class="btn-check" name="locMode" id="loc-custom" value="CUSTOM">
+                    <label class="btn btn-outline-light w-100" for="loc-custom">CUSTOM</label>
+                    </div>
+                </div>
+
+                <!-- LAT/LONG -->
+                <div class="row g-2 loc-fields" data-mode="LATLNG">
+                    <div class="col-md-6">
+                    <input type="number" step="any" class="form-control" id="lat" placeholder="Latitude">
+                    </div>
+                    <div class="col-md-6">
+                    <input type="number" step="any" class="form-control" id="lng" placeholder="Longitude">
+                    </div>
+                </div>
+
+                <!-- STREET -->
+                <div class="row g-2 loc-fields d-none" data-mode="STREET">
+                    <div class="col-md-3">
+                    <input type="number" class="form-control" id="street-num" placeholder="1234">
+                    </div>
+                    <div class="col-md-9">
+                    <input class="form-control" id="street-name" placeholder="N Main St">
+                    </div>
+                </div>
+
+                <!-- MILE -->
+                <div class="row g-2 loc-fields d-none" data-mode="MILE">
+                    <div class="col-md-8">
+                    <input class="form-control" id="mile-road" placeholder="I-81 NB">
+                    </div>
+                    <div class="col-md-4">
+                    <input type="number" step="any" class="form-control" id="mile-marker" placeholder="123.4">
+                    </div>
+                </div>
+
+                <!-- INTERSECTION -->
+                <div class="row g-2 loc-fields d-none" data-mode="INTERSECTION">
+                    <div class="col intersection-road-holder">
+                        <input class="form-control mb-1" placeholder="Road 1">
+                        <input class="form-control mb-1" placeholder="Road 2">
+                        <button class="btn btn-sm btn-outline-secondary add-road">+ Add road</button>
+                    </div>
+                </div>
+
+                <!-- CUSTOM (read-only unless selected) -->
+                <div class="mt-3">
+                    <label class="info-label">Display Location</label>
+                    <input class="form-control" id="custom-location" readonly>
+                </div>
+
+                <!-- COMMON NAME OF PLACE -->
+                <div class="mt-3">
+                    <label class="info-label">Common Name</label>
+                    <input class="form-control" id="common-name">
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row info-grid">
+                        <div class="col-md-6">
+                            <span class="info-label">Venue:</span> 
+                            <select class="selectpicker form-control" id="venue" data-live-search="true"></select>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="info-label">State:</span> 
+                            <input class="form-control" maxlength="2" pattern="[A-Z]{2}">
+                        </div>
+                        <div class="col-md-3">
+                            <span class="info-label">Zip:</span> 
+                            <input class="form-control" pattern="\d{5}">
+                        </div>
+                        <div class="col-md-10 mt-3">
+                            <span class="info-label">Cross-streets:</span> 
+                            <div id="crossstreets"></div>
+                            <button class="btn btn-sm btn-outline-secondary" id="add-cross">+ Add cross street</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <select class="selectpicker form-control mb-2"
+                data-live-search="true"
+                id="incidenttype"></select>
+
+            <div class="row info-grid">
+                <div class="col-md-6 mt-2">
+                    <span class="info-label">Incident Time:</span> 
+                    <div class="input-group">
+                        <input type="datetime-local" class="form-control" id="incident-time">
+                        <button class="btn btn-outline-light" onclick="setNow()">NOW</button>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <span class="info-label">Priority:</span> 
+                    <select class="selectpicker form-control mb-2"
+                        data-live-search="true"
+                        id="incidentpriority"></select>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <span class="info-label">Incident Status:</span> 
+                    <select class="form-control">
+                        <option>PENDING</option>
+                        <option>IN_PROGRESS</option>
+                        <option>RESOLVED</option>
+                        <option>CLOSED</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <span class="info-label">Caller Type:</span> 
+                    <select class="selectpicker form-control mb-2"
+                        data-live-search="true"
+                        id="callertype"></select>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <span class="info-label">Incident Number:</span> 
+                    <input class="form-control" readonly id="full-id">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Narrative Section -->
+    <div class="card">
+        <div class="card-body">
+            <h2 class="sect-title">Call Log</h2>
+            <div class="narrative-table">
+                <table class="table table-sm table-dark table-striped table-dark-custom" id="narrative-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Type</th>
+                            <th>Narrative</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Apparatus Section -->
+    <div class="card">
+        <div class="card-body">
+            <h2 class="sect-title">Apparatus (<span id="apparatus-count">0</span>)</h2>
+            <div class="apparatus-table">
+                <table class="table table-sm table-dark table-striped table-dark-custom" id="apparatus-table">
+                    <thead>
+                        <tr>
+                            <th>Primary</th>
+                            <th>Unit</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Get incident ID from query parameter
+const urlParams = new URLSearchParams(window.location.search);
+const API_BASE = "http://localhost:8080/api/v1/incidents"
+let incidentId = urlParams.get('incident');
+
+// Nested property helper
+function getNested(obj, path) {
+    return path.split('.').reduce((o, key) => (o ? o[key] : undefined), obj);
+}
+
+// Replace underscores with spaces for display
+function displayValue(val) {
+    if (Array.isArray(val)) {
+        // Convert array to comma-delimited string, replacing underscores in string elements
+        return val.map(v => typeof v === 'string' ? v.replace(/_/g,' ') : v).join(', ');
+    } else if (typeof val === 'string') {
+        if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?$/.test(val)) {
+            const date = new Date(val);
+            const partDate = date.toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric'
+            })
+            const partTime = date.toLocaleTimeString(undefined, {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            })
+            return partDate + " @ " + partTime;
+        }
+        return val.replace(/_/g,' ');
+    }
+    return val;
+    // return typeof val === 'string' ? val.replace(/_/g, ' ') : val;
+}
+
+async function createIncident() {
+    const res = await fetch(`${API_BASE}/create`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({})
+    });
+    const data = await res.json();
+
+    console.log(data);
+    if (!data.success) {
+        alert("Failed to create incident");
+        return;
+    }
+
+    incidentId = data.message.split(":")[1];
+
+    // Update URL without reload
+    urlParams.set("incident", incidentId);
+    window.history.replaceState({}, "", `?${urlParams.toString()}`);
+}
+
+async function loadIncident() {
+    if (!incidentId) {
+        document.body.textContent = "No incident specified.";
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/v1/incidents/id/${encodeURIComponent(incidentId)}`);
+        const json = await response.json();
+        const incident = json.message || [];
+        if (!incident) {
+            document.body.textContent = "Incident not found.";
+            return;
+        }
+
+        // Main info
+        // document.getElementById('commonname').textContent = displayValue(getNested(incident, 'location.commonName') || '');
+        // document.getElementById('location').textContent = displayValue(getNested(incident, 'location.shownValue') || '');
+        // document.getElementById('venue').textContent = displayValue(getNested(incident, 'location.venue') || '');
+        // document.getElementById('state').textContent = displayValue(getNested(incident, 'location.state') || '');
+        // document.getElementById('zip').textContent = displayValue(getNested(incident, 'location.zipCode') || '');
+        // document.getElementById('crossstreets').textContent = displayValue(getNested(incident, 'location.crossStreets') || '');
+        // // document.getElementById('incident-type').textContent = displayValue(getNested(incident, 'incidentType') || '');
+        // document.getElementById('created').textContent = displayValue(incident.created || '');
+        // document.getElementById('priority').textContent = displayValue(incident.incidentPriority || '');
+        // document.getElementById('status').textContent = displayValue(incident.incidentStatus || '');
+        // document.getElementById('caller-type').textContent = displayValue(incident.callerType || '');
+        // document.getElementById('full-id').textContent = displayValue(incident.fullId || '');
+
+        // Narrative Table
+        const narrativeBody = document.querySelector('#narrative-table tbody');
+        narrativeBody.innerHTML = '';
+        let narrativeLogs = (incident.log || [])
+            .sort((a,b) => new Date(b.time) - new Date(a.time))
+            .slice(0,5);
+
+        narrativeLogs.forEach(l => {
+            const tr = document.createElement('tr');
+            const dateTd = document.createElement('td');
+            dateTd.textContent = displayValue(l.time);
+            const typeTd = document.createElement('td');
+            typeTd.textContent = displayValue(l.logType);
+            const textTd = document.createElement('td');
+            textTd.textContent = l.text; // Do not replace underscores in narrative
+            tr.appendChild(dateTd);
+            tr.appendChild(typeTd);
+            tr.appendChild(textTd);
+            narrativeBody.appendChild(tr);
+        });
+
+        // Apparatus Table
+        const apparatusBody = document.querySelector('#apparatus-table tbody');
+        apparatusBody.innerHTML = '';
+        const units = incident.units || [];
+        document.getElementById('apparatus-count').textContent = units.length;
+
+        // Sort primary first
+        units.sort((a,b) => (b.primary ? 1 : 0) - (a.primary ? 1 : 0));
+
+        units.forEach(u => {
+            const tr = document.createElement('tr');
+            const primaryTd = document.createElement('td');
+            primaryTd.textContent = u.primary ? 'Yes' : 'No';
+
+            const unitTd = document.createElement('td');
+            const unitType = displayValue(getNested(u, 'unit.unitType') || '');
+            const unitNumber = displayValue(getNested(u, 'unit.unitNumber') || '');
+            unitTd.textContent = `${unitType} ${unitNumber}`;
+
+            const statusTd = document.createElement('td');
+            const lastEvent = u.events?.peek?.[0];
+            statusTd.textContent = displayValue(lastEvent?.status || '');
+
+            tr.appendChild(primaryTd);
+            tr.appendChild(unitTd);
+            tr.appendChild(statusTd);
+            apparatusBody.appendChild(tr);
+        });
+
+    } catch (err) {
+        console.error(err);
+        document.body.textContent = "Failed to load incident.";
+    }
+}
+
+function setNow() {
+  document.getElementById("incident-time").value =
+    new Date().toISOString().slice(0,16);
+}
+
+document.querySelectorAll('input[name="locMode"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    document.querySelectorAll('.loc-fields').forEach(f => {
+      f.classList.toggle('d-none', f.dataset.mode !== radio.value);
+      f.querySelectorAll('input').forEach(i => i.disabled = f.dataset.mode !== radio.value);
+    });
+
+    const custom = document.getElementById('custom-location');
+    custom.readOnly = radio.value !== "CUSTOM";
+  });
+});
+
+venue.add(new Option(" ", ""));
+fetch("http://localhost:8080/api/v1/venues")
+  .then(r => r.json())
+  .then(v => v.message.forEach(x => {
+    venue.add(new Option(x, x.replaceAll(" ", "_")))
+  }));
+
+incidenttype.add(new Option(">NEW<", "invalid-1"));
+incidenttype.add(new Option(">CHOOSE CALL TYPE<", "invalid-2"))
+fetch("http://localhost:8080/api/v1/incidenttypes")
+  .then(r => r.json())
+  .then(v => v.message.forEach(x => {
+    incidenttype.add(new Option(x, x.replaceAll(" ", "_")))
+  }));
+
+incidentpriority.add(new Option(" ", ""));
+fetch(`http://localhost:8080/api/v1/priorities`)
+  .then(r => r.json())
+  .then(p => p.message.forEach(x =>
+    incidentpriority.add(new Option(x, x.replace(" ", "_")))
+  ));
+
+callertype.add(new Option(" ", ""));
+fetch("http://localhost:8080/api/v1/callertypes")
+  .then(r => r.json())
+  .then(c => c.message.forEach(x =>
+    callertype.add(new Option(x, x.replace(" ", "_")))
+  ));
+
+const addCross = document.getElementById("add-cross");
+addCross.onclick = () => {
+  if (crossstreets.children.length < 5) {
+    const i = document.createElement("input");
+    i.className = "form-control mb-1";
+    crossstreets.appendChild(i);
+  }
+};
+
+(async function init() {
+    if (!incidentId) {
+        await createIncident();
+    }
+    await loadIncident();
+})();
+
+setInterval(loadIncident, 5000);
+</script>
+
+</body>
+</html>

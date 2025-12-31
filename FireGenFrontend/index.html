@@ -29,7 +29,7 @@
             overflow: hidden;      /* Hide content that exceeds cell width */
             text-overflow: clip;   /* Simply cut off excess text */
         }
-        .row-new td {
+        .row-pending td {
             color: #84c1ff !important; /* Darker blue for the whole row */
             background-color: #1c1c1c;
         }
@@ -48,11 +48,20 @@
             border-radius: 5px;
             font-weight: 500;
         }
+        tbody tr {
+            cursor: pointer; /* Show pointer on hover */
+        }
     </style>
 </head>
 <body>
 
-<div class="result-box" id="resultBox">Loading page...</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="result-box" id="resultBox">Loading page...</div>
+
+    <button style="color: white;" id="create-call-btn" class="btn btn-outline-primary">
+        ➕ Create Call
+    </button>
+</div>
 
 <div class="table-container">
     <table class="table table-borderless" id="dataTable">
@@ -75,6 +84,33 @@ const columns = [
 
 function getNestedValue(obj, path) {
     return path.split('.').reduce((o, key) => (o ? o[key] : undefined), obj);
+}
+
+// Replace underscores with spaces for display
+function displayValue(val) {
+    if (Array.isArray(val)) {
+        // Convert array to comma-delimited string, replacing underscores in string elements
+        return val.map(v => typeof v === 'string' ? v.replace(/_/g,' ') : v).join(', ');
+    } else if (typeof val === 'string') {
+        if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?$/.test(val)) {
+            const date = new Date(val);
+            const partDate = date.toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric'
+            })
+            const partTime = date.toLocaleTimeString(undefined, {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            })
+            return partDate + " @ " + partTime;
+        }
+        return val.replace(/_/g,' ');
+    }
+    return val;
+    // return typeof val === 'string' ? val.replace(/_/g, ' ') : val;
 }
 
 async function loadTable() {
@@ -111,8 +147,8 @@ async function loadTable() {
             const row = document.createElement("tr");
             var statusClass = "row-default";
             switch (item.incidentStatus) {
-                case "NEW":
-                    statusClass = "row-new";
+                case "PENDING":
+                    statusClass = "row-pending";
                     break;
                 case "RESOLVED":
                     statusClass = "row-resolved";
@@ -120,11 +156,18 @@ async function loadTable() {
             }
             row.classList.add(statusClass);
 
+            row.addEventListener("click", () => {
+                if (item.fullId) {
+                    // Open new tab with query parameter
+                    window.open(`/FireGenFrontend/view.html?incident=${encodeURIComponent(item.fullId)}`);
+                }
+            });
+
             columns.forEach(col => {
                 const td = document.createElement("td");
                 let value = getNestedValue(item, col.json);
                 if (typeof value === "object") value = JSON.stringify(value);
-                td.textContent = value !== undefined ? value : '';
+                td.textContent = value !== undefined ? displayValue(value) : '';
                 row.appendChild(td);
             });
 
@@ -163,6 +206,10 @@ async function loadTable() {
 
 // Initial load
 loadTable();
+
+document.getElementById("create-call-btn").addEventListener("click", () => {
+    window.open("/FireGenFrontend/edit.html", "_blank");
+});
 
 // Auto-refresh every 5 seconds
 setInterval(loadTable, 5000);

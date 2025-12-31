@@ -12,6 +12,8 @@ public enum IncidentLogType {
 
     UNIT_STATUS_UPDATED,
 
+    INCIDENT_CREATED,
+
     INCIDENT_UPDATED;
 
 }

@@ -32,7 +32,7 @@ public class Incident {
 
     public String fullId;
 
-    private IncidentStatus incidentStatus = IncidentStatus.NEW;
+    private IncidentStatus incidentStatus = IncidentStatus.PENDING;
 
     public String incidentType = ">NEW<";
 
@@ -43,6 +43,8 @@ public class Incident {
     public Location location = new Location();
 
     public List<IncidentLogEntry> log = new ArrayList<>();
+
+    public List<UnitAssignment> units = new ArrayList<>();
 
     public Instant created = Instant.now();
     public Instant closed = null;

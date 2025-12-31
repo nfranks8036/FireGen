@@ -2,7 +2,7 @@ package net.noahf.firegen.backend.database.structure.helper;
 
 public enum IncidentStatus {
 
-    NEW,
+    PENDING,
 
     IN_PROGRESS,
 
