@@ -6,7 +6,6 @@ import net.noahf.firegen.backend.structure.StructureObject;
 
 import java.util.function.Function;
 
-@Entity
 public class UnitAssignmentStatus extends StructureObject {
 
     public String name;

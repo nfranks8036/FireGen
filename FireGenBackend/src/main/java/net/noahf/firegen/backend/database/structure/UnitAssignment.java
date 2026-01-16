@@ -7,28 +7,25 @@ import net.noahf.firegen.backend.database.structure.helper.AssignmentEvent;
 import net.noahf.firegen.backend.structure.objects.RadioChannel;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Stack;
 
 @Entity
 public class UnitAssignment {
 
-    @Reference
-    public Unit unit;
-
-    @Reference
-    public Incident incident;
+    public String unit;
 
     public boolean primary;
 
-    public RadioChannel operate;
+    public String radioChannel;
 
-    public Stack<AssignmentEvent> events;
+    public List<AssignmentEvent> events;
 
-    public UnitAssignment(Unit unit, Incident incident, boolean primary, RadioChannel operate) {
-        this.unit = unit;
-        this.incident = incident;
+    public UnitAssignment() { super(); }
+    public UnitAssignment(Unit unit, Incident incident, boolean primary, String radioChannel) {
+        this.unit = unit.getCallsign();
         this.primary = primary;
-        this.operate = operate;
+        this.radioChannel = radioChannel;
         this.events = new Stack<>();
     }
 

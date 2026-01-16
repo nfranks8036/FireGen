@@ -36,7 +36,7 @@ public class Incident {
 
     public String incidentPriority = "";
 
-    private IncidentSource callerType = IncidentSource.NINE_ONE_ONE;
+    private IncidentSource incidentSource = IncidentSource.NINE_ONE_ONE;
 
     public Location location = new Location();
 
@@ -63,7 +63,7 @@ public class Incident {
                 ", incidentStatus=" + incidentStatus +
                 ", incidentType='" + incidentType + '\'' +
                 ", incidentPriority='" + incidentPriority + '\'' +
-                ", callerType=" + callerType +
+                ", callerType=" + incidentSource +
                 ", location=" + location +
                 ", log=" + log +
                 ", created=" + created +

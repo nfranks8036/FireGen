@@ -2,11 +2,8 @@ package net.noahf.firegen.backend.database.structure.helper;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Reference;
 import jakarta.annotation.Nullable;
-import net.noahf.firegen.backend.database.structure.Incident;
 import net.noahf.firegen.backend.database.structure.Unit;
-import net.noahf.firegen.backend.structure.objects.RadioChannel;
 import net.noahf.firegen.backend.structure.objects.UnitAssignmentStatus;
 
 import java.time.Instant;
@@ -14,16 +11,15 @@ import java.time.Instant;
 @Entity
 public class AssignmentEvent {
 
-    public @Id String unitId;
-    public UnitAssignmentStatus status;
+    public String status;
     public Instant timestamp;
     public String narrative;
 
+    public AssignmentEvent() { super(); }
     public AssignmentEvent(Unit unit, UnitAssignmentStatus status, @Nullable String narrative) {
-        this.unitId = unit.id;
-        this.status = status;
+        this.status = status.name;
         this.timestamp = Instant.now();
-        this.narrative = status.asNarrative(unit.id) + (narrative != null ? ": " + narrative : "");
+        this.narrative = status.asNarrative(unit.getCallsign()) + (narrative != null ? ": " + narrative : "");
     }
 
     @Override

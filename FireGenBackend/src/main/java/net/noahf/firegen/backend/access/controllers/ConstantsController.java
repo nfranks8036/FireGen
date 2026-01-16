@@ -30,6 +30,12 @@ public class ConstantsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("unit_statuses")
+    public ResponseEntity<?> getUnitStatuses() {
+        return ApiResponse.success(Main.st.getUnitAssignmentStatuses().asNameList());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("radio_channels")
     public ResponseEntity<?> getRadioChannels() {
         return ApiResponse.success(Main.st.getRadioChannels().asNameList());
@@ -39,6 +45,12 @@ public class ConstantsController {
     @GetMapping("venues")
     public ResponseEntity<?> getVenues() {
         return ApiResponse.success(Main.st.getVenues().asNameList());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("states")
+    public ResponseEntity<?> getStates() {
+        return ApiResponse.success(List.of("VIRGINIA"));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -54,9 +66,15 @@ public class ConstantsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("callertypes")
+    @GetMapping("caller_types")
     public ResponseEntity<?> getCallerTypes() {
         return ApiResponse.success(Arrays.stream(IncidentSource.values()).map(ct -> ct.name().replace("_", " ")).toList());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("sources")
+    public ResponseEntity<?> getSources() {
+        return ApiResponse.success(Arrays.stream(IncidentSource.values()).map(is -> is.name().replace("_", " ")).toList());
     }
 
     @ResponseStatus(HttpStatus.OK)

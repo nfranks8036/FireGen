@@ -5,6 +5,8 @@ import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 import net.noahf.firegen.backend.access.IncidentManagerService;
 import net.noahf.firegen.backend.database.structure.Incident;
+import net.noahf.firegen.backend.database.structure.IncidentLogEntry;
+import net.noahf.firegen.backend.database.structure.helper.IncidentLogType;
 import net.noahf.firegen.backend.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -73,6 +75,20 @@ public class IncidentController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/id/{id}/add_narrative")
+    public ResponseEntity<?> addNarrative(@PathVariable String id, @RequestBody NewNarrative narrative) {
+        return ApiResponse.respond(() -> {
+            Incident current = this.incidentManagerService.getIncidentById(id);
+
+            current.log.add(IncidentLogEntry.of(IncidentLogType.NARRATIVE_ADDED, narrative.newNarrative));
+
+            this.incidentManagerService.updateIncident(id, current);
+
+            return "Updated:" + current.fullId + ":" + narrative.newNarrative.toString();
+        });
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
     public ResponseEntity<?> createIncident(@RequestBody Incident incident) {
         return ApiResponse.respond(() -> {
@@ -81,5 +97,9 @@ public class IncidentController {
             }
             throw new IllegalStateException("Failed to insert into database, unknown reason why!");
         });
+    }
+
+    public static class NewNarrative {
+        public String newNarrative = null;
     }
 }

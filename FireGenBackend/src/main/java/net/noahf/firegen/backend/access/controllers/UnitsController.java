@@ -6,15 +6,12 @@ import net.noahf.firegen.backend.access.UnitManagerService;
 import net.noahf.firegen.backend.database.structure.*;
 import net.noahf.firegen.backend.database.structure.helper.AssignmentEvent;
 import net.noahf.firegen.backend.database.structure.helper.IncidentLogType;
-import net.noahf.firegen.backend.structure.objects.UnitAssignmentStatus;
 import net.noahf.firegen.backend.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/v1/units")
@@ -46,10 +43,10 @@ public class UnitsController {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No incident exists by the ID '" + newStatus.incident + "', see active at /api/v1/incidents");
             }
 
-            UnitAssignment ua = i.units.stream().filter(ua1 -> ua1.unit.equals(u)).findFirst().orElse(null);
+            UnitAssignment ua = i.units.stream().filter(ua1 -> ua1.unit.equals(u.getCallsign())).findFirst().orElse(null);
             AssignmentEvent assign;
             if (ua == null) {
-                ua = new UnitAssignment(u, i, newStatus.primary, Main.st.getRadioChannels().from(newStatus.operate));
+                ua = new UnitAssignment(u, i, newStatus.primary, newStatus.operate);
                 assign = new AssignmentEvent(u, Main.st.getUnitAssignmentStatuses().from(newStatus.new_status), newStatus.narrative);
                 ua.events.add(assign);
                 i.units.add(ua);
@@ -62,7 +59,7 @@ public class UnitsController {
 
             Main.db.datastore().save(i);
 
-            return "Updated:" + u.id + ":" + assign.toString();
+            return "Updated:" + u.unitId + ":" + assign.toString();
         });
     }
 

@@ -6,7 +6,6 @@ import dev.morphia.utils.IndexType;
 import lombok.Getter;
 import lombok.Setter;
 import net.noahf.firegen.backend.structure.objects.UnitType;
-import org.bson.types.ObjectId;
 
 @Entity(value = "unit")
 @Indexes(value = @Index(fields = @Field(value = "id", type = IndexType.DESC)))
@@ -14,7 +13,7 @@ import org.bson.types.ObjectId;
 public class Unit {
 
     @Id
-    public String id;
+    public String unitId;
 
     @Reference @JsonIgnore
     public Agency agency;
@@ -25,7 +24,7 @@ public class Unit {
 
     public Unit() { super(); } // required for Morphia
     public Unit(Agency agency, UnitType type, int number) {
-        this.id = agency.getAbbreviation() + ":" + (type.getAbbreviation() != null ? type.getAbbreviation() : agency.getAbbreviation()) + number;
+        this.unitId = agency.getAbbreviation() + ":" + (type.getAbbreviation() != null ? type.getAbbreviation() : agency.getAbbreviation()) + number;
         this.agency = agency;
         this.unitType = type;
         this.unitNumber = number;
@@ -37,6 +36,6 @@ public class Unit {
 
     @Override
     public String toString() {
-        return this.id;
+        return this.unitId;
     }
 }
