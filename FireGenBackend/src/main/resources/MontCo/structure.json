@@ -1,0 +1,48 @@
+{
+  "municipality": "Montgomery County",
+  "unit_assignment_statuses": [
+    {"name": "ASSIGNED", "narrative": "{0} dispatched"},
+    {"name": "EN_ROUTE", "narrative": "{0} en-route"},
+    {"name": "ON_SCENE", "narrative": "{0} on-scene"},
+    {"name": "TRANSPORTING_SECONDARY", "narrative": "{0} transporting secondary"},
+    {"name": "ARRIVED_SECONDARY", "narrative": "{0} arrived secondary"},
+    {"name": "AVAILABLE", "narrative": "{0} clear"}
+  ],
+  "unit_operation_statuses": [
+    "IN_SERVICE",
+    "OUT_OF_SERVICE"
+  ],
+  "radio_channels": [
+    "F/R 1",
+    "SOUTH 3",
+    "SOUTH 5",
+    "SOUTH 7",
+    "SOUTH 9",
+    "SOUTH 11",
+    "MCSO",
+    "MCSO- COURTS",
+    "MCSO- JAIL",
+    "BFD 1",
+    "BFD 3",
+    "BRS 1",
+    "BPD",
+    "CFD 1",
+    "CPD",
+    "VTRS 1",
+    "VTRS 3",
+    "VTPD"
+  ],
+  "venues": [
+    "TOWN OF CHRISTIANSBURG",
+    "TOWN OF BLACKSBURG",
+    "VIRGINIA TECH",
+    "MONTGOMERY COUNTY",
+
+    "PULASKI COUNTY",
+    "CITY OF RADFORD",
+    "FLOYD COUNTY",
+    "ROANOKE COUNTY",
+    "GILES COUNTY",
+    "CRAIG COUNTY"
+  ]
+}

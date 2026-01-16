@@ -2,6 +2,7 @@ package net.noahf.firegen.backend;
 
 import net.noahf.firegen.backend.database.DatabaseInitializer;
 import net.noahf.firegen.backend.database.DatabaseManager;
+import net.noahf.firegen.backend.structure.StructureManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -14,8 +15,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class Main {
 
     public static DatabaseManager db;
+    public static StructureManager st;
 
     public static void main(String[] args) {
+        st = new StructureManager("MontCo");
+
         db = new DatabaseInitializer(null, null).database();
 
         SpringApplication.run(Main.class, args);

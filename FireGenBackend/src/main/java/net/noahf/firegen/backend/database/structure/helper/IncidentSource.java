@@ -1,14 +1,16 @@
 package net.noahf.firegen.backend.database.structure.helper;
 
-public enum CallerType {
+public enum IncidentSource {
 
-    INDIVIDUAL,
+    NINE_ONE_ONE,
+
+    PHONE,
+
+    RADIO,
 
     LAW_ENFORCEMENT,
 
     ALARM_COMPANY,
-
-    PASSERBY,
 
     UNKNOWN,
 

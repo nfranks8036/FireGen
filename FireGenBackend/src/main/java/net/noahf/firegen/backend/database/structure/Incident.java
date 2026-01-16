@@ -4,13 +4,11 @@ import dev.morphia.annotations.*;
 import dev.morphia.utils.IndexType;
 import lombok.Getter;
 import lombok.Setter;
-import net.noahf.firegen.backend.database.structure.helper.CallerType;
+import net.noahf.firegen.backend.database.structure.helper.IncidentSource;
 import net.noahf.firegen.backend.database.structure.helper.IncidentStatus;
 import net.noahf.firegen.backend.utils.Identifier;
 
-import java.text.DecimalFormat;
 import java.time.Instant;
-import java.time.temporal.TemporalField;
 import java.util.*;
 
 @Entity(value = "incident")
@@ -38,7 +36,7 @@ public class Incident {
 
     public String incidentPriority = "";
 
-    private CallerType callerType = CallerType.INDIVIDUAL;
+    private IncidentSource callerType = IncidentSource.NINE_ONE_ONE;
 
     public Location location = new Location();
 

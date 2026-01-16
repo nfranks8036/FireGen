@@ -2,7 +2,6 @@ package net.noahf.firegen.backend.access.controllers;
 
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
-import de.danielbechler.diff.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.DiffNode;
 import net.noahf.firegen.backend.access.IncidentManagerService;
 import net.noahf.firegen.backend.database.structure.Incident;
@@ -13,9 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.StringJoiner;
 
 @RestController

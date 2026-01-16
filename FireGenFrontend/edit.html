@@ -437,9 +437,13 @@ fetch(`http://localhost:8080/api/v1/priorities`)
 callertype.add(new Option(" ", ""));
 fetch("http://localhost:8080/api/v1/callertypes")
   .then(r => r.json())
-  .then(c => c.message.forEach(x =>
+  .then(c => c.message.forEach(x => {
+    if (x === "NINE ONE ONE") {
+        x = "911";
+    }
     callertype.add(new Option(x, x.replace(" ", "_")))
-  ));
+  }));
+
 
 const addCross = document.getElementById("add-cross");
 addCross.onclick = () => {

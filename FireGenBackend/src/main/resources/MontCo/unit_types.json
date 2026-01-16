@@ -1,0 +1,113 @@
+{
+  "types": [
+    {
+      "name": "FIRE_ENGINE",
+      "callsign": "ENGINE",
+      "abbreviation": "E"
+    },
+    {
+      "name": "FIRE_LADDER",
+      "callsign": "LADDER",
+      "abbreviation": "L"
+    },
+    {
+      "name": "FIRE_TOWER",
+      "callsign": "TOWER",
+      "abbreviation": "TO"
+    },
+    {
+      "name": "FIRE_TANKER",
+      "callsign": "TANKER",
+      "abbreviation": "TA"
+    },
+    {
+      "name": "FIRE_UTILITY",
+      "callsign": "UTILITY",
+      "abbreviation": "U"
+    },
+    {
+      "name": "FIRE_RESPONSE",
+      "callsign": "RESPONSE",
+      "abbreviation": "RESP"
+    },
+    {
+      "name": "FIRE_ATTACK",
+      "callsign": "ATTACK",
+      "abbreviation": "ATT"
+    },
+    {
+      "name": "FIRE_BRUSH",
+      "callsign": "BRUSH",
+      "abbreviation": "BR"
+    },
+    {
+      "name": "FIRE_HAZMAT",
+      "callsign": "HAZMAT",
+      "abbreviation": "HAZM"
+    },
+    {
+      "name": "FIRE_AIR",
+      "callsign": "AIR",
+      "abbreviation": "AIR"
+    },
+    {
+      "name": "FIRE_SQUAD",
+      "callsign": "SQUAD",
+      "abbreviation": "SQ"
+    },
+    {
+      "name": "FIRE_BATTALION_CHIEF",
+      "callsign": "BATTALION CHIEF",
+      "abbreviation": null
+    },
+
+
+    {
+      "name": "EMS_RESCUE",
+      "callsign": "RESCUE",
+      "abbreviation": "R"
+    },
+    {
+      "name": "EMS_MEDIC",
+      "callsign": "MEDIC",
+      "abbreviation": "M"
+    },
+    {
+      "name": "EMS_RESPONSE",
+      "callsign": "RESPONSE",
+      "abbreviation": "RESP"
+    },
+    {
+      "name": "EMS_SQUAD",
+      "callsign": "SQUAD",
+      "abbreviation": "SQ"
+    },
+    {
+      "name": "EMS_SUPERVISOR",
+      "callsign": "SUPERVISOR",
+      "abbreviation": "SUP"
+    },
+
+
+    {
+      "name": "VIRGINIA_TECH_POLICE",
+      "callsign": "VTPD",
+      "abbreviation": "VTPD"
+    },
+    {
+      "name": "BLACKSBURG_POLICE",
+      "callsign": "BPD",
+      "abbreviation": "BPD"
+    },
+    {
+      "name": "CHRISTIANSBURG_POLICE",
+      "callsign": "CPD",
+      "abbreviation": "CPD"
+    },
+    {
+      "name": "MONTGOMERY_COUNTY_SHERIFF",
+      "callsign": "MCSO",
+      "abbreviation": "MCSO"
+    }
+  ]
+}

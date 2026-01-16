@@ -1,9 +1,6 @@
 package net.noahf.firegen.backend.access;
 
-import dev.morphia.InsertOneOptions;
-import dev.morphia.UpdateOptions;
 import dev.morphia.query.Query;
-import dev.morphia.query.filters.Filter;
 import net.noahf.firegen.backend.Main;
 import net.noahf.firegen.backend.database.structure.Incident;
 import net.noahf.firegen.backend.database.structure.IncidentLogEntry;
@@ -12,10 +9,6 @@ import net.noahf.firegen.backend.database.structure.helper.IncidentStatus;
 import net.noahf.firegen.backend.utils.Identifier;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import static dev.morphia.query.filters.Filters.*;

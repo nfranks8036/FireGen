@@ -2,10 +2,14 @@ package net.noahf.firegen.backend.database;
 
 import com.mongodb.client.MongoClients;
 import dev.morphia.Datastore;
+import dev.morphia.DeleteOptions;
 import dev.morphia.Morphia;
 import dev.morphia.config.MorphiaConfig;
 import dev.morphia.config.MorphiaConfigHelper;
 import jakarta.annotation.Nullable;
+import net.noahf.firegen.backend.Main;
+import net.noahf.firegen.backend.database.structure.Agency;
+import net.noahf.firegen.backend.database.structure.Unit;
 import net.noahf.firegen.backend.utils.Log;
 
 import java.sql.*;
@@ -32,6 +36,23 @@ public class DatabaseInitializer {
             config.add(str);
         }
         Log.debug("Database environment: [url='" + DEFAULT_URL + "', config=" + config.toString() + "]");
+
+        Log.debug("Deleting old information...");
+        this.datastore.find(Agency.class)
+                        .delete(new DeleteOptions().multi(true));
+        this.datastore.find(Unit.class)
+                .delete(new DeleteOptions().multi(true));
+
+        Log.debug("Creating information from JSON...");
+        for (Agency agency : Main.st.getAgencies()) {
+            Log.debug("Agency: " + agency.getName() + ", with " + agency.getUnits().size() + " units.");
+            for (Unit unit : agency.getUnits()) {
+                this.datastore.save(unit);
+            }
+            this.datastore.save(agency);
+        }
+
+        Log.debug("Injected information into database.");
 
         Log.debug("Database loaded.");
     }
