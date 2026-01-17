@@ -66,12 +66,6 @@ public class ConstantsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("caller_types")
-    public ResponseEntity<?> getCallerTypes() {
-        return ApiResponse.success(Arrays.stream(IncidentSource.values()).map(ct -> ct.name().replace("_", " ")).toList());
-    }
-
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("sources")
     public ResponseEntity<?> getSources() {
         return ApiResponse.success(Arrays.stream(IncidentSource.values()).map(is -> is.name().replace("_", " ")).toList());

@@ -58,6 +58,45 @@
     .card-body {
         padding: 15px;
     }
+
+    table {
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    #narrative-table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    #narrative-table th:nth-child(1),
+    #narrative-table td:nth-child(1) {
+        width: 15%;
+    }
+
+    #narrative-table th:nth-child(2),
+    #narrative-table td:nth-child(2) {
+        width: 15%;
+    }
+
+    #narrative-table th:nth-child(3),
+    #narrative-table td:nth-child(3) {
+        width: 60%;
+    }
+
+    .narrative-table {
+    max-height: 200px;      /* ~5 rows, tweak as needed */
+    overflow-y: auto;
+}
+
+/* keep header visible while scrolling (optional but nice) */
+#narrative-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #212529; /* match table-dark */
+    z-index: 1;
+}
+
 </style>
 </head>
 <body>
@@ -109,7 +148,7 @@
                     <span class="info-value" id="status"></span>
                 </div>
                 <div class="col-md-6">
-                    <span class="info-label">Caller Type:</span> 
+                    <span class="info-label">Source:</span> 
                     <span class="info-value" id="caller-type"></span>
                 </div>
                 <div class="col-md-12">
@@ -125,7 +164,7 @@
         <div class="card-body">
             <h2 class="sect-title">Call Log</h2>
             <div class="narrative-table">
-                <table class="table table-sm table-dark table-striped table-dark-custom" id="narrative-table">
+                <table class="table table-sm table-dark table-borderless table-striped table-dark-custom" id="narrative-table">
                     <thead>
                         <tr>
                             <th>Time</th>
@@ -223,15 +262,14 @@ async function loadIncident() {
         document.getElementById('created').textContent = displayValue(incident.created || '');
         document.getElementById('priority').textContent = displayValue(incident.incidentPriority || '');
         document.getElementById('status').textContent = displayValue(incident.incidentStatus || '');
-        document.getElementById('caller-type').textContent = displayValue(incident.callerType || '');
+        document.getElementById('caller-type').textContent = displayValue(incident.incidentSource || '').replace("NINE ONE ONE", "911");
         document.getElementById('full-id').textContent = displayValue(incident.fullId || '');
 
         // Narrative Table
         const narrativeBody = document.querySelector('#narrative-table tbody');
         narrativeBody.innerHTML = '';
         let narrativeLogs = (incident.log || [])
-            .sort((a,b) => new Date(b.time) - new Date(a.time))
-            .slice(0,5);
+            .sort((a,b) => new Date(b.time) - new Date(a.time));
 
         narrativeLogs.forEach(l => {
             const tr = document.createElement('tr');

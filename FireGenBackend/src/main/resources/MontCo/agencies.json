@@ -121,6 +121,16 @@
 
         { "number": 15, "unit_type": "EMS_SUPERVISOR" }
       ]
+    },
+    {
+      "station": 0,
+      "name": "Blacksburg Police Department",
+      "simplified": "Blacksburg Police",
+      "abbreviation": "BPD",
+      "agency_type": "POLICE",
+      "units": [
+        { "number": 150, "unit_type": "POLICE" }
+      ]
     }
   ]
 }
