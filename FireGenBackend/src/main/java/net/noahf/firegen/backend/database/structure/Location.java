@@ -47,4 +47,16 @@ public class Location {
         this.shownValue = custom;
     }
 
+    public enum LocationType {
+        STREET_ADDRESS,
+
+        INTERSECTION,
+
+        MILE_MARKER,
+
+        CUSTOM;
+
+        LocationType()
+    }
+
 }

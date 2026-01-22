@@ -6,6 +6,7 @@ import de.danielbechler.diff.node.DiffNode;
 import net.noahf.firegen.backend.access.IncidentManagerService;
 import net.noahf.firegen.backend.database.structure.Incident;
 import net.noahf.firegen.backend.database.structure.IncidentLogEntry;
+import net.noahf.firegen.backend.database.structure.Location;
 import net.noahf.firegen.backend.database.structure.helper.IncidentLogType;
 import net.noahf.firegen.backend.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class IncidentController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PutMapping("/id/{id}")
+    @PutMapping("/id/{id}/update")
     public ResponseEntity<?> updateIncident(@PathVariable String id, @RequestBody Incident incident) {
         return ApiResponse.respond(() -> {
 
@@ -75,6 +76,39 @@ public class IncidentController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/id/{id}/update/location")
+    public ResponseEntity<?> updateLocation(@PathVariable String id, @RequestBody Location location) {
+        return ApiResponse.respond(() -> {
+
+            Location dummy = new Location();
+            Incident currentIncident = this.incidentManagerService.getIncidentById(id);
+            Location currentLocation = currentIncident.location;
+            ObjectDiffer differ = ObjectDifferBuilder.startBuilding()
+                    .comparison()
+                    .ofType(String.class).toUseEqualsMethod().and()
+                    .build();
+            DiffNode diff = differ.compare(location, dummy);
+
+            StringJoiner joiner = new StringJoiner(",", "Diff[", "]");
+            diff.visit((node, visit) -> {
+                try {
+                    if (!node.isRootNode() && node.hasChanges()) {
+                        joiner.add(node.getPath().toString().substring(1) + "=" + node.canonicalGet(location) + "->" + node.canonicalGet(currentLocation));
+                        node.canonicalSet(currentLocation, node.canonicalGet(location));
+                    }
+                } catch (Exception exception) {
+                    System.err.println("ERROR FINDING CHANGES: " + exception);
+                }
+            });
+
+            currentIncident.location = currentLocation;
+            this.incidentManagerService.updateIncident(id, currentIncident);
+
+            return "UpdatedLocation:" + currentIncident.fullId + ":" + joiner.toString();
+        });
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/id/{id}/add_narrative")
     public ResponseEntity<?> addNarrative(@PathVariable String id, @RequestBody NewNarrative narrative) {
         return ApiResponse.respond(() -> {
@@ -102,4 +136,5 @@ public class IncidentController {
     public static class NewNarrative {
         public String newNarrative = null;
     }
+
 }

@@ -129,7 +129,7 @@
       "abbreviation": "BPD",
       "agency_type": "POLICE",
       "units": [
-        { "number": 150, "unit_type": "POLICE" }
+        { "number": 150, "unit_type": "BLACKSBURG_POLICE" }
       ]
     }
   ]
