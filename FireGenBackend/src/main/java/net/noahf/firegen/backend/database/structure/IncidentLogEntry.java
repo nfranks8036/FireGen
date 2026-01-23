@@ -12,13 +12,13 @@ public class IncidentLogEntry {
         IncidentLogEntry entry = new IncidentLogEntry();
         entry.time = Instant.now();
         entry.text = text;
-        entry.logType = logType;
+        entry.type = logType;
         return entry;
     }
 
     public Instant time;
     public String text;
 
-    public IncidentLogType logType;
+    public IncidentLogType type;
 
 }

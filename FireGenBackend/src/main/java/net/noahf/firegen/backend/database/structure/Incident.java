@@ -4,6 +4,7 @@ import dev.morphia.annotations.*;
 import dev.morphia.utils.IndexType;
 import lombok.Getter;
 import lombok.Setter;
+import net.noahf.firegen.backend.Main;
 import net.noahf.firegen.backend.database.structure.helper.IncidentSource;
 import net.noahf.firegen.backend.database.structure.helper.IncidentStatus;
 import net.noahf.firegen.backend.utils.Identifier;
@@ -17,7 +18,7 @@ import java.util.*;
 public class Incident {
 
     public Incident() {
-        this.incidentNumber = new Random().nextInt(10000, 99999);
+        this.incidentNumber = Main.db.nextIncident();
         this.incidentYear = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).get(Calendar.YEAR);
         this.fullId = this.incidentYear + "-" + String.format("%08d", this.incidentNumber);
     }

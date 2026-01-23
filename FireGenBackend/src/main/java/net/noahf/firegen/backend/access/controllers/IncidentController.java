@@ -3,6 +3,7 @@ package net.noahf.firegen.backend.access.controllers;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
+import net.noahf.firegen.backend.Main;
 import net.noahf.firegen.backend.access.IncidentManagerService;
 import net.noahf.firegen.backend.database.structure.Incident;
 import net.noahf.firegen.backend.database.structure.IncidentLogEntry;
@@ -123,7 +124,7 @@ public class IncidentController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/create")
+    @PostMapping("/new")
     public ResponseEntity<?> createIncident(@RequestBody Incident incident) {
         return ApiResponse.respond(() -> {
             if (this.incidentManagerService.createIncident(incident)) {
@@ -131,6 +132,12 @@ public class IncidentController {
             }
             throw new IllegalStateException("Failed to insert into database, unknown reason why!");
         });
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/count")
+    public ResponseEntity<?> getNextIncident() {
+        return ApiResponse.respond(() -> Main.db.countIncidents());
     }
 
     public static class NewNarrative {
