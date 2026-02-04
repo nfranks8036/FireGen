@@ -22,7 +22,7 @@ public class UnitsController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{agency}/{unit}")
-    public ResponseEntity<?> getIncidents(@PathVariable String agency, @PathVariable String unit, @RequestBody NewStatus newStatus) {
+    public ResponseEntity<?> updateUnit(@PathVariable String agency, @PathVariable String unit, @RequestBody NewStatus newStatus) {
         return ApiResponse.respond(() -> {
             if (agency == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expected abbreviated agency: /api/v1/units/{agency}/{unit}");
@@ -49,17 +49,42 @@ public class UnitsController {
                 ua = new UnitAssignment(u, i, newStatus.primary, newStatus.operate);
                 assign = new AssignmentEvent(u, Main.st.getUnitAssignmentStatuses().from(newStatus.new_status), newStatus.narrative);
                 ua.events.add(assign);
+                u.assignment = ua;
                 i.units.add(ua);
                 i.log.add(IncidentLogEntry.of(IncidentLogType.UNIT_ADDED, assign.narrative));
             } else { // ua != null
                 assign = new AssignmentEvent(u, Main.st.getUnitAssignmentStatuses().from(newStatus.new_status), newStatus.narrative);
                 ua.events.add(assign);
+                u.assignment = ua;
                 i.log.add(IncidentLogEntry.of(IncidentLogType.UNIT_STATUS_UPDATED, assign.narrative));
             }
 
             Main.db.datastore().save(i);
+            Main.db.datastore().save(u);
 
             return "Updated:" + u.unitId + ":" + assign.toString();
+        });
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{agency}/{unit}")
+    public ResponseEntity<?> getUnitStatus(@PathVariable String agency, @PathVariable String unit) {
+        return ApiResponse.respond(() -> {
+            if (agency == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expected abbreviated agency: /api/v1/units/{agency}/{unit}");
+            }
+            if (unit == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expected unit type and number: /api/v1/units/{agency}/{unit}");
+            }
+            Agency a = Main.st.getAgencies().asList().stream().filter(ag -> ag.abbreviation.equalsIgnoreCase(agency)).findFirst().orElse(null);
+            if (a == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No agency by the name of '" + agency + "', see list at /api/v1/agencies");
+            }
+            Unit u = a.units.stream().filter(un -> un.getCallsign().equalsIgnoreCase(unit)).findFirst().orElse(null);
+            if (u == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No unit in the agency '" + agency + "' with the ID '" + unit + "'");
+            }
+            return u.assignment;
         });
     }
 

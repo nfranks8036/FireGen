@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.StringJoiner;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/incidents")
@@ -78,34 +78,18 @@ public class IncidentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/id/{id}/update/location")
-    public ResponseEntity<?> updateLocation(@PathVariable String id, @RequestBody Location location) {
+    public ResponseEntity<?> updateLocation(@PathVariable String id, @RequestBody NewLocation newLocation) {
         return ApiResponse.respond(() -> {
+            Incident incident = this.incidentManagerService.getIncidentById(id);
+            if (incident == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Incident not found by ID '" + id + "'");
+            }
 
-            Location dummy = new Location();
-            Incident currentIncident = this.incidentManagerService.getIncidentById(id);
-            Location currentLocation = currentIncident.location;
-            ObjectDiffer differ = ObjectDifferBuilder.startBuilding()
-                    .comparison()
-                    .ofType(String.class).toUseEqualsMethod().and()
-                    .build();
-            DiffNode diff = differ.compare(location, dummy);
+            incident = newLocation.apply(incident);
 
-            StringJoiner joiner = new StringJoiner(",", "Diff[", "]");
-            diff.visit((node, visit) -> {
-                try {
-                    if (!node.isRootNode() && node.hasChanges()) {
-                        joiner.add(node.getPath().toString().substring(1) + "=" + node.canonicalGet(location) + "->" + node.canonicalGet(currentLocation));
-                        node.canonicalSet(currentLocation, node.canonicalGet(location));
-                    }
-                } catch (Exception exception) {
-                    System.err.println("ERROR FINDING CHANGES: " + exception);
-                }
-            });
+            this.incidentManagerService.updateIncident(id, incident);
 
-            currentIncident.location = currentLocation;
-            this.incidentManagerService.updateIncident(id, currentIncident);
-
-            return "UpdatedLocation:" + currentIncident.fullId + ":" + joiner.toString();
+            return "UpdatedLocation:" + incident.fullId + ":" + incident.location.toString();
         });
     }
 
@@ -125,8 +109,9 @@ public class IncidentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/new")
-    public ResponseEntity<?> createIncident(@RequestBody Incident incident) {
+    public ResponseEntity<?> createIncident() {
         return ApiResponse.respond(() -> {
+            Incident incident = new Incident(true);
             if (this.incidentManagerService.createIncident(incident)) {
                 return "Created:" + incident.fullId;
             }
@@ -142,6 +127,56 @@ public class IncidentController {
 
     public static class NewNarrative {
         public String newNarrative = null;
+    }
+
+    public static class NewLocation {
+        public Location.LocationType type = Location.LocationType.CUSTOM;
+        public List<String> crossStreets = null;
+        public String commonName = "";
+        public String venue = "";
+        public String state = "VA";
+        public Integer zipCode = null;
+        public Map<String, ?> payload = new HashMap<>();
+
+
+        public Incident apply(Incident incident) {
+            Location location = incident.location;
+            location.primaryLocationType = this.type;
+            switch (type) {
+                case STREET_ADDRESS -> {
+                    location.setStreetAddress(String.valueOf(this.payload.get("streetAddress")));
+                }
+                case MILE_MARKER -> {
+                    location.setMileMarker(String.valueOf(this.payload.get("roadName")), Double.parseDouble(String.valueOf(this.payload.get("mileMarker"))));
+                }
+                case INTERSECTION -> {
+                    location.setIntersection((ArrayList<String>)this.payload.get("intersection"));
+                }
+                case COORDINATES -> {
+                    location.setCoordinates(Double.parseDouble(String.valueOf(this.payload.get("latitude"))), Double.parseDouble(String.valueOf(this.payload.get("longitude"))));
+                }
+                case CUSTOM -> {
+                    location.setCustomRoad(String.valueOf(this.payload.get("custom")));
+                }
+            }
+            if (crossStreets != null ){
+                location.crossStreets = crossStreets;
+            }
+            if (commonName != null) {
+                location.commonName = commonName;
+            }
+            if (venue != null) {
+                location.venue = venue;
+            }
+            if (state != null) {
+                location.state = state;
+            }
+            if (zipCode != null) {
+                location.zipCode = zipCode;
+            }
+            incident.location = location;
+            return incident;
+        }
     }
 
 }

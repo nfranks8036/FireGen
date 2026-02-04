@@ -3,6 +3,7 @@ package net.noahf.firegen.backend.database.structure;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.morphia.annotations.*;
 import dev.morphia.utils.IndexType;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import net.noahf.firegen.backend.structure.objects.UnitType;
@@ -22,12 +23,15 @@ public class Unit {
 
     public int unitNumber;
 
+    public UnitAssignment assignment;
+
     public Unit() { super(); } // required for Morphia
     public Unit(Agency agency, UnitType type, int number) {
         this.unitId = agency.getAbbreviation() + ":" + (type.getAbbreviation() != null ? type.getAbbreviation() : agency.getAbbreviation()) + number;
         this.agency = agency;
         this.unitType = type;
         this.unitNumber = number;
+        this.assignment = null;
     }
 
     public String getCallsign() {

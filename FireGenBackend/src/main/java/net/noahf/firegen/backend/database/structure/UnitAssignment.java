@@ -13,6 +13,8 @@ import java.util.Stack;
 @Entity
 public class UnitAssignment {
 
+    public String incident;
+
     public String unit;
 
     public boolean primary;
@@ -23,6 +25,7 @@ public class UnitAssignment {
 
     public UnitAssignment() { super(); }
     public UnitAssignment(Unit unit, Incident incident, boolean primary, String radioChannel) {
+        this.incident = incident.fullId;
         this.unit = unit.getCallsign();
         this.primary = primary;
         this.radioChannel = radioChannel;
