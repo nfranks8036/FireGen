@@ -1,12 +1,12 @@
 {
   "municipality": "Montgomery County",
   "unit_assignment_statuses": [
-    {"name": "ASSIGNED", "narrative": "{0} dispatched"},
-    {"name": "EN_ROUTE", "narrative": "{0} en-route"},
-    {"name": "ON_SCENE", "narrative": "{0} on-scene"},
-    {"name": "TRANSPORTING_SECONDARY", "narrative": "{0} transporting secondary"},
-    {"name": "ARRIVED_SECONDARY", "narrative": "{0} arrived secondary"},
-    {"name": "AVAILABLE_FOR_CALLS", "narrative": "{0} clear"}
+    "DISPATCHED",
+    "EN-ROUTE",
+    "ON-SCENE",
+    "TRANSPORTING SECONDARY",
+    "ARRIVED SECONDARY",
+    "CLEAR"
   ],
   "unit_operation_statuses": [
     "IN_SERVICE",

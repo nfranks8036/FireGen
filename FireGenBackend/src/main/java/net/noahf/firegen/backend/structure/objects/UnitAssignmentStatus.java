@@ -11,10 +11,10 @@ public class UnitAssignmentStatus extends StructureObject {
     public String name;
     public @Getter String narrative;
 
-    public UnitAssignmentStatus(String name, String narrative) {
+    public UnitAssignmentStatus(String name) {
         super(name);
         this.name = super.getName();
-        this.narrative = narrative;
+        this.narrative = "Unit {0} " + name;
     }
 
     public String asNarrative(String unit) {

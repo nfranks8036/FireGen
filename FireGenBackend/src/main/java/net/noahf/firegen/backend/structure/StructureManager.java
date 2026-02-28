@@ -28,7 +28,7 @@ public class StructureManager {
 
     private @Getter StructureList<Agency> agencies;
 
-    private @Getter StructureList<IncidentPrioritiesPreset> prioritiesPresets;
+    private @Getter StructureList<IncidentTypeTag> tagsPresets;
     private @Getter StructureList<IncidentType> incidentTypes;
 
     public StructureManager(String folder) {
@@ -52,9 +52,8 @@ public class StructureManager {
             this.unitAssignmentStatuses = toStructureList(
                     json.getAsJsonArray("unit_assignment_statuses"),
                     (element) -> {
-                        JsonObject obj = element.getAsJsonObject();
-                        Log.debug("Inspecting: " + obj.toString());
-                        return new UnitAssignmentStatus(obj.get("name").getAsString(), obj.get("narrative").getAsString());
+                        Log.debug("Inspecting: " + element.toString());
+                        return new UnitAssignmentStatus(element.getAsString());
                     }
             );
             this.unitOperationStatuses = toStructureList(UnitOperationStatus::new, json.getAsJsonArray("unit_operation_statuses"));
@@ -98,13 +97,31 @@ public class StructureManager {
         try {
             JsonObject json = this.open(fileName);
 
-            this.prioritiesPresets = toStructureList(
-                    json.getAsJsonArray("priority_presets"),
+            this.tagsPresets = toStructureList(
+                    json.getAsJsonArray("tags"),
                     (element) -> {
                         JsonObject obj = element.getAsJsonObject();
                         Log.debug("Inspecting: " + obj.toString());
-                        return new IncidentPrioritiesPreset(obj.get("name").getAsString(), obj.getAsJsonArray("list").asList().stream().map(JsonElement::getAsString).toList());
+
+                        JsonElement qualifierElement = obj.get("qualifiers");
+                        IncidentTypeTag.Qualifier qualifier = null;
+                        if (!qualifierElement.isJsonNull()) {
+                            JsonObject qual = qualifierElement.getAsJsonObject();
+                            qualifier = new IncidentTypeTag.Qualifier(
+                                    qual.get("required").getAsBoolean(),
+                                    qual.get("unique").getAsBoolean(),
+                                    qual.get("syntax").getAsString(),
+                                    qual.getAsJsonArray("list").asList().stream().map(JsonElement::getAsString).toList()
+                            );
+                        }
+
+                        return new IncidentTypeTag(
+                                obj.get("name").getAsString(),
+                                obj.getAsJsonArray("priorities").asList().stream().map(JsonElement::getAsString).toList(),
+                                qualifier
+                        );
                     });
+
             this.incidentTypes = toStructureList(
                     json.getAsJsonArray("types"),
                     (element) -> {

@@ -7,33 +7,25 @@ import net.noahf.firegen.backend.structure.StructureManager;
 import net.noahf.firegen.backend.structure.StructureObject;
 
 import java.util.List;
-import java.util.UUID;
 
 public class IncidentType extends StructureObject {
 
-    private final @Getter IncidentPrioritiesPreset prioritiesPreset;
+    private final @Getter IncidentTypeTag tag;
 
     public IncidentType(StructureManager st, JsonObject obj) {
         super(obj.get("name").getAsString());
 
-        JsonElement prioritiesField = obj.get("priorities");
-        if (prioritiesField.isJsonArray()) {
-            this.prioritiesPreset = new IncidentPrioritiesPreset("Custom-" + UUID.randomUUID(), prioritiesField.getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList());
-        } else {
-            try {
-                this.prioritiesPreset = st.getPrioritiesPresets().from(prioritiesField.getAsString());
-            } catch (UnsupportedOperationException exception) {
-                throw new IllegalStateException("Must have some priorities set for IncidentType '" + this.getName() + "', found none: " + obj.toString());
-            }
-        }
-    }
+        JsonElement tagsField = obj.get("tags");
 
-    public List<String> getPriorities() {
-        return this.prioritiesPreset.getPriorities();
+        try {
+            this.tag = st.getTagsPresets().from(tagsField.getAsJsonArray().get(0).getAsString());
+        } catch (UnsupportedOperationException exception) {
+            throw new IllegalStateException("Must have a tag set for IncidentType '" + this.getName() + "', found none: " + obj.toString());
+        }
     }
 
     @Override
     public String toString() {
-        return "IncidentType{name=" + this.getName() + ", priorities=" + this.getPriorities() + "}";
+        return "IncidentType{name=" + this.getName() + ", tag=" + this.getTag().toString() + "}";
     }
 }

@@ -1,7 +1,6 @@
 package net.noahf.firegen.backend.access.controllers;
 
 import net.noahf.firegen.backend.Main;
-import net.noahf.firegen.backend.database.structure.Incident;
 import net.noahf.firegen.backend.database.structure.helper.IncidentSource;
 import net.noahf.firegen.backend.structure.objects.IncidentType;
 import net.noahf.firegen.backend.utils.ApiResponse;
@@ -72,8 +71,8 @@ public class ConstantsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("priorities")
-    public ResponseEntity<?> getPrioritiesFor(@RequestParam(required = false) String incident) {
+    @GetMapping("type_tag")
+    public ResponseEntity<?> getTypeTagFor(@RequestParam(required = false) String incident) {
         return ApiResponse.respond(() -> {
             if (incident == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expected parameter 'incident' with an incident type from /api/v1/incident_types");
@@ -82,7 +81,7 @@ public class ConstantsController {
             if (i == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Incident type of '" + incident + "' not found, see list at /api/v1/incident_types");
             }
-            return i.getPriorities();
+            return i.getTag();
         });
     }
 
