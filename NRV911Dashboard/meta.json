@@ -1,0 +1,56 @@
+{
+  "title": "Listen to NRV911",
+  "footer": "Press 'LIVE FEED' to begin listening. Press 'Scanner Tutorial' at the top for help.\nThis feed is provided for public monitoring purposes only. Using this data in the commission of a felony or with intent to disrupt public safety personnel is a crime (47 U.S.C. § 605; VA § 18.2-165.2 and 462.1).",
+  "sections": [
+    {
+      "title": "WAYS TO LISTEN",
+      "links": [
+            {
+            "text": "OpenMHz",
+            "url": "https://www.openmhz.com/system/nrv911",
+            "icon": "favicon"
+            },
+            {
+            "text": "RdioScanner",
+            "url": "https://radio.vtfirewatch.com",
+            "icon": "🔊"
+            },
+            {
+            "text": "Broadcastify (RadioReference)",
+            "url": "https://www.radioreference.com/db/browse/ctid/2879#cid-1979",
+            "icon": "favicon"
+            },
+            {
+            "text": "Discord (Firewatch @ VT)",
+            "url": "https://discord.gg/DYrkrUA7qz",
+            "icon": "favicon"
+            },
+            {
+            "text": "Incident List",
+            "url": "https://www.incidentsource.com/radiant-glow/?view=list&incContextId=121&incLimit=10&ctid=&ctids=&incCtid=&eventsCtid=&eventsContextId=121&evtLimit=50#events",
+            "icon": "favicon"
+            }
+        ]
+    },
+    {
+      "title": "OTHER RESOURCES",
+      "links": [
+        {
+          "text": "RdioScanner Tutorial",
+          "url": "https://github.com/chuot/rdio-scanner/blob/master/docs/webapp.md",
+          "icon": "favicon"
+        },
+        {
+          "text": "Weather (AccuWeather)",
+          "url": "https://www.accuweather.com/en/us/blacksburg/24060/weather-forecast/331254",
+          "icon": "favicon"
+        },
+        {
+          "text": "Firewatch at VT",
+          "url": "https://vtfirewatch.com",
+          "icon": "favicon"
+        }
+      ]
+    }
+  ]
+}

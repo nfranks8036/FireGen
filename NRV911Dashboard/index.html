@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Loading...</title>
+
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --accent: #3b82f6;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  padding: 20px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+/* SECTIONS */
+.section {
+  padding: 0 20px 20px 20px;
+}
+
+.section-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* LINK BUTTON */
+.link-card {
+  background: var(--card);
+  padding: 14px 20px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.link-card:hover {
+  transform: translateY(-3px);
+  border: 1px solid var(--accent);
+  background: #273449;
+}
+
+/* IFRAME */
+.radio-container {
+  flex: 1;
+  padding: 0 20px 20px 20px;
+  display: flex;
+  justify-content: center;   /* center horizontally */
+}
+
+.radio-container iframe {
+  flex: 1;
+  height: auto;
+  width: 100%;
+  max-width: 900px;
+  border: none;
+  border-radius: 14px;
+  background: black;
+}
+
+/* FOOTER */
+.footer-container {
+  text-align: center;
+  padding: 12px 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.footer {
+  text-align: center;
+  padding: 4px 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<div class="header" id="page-title"></div>
+
+<div id="sections-container"></div>
+
+<div class="radio-container">
+  <iframe 
+    src="https://radio.scannrv.com"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<div id="footer-container"></div>
+
+<script>
+fetch("meta.json")
+  .then(response => response.json())
+  .then(data => {
+    document.title = data.title;
+    document.getElementById("page-title").textContent = data.title;
+
+    const footerContainer = document.getElementById("footer-container");
+    (data.footer || "").split("\n").forEach(section => {
+      const sectionDiv = document.createElement("div");
+      sectionDiv.className = "footer";
+      sectionDiv.textContent = section;
+
+      footerContainer.appendChild(sectionDiv);
+    });
+
+    const sectionsContainer = document.getElementById("sections-container");
+
+    data.sections.forEach(section => {
+      const sectionDiv = document.createElement("div");
+      sectionDiv.className = "section";
+
+      const title = document.createElement("div");
+      title.className = "section-title";
+      title.textContent = section.title;
+      sectionDiv.appendChild(title);
+
+      const linksDiv = document.createElement("div");
+      linksDiv.className = "links";
+
+      section.links.forEach(link => {
+        const a = document.createElement("a");
+        a.href = link.url;
+        a.target = "_blank";
+        a.className = "link-card";
+
+        let iconHTML = "";
+
+        if (link.icon === "favicon") {
+          const domain = new URL(link.url).hostname;
+          const faviconURL = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+          iconHTML = `<img src="${faviconURL}" style="width:18px;height:18px;border-radius:4px;">`;
+        } else if (link.icon) {
+          iconHTML = `<span>${link.icon}</span>`;
+        }
+
+        a.innerHTML = `${iconHTML} ${link.text}`;
+        linksDiv.appendChild(a);
+      });
+
+      sectionDiv.appendChild(linksDiv);
+      sectionsContainer.appendChild(sectionDiv);
+    });
+  })
+  .catch(err => {
+    console.error("Error loading meta.json:", err);
+  });
+</script>
+
+</body>
+</html>

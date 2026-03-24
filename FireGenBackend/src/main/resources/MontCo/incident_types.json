@@ -47,6 +47,7 @@
     {"name": "LOST PET", "tags": ["POLICE"]},
     {"name": "RECKLESS DRIVING", "tags": ["POLICE"]},
     {"name": "MISSING PERSON", "tags": ["POLICE"]},
+    {"name": "BUILDING UNLOCK", "tags": ["POLICE"]},
 
     {"name": "LOOKOUT", "tags": ["POLICE"]},
     {"name": "TRAFFIC STOP", "tags": ["POLICE"]},
