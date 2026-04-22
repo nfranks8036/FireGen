@@ -186,8 +186,9 @@
                 <table class="table table-sm table-dark table-striped table-dark-custom" id="apparatus-table">
                     <thead>
                         <tr>
-                            <th>Primary</th>
                             <th>Unit</th>
+                            <th>Primary</th>
+                            <th>Radio</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -295,21 +296,25 @@ async function loadIncident() {
         units.sort((a,b) => (b.primary ? 1 : 0) - (a.primary ? 1 : 0));
 
         units.forEach(u => {
+            const unitTd = document.createElement('td');
+            const unit = displayValue(u.unit || '');
+            unitTd.textContent = `${unit}`;
+
             const tr = document.createElement('tr');
             const primaryTd = document.createElement('td');
             primaryTd.textContent = u.primary ? 'Yes' : 'No';
 
-            const unitTd = document.createElement('td');
-            const unitType = displayValue(getNested(u, 'unit.unitType') || '');
-            const unitNumber = displayValue(getNested(u, 'unit.unitNumber') || '');
-            unitTd.textContent = `${unitType} ${unitNumber}`;
+            const radioTd = document.createElement('td');
+            const radio = displayValue(u.radioChannel || '');
+            radioTd.textContent = `${radio}`;
 
             const statusTd = document.createElement('td');
-            const lastEvent = u.events?.peek?.[0];
-            statusTd.textContent = displayValue(lastEvent?.status || '');
+            const lastEvent = u.events[0];
+            statusTd.textContent = displayValue(lastEvent.status || '');
 
-            tr.appendChild(primaryTd);
             tr.appendChild(unitTd);
+            tr.appendChild(primaryTd);
+            tr.appendChild(radioTd);
             tr.appendChild(statusTd);
             apparatusBody.appendChild(tr);
         });

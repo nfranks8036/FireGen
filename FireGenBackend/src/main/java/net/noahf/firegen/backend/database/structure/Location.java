@@ -11,6 +11,11 @@ import java.util.function.Function;
 @Getter
 public class Location {
 
+    public static final String INTERSECTION_SEPARATOR = " / ";
+    public static final String MILE_MARKER_SEPARATOR = " @ ";
+
+
+
     public LocationType primaryLocationType = LocationType.CUSTOM;
 
     public String streetAddress = null;
@@ -39,7 +44,7 @@ public class Location {
     public void setIntersection(List<String> intersection) {
         this.intersection = intersection;
 
-        this.shownValue = String.join(" / ", intersection);
+        this.shownValue = String.join(INTERSECTION_SEPARATOR, intersection);
         this.primaryLocationType = LocationType.INTERSECTION;
     }
 
@@ -47,7 +52,7 @@ public class Location {
         this.mileMarker = mileMarker;
         this.streetAddress = roadName;
 
-        this.shownValue = roadName + " @ " + mileMarker;
+        this.shownValue = roadName + MILE_MARKER_SEPARATOR + mileMarker;
         this.primaryLocationType = LocationType.MILE_MARKER;
     }
 

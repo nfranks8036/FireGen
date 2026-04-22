@@ -1,0 +1,36 @@
+plugins {
+    id 'idea'
+    id 'java'
+}
+
+allprojects {
+    group = 'net.noahf.firegen'
+    version = '1.0.0'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
+        }
+    }
+
+    dependencies {
+
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}

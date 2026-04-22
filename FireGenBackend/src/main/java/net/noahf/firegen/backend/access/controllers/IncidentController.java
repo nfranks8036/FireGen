@@ -139,6 +139,7 @@ public class IncidentController {
         public Map<String, ?> payload = new HashMap<>();
 
 
+        @SuppressWarnings("unchecked")
         public Incident apply(Incident incident) {
             Location location = incident.location;
             location.primaryLocationType = this.type;
