@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface IncidentLocation {
 
-    List<String> getLocationData();
+    List<String> getData();
 
-    LocationType getLocationType();
+    LocationType getType();
 
     String getCommonName();
 
@@ -16,7 +16,7 @@ public interface IncidentLocation {
 
     void setVenue(LocationVenue venue);
 
-    boolean isLocationSet();
+    boolean isSet();
 
     String formatAsOneLine();
 

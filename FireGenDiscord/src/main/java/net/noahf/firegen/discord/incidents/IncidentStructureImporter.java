@@ -11,7 +11,7 @@ import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeTagImpl;
-import net.noahf.firegen.discord.incidents.structure.location.Venue;
+import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,7 +114,7 @@ public class IncidentStructureImporter {
                 String name = object.get("name").getAsString();
                 String display = object.get("display").getAsString();
 
-                manager.venues.add(new Venue(name, display));
+                manager.venues.add(new LocationVenueImpl(name, display));
             }
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);

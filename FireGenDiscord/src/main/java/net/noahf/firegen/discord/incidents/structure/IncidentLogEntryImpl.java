@@ -2,27 +2,30 @@ package net.noahf.firegen.discord.incidents.structure;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.IncidentLogEntry;
+import net.noahf.firegen.api.utilities.IdGenerator;
 import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
-public class IncidentLogEntryImpl {
+public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     private static final String NARRATIVE_TIME_FORMAT = "HH:mm";
 
     private final @Getter long id;
     private final @Getter LocalDateTime time;
-    private final @Getter long userId;
+    private final @Getter Contributor user;
     private final @Getter String entry;
 
-    private @Getter @Setter EntryType type;
+    private @Getter @Setter IncidentLogEntry.EntryType type;
 
-    IncidentLogEntryImpl(LocalDateTime time, long userId, String entry, EntryType type) {
-        this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
+    IncidentLogEntryImpl(LocalDateTime time, Contributor user, String entry, IncidentLogEntry.EntryType type) {
+        this.id = IdGenerator.generateNarrativeId(this);
         this.time = time;
-        this.userId = userId;
+        this.user = user;
         this.entry = entry.toUpperCase()
                 .strip()
                 .replace("\n", "") // don't allow newLine characters
@@ -31,21 +34,12 @@ public class IncidentLogEntryImpl {
         this.type = type;
     }
 
-    public enum EntryType {
-        UPDATE(false), NARRATIVE(true), HIDDEN(true);
-
-        private final @Getter boolean editable;
-        EntryType(boolean editable) {
-            this.editable = editable;
-        }
-    }
-
     public String formatReceiver() {
         return "`" + this.time.format(DateTimeFormatter.ofPattern(NARRATIVE_TIME_FORMAT)) + "` " + entry;
     }
 
     public String formatAdmin() {
-        return "<t:" + Time.getUnix(this.time) + ":T> `"+ type.name() + "` <@" + userId + "> " + entry;
+        return "<t:" + Time.getUnix(this.time) + ":T> `"+ type.name() + "` <@" + user.getId() + "> " + entry;
     }
 
 }

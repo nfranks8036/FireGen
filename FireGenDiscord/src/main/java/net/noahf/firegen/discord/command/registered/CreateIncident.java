@@ -12,7 +12,7 @@ import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
-import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
+import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.time.LocalDate;
@@ -84,7 +84,7 @@ public class CreateIncident extends Command {
         // ---------- incident location ----------
         OptionMapping locationOption = event.getOption("location");
         if (locationOption != null) {
-            incident.setLocation(new IncidentLocation(List.of(locationOption.getAsString())));
+            incident.setLocation(new IncidentLocationImpl(List.of(locationOption.getAsString())));
         }
 
         // ---------- incident agencies ----------

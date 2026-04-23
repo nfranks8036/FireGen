@@ -15,9 +15,9 @@ import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
-import net.noahf.firegen.discord.incidents.structure.location.IncidentLocation;
+import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.location.LocationType;
-import net.noahf.firegen.discord.incidents.structure.location.Venue;
+import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,7 +103,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
 
         // ------- [ GET VENUE IF SET ] --------
         ModalMapping venueMapping = event.getValue("venue");
-        Venue venue = ctx.getManager().getVenueBy(venueMapping != null ? venueMapping.getAsString() : null);
+        LocationVenueImpl venue = ctx.getManager().getVenueBy(venueMapping != null ? venueMapping.getAsString() : null);
 
         // ------- [ GET COMMON NAME IF SET ] --------
         ModalMapping commonNameMapping = event.getValue("common-name");
@@ -114,7 +114,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         List<String> data = this.getData(event);
 
         // ------- [ COMPLETE AND PACKAGE DATA ] -------
-        IncidentLocation location = new IncidentLocation(data, type, commonName, venue);
+        IncidentLocationImpl location = new IncidentLocationImpl(data, type, commonName, venue);
         incident.setLocation(location);
 
         String narrative = "Location updated: " + location.format();
@@ -128,7 +128,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
     /**
      * Gets the actual location data provided by the modals that isn't the {@code common-name} or {@code venue}.
      * @param event the current event
-     * @return the list of string data to be interpreted by the {@link IncidentLocation} class at a future date
+     * @return the list of string data to be interpreted by the {@link IncidentLocationImpl} class at a future date
      */
     @NotNull
     private List<String> getData(ModalInteractionEvent event) {

@@ -9,7 +9,8 @@ import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
-import net.noahf.firegen.discord.incidents.structure.location.Venue;
+import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 /**
  * Represents the Incident manager, which creates, modifies, and deletes {@link IncidentImpl incidents}, as well as the
  * allowed data that can be put into the incidents, including {@link IncidentTypeImpl incident types},
- * {@link net.noahf.firegen.discord.incidents.structure.location.IncidentLocation incident locations},
- * and even {@link Venue venues}.
+ * {@link IncidentLocationImpl incident locations},
+ * and even {@link LocationVenueImpl venues}.
  */
 public class IncidentManager {
 
@@ -44,7 +45,7 @@ public class IncidentManager {
     @Getter List<Agency> agencies = new ArrayList<>();
 
     /**
-     * This is the list of allowed {@link Venue Venues}.
+     * This is the list of allowed {@link LocationVenueImpl Venues}.
      * This is imported from the {@link IncidentStructureImporter#VENUES_FILE venues file}.
      */
     @Getter List<LocationVenue> venues = new ArrayList<>();
@@ -130,16 +131,16 @@ public class IncidentManager {
     }
 
     /**
-     * Retrieves a {@link Venue venue} from the manager by the {@link Venue#getName() normal name}.
+     * Retrieves a {@link LocationVenueImpl venue} from the manager by the {@link LocationVenueImpl#getName() normal name}.
      * @param name the name for the venue
      * @return the associated venue with that name, or {@code null} if it's not found
      */
-    public @Nullable Venue getVenueBy(String name) {
+    public @Nullable LocationVenueImpl getVenueBy(String name) {
         if (name == null) {
             return null;
         }
 
-        for (Venue v : this.venues) {
+        for (LocationVenueImpl v : this.venues) {
             if (v.getName().equalsIgnoreCase(name)) {
                 return v;
             }
@@ -148,11 +149,11 @@ public class IncidentManager {
     }
 
     /**
-     * Retrieves the list of {@link Venue venues} stringified by their name and concatenated with a ", "
+     * Retrieves the list of {@link LocationVenueImpl venues} stringified by their name and concatenated with a ", "
      * @return the string form of the venues.
      */
     public String getConcatenatedVenues() {
-        return this.venues.stream().map(Venue::getName).collect(Collectors.joining(", "));
+        return this.venues.stream().map(LocationVenueImpl::getName).collect(Collectors.joining(", "));
     }
 
 }

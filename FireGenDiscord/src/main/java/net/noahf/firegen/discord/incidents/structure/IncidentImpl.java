@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.*;
@@ -130,27 +129,31 @@ public class IncidentImpl implements Incident {
         this.contributors.add(contributor);
     }
 
-    public void addNarrative(User user, IncidentLogEntryImpl.EntryType type, String narrative) {
-        this.narrative.add(new IncidentLogEntryImpl(LocalDateTime.now(), user.getIdLong(), narrative, type));
+    @Override
+    public void addLog(Contributor user, IncidentLogEntry.EntryType type, String log) {
+        this.addLog(new IncidentLogEntryImpl(LocalDateTime.now(), user, log, type));
     }
 
-    public List<IncidentLogEntryImpl> getEditableNarrative() {
-        return this.narrative.stream().filter(ine -> ine.getType().isEditable()).toList();
+    @Override
+    public void addLog(IncidentLogEntry entry) {
+        this.narrative.add(entry);
     }
 
-    public void injectNarrative(IncidentLogEntryImpl entry) {
+    @Override
+    public void injectLog(IncidentLogEntry entry) {
         for (int i = 0; i < this.narrative.size(); i++) {
-            IncidentLogEntryImpl element = this.narrative.get(i);
+            IncidentLogEntry element = this.narrative.get(i);
             if (element.getId() != entry.getId()) {
                 continue;
             }
+
             this.narrative.set(i, entry);
             return;
         }
         throw new IllegalStateException("Narrative with ID '" + entry.getId() + "' does not exist in the incident with ID '" + this.getFormattedId() + "'");
     }
 
-    public void setAgencies(List<AgencyImpl> agencies) {
+    public void setAgencies(List<Agency> agencies) {
         if (agencies.isEmpty()) {
             this.status =  IncidentStatus.PENDING;
         } else {
@@ -173,19 +176,21 @@ public class IncidentImpl implements Incident {
         }
 
         List<String> response = new ArrayList<>();
-        for (IncidentLogEntryImpl entry : this.narrative) {
+        for (IncidentLogEntry entry : this.narrative) {
             if (!admin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
                 // we don't want admin update logs to be included in the narrative for the public necessarily
                 continue;
             }
-            response.add(admin ? entry.formatAdmin() : entry.formatReceiver());
+            IncidentLogEntryImpl entryImpl = (IncidentLogEntryImpl) entry;
+            response.add(admin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
         }
         return response;
     }
 
 
     public String getFormattedId() {
-        return this.time.format(DateTimeFormatter.ofPattern("yyyy")) + "-" + this.getId();
+        return this.time.getDateTime().format(DateTimeFormatter.ofPattern("yyyy")) + "-" +
+                this.getId();
     }
 
     /**
@@ -198,7 +203,7 @@ public class IncidentImpl implements Incident {
             // if condition is met:
             // this incident has never been posted in any channel yet, so it's likely a new one.
 
-            String startingMessage = "New Call- " + this.type.getCompleteName();
+            String startingMessage = "New Call- " + this.type.getSelectedName();
             if (this.location.isSet() && !this.location.format().isBlank()) {
                 startingMessage = startingMessage + "\nWhere- " + this.location.format();
             }

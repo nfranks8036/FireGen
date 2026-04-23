@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 
-import static net.noahf.firegen.discord.incidents.structure.location.Venue.*;
+import static net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl.*;
 
 public enum LocationType {
     ADDRESS(
