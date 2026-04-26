@@ -1,14 +1,23 @@
 package net.noahf.firegen.discord.actions.registered;
 
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
+import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.location.IncidentLocation;
+import net.noahf.firegen.api.incidents.location.LocationField;
+import net.noahf.firegen.api.incidents.location.LocationType;
+import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
@@ -16,8 +25,6 @@ import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
-import net.noahf.firegen.discord.incidents.structure.location.LocationType;
-import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +44,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
     private static final List<SelectOption> LOCATION_SELECT_OPTIONS =
             Arrays.stream(LocationType.values())
                     .map(lt ->
-                            SelectOption.of(lt.displayName(), lt.name())
+                            SelectOption.of(lt.getTitle(), lt.name())
                                     .withDescription(lt.getDescription())
                     )
                     .toList();
@@ -75,7 +82,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
         LocationType type;
         // get(0) because only one option is allowed, so there should never be >0
-        String selected = event.getInteraction().getSelectedOptions().get(0).getValue();
+        String selected = event.getInteraction().getSelectedOptions().getFirst().getValue();
         try {
             type = LocationType.valueOf(selected);
         } catch (IllegalArgumentException argumentException) {
@@ -85,9 +92,13 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
 
         Modal modal = Modal.create(
                         this.callbackId(ctx, type.name()),
-                        "Location of " + ctx.getIncident().getFormattedId() + " - " + type.displayName()
+                        DiscordMessages.truncate(
+                                "Location of " + ctx.getIncident().getFormattedId() + " - " + type.getTitle(),
+                                45,
+                                "..."
+                        )
                 )
-                .addComponents(type.getLabels(ctx.getIncident()))
+                .addComponents(this.getLocationModalFields(type))
                 .build();
 
         event.replyModal(modal).queue();
@@ -98,12 +109,12 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
-        IncidentImpl incident = ctx.getIncident();
+        net.noahf.firegen.api.incidents.Incident incident = ctx.getIncident();
         LocationType type = LocationType.valueOf(ctx.getParameters().get(0));
 
         // ------- [ GET VENUE IF SET ] --------
         ModalMapping venueMapping = event.getValue("venue");
-        LocationVenueImpl venue = ctx.getManager().getVenueBy(venueMapping != null ? venueMapping.getAsString() : null);
+        LocationVenue venue = ctx.getManager().getVenueBy(venueMapping != null ? venueMapping.getAsString() : null);
 
         // ------- [ GET COMMON NAME IF SET ] --------
         ModalMapping commonNameMapping = event.getValue("common-name");
@@ -114,15 +125,15 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         List<String> data = this.getData(event);
 
         // ------- [ COMPLETE AND PACKAGE DATA ] -------
-        IncidentLocationImpl location = new IncidentLocationImpl(data, type, commonName, venue);
+        IncidentLocation location = new IncidentLocationImpl(data, type, commonName, venue);
         incident.setLocation(location);
 
         String narrative = "Location updated: " + location.format();
         DiscordMessages.selfDestructEdit(event, 5, "The location for this incident was updated to `" + location.format() + "`");
 
-        incident.addContributor(event.getUser().getName());
-        incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE, narrative);
-        incident.postUpdate();
+        Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
+        incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
+        incident.update();
     }
 
     /**
@@ -157,5 +168,27 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, e); }
         if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
         if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, e); }
+    }
+
+
+
+    private Label[] getLocationModalFields(LocationType type) {
+        LocationField[] fields = type.getFields();
+        Label[] labels = new Label[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            labels[i] = this.convertToLabel(fields[i]);
+        }
+        return labels;
+    }
+
+    private Label convertToLabel(LocationField field) {
+        return Label.of(field.getTitle(), field.getDescription(),
+                TextInput.create(field.getId(), TextInputStyle.valueOf(field.getType().name()))
+                        .setRequired(field.isRequired())
+                        .setMinLength(field.getMinLength())
+                        .setMaxLength(field.getMaxLength())
+                        .setPlaceholder(field.getPlaceholder())
+                        .build()
+        );
     }
 }

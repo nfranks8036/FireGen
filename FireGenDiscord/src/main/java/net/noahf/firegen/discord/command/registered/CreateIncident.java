@@ -7,10 +7,11 @@ import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.ContributorImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
@@ -78,7 +79,7 @@ public class CreateIncident extends Command {
         // ---------- incident type ----------
         OptionMapping typeOption = event.getOption("type");
         if (typeOption != null) {
-            incident.setType(typeOption.getAsString());
+            incident.setTypeBySearch(typeOption.getAsString());
         }
 
         // ---------- incident location ----------
@@ -95,10 +96,10 @@ public class CreateIncident extends Command {
 
             String[] agenciesList = agenciesString.split(",");
 
-            List<AgencyImpl> agencies = new ArrayList<>();
+            List<Agency> agencies = new ArrayList<>();
             for (String agencyString : agenciesList) {
                 // required syntax of command is the shorthand. e.g., "BFD,BVRS,SUP5,BPD,VTPD"
-                AgencyImpl a = Main.incidents.getAgencyBy(agencyString);
+                Agency a = Main.incidents.getAgencyBy(agencyString);
                 if (a == null) continue;
 
                 agencies.add(a);
@@ -142,13 +143,13 @@ public class CreateIncident extends Command {
                 return;
             }
         }
-        incident.setDate(date, time);
+        incident.getTime().setDate(date, time);
 
         // ---------- incident contributors // begin list ----------
-        incident.addContributor(event.getUser().getName());
+        incident.addContributor(ContributorImpl.of(event.getUser()));
 
         // ---------- post update for first time to channels ----------
-        incident.postUpdate();
+        incident.update();
 
         DiscordMessages.selfDestruct(event, 5,
                 "Created new incident with those details. Check an admin channel for more information."
@@ -171,7 +172,7 @@ public class CreateIncident extends Command {
                 String input = event.getFocusedOption().getValue().replaceAll("\\s+", "");
 
                 // the input for the agencies field will only take in the shorthands (e.g., 'SUP5' not 'Supervisor 5')
-                List<String> allAgencies = Main.incidents.getAgencies().stream().map(AgencyImpl::getShorthand).toList();
+                List<String> allAgencies = Main.incidents.getAgencies().stream().map(Agency::getShorthand).toList();
 
                 String[] parts = input.split(",");
                 List<String> selected = new ArrayList<>();

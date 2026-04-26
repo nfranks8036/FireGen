@@ -4,11 +4,11 @@ import net.noahf.firegen.api.Identifiable;
 
 public interface IncidentType extends Identifiable {
 
-    String type();
+    String getType();
 
-    IncidentTypeTag tag();
+    IncidentTypeTag getTag();
 
-    int qualifierChoice();
+    int getQualifierChoice();
 
 
 

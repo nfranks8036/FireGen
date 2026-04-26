@@ -3,11 +3,11 @@ package net.noahf.firegen.api.incidents.location;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder(builderMethodName = "", setterPrefix = "set")
+@Builder(builderMethodName = "", setterPrefix = "set", toBuilder = true)
 @Getter
 public class LocationField {
 
-    public static LocationFieldBuilder newField(String title, String description, String id, TextInputStyle type) {
+    public static LocationFieldBuilder newField(String title, String description, String id, TextType type) {
         return new LocationFieldBuilder()
                 // inputted required values
                 .setTitle(title)
@@ -22,11 +22,11 @@ public class LocationField {
                 .setPlaceholder(null);
     }
 
-    public static final LocationField VENUE = LocationField.newField(
+    public static LocationField VENUE = LocationField.newField(
             "Venue",
             "OPTIONAL: {VENUES}",
             "venue",
-            TextInputStyle.SHORT
+            TextType.SHORT
     )
             .setRequired(false)
             .build();
@@ -35,7 +35,7 @@ public class LocationField {
             "Common Name",
             "OPTIONAL: The name the general public refers to this location as.",
             "common-name",
-            TextInputStyle.SHORT
+            TextType.SHORT
     )
             .setRequired(false)
             .setMaxLength(100)
@@ -48,7 +48,7 @@ public class LocationField {
     private final String title;
     private final String description;
     private final String id;
-    private final TextInputStyle type;
+    private final TextType type;
 
     private boolean required = true;
     private int minLength = -1;
@@ -56,7 +56,7 @@ public class LocationField {
     private String placeholder = null;
 
 
-    public enum TextInputStyle {
+    public enum TextType {
         SHORT, PARAGRAPH
     }
 

@@ -46,14 +46,14 @@ public class AdminCommand extends Command {
                     return;
                 }
 
-                IncidentImpl incident = Main.incidents.getIncidentBy(Long.parseLong(parameter));
+                IncidentImpl incident = (IncidentImpl) Main.incidents.getIncidentBy(Long.parseLong(parameter));
                 if (incident == null) {
                     DiscordMessages.error(event, "Invalid parameter.");
                     return;
                 }
 
                 incident.admin_wipeMessages();
-                incident.postUpdate();
+                incident.update();
             }
             default -> {
                 DiscordMessages.error(event, "Invalid command.");

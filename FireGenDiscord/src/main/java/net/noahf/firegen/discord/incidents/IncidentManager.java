@@ -1,7 +1,6 @@
 package net.noahf.firegen.discord.incidents;
 
 import lombok.Getter;
-import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.units.Agency;
@@ -28,45 +27,51 @@ public class IncidentManager {
     /**
      * List of {@link IncidentImpl} that are currently ongoing right now. Closed incidents may still show up in this list.
      */
-    private final List<Incident> incidents = new ArrayList<>();
+    private final List<net.noahf.firegen.api.incidents.Incident> incidents = new ArrayList<>();
+
+    private final @Getter FireGenVariables fireGenVariables;
 
     //<editor-fold desc="Imported with IncidentStructureImporter">
     /**
      * This is the list of allowed {@link IncidentTypeImpl Incident Types}.
      * These should include every possible variant, including qualifies.
-     * This is imported from the {@link IncidentStructureImporter#INCIDENT_TYPE_FILE incident types file}.
+     * This is imported from the {@link FireGenVariables#incidentTypesFile()} incident types file}.
      */
     @Getter List<IncidentType> incidentTypes = new ArrayList<>();
 
     /**
      * This is the list of {@link AgencyImpl Agencies} in this system.
-     * This is imported from the {@link IncidentStructureImporter#AGENCIES_FILE agencies file}.
+     * This is imported from the {@link FireGenVariables#agenciesFile()} agencies file}.
      */
     @Getter List<Agency> agencies = new ArrayList<>();
 
     /**
      * This is the list of allowed {@link LocationVenueImpl Venues}.
-     * This is imported from the {@link IncidentStructureImporter#VENUES_FILE venues file}.
+     * This is imported from the {@link FireGenVariables#venuesFile()} venues file}.
      */
     @Getter List<LocationVenue> venues = new ArrayList<>();
     //</editor-fold>
 
     public IncidentManager(FireGenVariables vars) {
+        this.fireGenVariables = vars;
+
         IncidentStructureImporter importer = new IncidentStructureImporter();
-        importer.importIncidentTypes(vars, this);
-        importer.importAgencies(vars, this);
-        importer.importVenues(vars, this);
+        importer.importIncidentTypes(this);
+        importer.importAgencies(this);
+        importer.importVenues(this);
+
+        this.fireGenVariables.setVenues(this.getVenues());
     }
 
     /**
      * Find a certain {@link IncidentTypeImpl} given a string. This will search the
-     * {@link IncidentTypeImpl#getCompleteName() IncidentType's complete name}.
+     * {@link IncidentTypeImpl#getSelectedName()} IncidentType's complete name}.
      * @param type the complete name of the incident type to search for.
      * @return the {@link IncidentTypeImpl} associated with that type, or {@code null} if not found.
      */
-    public IncidentTypeImpl getTypeFromString(String type) {
-        for (IncidentTypeImpl t : this.incidentTypes) {
-            if (t.getCompleteName().equalsIgnoreCase(type)) {
+    public IncidentType getTypeFromString(String type) {
+        for (IncidentType t : this.incidentTypes) {
+            if (t.getSelectedName().equalsIgnoreCase(type)) {
                 return t;
             }
         }
@@ -77,7 +82,7 @@ public class IncidentManager {
      * Requests the list of all allowed {@link IncidentTypeImpl IncidentTypes} and their qualifiers from the manager.
      * @return the list of allowed types
      */
-    public List<IncidentTypeImpl> listAllIncidentTypes() {
+    public List<IncidentType> listAllIncidentTypes() {
         return this.incidentTypes;
     }
 
@@ -88,7 +93,7 @@ public class IncidentManager {
      *         note: this <b>DOES NOT</b> limit the amount of results, you will receive the full list!
      */
     public List<String> listAllIncidentTypesForAutocomplete() {
-        return this.listAllIncidentTypes().stream().map(IncidentTypeImpl::getCompleteName).toList();
+        return this.listAllIncidentTypes().stream().map(IncidentType::getSelectedName).toList();
     }
 
     /**
@@ -107,8 +112,8 @@ public class IncidentManager {
      * @param id the identifying number after the year in the incident number
      * @return the associated incident with the ID, or {@code null} if it's not found
      */
-    public @Nullable IncidentImpl getIncidentBy(long id) {
-        for (IncidentImpl i : this.incidents) {
+    public @Nullable net.noahf.firegen.api.incidents.Incident getIncidentBy(long id) {
+        for (net.noahf.firegen.api.incidents.Incident i : this.incidents) {
             if (i.getId() == id) {
                 return i;
             }
@@ -117,12 +122,12 @@ public class IncidentManager {
     }
 
     /**
-     * Retrieves an {@link AgencyImpl agency} from the manager by the {@link AgencyImpl#getShorthand() shorthand name}.
+     * Retrieves an {@link Agency agency} from the manager by the {@link Agency#getShorthand() shorthand name}.
      * @param shorthand the shorthand for the agency name
      * @return the associated agency with that shorthand name, or {@code null} if it's not found
      */
-    public @Nullable AgencyImpl getAgencyBy(String shorthand) {
-        for (AgencyImpl a : this.agencies) {
+    public @Nullable Agency getAgencyBy(String shorthand) {
+        for (Agency a : this.agencies) {
             if (a.getShorthand().equalsIgnoreCase(shorthand)) {
                 return a;
             }
@@ -135,12 +140,12 @@ public class IncidentManager {
      * @param name the name for the venue
      * @return the associated venue with that name, or {@code null} if it's not found
      */
-    public @Nullable LocationVenueImpl getVenueBy(String name) {
+    public @Nullable LocationVenue getVenueBy(String name) {
         if (name == null) {
             return null;
         }
 
-        for (LocationVenueImpl v : this.venues) {
+        for (LocationVenue v : this.venues) {
             if (v.getName().equalsIgnoreCase(name)) {
                 return v;
             }
@@ -153,7 +158,15 @@ public class IncidentManager {
      * @return the string form of the venues.
      */
     public String getConcatenatedVenues() {
-        return this.venues.stream().map(LocationVenueImpl::getName).collect(Collectors.joining(", "));
+        return this.venues.stream().map(LocationVenue::getName).collect(Collectors.joining(", "));
+    }
+
+    public String getStatusEmoji(net.noahf.firegen.api.incidents.Incident incident) {
+        return switch (incident.getStatus()) {
+            case ACTIVE -> ":green_circle:";
+            case PENDING -> ":blue_circle:";
+            case CLOSED, TIMED_OUT -> ":black_circle:";
+        };
     }
 
 }

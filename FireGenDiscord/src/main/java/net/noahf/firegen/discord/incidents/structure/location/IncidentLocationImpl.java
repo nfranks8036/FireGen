@@ -7,20 +7,23 @@ import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
+import net.noahf.firegen.api.incidents.location.LocationField;
+import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
-import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * Represents a location of an {@link IncidentImpl Incident}.
  */
 @AllArgsConstructor
 @Getter
-public class IncidentLocationImpl implements IncidentLocation {
+public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSequence {
 
     /**
      * Creates a location of type {@link LocationType#CUSTOM} with custom data, the data will be shown as written.
@@ -83,40 +86,55 @@ public class IncidentLocationImpl implements IncidentLocation {
     }
 
     @Override
-    public String formatAsOneLine() {
+    public String format(@Nullable String lineDelimiter, @Nullable String dataDelimiter) {
         if (!this.isSet()) {
             return " ";
         }
 
-        String main = (this.commonName != null ? this.commonName + ", " : "");
-        switch (type) {
+        if (lineDelimiter == null) {
+            lineDelimiter = IncidentLocation.DEFAULT_LINE_DELIMITER;
+        }
+
+        StringJoiner joiner = new StringJoiner(lineDelimiter);
+
+        if (this.getCommonName() != null) {
+            joiner.add(this.getCommonName());
+        }
+
+        switch (this.getType()) {
             case ADDRESS -> {
-                main = main + data.get(0) + " " + data.get(1);
+                String delimiter = returnUnlessNull(dataDelimiter, " ");
+                joiner.add(data.get(0) + delimiter + data.get(1));
             }
             case MILE_MARKER -> {
-                main = main + data.get(0) + " @ " + data.get(1);
+                String delimiter = returnUnlessNull(dataDelimiter, " @ ");
+                joiner.add(data.get(0) + delimiter + data.get(1));
             }
             case INTERSECTION -> {
-                main = main + String.join(" / ", data);
+                String delimiter = returnUnlessNull(dataDelimiter, " / ");
+                joiner.add(String.join(delimiter, data));
             }
             case CROSS_STREETS, LATITUDE_LONGITUDE, CUSTOM -> {
-                main = main + String.join(", ", data);
+                String delimiter = returnUnlessNull(dataDelimiter, ", ");
+                joiner.add(String.join(delimiter, data));
             }
         }
-        if (venue != null) {
-            main = main + ", " + venue.getDisplay();
+
+        if (this.getVenue() != null) {
+            joiner.add(this.getVenue().getDisplayName());
         }
-        return main;
+
+        return joiner.toString();
+    }
+
+    private String returnUnlessNull(@Nullable String userInput, String def) {
+        return userInput != null ? userInput : def;
     }
 
     @Override
-    public String[] formatAsMultipleLines() {
-        if (!this.isSet()) {
-            return new String[]{" "};
-        }
-
-        return switch (this.type) {
-            
-        };
+    @NotNull
+    public String toString() {
+        return this.format();
     }
+
 }

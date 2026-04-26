@@ -4,11 +4,8 @@ import net.noahf.firegen.api.Identifiable;
 
 public interface LocationVenue extends Identifiable {
 
+    String getName();
 
-
-
-    String name();
-
-    String displayName();
+    String getDisplayName();
 
 }

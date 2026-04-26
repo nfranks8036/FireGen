@@ -1,6 +1,8 @@
 package net.noahf.firegen.api.incidents;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -14,9 +16,11 @@ public interface IncidentTypeTag {
 
 
 
-    List<String> findTypeOptions(IncidentType type);
+    List<String> findTypeOptions(String name);
 
     @Getter
+    @AllArgsConstructor
+    @ToString
     class Qualifier {
         protected boolean required;
         protected boolean unique;

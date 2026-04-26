@@ -9,20 +9,21 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.*;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.IncidentManager;
+import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,24 +31,22 @@ import java.util.Random;
 import java.util.StringJoiner;
 
 @RequiredArgsConstructor
-public class IncidentImpl implements Incident {
+public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     private final IncidentManager manager;
     private @Getter final long id;
 
     private @Getter @Setter IncidentStatus status;
 
-    private @Getter @NotNull IncidentType type;
+    private @Getter @Setter @NotNull IncidentType type;
     private @Getter @NotNull List<Agency> agencies;
     private @Getter @Setter @NotNull IncidentLocation location;
     private @Getter @NotNull IncidentTime time;
 
-    private final @Getter List<IncidentLogEntry> narrative;
+    private final @Getter List<IncidentLogEntry> log;
+    private final @Getter List<Contributor> contributors;
 
-    private final List<Message> receivingMessages;
-    private final List<Message> adminMessages;
-
-    private final List<Contributor> contributors;
+    private final List<Message> receivingMessages, adminMessages;
 
     private final List<MessageTopLevelComponent> adminComponents;
 
@@ -55,12 +54,12 @@ public class IncidentImpl implements Incident {
         this.manager = manager;
         this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
         this.status = IncidentStatus.PENDING;
-        this.type = this.manager.getNewIncidentType();
-        this.location = new IncidentLocation(new ArrayList<>());
-        this.time = LocalDateTime.now();
+        this.type = manager.getFireGenVariables().defaultType();
+        this.location = new IncidentLocationImpl(new ArrayList<>());
+        this.time = new IncidentTimeImpl(LocalDateTime.now());
 
         this.agencies = new ArrayList<>();
-        this.narrative = new ArrayList<>();
+        this.log = new ArrayList<>();
         this.receivingMessages = new ArrayList<>();
         this.adminMessages = new ArrayList<>();
         this.contributors = new ArrayList<>();
@@ -70,28 +69,28 @@ public class IncidentImpl implements Incident {
                 // id should be in the format of 'firegen-<incident ID>-<command>-<additional info>'
                 ActionRow.of(
                         Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
-                        Button.danger("firegen-" + this.getId() + "-status", "Close Incident")
+                        Button.danger(this.createInteractionIdString("status"), "Close Incident")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident1", "Edit:").asDisabled(),
-                        Button.primary("firegen-" + this.getId() + "-incidenttype", "Type"),
-                        Button.primary("firegen-" + this.getId() + "-datetime", "Date/Time")
+                        Button.primary(this.createInteractionIdString("incidenttype"), "Type"),
+                        Button.primary(this.createInteractionIdString("datetime"), "Date/Time")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
-                        Button.primary("firegen-" + this.getId() + "-location", "Location"),
-                        Button.primary("firegen-" + this.getId() + "-agencies", "Agencies")
+                        Button.primary(this.createInteractionIdString("location"), "Location"),
+                        Button.primary(this.createInteractionIdString("agencies"), "Agencies")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-narrative", "Narrative:").asDisabled(),
-                        Button.success("firegen-" + this.getId() + "-addnarrative", "Add"),
-                        Button.danger("firegen-" + this.getId() + "-hidenarrative", "Hide")
+                        Button.success(this.createInteractionIdString("addnarrative"), "Add"),
+                        Button.danger(this.createInteractionIdString("hidenarrative"), "Hide")
                 )
         ));
     }
 
-    public void setType(String type) {
-        IncidentTypeImpl newType          = manager.getTypeFromString(type);
+    public void setTypeBySearch(String type) {
+        IncidentType newType = manager.getTypeFromString(type);
         if (type.startsWith("custom:")) {
             type = type.substring("custom:".length()).toUpperCase();
             newType = new IncidentTypeImpl(type, IncidentTypeTagImpl.DEFAULT, 0);
@@ -101,32 +100,21 @@ public class IncidentImpl implements Incident {
             throw new IllegalArgumentException("Expected a valid incident type from file, got '" + type + "'");
         }
 
-        this.type = newType;
+        this.setType(newType);
     }
 
-    public long getUnix() {
-        return Time.getUnix(this.time);
-    }
-
-    public void setTime(LocalTime time) {
-        this.setDate(LocalDate.now(), time);
-    }
-
-    public void setDate(LocalDate date, LocalTime time) {
-        ChronoLocalDate rightNow = ChronoLocalDate.from(LocalDateTime.now(OffsetDateTime.now().getOffset()));
-        if (date.isAfter(rightNow)) {
-            // we cannot allow future dates because you never know what incident may happen AFTER the current time
-            throw new IllegalStateException("Date and time of incident cannot be set to a future date.");
-        }
-
-        this.time = time.atDate(date);
-    }
-
-    public void addContributor(String contributor) {
+    @Override
+    public void addContributor(Contributor contributor) {
         if (this.contributors.contains(contributor)) {
             return;
         }
         this.contributors.add(contributor);
+    }
+
+    public Contributor<User> addContributor(User user) {
+        Contributor<User> contributor = ContributorImpl.of(user);
+        this.addContributor(contributor);
+        return contributor;
     }
 
     @Override
@@ -136,21 +124,31 @@ public class IncidentImpl implements Incident {
 
     @Override
     public void addLog(IncidentLogEntry entry) {
-        this.narrative.add(entry);
+        this.log.add(entry);
     }
 
     @Override
     public void injectLog(IncidentLogEntry entry) {
-        for (int i = 0; i < this.narrative.size(); i++) {
-            IncidentLogEntry element = this.narrative.get(i);
+        for (int i = 0; i < this.log.size(); i++) {
+            IncidentLogEntry element = this.log.get(i);
             if (element.getId() != entry.getId()) {
                 continue;
             }
 
-            this.narrative.set(i, entry);
+            this.log.set(i, entry);
             return;
         }
         throw new IllegalStateException("Narrative with ID '" + entry.getId() + "' does not exist in the incident with ID '" + this.getFormattedId() + "'");
+    }
+
+    @Override
+    public List<Agency> getAttachedAgencies() {
+        return List.of();
+    }
+
+    @Override
+    public List<Unit> getAttachedUnits() {
+        return List.of();
     }
 
     public void setAgencies(List<Agency> agencies) {
@@ -171,12 +169,12 @@ public class IncidentImpl implements Incident {
     }
 
     public @NotNull List<String> formatNarrative(boolean admin) {
-        if (this.narrative == null || this.narrative.isEmpty()) {
+        if (this.log == null || this.log.isEmpty()) {
             return new ArrayList<>();
         }
 
         List<String> response = new ArrayList<>();
-        for (IncidentLogEntry entry : this.narrative) {
+        for (IncidentLogEntry entry : this.log) {
             if (!admin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
                 // we don't want admin update logs to be included in the narrative for the public necessarily
                 continue;
@@ -185,6 +183,10 @@ public class IncidentImpl implements Incident {
             response.add(admin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
         }
         return response;
+    }
+
+    public List<IncidentLogEntry> getNarrative() {
+        return this.getLog().stream().filter(IncidentLogEntry::isNarrative).toList();
     }
 
 
@@ -198,7 +200,8 @@ public class IncidentImpl implements Incident {
      * <b>This method will block the main thread IF the incident has never been posted before.</b> <br>
      * This is required to ensure the order of the initial message and then edit message when the incident is created.
      */
-    public void postUpdate() {
+    @Override
+    public void update() {
         if (this.receivingMessages.isEmpty()) {
             // if condition is met:
             // this incident has never been posted in any channel yet, so it's likely a new one.
@@ -208,9 +211,9 @@ public class IncidentImpl implements Incident {
                 startingMessage = startingMessage + "\nWhere- " + this.location.format();
             }
             if (!this.agencies.isEmpty()) {
-                startingMessage = startingMessage + "\nWho- " + String.join(", ", this.agencies.stream().map(AgencyImpl::getShorthand).toList());
+                startingMessage = startingMessage + "\nWho- " + String.join(", ", this.agencies.stream().map(Agency::getShorthand).toList());
             }
-            startingMessage = startingMessage + "\nWhen- <t:" + getUnix() + ":t>";
+            startingMessage = startingMessage + "\nWhen- <t:" + this.getTime().getUnix() + ":t>";
 
             // send a starting message to the subscribed channels, this will be quickly changed by the following edit
             for (TextChannel channel : Main.receiveChannels) {
@@ -222,7 +225,7 @@ public class IncidentImpl implements Incident {
             // the content will remain
             for (TextChannel channel : Main.adminChannels) {
                 this.adminMessages
-                        .add(channel.sendMessage("New incident " + this.type.getCompleteName() + " created by " + this.contributors.get(0))
+                        .add(channel.sendMessage("New incident " + this.type.getSelectedName() + " created by " + this.contributors.getFirst())
                         .setComponents(this.adminComponents)
                         .complete());
             }
@@ -231,7 +234,7 @@ public class IncidentImpl implements Incident {
         // edit the messages with the updated detailed content
         String fullMessage = this.formatReceiving();
         for (Message message : this.receivingMessages) {
-            Log.info("Updating incident " + this.getFormattedId() + " (" + this.getType().getCompleteName()
+            Log.info("Updating incident " + this.getFormattedId() + " (" + this.getType().getSelectedName()
                     + ") message in #" + message.getChannel().getName() + " in " + message.getGuild().getName() + "...");
             message.editMessage(fullMessage).queue(null, (t) -> {
                 Log.warn("Message does not exist. Removing from the list (possibly deleted by staff).", t);
@@ -244,9 +247,9 @@ public class IncidentImpl implements Incident {
         for (Message message : this.adminMessages) {
 
             // add or remove the components if the status requires it
-            if (this.status.isActive() && message.getComponents().size() <= this.adminComponents.size()) {
+            if (this.status.isInProgress() && message.getComponents().size() <= this.adminComponents.size()) {
                 message.editMessageComponents(this.adminComponents).queue();
-            } else if (!this.status.isActive() && message.getComponents().size() > 1) {
+            } else if (!this.status.isInProgress() && message.getComponents().size() > 1) {
                 message.editMessageComponents(ActionRow.of(
                         Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
                         Button.success("firegen-" + this.getId() + "-status", "Re-open Incident")
@@ -272,13 +275,13 @@ public class IncidentImpl implements Incident {
                         **Responding:** %s
                         **%s:** %s""" +
                         (!narrative.isEmpty() ? "\n\n**Narrative:**\n%s" : ""),
-                this.status.getEmoji(),
-                this.type.getCompleteName(),
-                this.getTime().format(DateTimeFormatter.ofPattern(INCIDENT_DATE_FORMAT)),
-                this.getTime().format(DateTimeFormatter.ofPattern(INCIDENT_TIME_FORMAT)),
-                getUnix(),
-                String.join(", ", this.agencies.stream().map(AgencyImpl::getFormatted).toList()),
-                this.location.getType().getTitle(),
+                this.manager.getStatusEmoji(this),
+                this.type.getSelectedName(),
+                this.getTime().formatDate(this.manager.getFireGenVariables()),
+                this.getTime().formatTimeShort(this.manager.getFireGenVariables()),
+                this.getTime().getUnix(),
+                String.join(", ", this.agencies.stream().map(Agency::getFormatted).toList()),
+                this.location.getType().getPrefix(),
                 this.location.format(),
                 !narrative.isEmpty() ? String.join("\n", narrative) : "None"
         );
@@ -286,60 +289,60 @@ public class IncidentImpl implements Incident {
 
     public MessageEmbed formatAdmin() {
         List<String> narrative = this.formatNarrative(true);
-
-        StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
-        int index = 0;
-        for (AgencyImpl agency : this.agencies) {
-            respondingAgenciesJoiner.add("- **" + agency.getLonghand().toUpperCase() + "**");
-            respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
-                    "(shorthand `" + agency.getShorthand() + "`, formatted `" + agency.getFormatted() + "`, emoji " + agency.getEmoji() + ")"
-                    );
-            index++;
-        }
-        String respondingAgencies = respondingAgenciesJoiner.toString().isBlank() ? "None"
-                :  respondingAgenciesJoiner.toString().substring(
-                0, Math.min(1024, respondingAgenciesJoiner.toString().length())
-        );
         return new EmbedBuilder()
                         .setTitle("ADMIN OVERVIEW")
                         .setDescription("Incident `" + this.getFormattedId() + "`"
-                                + "\nStatus: " + this.status.getEmoji() + " " + this.status.name().replace("_", " ")
+                                + "\nStatus: " + this.manager.getStatusEmoji(this) + " " + this.status
                                 + "\nMessages (" + this.receivingMessages.size() + "): " + String.join(" , ", this.receivingMessages.stream().map(msg ->
                                     "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()
                                 ).toList())
                         )
-                        .setFooter("Contributors: " + String.join(", ", this.contributors))
+                        .setFooter("Contributors: " + String.join(", ", this.getContributors()))
                         .addField("Call Type",
-                                this.type.getCompleteName() + "\n\n" +
+                                this.type + "\n\n" +
                                         "(base `" + this.type.getType() + "`, " +
-                                        "tag `" + this.type.getTag().name + "`, " +
+                                        "tag `" + this.type.getTag().getTagName() + "`, " +
                                         "qualifier `" + (this.type.getTag().getQualifier() != null ? this.type.getTag().getQualifier().getQualifiers().get(this.type.getQualifierChoice()) : "None") + "`)",
                                 true
                         )
                         .addField("Date/Time",
-                                "Date: <t:" + getUnix() + ":d>\n" +
-                                        "Time: <t:" + getUnix() + ":T>\n" +
-                                        "Relative: <t:" + getUnix() + ":R>\n" +
-                                        "Unix: `" + getUnix() + "`", true
-                                )
+                                "Date: <t:" + this.time.getUnix() + ":d>\n" +
+                                        "Time: <t:" + this.time.getUnix() + ":T>\n" +
+                                        "Relative: <t:" + this.time.getUnix() + ":R>\n" +
+                                        "Unix: `" + this.time.getUnix() + "`", true
+                        )
                         .addField("Location",
                                 "Type: `" + this.location.getType().name() + "`\n" +
                                         "Data: " + String.join(", ", this.location.getData().stream().map(s -> "`" + s + "`").toList()) + "\n" +
                                         "Common Name: `" + (this.location.getCommonName() != null ? this.location.getCommonName() : " ") + "`\n" +
                                         "Venue: `" + (this.location.getVenue() != null ? this.location.getVenue() : " ") + "`\n" +
-                                        "Formatted: `" + this.location.format() + "`"
-                                ,
+                                        "Formatted: `" + this.location + "`",
                                 false
-                                )
-                        .addField("Responding Agencies (" + this.agencies.size() + ")", respondingAgencies, false)
-                        .addField("Narrative",
+                        )
+                        .addField("Responding Agencies (" + this.agencies.size() + ")", this.getRespondingAgenciesJoinedString(), false)
+                        .addField("Log",
                                 !narrative.isEmpty() ? String.join("\n", narrative) : "None",
                                 false
-                                )
+                        )
                         .setColor(new Color(255, 94, 94))
                 .build();
     }
 
+    private @NotNull String getRespondingAgenciesJoinedString() {
+        StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
+        int index = 0;
+        for (Agency agency : this.agencies) {
+            respondingAgenciesJoiner.add("- **" + agency.getLonghand().toUpperCase() + "**");
+            respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
+                    "(shorthand `" + agency.getShorthand() + "`, formatted `" + agency.getFormatted() + "`, emoji " + ((AgencyImpl)agency).getEmoji() + ")"
+                    );
+            index++;
+        }
+        return respondingAgenciesJoiner.toString().isBlank() ? "None"
+                :  respondingAgenciesJoiner.toString().substring(
+                0, Math.min(1024, respondingAgenciesJoiner.toString().length())
+        );
+    }
 
 
     public void admin_wipeMessages() {

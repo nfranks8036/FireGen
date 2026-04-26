@@ -1,4 +1,3 @@
 rootProject.name = 'FireGen'
 include 'FireGenDiscord'
 include 'FireGenAPI'
-include 'FireGenBackend'

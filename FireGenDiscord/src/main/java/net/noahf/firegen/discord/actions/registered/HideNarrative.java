@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
@@ -33,15 +35,14 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      * The {@link Function} used to convert the {@link IncidentLogEntryImpl} into a JDA {@link SelectOption}.
      * This function is used every time that the string select option menu is created.
      */
-    private static final Function<IncidentLogEntryImpl, SelectOption> CONVERT_TO_SELECT_OPTION =
+    private static final Function<IncidentLogEntry, SelectOption> CONVERT_TO_SELECT_OPTION =
             (entry) ->
                     SelectOption.of(entry.getTime().format(DATE_TIME_NARRATIVE_FORMAT), String.valueOf(entry.getId()))
                             .withDescription(
-                                    // cannot exceed DESCRIPTION_MAX_LENGTH  characters in discord string description
-                                    // so we either use the string length and cut off there or
-                                    // go to the maximum of DESCRIPTION_MAX_LENGTH characters
-                                    entry.getEntry().substring(0,
-                                            Math.min(SelectOption.DESCRIPTION_MAX_LENGTH, entry.getEntry().length())
+                                    DiscordMessages.truncate(
+                                            entry.getEntry(),
+                                            SelectOption.DESCRIPTION_MAX_LENGTH,
+                                            "..."
                                     )
                             )
                             .withDefault(entry.getType() == IncidentLogEntryImpl.EntryType.HIDDEN);
@@ -60,7 +61,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        List<IncidentLogEntryImpl> narrative = ctx.getIncident().getEditableNarrative();
+        List<IncidentLogEntry> narrative = ((IncidentImpl) ctx.getIncident()).getNarrative();
         if (narrative.isEmpty()) {
             DiscordMessages.error(event, "There is no narrative text to hide.\n" +
                     "Note: You cannot remove sections of the narrative not labelled 'NARRATIVE'");
@@ -83,11 +84,11 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
-        IncidentImpl incident = ctx.getIncident();
+        IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
         List<String> values = event.getValues();
         int hidden = 0, shown = 0;
-        for (IncidentLogEntryImpl entry : incident.getEditableNarrative()) {
+        for (IncidentLogEntry entry : incident.getNarrative()) {
             boolean unconfirmedChanges = false;
             IncidentLogEntryImpl.EntryType type = entry.getType();
 
@@ -114,7 +115,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
                 // this is especially noticeable if we have long narratives
                 continue;
 
-            incident.injectNarrative(entry);
+            incident.injectLog(entry);
         }
 
         DiscordMessages.selfDestructEdit(event, 5,
@@ -125,8 +126,8 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
                         "for the end user."
         );
 
-        incident.addContributor(event.getUser().getName());
-        incident.postUpdate();
+        incident.addContributor(event.getUser());
+        incident.update();
     }
 
     @Override

@@ -141,17 +141,24 @@
   },
 
   {
-    "short": "VTSC",
-    "long": "VIRGINIA TECH SECURITY",
-    "format": "Virginia Tech Security",
-    "emoji": ":vtsc:"
-  },
-
-  {
     "short": "LG",
     "long": "CARILION LIFE-GUARD",
     "format": "Carilion Life-Guard",
     "emoji": ":lg:"
+  },
+
+  {
+    "short": "TEST-S",
+    "long": "TEST AGENCY L",
+    "format": "Test Agency F",
+    "emoji": ":test-e:"
+  },
+
+  {
+    "short": "VTSC",
+    "long": "VIRGINIA TECH SECURITY",
+    "format": "Virginia Tech Security",
+    "emoji": ":vtsc:"
   },
 
   {

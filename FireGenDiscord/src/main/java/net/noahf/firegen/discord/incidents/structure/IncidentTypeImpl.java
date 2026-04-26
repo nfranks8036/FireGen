@@ -4,21 +4,48 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.IncidentTypeTag;
+import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-@RequiredArgsConstructor
-public class IncidentTypeImpl implements IncidentType {
+@Getter
+public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
 
-    private @NotNull @Getter String type;
-    private @NotNull @Getter IncidentTypeTag tag;
-    private @NotNull @Getter int qualifierChoice;
+    private final long id;
+    private final @NotNull String type;
+    private final @NotNull IncidentTypeTag tag;
+    private final int qualifierChoice;
 
-    private @Getter long id = new Random().nextLong(1000000, 9999999);
-
-    public String getCompleteName() {
-        return tag.fromType(this.type).get(this.qualifierChoice);
+    public IncidentTypeImpl(@NotNull String type, @NotNull IncidentTypeTag tag, int qualifierChoice) {
+        this.id = IdGenerator.generateTypeId(this);
+        this.type = type;
+        this.tag = tag;
+        this.qualifierChoice = qualifierChoice;
     }
 
+    @Override
+    public String getSelectedName() {
+        try {
+            return tag.findTypeOptions(this.type).get(this.qualifierChoice);
+        } catch (NullPointerException nullPointerException) {
+            return null;
+        }
+    }
+
+    @Override
+    public String getSelectedPriority() {
+        return " ";
+    }
+
+    @Override
+    @NotNull
+    public String toString() {
+        if (this.getSelectedName() == null) {
+            return "[IncidentType Empty]";
+        }
+
+        return this.getSelectedName();
+    }
 }

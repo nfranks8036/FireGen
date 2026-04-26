@@ -4,27 +4,29 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.IncidentTypeTag;
+import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncidentTypeTagImpl implements IncidentTypeTag {
+public class IncidentTypeTagImpl implements IncidentTypeTag, AutofilledCharSequence {
 
     public static final IncidentTypeTagImpl DEFAULT;
 
     static {
         DEFAULT = new IncidentTypeTagImpl(null);
-        DEFAULT.name = "None";
+        DEFAULT.tagName = "None";
         DEFAULT.priorities = new ArrayList<>(List.of("1", "2", "3"));
         DEFAULT.qualifier = null;
     }
 
     private final JsonObject object;
 
-    public @Getter String name;
+    public @Getter String tagName;
     public @Getter List<String> priorities;
 
-    private @Getter Qualifier qualifier;
+    private @Getter IncidentTypeTag.Qualifier qualifier;
 
     public IncidentTypeTagImpl(JsonObject object) {
         this.object = object;
@@ -32,44 +34,51 @@ public class IncidentTypeTagImpl implements IncidentTypeTag {
             return;
         }
 
-        this.name = this.object.get("name").getAsString();
+        this.tagName = this.object.get("name").getAsString();
         this.priorities = this.object.get("priorities").getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList();
 
         if (!this.object.get("qualifiers").isJsonNull()) {
 
             JsonObject qualifierObj = this.object.get("qualifiers").getAsJsonObject();
-            this.qualifier = new Qualifier();
-            this.qualifier.required = qualifierObj.get("required").getAsBoolean();
-            this.qualifier.unique = qualifierObj.get("unique").getAsBoolean();
-            this.qualifier.syntax = qualifierObj.get("syntax").getAsString();
-            this.qualifier.qualifiers = qualifierObj.get("list").getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList();
+            this.qualifier = new Qualifier(
+                    qualifierObj.get("required").getAsBoolean(),
+                    qualifierObj.get("unique").getAsBoolean(),
+                    qualifierObj.get("syntax").getAsString(),
+                    qualifierObj.get("list").getAsJsonArray().asList().stream()
+                            .map(JsonElement::getAsString)
+                            .toList()
+            );
         } else this.qualifier = null;
     }
 
-    public List<String> fromType(String type) {
+    @Override
+    public List<String> findTypeOptions(String type) {
         List<String> returned = new ArrayList<>();
         if (qualifier == null) {
             returned.add(type);
             return returned;
         }
 
-        if (!qualifier.required) {
+        if (!qualifier.isRequired()) {
             returned.add(type);
         }
 
-        if (!qualifier.unique) {
+        if (!qualifier.isUnique()) {
             List<String> output = new ArrayList<>();
-            int total = 1 << qualifier.qualifiers.size();
+            int total = 1 << qualifier.getQualifiers().size();
             for (int mask = 1; mask < total; mask++) {
                 List<String> combo = new ArrayList<>();
 
-                for (int i = 0; i < qualifier.qualifiers.size(); i++) {
+                for (int i = 0; i < qualifier.getQualifiers().size(); i++) {
                     if ((mask & (1 << i)) != 0) {
-                        combo.add(qualifier.qualifiers.get(i));
+                        combo.add(qualifier.getQualifiers().get(i));
                     }
                 }
 
-                output.add(qualifier.syntax.replace("{T}", type).replace("{Q}", String.join(", ", combo)));
+                output.add(qualifier.getSyntax()
+                        .replace("{T}", type)
+                        .replace("{Q}", String.join(", ", combo))
+                );
             }
 
             returned.addAll(output);
@@ -77,18 +86,23 @@ public class IncidentTypeTagImpl implements IncidentTypeTag {
             return returned;
         }
 
-        for (String q : qualifier.qualifiers) {
-            returned.add(qualifier.syntax.replace("{T}", type).replace("{Q}", q));
+        for (String q : qualifier.getQualifiers()) {
+            returned.add(qualifier.getSyntax()
+                    .replace("{T}", type)
+                    .replace("{Q}", q)
+            );
         }
 
         return returned;
     }
 
-    public static class Qualifier {
-        private boolean required;
-        private boolean unique;
-        private String syntax;
-        private @Getter List<String> qualifiers;
+    @Override
+    @NotNull
+    public String toString() {
+        return "IncidentTypeTag{" +
+                "tagName='" + tagName + '\'' +
+                ", priorities=" + priorities +
+                ", qualifier=" + qualifier +
+                '}';
     }
-
 }

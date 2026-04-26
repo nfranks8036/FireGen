@@ -2,6 +2,7 @@ package net.noahf.firegen.api.incidents;
 
 import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.Unit;
 
@@ -17,6 +18,14 @@ public interface Incident extends Identifiable {
 
     IncidentTime getTime();
 
+    IncidentLocation getLocation();
+
+    void setLocation(IncidentLocation location);
+
+    IncidentType getType();
+
+    void setType(IncidentType type);
+
     void addLog(IncidentLogEntry entry);
 
     void addLog(Contributor account, IncidentLogEntry.EntryType type, String narrative);
@@ -25,16 +34,14 @@ public interface Incident extends Identifiable {
 
     List<IncidentLogEntry> getLog();
 
-    List<IncidentLogEntry> getNarrative();
-
     List<Agency> getAttachedAgencies();
 
     List<Unit> getAttachedUnits();
 
     List<Contributor> getContributors();
 
-    void addContributor(Contributor userAccount);
+    void addContributor(Contributor contributor);
 
-
+    void update();
 
 }

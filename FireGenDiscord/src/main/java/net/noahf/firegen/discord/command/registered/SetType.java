@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.EditType;
 import net.noahf.firegen.discord.command.Command;
@@ -37,7 +39,7 @@ public class SetType extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        IncidentImpl incident = EditType.editIncidents.get(event.getUser());
+        IncidentImpl incident = (IncidentImpl) EditType.editIncidents.get(event.getUser());
 
         if (incident == null) {
             DiscordMessages.error(event, "You are not currently editing an incident. " +
@@ -47,7 +49,7 @@ public class SetType extends Command {
         }
 
         // store old type for the narrative in the future
-        String oldType = incident.getType().getCompleteName();
+        String oldType = incident.getType().getSelectedName();
 
         OptionMapping typeOption = event.getOption("new-type");
         OptionMapping reasonOption = event.getOption("reason");
@@ -66,17 +68,17 @@ public class SetType extends Command {
 
         // we do not need to worry about removing 'hide:' from the narrative as it will not used or saved anyways
 
-        incident.setType(type);
-        incident.addContributor(event.getUser().getName()); // they have contributed
+        incident.setTypeBySearch(type);
+        Contributor<User> contributor = incident.addContributor(event.getUser()); // they have contributed
 
         if (!hiddenFromNarrative) { // if not hidden
-            incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE,
+            incident.addLog(contributor, IncidentLogEntryImpl.EntryType.UPDATE,
                     "Changed incident type from '" + oldType + "' to '" + type + "' due to " + reason
             );
         }
 
         // post update only after the narrative option has been added
-        incident.postUpdate();
+        incident.update();
 
         DiscordMessages.selfDestruct(event, 5,
                 "Set incident type to `" + type + "` due to '" + reason + "'"

@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.IncidentTypeTag;
+import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
@@ -21,7 +22,8 @@ import java.util.List;
 
 public class IncidentStructureImporter {
 
-    public void importIncidentTypes(FireGenVariables vars, IncidentManager manager) {
+    public void importIncidentTypes(IncidentManager manager) {
+        FireGenVariables vars = manager.getFireGenVariables();
         try
                 (InputStream input = this.getClass().getClassLoader().getResourceAsStream(vars.incidentTypesFile()))
         {
@@ -34,7 +36,7 @@ public class IncidentStructureImporter {
             for (JsonElement element : object.getAsJsonArray("tags").asList()) {
                 IncidentTypeTagImpl tag = new IncidentTypeTagImpl(element.getAsJsonObject());
                 tags.add(tag);
-                if (tag.name.equalsIgnoreCase("NEW_INCIDENT")) {
+                if (tag.tagName.equalsIgnoreCase("NEW_INCIDENT")) {
                     newTag = tag;
                 }
             }
@@ -46,7 +48,7 @@ public class IncidentStructureImporter {
                 JsonObject obj = element.getAsJsonObject();
                 String name = obj.get("name").getAsString();
                 String tagStr = obj.get("tag").getAsString();
-                IncidentTypeTag tag = tags.stream().filter(itt -> itt.name.equalsIgnoreCase(tagStr)).findFirst().orElse(null);
+                IncidentTypeTag tag = tags.stream().filter(itt -> itt.tagName.equalsIgnoreCase(tagStr)).findFirst().orElse(null);
                 if (tag == null) {
                     throw new IllegalStateException("Expected type '" + name + "' to have an associated 'tag'");
                 }
@@ -57,7 +59,7 @@ public class IncidentStructureImporter {
                 } else if (tag.getQualifier() == null) {
                     types.add(new IncidentTypeImpl(name, tag, 0));
                 } else {
-                    List<String> stringTags = tag.fromType(name);
+                    List<String> stringTags = tag.findTypeOptions(name);
                     for (int i = 0; i < stringTags.size(); i++) {
                         types.add(new IncidentTypeImpl(name, tag, i));
                     }
@@ -65,7 +67,7 @@ public class IncidentStructureImporter {
 
                 manager.incidentTypes.addAll(types);
             }
-            if (manager.newIncidentType == null) {
+            if (vars.defaultType() == null) {
                 throw new IllegalStateException("Expected an incident type to be tagged 'NEW_INCIDENT', found none.");
             }
         } catch (IOException exception) {
@@ -74,11 +76,12 @@ public class IncidentStructureImporter {
     }
 
     public void importAgencies(IncidentManager manager) {
+        FireGenVariables vars = manager.getFireGenVariables();
         try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(AGENCIES_FILE))
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(vars.agenciesFile()))
         {
             if (input == null) {
-                throw new IllegalStateException("Expected file '" + AGENCIES_FILE + "' to exist, found none.");
+                throw new IllegalStateException("Expected file '" + vars.agenciesFile() + "' to exist, found none.");
             }
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
             for (JsonElement element : array.asList()) {
@@ -89,7 +92,8 @@ public class IncidentStructureImporter {
                 String emoji = object.get("emoji").getAsString();
 
                 manager.agencies.add(new AgencyImpl(
-                        shorthand, longhand, format, emoji,
+                        shorthand, longhand, format, emoji, AgencyType.OTHER,
+                        new ArrayList<>(),
                         SelectOption.of(format, shorthand)
                                 .withDescription("(" + shorthand + ") " + longhand)
 //                                .withEmoji(Emoji.fromCustom(emoji, 0, false))
@@ -101,11 +105,12 @@ public class IncidentStructureImporter {
     }
 
     public void importVenues(IncidentManager manager) {
+        FireGenVariables vars = manager.getFireGenVariables();
         try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(VENUES_FILE))
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(vars.venuesFile()))
         {
             if (input == null) {
-                throw new IllegalStateException("Expected file '" + VENUES_FILE + "' to exist, found none.");
+                throw new IllegalStateException("Expected file '" + vars.venuesFile() + "' to exist, found none.");
             }
 
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();

@@ -2,9 +2,9 @@ package net.noahf.firegen.discord.actions;
 
 import lombok.Getter;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.errors.ActionCommandNotExist;
-import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.utilities.Log;
 import org.reflections.Reflections;
 
@@ -17,11 +17,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
 public class ActionsManager {
 
     public static final String ACTIONS_PACKAGE = "net.noahf.firegen.discord.actions.registered";
 
-    private @Getter List<FireGenAction> actions = new ArrayList<>();
+    private final List<FireGenAction> actions = new ArrayList<>();
 
     public ActionsManager() {
         // find command classes and instantiate
@@ -73,7 +74,7 @@ public class ActionsManager {
         String actionTitle = sections[2];
         String[] params = Arrays.copyOfRange(sections, 3, sections.length);
 
-        IncidentImpl incident = Main.incidents.getIncidentBy(Long.parseLong(incidentNumber));
+        Incident incident = Main.incidents.getIncidentBy(Long.parseLong(incidentNumber));
         if (incident == null) {
             throw new IllegalArgumentException("Incident with ID '" + incidentNumber + "' does not exist.");
         }

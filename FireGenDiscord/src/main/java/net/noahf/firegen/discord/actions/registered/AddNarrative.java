@@ -3,11 +3,13 @@ package net.noahf.firegen.discord.actions.registered;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
+import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
@@ -60,7 +62,7 @@ public class AddNarrative implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
-        IncidentImpl incident = ctx.getIncident();
+        IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
         ModalMapping textMapping = event.getValue("text");
         if (textMapping == null) {
@@ -68,12 +70,12 @@ public class AddNarrative implements ButtonAction, ModalAction {
             return;
         }
 
-        incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.NARRATIVE, textMapping.getAsString());
+        Contributor<User> user = incident.addContributor(event.getUser());
+        incident.addLog(user, IncidentLogEntryImpl.EntryType.NARRATIVE, textMapping.getAsString());
 
         DiscordMessages.noMessage(event);
-        incident.addContributor(event.getUser().getName());
 
-        incident.postUpdate();
+        incident.update();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package net.noahf.firegen.discord.actions;
 
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 
 import java.util.Arrays;
 
@@ -23,8 +24,9 @@ public interface FireGenAction {
      * @return the string callback ID with all the information requested, including incident number and parameters
      */
     default String callbackId(ActionsContext context, String... additionalParameters) {
+        IncidentImpl incident = (IncidentImpl) context.getIncident();
         if (additionalParameters == null || additionalParameters.length == 0) {
-            return context.getIncident().createInteractionIdString(this.getName());
+            return incident.createInteractionIdString(this.getName());
         }
 
         String[] commands = Arrays.copyOf(additionalParameters, additionalParameters.length + 1);
@@ -33,7 +35,7 @@ public interface FireGenAction {
         }
         commands[0] = this.getName();
         // the name of the command has to come first
-        return context.getIncident().createInteractionIdString(commands);
+        return incident.createInteractionIdString(commands);
     }
 
 }

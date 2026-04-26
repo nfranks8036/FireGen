@@ -15,6 +15,8 @@ public interface IncidentLogEntry extends Identifiable {
 
     EntryType getType();
 
+    void setType(EntryType newType);
+
     default boolean isNarrative() {
         return switch (this.getType()) {
             case UPDATE -> false;

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.Component;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("ClassCanBeRecord")
@@ -12,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class LocationVenueImpl implements LocationVenue {
 
-    private final long id;
-    private final @Accessors(fluent = true) String name, displayName;
+    private final long id = IdGenerator.generateVenueId(this);
+    private final String name, displayName;
 
     @Override
     public String toString() {

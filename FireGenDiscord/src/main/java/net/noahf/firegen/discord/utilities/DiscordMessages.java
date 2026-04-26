@@ -76,14 +76,12 @@ public class DiscordMessages {
         event.deferEdit().complete().deleteOriginal().queue();
     }
 
-    @Deprecated
-    public static MessageEmbed error(String message) {
-        return new EmbedBuilder()
-                .setColor(new Color(121, 0, 0))
-                .setTitle("An error occurred")
-                .setDescription(message)
-                .setFooter("Try again later or with different parameters.")
-                .build();
+
+    public static String truncate(String message, int length, String end) {
+        if (message.length() > length) {
+            return message.substring(0, length - end.length()) + end;
+        }
+        return message;
     }
 
 }

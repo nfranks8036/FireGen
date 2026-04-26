@@ -3,11 +3,14 @@ package net.noahf.firegen.discord.actions.registered;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
+import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
@@ -26,18 +29,6 @@ import java.time.format.DateTimeFormatter;
 public class EditDateTime implements ButtonAction, ModalAction {
 
     /**
-     * Represents the expected {@code time} input format expected of the user to be matched.
-     * See {@link DateTimeFormatter} for more information.
-     */
-    private static final String TIME_INPUT_FORMAT = "HH:mm:ss";
-
-    /**
-     * Represents the expected {@code date} input format expected of the user to be matched.
-     * See {@link DateTimeFormatter} for more information.
-     */
-    private static final String DATE_INPUT_FORMAT = "MM/dd/yyyy";
-
-    /**
      * The name of the command needed to access this class
      */
     @Override
@@ -51,32 +42,36 @@ public class EditDateTime implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        IncidentImpl incident = ctx.getIncident();
+        IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+        FireGenVariables vars = ctx.getManager().getFireGenVariables();
+
+        String timeFormat = vars.longTimeFormat();
+        String dateFormat = vars.dateFormat();
 
         // the reason the following date/time fields can't be static is because they require the current incident's
         // date/time to pre-fill the value.
         TextInput time = TextInput.create("time", TextInputStyle.SHORT)
-                .setPlaceholder(TIME_INPUT_FORMAT)
+                .setPlaceholder(timeFormat)
                 .setRequired(true)
-                .setValue(incident.getTime().format(DateTimeFormatter.ofPattern(TIME_INPUT_FORMAT)))
+                .setValue(incident.getTime().formatTimeLong(vars))
                 .build();
 
         TextInput date = TextInput.create("date", TextInputStyle.SHORT)
-                .setPlaceholder(DATE_INPUT_FORMAT)
+                .setPlaceholder(dateFormat)
                 .setRequired(false)
-                .setValue(incident.getTime().format(DateTimeFormatter.ofPattern(DATE_INPUT_FORMAT)))
+                .setValue(incident.getTime().formatDate(vars))
                 .build();
 
         Modal modal = Modal.create(this.callbackId(ctx), "Date/Time of " + incident.getFormattedId())
                 .addComponents(
                         Label.of(
                                 "Time of Incident",
-                                "In the format of (" + TIME_INPUT_FORMAT + ")",
+                                "In the format of (" + timeFormat + ")",
                                 time
                         ),
                         Label.of(
                                 "Date of Incident",
-                                "In the format of (" + DATE_INPUT_FORMAT + ")",
+                                "In the format of (" + dateFormat + ")",
                                 date
                         )
                 ).build();
@@ -89,7 +84,11 @@ public class EditDateTime implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
-        IncidentImpl incident = ctx.getIncident();
+        IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+        FireGenVariables vars = ctx.getManager().getFireGenVariables();
+
+        String timeFormat = vars.longTimeFormat();
+        String dateFormat = vars.dateFormat();
 
         ModalMapping timeMapping = event.getValue("time");
         ModalMapping dateMapping = event.getValue("date");
@@ -104,24 +103,24 @@ public class EditDateTime implements ButtonAction, ModalAction {
         //   the date to be today.
         LocalTime time = LocalTime.parse(
                 timeMapping.getAsString(),
-                DateTimeFormatter.ofPattern(TIME_INPUT_FORMAT)
+                DateTimeFormatter.ofPattern(timeFormat)
         );
-        LocalDate date = incident.getTime().toLocalDate();
+        LocalDate date = incident.getTime().getDate();
 
         if (dateMapping != null) {
             // the date mapping is OPTIONAL, if not set it will default to the `toLocalDate` mentioned above
-            date = LocalDate.parse(dateMapping.getAsString(), DateTimeFormatter.ofPattern(DATE_INPUT_FORMAT));
+            date = LocalDate.parse(dateMapping.getAsString(), DateTimeFormatter.ofPattern(dateFormat));
         }
 
-        incident.setDate(date, time);
+        incident.getTime().setDate(date, time);
 
         long unix = Time.getUnix(time.atDate(date));
         String narrative = "Changed time to <t:" + unix + ">";
         DiscordMessages.selfDestruct(event, 5, narrative);
 
-        incident.addContributor(event.getUser().getName());
-        incident.addNarrative(event.getUser(), IncidentLogEntryImpl.EntryType.UPDATE, narrative);
-        incident.postUpdate();
+        Contributor<User> user = incident.addContributor(event.getUser());
+        incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
+        incident.update();
     }
 
 

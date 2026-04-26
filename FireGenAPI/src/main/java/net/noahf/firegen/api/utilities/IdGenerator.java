@@ -2,6 +2,7 @@ package net.noahf.firegen.api.utilities;
 
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
+import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
@@ -17,6 +18,8 @@ public class IdGenerator<T extends Identifiable> {
     }
 
     public static long generateContributorId(Contributor contributor) { return id(contributor, 7); }
+
+    public static long generateTypeId(IncidentType type) { return id(type, 6); }
 
     public static long generateNarrativeId(IncidentLogEntry entry) {
         return id(entry, 5);
@@ -45,9 +48,9 @@ public class IdGenerator<T extends Identifiable> {
         long origin = (long) Math.pow(10, length - 1);
         long bound = (long) Math.pow(10, length) - 1;
 
-        long totalAllowed = origin - bound;
+        long totalAllowed = bound - origin;
         long totalForType = generatedIds.keySet().stream()
-                .filter(i -> i.getClass().isAssignableFrom(object.getClass()))
+                .filter(i -> i.getClass().equals(object.getClass()))
                 .toList()
                 .size();
         if (totalForType >= totalAllowed) {

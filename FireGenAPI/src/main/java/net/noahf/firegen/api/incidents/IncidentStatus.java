@@ -1,6 +1,11 @@
 package net.noahf.firegen.api.incidents;
 
-public enum IncidentStatus {
+import lombok.Getter;
+import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import org.jetbrains.annotations.NotNull;
+
+@Getter
+public enum IncidentStatus implements AutofilledCharSequence {
 
     ACTIVE("This incident is considered active, which means there are units attached, en-route, and/or actively on-scene."),
 
@@ -17,8 +22,25 @@ public enum IncidentStatus {
         this.description = description;
     }
 
-    public String getDescription() {
-        return this.description;
+    public boolean isInProgress() {
+        return this == ACTIVE || this == PENDING;
     }
 
+    public IncidentStatus opposite(Incident incident) {
+        return switch (this) {
+            case ACTIVE, PENDING -> CLOSED;
+            case CLOSED, TIMED_OUT -> {
+                if (incident.getAttachedAgencies().isEmpty()) {
+                    yield ACTIVE;
+                } else {
+                    yield PENDING;
+                }
+            }
+        };
+    }
+
+    @Override @NotNull
+    public String toString() {
+        return this.name().replace("_", " ");
+    }
 }
