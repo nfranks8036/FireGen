@@ -1,6 +1,6 @@
 {
-  "title": "Listen to NRV911",
-  "footer": "Press 'LIVE FEED' to begin listening. Press 'Scanner Tutorial' at the top for help.\nThis feed is provided for public monitoring purposes only. Using this data in the commission of a felony or with intent to disrupt public safety personnel is a crime (47 U.S.C. § 605; VA § 18.2-165.2 and 462.1).",
+  "title": "Listen to NRV911 & More",
+  "footer": "Press 'LIVE FEED' to begin listening. Press 'RdioScanner Tutorial' at the top for help.\nThis feed is provided for public monitoring purposes only. Using this data in the commission of a felony or with intent to disrupt public safety personnel is a crime (47 U.S.C. § 605; VA § 18.2-165.2 and 462.1).",
   "sections": [
     {
       "title": "WAYS TO LISTEN",
@@ -21,13 +21,13 @@
             "icon": "favicon"
             },
             {
-            "text": "Discord (Firewatch @ VT)",
+            "text": "Discord (Firewatch)",
             "url": "https://discord.gg/DYrkrUA7qz",
             "icon": "favicon"
             },
             {
             "text": "Incident List",
-            "url": "https://www.incidentsource.com/radiant-glow/?view=list&incContextId=121&incLimit=10&ctid=&ctids=&incCtid=&eventsCtid=&eventsContextId=121&evtLimit=50#events",
+            "url": "https://www.incidentsource.com/radiant-glow/?view=list&incContextId=121&eventsContextId=121",
             "icon": "favicon"
             }
         ]
@@ -41,8 +41,13 @@
           "icon": "favicon"
         },
         {
-          "text": "Weather (AccuWeather)",
-          "url": "https://www.accuweather.com/en/us/blacksburg/24060/weather-forecast/331254",
+          "text": "'Scanning Montgomery County'",
+          "url": "https://wiki.radioreference.com/index.php/Montgomery_County_%28VA%29",
+          "icon": "favicon"
+        },
+        {
+          "text": "Weather",
+          "url": "https://www.wunderground.com/weather/us/va/blacksburg",
           "icon": "favicon"
         },
         {
