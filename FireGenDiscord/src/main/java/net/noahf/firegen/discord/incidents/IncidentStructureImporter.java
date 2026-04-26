@@ -5,6 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.components.selections.SelectOption;
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.managers.CustomEmojiManager;
+import net.dv8tion.jda.internal.entities.emoji.CustomEmojiImpl;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.units.AgencyType;
@@ -96,6 +100,7 @@ public class IncidentStructureImporter {
                         new ArrayList<>(),
                         SelectOption.of(format, shorthand)
                                 .withDescription("(" + shorthand + ") " + longhand)
+                                .withEmoji(Emoji.fromFormatted(emoji))
 //                                .withEmoji(Emoji.fromCustom(emoji, 0, false))
                 ));
             }
