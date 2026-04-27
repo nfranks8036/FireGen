@@ -50,6 +50,9 @@ public class IncidentManager {
      * This is imported from the {@link FireGenVariables#venuesFile()} venues file}.
      */
     @Getter List<LocationVenue> venues = new ArrayList<>();
+
+    @Getter
+    SystemMunicipalityImpl municipality;
     //</editor-fold>
 
     public IncidentManager(FireGenVariables vars) {
@@ -59,6 +62,7 @@ public class IncidentManager {
         importer.importIncidentTypes(this);
         importer.importAgencies(this);
         importer.importVenues(this);
+        importer.importMunicipality(this);
 
         this.fireGenVariables.setVenues(this.getVenues());
     }

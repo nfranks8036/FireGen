@@ -17,6 +17,7 @@ import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
+import net.noahf.firegen.discord.utilities.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,13 +27,14 @@ import java.util.List;
 
 public class IncidentStructureImporter {
 
-    public void importIncidentTypes(IncidentManager manager) {
+    void importIncidentTypes(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
+        String file = vars.municipality() + "/" + vars.incidentTypesFile();
         try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(vars.incidentTypesFile()))
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
         {
             if (input == null) {
-                throw new IllegalStateException("Expected file '" + vars.incidentTypesFile() + "' to exist, found none.");
+                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
             }
             JsonObject object = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonObject();
             List<IncidentTypeTagImpl> tags = new ArrayList<>();
@@ -71,21 +73,25 @@ public class IncidentStructureImporter {
 
                 manager.incidentTypes.addAll(types);
             }
+
             if (vars.defaultType() == null) {
                 throw new IllegalStateException("Expected an incident type to be tagged 'NEW_INCIDENT', found none.");
             }
+
+            Log.info("Imported " + manager.incidentTypes.size() + " incident types.");
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }
     }
 
-    public void importAgencies(IncidentManager manager) {
+    void importAgencies(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
+        String file = vars.municipality() + "/" + vars.agenciesFile();
         try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(vars.agenciesFile()))
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
         {
             if (input == null) {
-                throw new IllegalStateException("Expected file '" + vars.agenciesFile() + "' to exist, found none.");
+                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
             }
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
             for (JsonElement element : array.asList()) {
@@ -100,22 +106,25 @@ public class IncidentStructureImporter {
                         new ArrayList<>(),
                         SelectOption.of(format, shorthand)
                                 .withDescription("(" + shorthand + ") " + longhand)
-                                .withEmoji(Emoji.fromFormatted(emoji))
+//                                .withEmoji(Emoji.fromFormatted(emoji))
 //                                .withEmoji(Emoji.fromCustom(emoji, 0, false))
                 ));
             }
+
+            Log.info("Imported agencies " + String.join(", ", manager.agencies));
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }
     }
 
-    public void importVenues(IncidentManager manager) {
+    void importVenues(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
+        String file = vars.municipality() + "/" + vars.venuesFile();
         try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(vars.venuesFile()))
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
         {
             if (input == null) {
-                throw new IllegalStateException("Expected file '" + vars.venuesFile() + "' to exist, found none.");
+                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
             }
 
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
@@ -126,6 +135,36 @@ public class IncidentStructureImporter {
 
                 manager.venues.add(new LocationVenueImpl(name, display));
             }
+
+            Log.info("Imported venues " + String.join(", ", manager.venues));
+        } catch (IOException exception) {
+            throw new IllegalStateException("IOException: " + exception, exception);
+        }
+    }
+
+    void importMunicipality(IncidentManager manager) {
+        FireGenVariables vars = manager.getFireGenVariables();
+        String file = vars.municipality() + "/" + vars.municipalityFile();
+        try
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
+        {
+            if (input == null) {
+                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
+            }
+
+            JsonObject main = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonObject();
+            JsonObject state = main.getAsJsonObject("state");
+
+            manager.municipality = new SystemMunicipalityImpl(
+                    main.get("municipality").getAsString(),
+                    main.get("dispatch_name").getAsString(),
+                    new SystemMunicipalityImpl.StateImpl(
+                            state.get("name").getAsString(),
+                            state.get("abbreviation").getAsString()
+                    )
+            );
+
+            Log.info("Imported municipality " + manager.municipality);
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }

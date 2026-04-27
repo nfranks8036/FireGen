@@ -53,11 +53,11 @@
     {"name": "BARRICADED SUSPECT", "tag": "POLICE_WITH_WEAPON"},
     {"name": "DISTURBANCE", "tag": "POLICE_WITH_WEAPON"},
     {"name": "EDP", "tag": "POLICE_WITH_WEAPON"},
-    {"name": "OFFICER IN DISTRESS", "tag": "POLICE_WITH_WEAPON"},
-    {"name": "RESPONDER IN DISTRESS", "tag": "POLICE_WITH_WEAPON"},
     {"name": "TERRORISTIC THREAT", "tag": "POLICE_WITH_WEAPON"},
     {"name": "RIOT", "tag": "POLICE_WITH_WEAPON"},
 
+    {"name": "EMERGENCY OFFICER ASSIST", "tag": "POLICE"},
+    {"name": "EMERGENCY RESPONDER ASSIST", "tag": "POLICE"},
     {"name": "ACTIVE SHOOTER", "tag": "POLICE"},
     {"name": "ACTIVE GUNFIGHT", "tag": "POLICE"},
     {"name": "FELONY TRAFFIC STOP", "tag": "POLICE"},
@@ -251,7 +251,7 @@
         "required": true,
         "unique": true,
         "syntax": "{T} W/ {Q}",
-        "list": ["PROPERTY DAMAGE", "INJURIES", "SERIOUS INJURIES"]
+        "list": ["PROPERTY DAMAGE", "INJURIES", "SERIOUS INJURIES", "ENTRAPMENT"]
       }
     },
 

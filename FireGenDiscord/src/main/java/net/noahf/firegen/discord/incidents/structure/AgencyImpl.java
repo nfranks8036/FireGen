@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.IdGenerator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class AgencyImpl implements net.noahf.firegen.api.incidents.units.Agency 
     private SelectOption selectOption;
 
     @Override
+    @NotNull
     public String toString() {
         return this.shorthand;
     }

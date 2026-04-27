@@ -1,0 +1,205 @@
+{
+  "types": [
+    {"name": ">NEW<", "tag": "NEW_INCIDENT"},
+    {"name": ">>CHOOSE CALL TYPE<<", "tag": "NEW_INCIDENT"},
+
+    {"name": "ACCIDENT", "tag": "MOTOR_VEHICLE_CRASH"},
+    {"name": "HIT & RUN", "tag": "MOTOR_VEHICLE_CRASH"},
+
+    {"name": "ALARM", "tag": "FIRE_QUALIFIERS"},
+    {"name": "CARBON", "tag": "FIRE_QUALIFIERS"},
+    {"name": "GAS", "tag": "FIRE_QUALIFIERS"},
+    {"name": "STRUCT", "tag": "FIRE_QUALIFIERS"},
+
+    {"name": "WIREDOWN", "tag": "FIRE"},
+    {"name": "ILLEGALBURN", "tag": "FIRE"},
+    {"name": "SMOKE", "tag": "FIRE"},
+    {"name": "ELEVATOR", "tag": "FIRE"},
+    {"name": "HAZMAT", "tag": "FIRE"},
+
+    {"name": "VEHICLE", "tag": "FIRE"},
+    {"name": "MULCH", "tag": "FIRE"},
+    {"name": "BRUSH", "tag": "FIRE"},
+    {"name": "DUMPSTER", "tag": "FIRE"},
+    {"name": "CHIMNEY", "tag": "FIRE"},
+
+    {"name": "ASSISTF", "tag": "FIRE"},
+    {"name": "FSERVICE", "tag": "FIRE"},
+
+    {"name": "DOMESTIC", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "FIGHT", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "ROBBERY", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "BURGLARY", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "BREAKING", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "LARCENY", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "LARCENY FROM VEHICLE", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "VEHICLE THEFT", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "SHOPLIFTING", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "FRAUD", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "FORGERY", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "COUNTERFEITING", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "KIDNAPPING/ABDUCTION", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "VANDALISM", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "TRESPASSING", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "JUVENILE PROBLEMS", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "BARRICADED SUSPECT", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "DISTURBANCE", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "TERRORISTIC THREAT", "tag": "POLICE_WITH_WEAPON"},
+    {"name": "RIOT", "tag": "POLICE_WITH_WEAPON"},
+
+    {"name": "EMERGENCY OFFICER ASSIST", "tag": "POLICE"},
+    {"name": "EMERGENCY RESPONDER ASSIST", "tag": "POLICE"},
+    {"name": "ACTIVE SHOOTER", "tag": "POLICE"},
+    {"name": "ACTIVE GUNFIGHT", "tag": "POLICE"},
+    {"name": "FELONY TRAFFIC STOP", "tag": "POLICE"},
+    {"name": "DISCHARGED FIREARM", "tag": "POLICE"},
+    {"name": "ARMED SUBJECT", "tag": "POLICE"},
+    {"name": "BOMB THREAT", "tag": "POLICE"},
+    {"name": "EVACUATION", "tag": "POLICE"},
+    {"name": "SHOTS FIRED", "tag": "POLICE"},
+    {"name": "SHOTS FIRED BY POLICE", "tag": "POLICE"},
+
+    {"name": "DISABLED VEHICLE", "tag": "POLICE"},
+    {"name": "ABUSE", "tag": "POLICE"},
+    {"name": "LOCKOUT", "tag": "POLICE"},
+    {"name": "KEYS LOCKED IN VEHICLE", "tag": "POLICE"},
+    {"name": "ROAD BLOCK", "tag": "POLICE"},
+    {"name": "1056", "tag": "POLICE"},
+    {"name": "DRUNK DRIVER", "tag": "POLICE"},
+    {"name": "DRUGS/NARCOTICS", "tag": "POLICE"},
+    {"name": "PROTECTIVE ORDER", "tag": "POLICE"},
+    {"name": "WEAPONS VIOLATION", "tag": "POLICE"},
+    {"name": "ROAD RAGE", "tag": "POLICE"},
+    {"name": "NOISE COMPLAINT", "tag": "POLICE"},
+    {"name": "LOUD MUSIC", "tag": "POLICE"},
+    {"name": "BARKING", "tag": "POLICE"},
+    {"name": "DISORDERLY CONDUCT", "tag": "POLICE"},
+    {"name": "DRUG OVERDOSE", "tag": "POLICE"},
+    {"name": "DEATH", "tag": "POLICE"},
+    {"name": "LOITERING", "tag": "POLICE"},
+    {"name": "SUSPICIOUS", "tag": "POLICE"},
+    {"name": "WELFARE CHECK", "tag": "POLICE"},
+    {"name": "SICK/INJURED", "tag": "POLICE"},
+    {"name": "STRAY", "tag": "POLICE"},
+    {"name": "ASSAULT", "tag": "POLICE"},
+    {"name": "DOG AT LARGE", "tag": "POLICE"},
+    {"name": "LIVESTOCK", "tag": "POLICE"},
+    {"name": "IMPROPER PARKING", "tag": "POLICE"},
+    {"name": "911 HANGUP", "tag": "POLICE"},
+    {"name": "LOST PROPERTY", "tag": "POLICE"},
+    {"name": "FOUND PROPERTY", "tag": "POLICE"},
+    {"name": "PROPERTY DAMAGE", "tag": "POLICE"},
+    {"name": "BURGLAR ALARM - RESIDENTIAL", "tag": "POLICE"},
+    {"name": "BURGLAR ALARM - COMMERCIAL", "tag": "POLICE"},
+    {"name": "HARASSMENT/THREATS", "tag": "POLICE"},
+    {"name": "LOST PET", "tag": "POLICE"},
+    {"name": "RECKLESS DRIVING", "tag": "POLICE"},
+    {"name": "MISSING PERSON", "tag": "POLICE"},
+    {"name": "BUILDING UNLOCK", "tag": "POLICE"},
+    {"name": "RUNAWAY JUVENILE", "tag": "POLICE"},
+    {"name": "DELIVER MESSAGE", "tag": "POLICE"},
+    {"name": "INTERNET CRIMES", "tag": "POLICE"},
+    {"name": "ORDINANCE VIOLATION", "tag": "POLICE"},
+    {"name": "INDECENT EXPOSURE", "tag": "POLICE"},
+    {"name": "STALKING", "tag": "POLICE"},
+
+    {"name": "LOOKOUT", "tag": "POLICE"},
+    {"name": "TRAFFIC STOP", "tag": "POLICE"},
+    {"name": "TRAFFIC ENFORCEMENT", "tag": "POLICE"},
+    {"name": "WORK TRAFFIC", "tag": "POLICE"},
+    {"name": "RADAR/CHECKPOINT", "tag": "POLICE"},
+    {"name": "VEHICLE PURSUIT", "tag": "POLICE"},
+    {"name": "PURSUIT", "tag": "POLICE"},
+    {"name": "FOLLOWUP", "tag": "POLICE"},
+    {"name": "INMATE TRANSPORT", "tag": "POLICE"},
+    {"name": "ESCORT", "tag": "POLICE"},
+    {"name": "SECURITY CHECK", "tag": "POLICE"},
+    {"name": "PATROL REQUEST", "tag": "POLICE"},
+    {"name": "WARRANT SERVICE", "tag": "POLICE"},
+    {"name": "COURT SERVICE", "tag": "POLICE"},
+
+    {"name": "ASSIST CITIZEN", "tag": "POLICE"},
+    {"name": "ASSIST MOTORIST", "tag": "POLICE"},
+    {"name": "ASSISTP", "tag": "POLICE"},
+    {"name": "COMMUNITY POLICING", "tag": "POLICE"},
+
+    {"name": "ALSPD", "tag": "EMS"},
+    {"name": "ALSC", "tag": "EMS"},
+    {"name": "ALS", "tag": "EMS"},
+    {"name": "BLS", "tag": "EMS"},
+    {"name": "ESERVICE", "tag": "EMS"},
+    {"name": "ASSISTR", "tag": "EMS"},
+    {"name": "CHILD LOCKED IN VEHICLE", "tag": "EMS"},
+
+    {"name": "CIVIL ADVICE", "tag": "GENERIC"},
+    {"name": "TECHRES", "tag": "GENERIC"},
+    {"name": "SEARCHRES", "tag": "GENERIC"},
+    {"name": "MASS", "tag": "GENERIC"},
+    {"name": "ALARM TESTING", "tag": "GENERIC"},
+
+    {"name": "TEST", "tag":  "GENERIC"}
+  ],
+
+  "tags": [
+    {
+      "name": "POLICE",
+      "priorities": ["PD 1", "PD 2", "PD 3", "PD HBP"],
+      "qualifiers": null
+    },
+    {
+      "name": "POLICE_WITH_WEAPON",
+      "priorities": ["PD 1", "PD 2", "PD 3", "PD HBP"],
+      "qualifiers": {
+        "required": false,
+        "unique": false,
+        "syntax": "{T} W/ {Q}",
+        "list": ["WEAPON"]
+      }
+    },
+
+    {
+      "name": "EMS",
+      "priorities": ["EMS 1"],
+      "qualifiers": null
+    },
+
+    {
+      "name": "FIRE",
+      "priorities": ["FIRE 1", "FIRE 2"],
+      "qualifiers": null
+    },
+    {
+      "name": "FIRE_QUALIFIERS",
+      "priorities": ["FIRE 1", "FIRE 2"],
+      "qualifiers": {
+        "required": true,
+        "unique": true,
+        "syntax": "{T}{Q}",
+        "list": ["R", "C"]
+      }
+    },
+
+    {
+      "name": "MOTOR_VEHICLE_CRASH",
+      "priorities": ["MVC 1"],
+      "qualifiers": {
+        "required": true,
+        "unique": true,
+        "syntax": "{T} {Q}",
+        "list": ["PROPERTY DAMAGE", "PERSONAL INJURY", "SERIOUS INJURY"]
+      }
+    },
+
+    {
+      "name": "GENERIC",
+      "priorities": ["1", "2", "3", "4"],
+      "qualifiers": null
+    },
+
+    {
+      "name": "NEW_INCIDENT",
+      "priorities": [],
+      "qualifiers": null
+    }
+  ]
+}

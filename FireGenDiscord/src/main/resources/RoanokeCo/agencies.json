@@ -1,0 +1,50 @@
+[
+  {
+    "short": "RES1",
+    "long": "RESCUE 1",
+    "format": "Rescue 1",
+    "emoji": "<:1449916134714511481:"
+  },
+  {
+    "short": "CO1",
+    "long": "COMPANY 1",
+    "format": "Company 1",
+    "emoji": "<:1449916134714511481:"
+  },
+  {
+    "short": "RES2",
+    "long": "RESCUE 2",
+    "format": "Rescue 2",
+    "emoji": "<:1449916134714511481:"
+  },
+  {
+    "short": "CO2",
+    "long": "COMPANY 2",
+    "format": "Company 2",
+    "emoji": "<:1449916134714511481:"
+  },
+  {
+    "short": "EMS2",
+    "long": "EMS 2",
+    "format": "EMS 2",
+    "emoji": "<:1449916134714511481:"
+  },
+  {
+    "short": "BATT1",
+    "long": "BATTALION 1",
+    "format": "Battalion 1",
+    "emoji": "<:1449916134714511481:"
+  },
+  {
+    "short": "VPD",
+    "long": "VINTON POLICE DEPARTMENT",
+    "format": "Vinton Police",
+    "emoji": "<:1449916134714511481:"
+  },
+  {
+    "short": "RCPD",
+    "long": "ROANOKE COUNTY POLICE DEPARTMENT",
+    "format": "Roanoke County Police",
+    "emoji": "<:1449916134714511481:"
+  }
+]

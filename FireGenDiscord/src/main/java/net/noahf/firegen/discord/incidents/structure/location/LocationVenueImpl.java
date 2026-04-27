@@ -8,7 +8,6 @@ import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("ClassCanBeRecord")
 @AllArgsConstructor
 @Getter
 public class LocationVenueImpl implements LocationVenue {
@@ -17,7 +16,7 @@ public class LocationVenueImpl implements LocationVenue {
     private final String name, displayName;
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return this.name;
     }
 

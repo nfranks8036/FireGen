@@ -16,14 +16,17 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FireGenVariables {
 
-    public static FireGenVariables newInstanceWithDefaults() {
-        return new FireGenVariables().resetToDefault();
+    public static FireGenVariables createFromFolder(String municipality) {
+        return new FireGenVariables().resetToDefault(municipality);
     }
 
-    public FireGenVariables resetToDefault() {
+    public FireGenVariables resetToDefault(String municipality) {
+        this.municipality = municipality;
+
         this.incidentTypesFile = "incident_types.json";
         this.agenciesFile = "agencies.json";
         this.venuesFile = "venues.json";
+        this.municipalityFile = "municipality.json";
 
         this.shortTimeFormat = "HH:mm";
         this.longTimeFormat = "HH:mm:ss";
@@ -47,9 +50,12 @@ public class FireGenVariables {
         return this;
     }
 
+    private String municipality;
+
     private String incidentTypesFile;
     private String agenciesFile;
     private String venuesFile;
+    private String municipalityFile;
 
     private String shortTimeFormat;
     private String longTimeFormat;
