@@ -12,6 +12,7 @@ import net.noahf.firegen.api.incidents.location.State;
 public class SystemMunicipalityImpl implements SystemMunicipality {
 
     private final String name;
+    private final String shortName;
     private final String dispatchName;
     private final State state;
 

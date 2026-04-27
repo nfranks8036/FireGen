@@ -6,6 +6,8 @@ public interface SystemMunicipality {
 
     String getName();
 
+    String getShortName();
+
     String getDispatchName();
 
     State getState();

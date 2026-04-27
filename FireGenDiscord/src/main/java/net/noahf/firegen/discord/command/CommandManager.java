@@ -86,9 +86,8 @@ public class CommandManager extends ListenerAdapter {
             allCommandData.addAll(command.data);
         }
 
-        Main.JDA.updateCommands().addCommands(allCommandData).queue((c) ->
-                Log.info("Successfully registered all commands with JDA, returned with " + (c == null ? "null" : c.size()) + " commands.")
-        );
+        Main.JDA.updateCommands().addCommands(allCommandData).complete();
+        Log.info("Successfully registered all commands with JDA, returned with " + this.commands.size() + " commands.");
     }
 
     /**

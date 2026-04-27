@@ -157,6 +157,7 @@ public class IncidentStructureImporter {
 
             manager.municipality = new SystemMunicipalityImpl(
                     main.get("municipality").getAsString(),
+                    main.get("short").getAsString(),
                     main.get("dispatch_name").getAsString(),
                     new SystemMunicipalityImpl.StateImpl(
                             state.get("name").getAsString(),
