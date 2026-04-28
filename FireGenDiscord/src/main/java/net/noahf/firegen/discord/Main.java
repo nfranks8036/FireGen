@@ -14,6 +14,7 @@ import net.noahf.firegen.discord.actions.listeners.ButtonDetector;
 import net.noahf.firegen.discord.actions.listeners.ModalDetector;
 import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.command.CommandManager;
+import net.noahf.firegen.discord.database.DatabaseManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.SystemMunicipalityImpl;
 import net.noahf.firegen.discord.utilities.Log;
@@ -31,6 +32,8 @@ public class Main {
     public static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     public static JDA JDA;
+
+    public static DatabaseManager database;
     public static CommandManager commands;
     public static IncidentManager incidents;
     public static ActionsManager actions;
@@ -80,9 +83,11 @@ public class Main {
         Log.info("-".repeat(20) + " [ JDA END ] " + "-".repeat(20));
 
         Log.info("Importing structure data from municipality '" + MUNICIPALITY_FOLDER + "'");
-        incidents = new IncidentManager(FireGenVariables.createFromFolder(MUNICIPALITY_FOLDER));
+        database = new DatabaseManager();
+        incidents = new IncidentManager();
         actions = new ActionsManager();
         commands = new CommandManager();
+//        subscribers = new SubscriberManager();
 
         String status = getStatus(incidents.getMunicipality());
         JDA.getPresence().setActivity(Activity.customStatus(status));
@@ -97,7 +102,7 @@ public class Main {
 
     private static void assertPropertyNotNull(String objectName, Object object) {
         if (object == null) {
-            throw new RuntimeException("Cannot find " + objectName + " (" + objectName + " = null). Try setting an environmental variable or property and re-ren the program.");
+            throw new RuntimeException("Cannot find " + objectName + " (" + objectName + " = null). Try setting an environmental variable or property and re-run the program.");
         }
     }
 

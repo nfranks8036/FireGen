@@ -1,5 +1,9 @@
 package net.noahf.firegen.discord.incidents.structure;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -31,24 +35,34 @@ import java.util.Random;
 import java.util.StringJoiner;
 
 @RequiredArgsConstructor
+@Entity @Table(name = "incident")
 public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
-    private final IncidentManager manager;
-    private @Getter final long id;
+    private final transient IncidentManager manager;
+
+    private
+    @Getter
+    @Id @Column(name="id")
+    final long id;
 
     private @Getter @Setter IncidentStatus status;
 
-    private @Getter @Setter @NotNull IncidentType type;
-    private @Getter @NotNull List<Agency> agencies;
-    private @Getter @Setter @NotNull IncidentLocation location;
-    private @Getter @NotNull IncidentTime time;
+    private transient @Getter @Setter @NotNull IncidentType type;
+    private transient @Getter @NotNull List<Agency> agencies;
+    private transient @Getter @Setter @NotNull IncidentLocation location;
+    private transient @Getter @NotNull IncidentTime time;
 
-    private final @Getter List<IncidentLogEntry> log;
-    private final @Getter List<Contributor> contributors;
+    private transient @Getter List<IncidentLogEntry> log;
+    private transient @Getter List<Contributor> contributors;
 
-    private final List<Message> receivingMessages, adminMessages;
+    private transient List<Message> receivingMessages, adminMessages;
 
-    private final List<MessageTopLevelComponent> adminComponents;
+    private transient List<MessageTopLevelComponent> adminComponents;
+
+    public IncidentImpl() {
+        this.manager = null;
+        this.id = Integer.MIN_VALUE;
+    }
 
     public IncidentImpl(IncidentManager manager) {
         this.manager = manager;

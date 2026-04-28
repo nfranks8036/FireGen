@@ -7,7 +7,7 @@ import net.noahf.firegen.discord.actions.FireGenAction;
  * list of {@link FireGenAction commands}
  * (such as 'addnarrative', 'location', etc.)
  */
-public class ActionCommandNotExist extends IllegalArgumentException {
+public class ActionCommandNotExist extends RuntimeException {
 
     /**
      * Creates a new action command does not exist error

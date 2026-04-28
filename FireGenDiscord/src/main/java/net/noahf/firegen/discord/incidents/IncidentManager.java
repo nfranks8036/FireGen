@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static net.noahf.firegen.discord.Main.MUNICIPALITY_FOLDER;
+
 /**
  * Represents the Incident manager, which creates, modifies, and deletes {@link IncidentImpl incidents}, as well as the
  * allowed data that can be put into the incidents, including {@link IncidentTypeImpl incident types},
@@ -55,8 +57,8 @@ public class IncidentManager {
     SystemMunicipalityImpl municipality;
     //</editor-fold>
 
-    public IncidentManager(FireGenVariables vars) {
-        this.fireGenVariables = vars;
+    public IncidentManager() {
+        this.fireGenVariables = FireGenVariables.createFromFolder(MUNICIPALITY_FOLDER);
 
         IncidentStructureImporter importer = new IncidentStructureImporter();
         importer.importIncidentTypes(this);
