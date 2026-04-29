@@ -9,7 +9,6 @@ import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Random;
 
 public class IncidentLogEntryImpl implements IncidentLogEntry {
 

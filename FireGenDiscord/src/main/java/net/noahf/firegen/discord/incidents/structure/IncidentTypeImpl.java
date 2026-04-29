@@ -1,14 +1,11 @@
 package net.noahf.firegen.discord.incidents.structure;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.IncidentTypeTag;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Random;
 
 @Getter
 public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
