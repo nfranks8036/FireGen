@@ -355,7 +355,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         for (Agency agency : this.agencies) {
             respondingAgenciesJoiner.add("- **" + agency.getLonghand().toUpperCase() + "**");
             respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
-                    "(shorthand `" + agency.getShorthand() + "`, formatted `" + agency.getFormatted() + "`, emoji " + ((AgencyImpl)agency).getEmoji() + ")"
+                    "(shorthand `" + agency.getShorthand() + "`, formatted '" + agency.getFormatted() + "')"
                     );
             index++;
         }

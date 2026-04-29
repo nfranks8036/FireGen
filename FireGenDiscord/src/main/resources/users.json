@@ -5,7 +5,7 @@
     "permissions": ["*"]
   },
   {
-    "internal_name": "auth",
+    "internal_name": "komal",
     "id": 798257769764618300,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -22,7 +22,7 @@
     ]
   },
   {
-    "internal_name": "apolloangel",
+    "internal_name": "caroline",
     "id": 631210635509891110,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -92,6 +92,23 @@
   {
     "internal_name": "levi",
     "id": 747508379844346079,
+    "permissions": [
+      "CHANGE_CALL_TYPE",
+      "CHANGE_DATE_TIME",
+      "CHANGE_LOCATION",
+      "USE_CUSTOM_LOCATION",
+      "CHANGE_AGENCIES",
+      "NARRATIVE_ADD",
+      "NARRATIVE_HIDE",
+      "INCIDENT_CREATE",
+      "INCIDENT_CLOSE",
+      "INCIDENT_REOPEN",
+      "DEFAULT"
+    ]
+  },
+  {
+    "internal_name": "nathan",
+    "id": 667448261245796352,
     "permissions": [
       "CHANGE_CALL_TYPE",
       "CHANGE_DATE_TIME",
