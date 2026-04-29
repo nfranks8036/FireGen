@@ -111,6 +111,7 @@
     {"name": "ORDINANCE VIOLATION", "tag": "POLICE"},
     {"name": "INDECENT EXPOSURE", "tag": "POLICE"},
     {"name": "STALKING", "tag": "POLICE"},
+    {"name": "MISUSE OF 911", "tag": "POLICE"},
 
     {"name": "BOLO", "tag": "POLICE"},
     {"name": "TRAFFIC STOP", "tag": "POLICE"},

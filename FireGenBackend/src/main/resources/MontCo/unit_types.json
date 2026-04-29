@@ -91,22 +91,22 @@
 
     {
       "name": "VIRGINIA_TECH_POLICE",
-      "callsign": "VTPD",
+      "callsign": "V",
       "abbreviation": "VTPD"
     },
     {
       "name": "BLACKSBURG_POLICE",
-      "callsign": "BPD",
+      "callsign": "B",
       "abbreviation": "BPD"
     },
     {
       "name": "CHRISTIANSBURG_POLICE",
-      "callsign": "CPD",
+      "callsign": "C",
       "abbreviation": "CPD"
     },
     {
       "name": "MONTGOMERY_COUNTY_SHERIFF",
-      "callsign": "MCSO",
+      "callsign": "M",
       "abbreviation": "MCSO"
     }
   ]
