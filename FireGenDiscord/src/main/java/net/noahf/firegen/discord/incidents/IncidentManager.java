@@ -127,14 +127,27 @@ public class IncidentManager {
         return null;
     }
 
+    public int countIncidents() {
+        return this.incidents.size();
+    }
+
     /**
      * Retrieves an {@link Agency agency} from the manager by the {@link Agency#getShorthand() shorthand name}.
      * @param shorthand the shorthand for the agency name
      * @return the associated agency with that shorthand name, or {@code null} if it's not found
      */
-    public @Nullable Agency getAgencyBy(String shorthand) {
+    public @Nullable Agency getAgencyByShorthand(String shorthand) {
         for (Agency a : this.agencies) {
             if (a.getShorthand().equalsIgnoreCase(shorthand)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public @Nullable Agency getAgencyByLonghand(String longhand) {
+        for (Agency a : this.agencies) {
+            if (a.getLonghand().equalsIgnoreCase(longhand)) {
                 return a;
             }
         }

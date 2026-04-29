@@ -1,14 +1,12 @@
 package net.noahf.firegen.api.utilities;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,10 +36,13 @@ public class FireGenVariables {
         this.dateFormat = "MM/dd/yyyy";
 
         this.defaultTag = new IncidentTypeTag() {
-            @Override public String getTagName() { return "None"; }
+            @Override public String getTagName() { return "Not Set"; }
             @Override public List<String> getPriorities() { return List.of("1", "2", "3"); }
             @Override public Qualifier getQualifier() { return null; }
             @Override public List<String> findTypeOptions(String name) { return Collections.singletonList(name); }
+            @Override @NotNull public String toString() {
+                return this.getTagName().toUpperCase();
+            }
         };
         this.defaultType = new IncidentType() {
             @Override public String getType() { return ">NEW<"; }

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncidentTypeTagImpl implements IncidentTypeTag, AutofilledCharSequence {
+public class IncidentTypeTagImpl implements IncidentTypeTag {
 
     public static final IncidentTypeTagImpl DEFAULT;
 
@@ -99,10 +99,6 @@ public class IncidentTypeTagImpl implements IncidentTypeTag, AutofilledCharSeque
     @Override
     @NotNull
     public String toString() {
-        return "IncidentTypeTag{" +
-                "tagName='" + tagName + '\'' +
-                ", priorities=" + priorities +
-                ", qualifier=" + qualifier +
-                '}';
+        return "IncidentTypeTag(name=" + this.tagName + ", priorities=[" + String.join(", ", this.priorities) + "], qualifier=" + this.qualifier + ")";
     }
 }

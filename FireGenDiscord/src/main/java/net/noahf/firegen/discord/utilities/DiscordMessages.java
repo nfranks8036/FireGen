@@ -7,9 +7,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class DiscordMessages {
+
+    public static Color randomColorForEmbed() {
+        Random color = new Random(System.currentTimeMillis());
+        return new Color(
+                color.nextInt(0, 255), color.nextInt(0, 255), color.nextInt(0, 255)
+        );
+    }
 
     public static void error(IReplyCallback event, String message, @Nullable Exception cause) {
         EmbedBuilder responseBuilder = new EmbedBuilder()

@@ -41,6 +41,8 @@ public class Main {
     public static List<TextChannel> adminChannels = new ArrayList<>();
     public static List<TextChannel> receiveChannels = new ArrayList<>();
 
+    public static final long botStartTime = System.currentTimeMillis();
+
     private static void loadChannels(JDA jda) {
 //        receiveChannels.add(jda.getTextChannelById(1473433906681221200L)); // Personal - radio-activity-firewatch
 //        adminChannels.add(jda.getTextChannelById(1497787094779822170L)); // Personal - admin-chat

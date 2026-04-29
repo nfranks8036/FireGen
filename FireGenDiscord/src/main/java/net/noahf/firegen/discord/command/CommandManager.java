@@ -84,10 +84,13 @@ public class CommandManager extends ListenerAdapter {
         List<CommandData> allCommandData = new ArrayList<>();
         for (Command command : commands) {
             allCommandData.addAll(command.data);
+//            command.data.forEach(cd ->
+//                    Main.JDA.getGuildById(725503420512862220L).upsertCommand(cd).queue());
         }
 
         Main.JDA.updateCommands().addCommands(allCommandData).complete();
         Log.info("Successfully registered all commands with JDA, returned with " + this.commands.size() + " commands.");
+
     }
 
     /**

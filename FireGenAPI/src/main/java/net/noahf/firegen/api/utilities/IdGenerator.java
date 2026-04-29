@@ -41,6 +41,10 @@ public class IdGenerator<T extends Identifiable> {
 
     private static final Map<Identifiable, Long> generatedIds = new HashMap<>();
 
+    public static int getGeneratedIdsAmount() {
+        return generatedIds.size();
+    }
+
     private static <T extends Identifiable> long id(T object, int length) {
         Long id = generatedIds.get(object);
         if (id != null) {

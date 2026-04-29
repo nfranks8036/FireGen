@@ -107,7 +107,7 @@ public class CreateIncident extends Command {
             List<Agency> agencies = new ArrayList<>();
             for (String agencyString : agenciesList) {
                 // required syntax of command is the shorthand. e.g., "BFD,BVRS,SUP5,BPD,VTPD"
-                Agency a = Main.incidents.getAgencyBy(agencyString);
+                Agency a = Main.incidents.getAgencyByShorthand(agencyString);
                 if (a == null) continue;
 
                 agencies.add(a);
