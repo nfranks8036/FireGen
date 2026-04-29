@@ -3,168 +3,161 @@
     "short": "BFD",
     "long": "BLACKSBURG FIRE DEPARTMENT",
     "format": "Blacksburg Fire",
-    "emoji": "<:1449916134714511481:"
+    "emoji": "<:bfd:1449916134714511481>"
   },
   {
     "short": "EVFD",
     "long": "ELLISTON VOLUNTEER FIRE DEPARTMENT",
     "format": "Elliston Fire",
-    "emoji": ":evfd:"
+    "emoji": "<:evfd:1449930471231328477>"
   },
   {
     "short": "LMRS",
     "long": "LONGSHOP-MCCOY RESCUE SQUAD",
     "format": "Longshop-McCoy Rescue",
-    "emoji": ":lmfr:"
+    "emoji": "<:lmfr:1449926826079158413>"
   },
   {
     "short": "RVFD",
     "long": "RINER VOLUNTEER FIRE DEPARTMENT",
     "format": "Riner Fire",
-    "emoji": ":rfd:"
+    "emoji": "<:rfd:1449932933665128468>"
   },
   {
     "short": "BVRS",
     "long": "BLACKSBURG VOLUNTEER RESCUE SQUAD",
     "format": "Blacksburg Rescue",
-    "emoji": ":bvrs:"
+    "emoji": "<:bvrs:1449916532770476134>"
   },
   {
     "short": "SUP5",
     "long": "SUPERVISOR 5",
     "format": "Supervisor 5",
-    "emoji": ":bvrs:"
+    "emoji": "<:bvrs:1449916532770476134>"
   },
   {
     "short": "LMFD",
     "long": "LONGSHOP-MCCOY FIRE DEPARTMENT",
     "format": "Longshop-McCoy Fire",
-    "emoji": ":lmfr:"
+    "emoji": "<:lmfr:1449926826079158413>"
   },
   {
     "short": "CFD",
     "long": "CHRISTIANSBURG FIRE DEPARTMENT",
     "format": "Christiansburg Fire",
-    "emoji": ":cfd:"
+    "emoji": "<:cfd:1449926970296107150>"
   },
   {
     "short": "CRS",
     "long": "CHRISTIANSBURG RESCUE SQUAD",
     "format": "Christiansburg Rescue",
-    "emoji": ":crs:"
+    "emoji": "<:crs:1449927312861565142>"
   },
   {
     "short": "SUP9",
     "long": "SUPERVISOR 9",
     "format": "Supervisor 9",
-    "emoji": ":crs:"
+    "emoji": "<:crs:1449927312861565142>"
   },
   {
     "short": "RVRS",
     "long": "RINER VOLUNTEER RESCUE SQUAD",
     "format": "Riner Rescue",
-    "emoji": ":rvrs:"
+    "emoji": "<:rvrs:1449934079620288558>"
   },
   {
     "short": "M13-1",
     "long": "MEDIC 13-1",
     "format": "Medic 13-1",
-    "emoji": ":mcfr:"
+    "emoji": "<:mcfr:1449929970926358649>"
   },
   {
     "short": "M13-2",
     "long": "MEDIC 13-2",
     "format": "Medic 13-2",
-    "emoji": ":mcfr:"
+    "emoji": "<:mcfr:1449929970926358649>"
   },
   {
     "short": "MCFR",
     "long": "MONTGOMERY COUNTY FIRE & EMS",
     "format": "Montgomery County Fire & EMS",
-    "emoji": ":mcfr:"
+    "emoji": "<:mcfr:1449929970926358649>"
   },
   {
     "short": "SUP13",
     "long": "SUPERVISOR 13",
     "format": "Supervisor 13",
-    "emoji": ":mcfr:"
+    "emoji": "<:mcfr:1449929970926358649>"
   },
   {
     "short": "VTRS",
     "long": "VIRGINIA TECH RESCUE SQUAD",
     "format": "Virginia Tech Rescue",
-    "emoji": ":vtrs:"
+    "emoji": "<:vtrs:1449920222940369018>"
   },
   {
     "short": "SUP15",
     "long": "SUPERVISOR 15",
     "format": "Supervisor 15",
-    "emoji": ":vtrs:"
+    "emoji": "<:vtrs:1449920222940369018>"
   },
 
   {
     "short": "MCSO",
     "long": "MONTGOMERY COUNTY SHERIFF'S OFFICE",
     "format": "Montgomery County Sheriff",
-    "emoji": ":mcso:"
+    "emoji": "<:mcso:1449929686963458140>"
   },
   {
     "short": "CPD",
     "long": "CHRISTIANSBURG POLICE DEPARTMENT",
     "format": "Christiansburg Police",
-    "emoji": ":cpd:"
+    "emoji": "<:cpd:1449927471414902826>"
   },
   {
     "short": "BPD",
     "long": "BLACKSBURG POLICE DEPARTMENT",
     "format": "Blacksburg Police",
-    "emoji": ":bpd:"
+    "emoji": "<:bpd:1449916806931153110>"
   },
   {
     "short": "VTPD",
     "long": "VIRGINIA TECH POLICE DEPARTMENT",
     "format": "Virginia Tech Police",
-    "emoji": ":vtpd:"
+    "emoji": "<:vtpd:1449922611550093474>"
   },
   {
     "short": "VSP",
     "long": "VIRGINIA STATE POLICE",
     "format": "Virginia State Police",
-    "emoji": ":vsp:"
+    "emoji": "<:vsp:1449930105592746125>"
   },
 
   {
     "short": "BT",
     "long": "BLACKSBURG TRANSIT",
     "format": "Blacksburg Transit",
-    "emoji": ":bt:"
+    "emoji": "<:bt:1449917533976133773>"
   },
 
   {
     "short": "LG",
     "long": "CARILION LIFE-GUARD",
     "format": "Carilion Life-Guard",
-    "emoji": ":lg:"
-  },
-
-  {
-    "short": "TEST-S",
-    "long": "TEST AGENCY L",
-    "format": "Test Agency F",
-    "emoji": ":test-e:"
+    "emoji": "<:star_of_life:1349821233595678770>"
   },
 
   {
     "short": "VTSC",
     "long": "VIRGINIA TECH SECURITY",
     "format": "Virginia Tech Security",
-    "emoji": ":vtsc:"
+    "emoji": "<:vtsc:1449924056127373567>"
   },
 
   {
     "short": "NRV",
     "long": "NEW RIVER VALLEY 911 AUTHORITY",
     "format": "New River Valley 911 Authority",
-    "emoji": ":nrv:"
+    "emoji": "<:nrv:1449915761563799703>"
   }
 ]

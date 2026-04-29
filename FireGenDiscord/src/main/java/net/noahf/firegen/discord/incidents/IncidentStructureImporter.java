@@ -99,13 +99,14 @@ public class IncidentStructureImporter {
                 String shorthand = object.get("short").getAsString();
                 String longhand = object.get("long").getAsString();
                 String format = object.get("format").getAsString();
-                String emoji = object.get("emoji").getAsString();
+                Emoji emoji = Emoji.fromFormatted(object.get("emoji").getAsString());
 
                 manager.agencies.add(new AgencyImpl(
                         shorthand, longhand, format, emoji, AgencyType.OTHER,
                         new ArrayList<>(),
                         SelectOption.of(format, shorthand)
                                 .withDescription("(" + shorthand + ") " + longhand)
+                                .withEmoji(emoji)
 //                                .withEmoji(Emoji.fromFormatted(emoji))
 //                                .withEmoji(Emoji.fromCustom(emoji, 0, false))
                 ));

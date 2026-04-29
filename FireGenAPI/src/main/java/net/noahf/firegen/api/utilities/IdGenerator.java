@@ -49,10 +49,12 @@ public class IdGenerator<T extends Identifiable> {
         long bound = (long) Math.pow(10, length) - 1;
 
         long totalAllowed = bound - origin;
-        long totalForType = generatedIds.keySet().stream()
-                .filter(i -> i.getClass().equals(object.getClass()))
-                .toList()
-                .size();
+        long totalForType = 0;
+        for (Identifiable i : generatedIds.keySet()) {
+            if (i.getClass().equals(object.getClass())) {
+                totalForType++;
+            }
+        }
         if (totalForType >= totalAllowed) {
             throw new IllegalStateException("Cannot generate a new ID for " + object.toString() +
                     ", ran out for type " + object.getClass().getCanonicalName() + " " +

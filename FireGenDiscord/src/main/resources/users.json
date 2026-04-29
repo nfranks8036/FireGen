@@ -1,6 +1,109 @@
 [
   {
+    "internal_name": "noah",
     "id": 351410272256262145,
     "permissions": ["*"]
+  },
+  {
+    "internal_name": "auth",
+    "id": 798257769764618300,
+    "permissions": [
+      "CHANGE_CALL_TYPE",
+      "CHANGE_DATE_TIME",
+      "CHANGE_LOCATION",
+      "USE_CUSTOM_LOCATION",
+      "CHANGE_AGENCIES",
+      "NARRATIVE_ADD",
+      "NARRATIVE_HIDE",
+      "INCIDENT_CREATE",
+      "INCIDENT_CLOSE",
+      "INCIDENT_REOPEN",
+      "DEFAULT"
+    ]
+  },
+  {
+    "internal_name": "apolloangel",
+    "id": 631210635509891110,
+    "permissions": [
+      "CHANGE_CALL_TYPE",
+      "CHANGE_DATE_TIME",
+      "CHANGE_LOCATION",
+      "USE_CUSTOM_LOCATION",
+      "CHANGE_AGENCIES",
+      "NARRATIVE_ADD",
+      "NARRATIVE_HIDE",
+      "INCIDENT_CREATE",
+      "INCIDENT_CLOSE",
+      "INCIDENT_REOPEN",
+      "DEFAULT"
+    ]
+  },
+  {
+    "internal_name": "helen",
+    "id": 649014151376797709,
+    "permissions": [
+      "CHANGE_CALL_TYPE",
+      "CHANGE_DATE_TIME",
+      "CHANGE_LOCATION",
+      "USE_CUSTOM_LOCATION",
+      "CHANGE_AGENCIES",
+      "NARRATIVE_ADD",
+      "NARRATIVE_HIDE",
+      "INCIDENT_CREATE",
+      "INCIDENT_CLOSE",
+      "INCIDENT_REOPEN",
+      "DEFAULT"
+    ]
+  },
+  {
+    "internal_name": "lee",
+    "id": 1235961886583820399,
+    "permissions": [
+      "CHANGE_CALL_TYPE",
+      "CHANGE_DATE_TIME",
+      "CHANGE_LOCATION",
+      "USE_CUSTOM_LOCATION",
+      "CHANGE_AGENCIES",
+      "NARRATIVE_ADD",
+      "NARRATIVE_HIDE",
+      "INCIDENT_CREATE",
+      "INCIDENT_CLOSE",
+      "INCIDENT_REOPEN",
+      "DEFAULT"
+    ]
+  },
+  {
+    "internal_name": "emma",
+    "id": 397867964952739843,
+    "permissions": [
+      "CHANGE_CALL_TYPE",
+      "CHANGE_DATE_TIME",
+      "CHANGE_LOCATION",
+      "USE_CUSTOM_LOCATION",
+      "CHANGE_AGENCIES",
+      "NARRATIVE_ADD",
+      "NARRATIVE_HIDE",
+      "INCIDENT_CREATE",
+      "INCIDENT_CLOSE",
+      "INCIDENT_REOPEN",
+      "DEFAULT"
+    ]
+  },
+  {
+    "internal_name": "levi",
+    "id": 747508379844346079,
+    "permissions": [
+      "CHANGE_CALL_TYPE",
+      "CHANGE_DATE_TIME",
+      "CHANGE_LOCATION",
+      "USE_CUSTOM_LOCATION",
+      "CHANGE_AGENCIES",
+      "NARRATIVE_ADD",
+      "NARRATIVE_HIDE",
+      "INCIDENT_CREATE",
+      "INCIDENT_CLOSE",
+      "INCIDENT_REOPEN",
+      "DEFAULT"
+    ]
   }
 ]

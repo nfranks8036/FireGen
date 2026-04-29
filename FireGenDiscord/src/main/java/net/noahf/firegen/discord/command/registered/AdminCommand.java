@@ -2,6 +2,7 @@ package net.noahf.firegen.discord.command.registered;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -13,6 +14,7 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -66,6 +68,28 @@ public class AdminCommand extends Command {
                 incident.update();
                 DiscordMessages.selfDestruct(event, 5, "Sent an update.");
             }
+            case "send-identify-message" -> {
+                event.deferReply().setEphemeral(true).queue();
+
+                int adminC = 0, receiveC = 0;
+                for (TextChannel admin : Main.adminChannels) {
+                    if (admin == null) {
+                        Log.warn("ADMIN - Channel does not exist."); continue;
+                    }
+                    admin.sendMessage("Hello! This channel is subscribed to 'adminChannels'.").complete();
+                    adminC++;
+                }
+
+                for (TextChannel receive : Main.receiveChannels) {
+                    if (receive == null) {
+                        Log.warn("RECEIVE - Channel does not exist."); continue;
+                    }
+                    receive.sendMessage("Hello! This channel is subscribed to 'receiveChannels'.").complete();
+                    receiveC++;
+                }
+
+                event.getHook().editOriginal("Sent message to `" + adminC + "` admin channels and `" + receiveC + "` receive channels.").queue();
+            }
             case "see-saved-user" -> {
                 User user = event.getUser();
                 int type = 0;
@@ -87,7 +111,7 @@ public class AdminCommand extends Command {
                 };
 
                 FireGenUser fireGenUser = Main.users.getByDiscordNotNull(user);
-                java.util.List<net.noahf.firegen.discord.users.Permission> permissions = fireGenUser.getPermissions();
+                List<net.noahf.firegen.discord.users.Permission> permissions = fireGenUser.getPermissions();
                 event.reply(
                         "User: `" + user.getName() + "` (`" + user.getIdLong() + "`)\n" +
                                 "StoredUser: `" + fireGenUser.getName() + "` and `" + fireGenUser.getDisplayName() + "`\n" +

@@ -232,6 +232,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
             // send a starting message to the subscribed channels, this will be quickly changed by the following edit
             for (TextChannel channel : Main.receiveChannels) {
+                if (channel == null) {
+                    Log.warn("RECEIVE - Can't send a message here. This channel does not exist!"); continue;
+                }
                 Log.info("Sending starting message in #" + channel.getName() + " in " + channel.getGuild().getName() + "...");
                 this.receivingMessages.add(channel.sendMessage(startingMessage).complete());
             }
@@ -239,6 +242,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             // send a starting message to the admin channels, this will be quickly changed by the following edit THOUGH
             // the content will remain
             for (TextChannel channel : Main.adminChannels) {
+                if (channel == null) {
+                    Log.warn("ADMIN - Can't send a message here. This channel does not exist!"); continue;
+                }
                 this.adminMessages
                         .add(channel.sendMessage("New incident " + this.type.getSelectedName() + " created by " + this.contributors.getFirst())
                         .setComponents(this.adminComponents)
