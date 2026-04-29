@@ -18,14 +18,13 @@ public interface IncidentLogEntry extends Identifiable {
     void setType(EntryType newType);
 
     default boolean isNarrative() {
-        return switch (this.getType()) {
-            case UPDATE -> false;
-            case NARRATIVE, HIDDEN -> true;
-        };
+        return this.getType() == EntryType.NARRATIVE ||
+                this.getType() == EntryType.HIDDEN;
     }
 
 
     enum EntryType {
+        CREATE,
         UPDATE,
         NARRATIVE,
         HIDDEN

@@ -97,6 +97,8 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
             return;
         }
 
+        event.getHook().deleteOriginal().queue();
+
         Modal modal = Modal.create(
                         this.callbackId(ctx, type.name()),
                         DiscordMessages.truncate(
@@ -143,7 +145,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         incident.setLocation(location);
 
         String narrative = "Location updated: " + location.format();
-        DiscordMessages.selfDestruct(event, 5, "The location for this incident was updated to `" + location.format() + "`");
+        DiscordMessages.noMessage(event);
 
         Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);

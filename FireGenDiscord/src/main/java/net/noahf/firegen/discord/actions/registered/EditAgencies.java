@@ -113,7 +113,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
 
         incident.setAgencies(agencies);
 
-        DiscordMessages.selfDestruct(event, 5, narrative.toString());
+        DiscordMessages.noMessage(event);
 
         Contributor<User> user = incident.addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative.toString());

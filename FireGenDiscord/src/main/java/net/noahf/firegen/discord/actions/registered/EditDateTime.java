@@ -124,7 +124,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
 
         long unix = Time.getUnix(time.atDate(date));
         String narrative = "Changed time to <t:" + unix + ">";
-        DiscordMessages.selfDestruct(event, 5, narrative);
+        DiscordMessages.noMessage(event);
 
         Contributor<User> user = incident.addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);

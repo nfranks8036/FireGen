@@ -18,6 +18,8 @@
       "INCIDENT_CREATE",
       "INCIDENT_CLOSE",
       "INCIDENT_REOPEN",
+      "INCIDENT_PUBLISH",
+      "INCIDENT_UNPUBLISH",
       "DEFAULT"
     ]
   },
@@ -35,6 +37,8 @@
       "INCIDENT_CREATE",
       "INCIDENT_CLOSE",
       "INCIDENT_REOPEN",
+      "INCIDENT_PUBLISH",
+      "INCIDENT_UNPUBLISH",
       "DEFAULT"
     ]
   },
@@ -52,6 +56,8 @@
       "INCIDENT_CREATE",
       "INCIDENT_CLOSE",
       "INCIDENT_REOPEN",
+      "INCIDENT_PUBLISH",
+      "INCIDENT_UNPUBLISH",
       "DEFAULT"
     ]
   },
@@ -69,6 +75,8 @@
       "INCIDENT_CREATE",
       "INCIDENT_CLOSE",
       "INCIDENT_REOPEN",
+      "INCIDENT_PUBLISH",
+      "INCIDENT_UNPUBLISH",
       "DEFAULT"
     ]
   },
@@ -86,6 +94,8 @@
       "INCIDENT_CREATE",
       "INCIDENT_CLOSE",
       "INCIDENT_REOPEN",
+      "INCIDENT_PUBLISH",
+      "INCIDENT_UNPUBLISH",
       "DEFAULT"
     ]
   },
@@ -103,6 +113,8 @@
       "INCIDENT_CREATE",
       "INCIDENT_CLOSE",
       "INCIDENT_REOPEN",
+      "INCIDENT_PUBLISH",
+      "INCIDENT_UNPUBLISH",
       "DEFAULT"
     ]
   },
@@ -120,6 +132,8 @@
       "INCIDENT_CREATE",
       "INCIDENT_CLOSE",
       "INCIDENT_REOPEN",
+      "INCIDENT_PUBLISH",
+      "INCIDENT_UNPUBLISH",
       "DEFAULT"
     ]
   }

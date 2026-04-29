@@ -59,6 +59,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private transient @Getter List<IncidentLogEntry> log;
     private transient @Getter List<Contributor<?>> contributors;
 
+    private transient @Getter boolean published;
+
     private transient List<Message> receivingMessages, adminMessages;
 
     private transient List<MessageTopLevelComponent> adminComponents;
@@ -87,7 +89,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 // id should be in the format of 'firegen-<incident ID>-<command>-<additional info>'
                 ActionRow.of(
                         Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
-                        Button.danger(this.createInteractionIdString("status"), "Close Incident")
+                        Button.danger(this.createInteractionIdString("status"), "Close Incident"),
+                        Button.danger(this.createInteractionIdString("publish"), "Publish"),
+                        Button.secondary(this.createInteractionIdString("preview"), "Preview")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident1", "Edit:").asDisabled(),
@@ -213,19 +217,48 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 this.getId();
     }
 
-    /**
-     * Post the incident changes to the saved messages. Used for updating subscribed servers with new information. <br>
-     * <b>This method will block the main thread IF the incident has never been posted before.</b> <br>
-     * This is required to ensure the order of the initial message and then edit message when the incident is created.
-     */
-    @Override
-    public void update() {
-        long start = System.currentTimeMillis();
+    public void togglePublished() {
+        final int PUBLISH_INDEX = 0;
 
-        if (this.receivingMessages.isEmpty()) {
-            // if condition is met:
-            // this incident has never been posted in any channel yet, so it's likely a new one.
+        this.published = !this.published;
+        String text;
+        if (this.published) {
+            text = "Unpublish";
+        } else {
+            text = "Publish";
+            for (Message message : this.receivingMessages) {
+                message.delete().complete();
+            }
+            this.receivingMessages.clear();
+        }
+        this.adminComponents.set(PUBLISH_INDEX,                 ActionRow.of(
+                Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
+                Button.danger(this.createInteractionIdString("status"), "Close Incident"),
+                Button.danger(this.createInteractionIdString("publish"), text),
+                Button.secondary(this.createInteractionIdString("preview"), "Preview")
+        ));
+    }
 
+    private void sendStartMessages() {
+        if (this.adminMessages.isEmpty()) {
+            // send a starting message to the admin channels, this will be quickly changed by the following edit THOUGH
+            // the content will remain
+            for (TextChannel channel : Main.adminChannels) {
+                if (channel == null) {
+                    Log.warn("ADMIN - Can't send a message here. This channel does not exist!"); continue;
+                }
+                Message message = channel.sendMessage("New incident " + this.type.getSelectedName() + " created by " + this.contributors.getFirst())
+                        .setComponents(this.adminComponents)
+                        .complete();
+
+                message.createThreadChannel("Incident " + this.getFormattedId() + " Discussion").complete();
+
+                this.adminMessages
+                        .add(message);
+            }
+        }
+
+        if (this.isPublished() && this.receivingMessages.isEmpty()) {
             String startingMessage = "New Call- " + this.type.getSelectedName();
             if (this.location.isSet() && !this.location.format().isBlank()) {
                 startingMessage = startingMessage + "\nWhere- " + this.location.format();
@@ -243,22 +276,23 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 Log.info("Sending starting message in #" + channel.getName() + " in " + channel.getGuild().getName() + "...");
                 this.receivingMessages.add(channel.sendMessage(startingMessage).complete());
             }
+        }
+    }
 
-            // send a starting message to the admin channels, this will be quickly changed by the following edit THOUGH
-            // the content will remain
-            for (TextChannel channel : Main.adminChannels) {
-                if (channel == null) {
-                    Log.warn("ADMIN - Can't send a message here. This channel does not exist!"); continue;
-                }
-                Message message = channel.sendMessage("New incident " + this.type.getSelectedName() + " created by " + this.contributors.getFirst())
-                        .setComponents(this.adminComponents)
-                        .complete();
+    /**
+     * Post the incident changes to the saved messages. Used for updating subscribed servers with new information. <br>
+     * <b>This method will block the main thread IF the incident has never been posted before.</b> <br>
+     * This is required to ensure the order of the initial message and then edit message when the incident is created.
+     */
+    @Override
+    public void update() {
+        long start = System.currentTimeMillis();
 
-                message.createThreadChannel("Incident " + this.getFormattedId() + " Discussion").complete();
+        if (this.receivingMessages.isEmpty() || this.adminMessages.isEmpty()) {
+            // if condition is met:
+            // this incident has never been posted in any channel yet, so it's likely a new one.
 
-                this.adminMessages
-                        .add(message);
-            }
+            this.sendStartMessages();
         }
 
         // edit the messages with the updated detailed content

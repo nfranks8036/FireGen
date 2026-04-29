@@ -27,6 +27,10 @@ public enum Permission implements AutofilledCharSequence {
 
     INCIDENT_REOPEN,
 
+    INCIDENT_PUBLISH,
+
+    INCIDENT_UNPUBLISH,
+
     DEFAULT;
 
     @Override
