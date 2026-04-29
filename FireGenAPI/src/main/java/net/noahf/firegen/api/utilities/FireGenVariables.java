@@ -28,6 +28,8 @@ public class FireGenVariables {
         this.venuesFile = "venues.json";
         this.municipalityFile = "municipality.json";
 
+        this.usersFile = "users.json";
+
         this.shortTimeFormat = "HH:mm";
         this.longTimeFormat = "HH:mm:ss";
         this.dateFormat = "MM/dd/yyyy";
@@ -56,6 +58,8 @@ public class FireGenVariables {
     private String agenciesFile;
     private String venuesFile;
     private String municipalityFile;
+
+    private String usersFile;
 
     private String shortTimeFormat;
     private String longTimeFormat;

@@ -28,7 +28,7 @@ public interface Incident extends Identifiable {
 
     void addLog(IncidentLogEntry entry);
 
-    void addLog(Contributor account, IncidentLogEntry.EntryType type, String narrative);
+    void addLog(Contributor<?> account, IncidentLogEntry.EntryType type, String narrative);
 
     void injectLog(IncidentLogEntry entry);
 
@@ -38,9 +38,9 @@ public interface Incident extends Identifiable {
 
     List<Unit> getAttachedUnits();
 
-    List<Contributor> getContributors();
+    List<Contributor<?>> getContributors();
 
-    void addContributor(Contributor contributor);
+    void addContributor(Contributor<?> contributor);
 
     void update();
 

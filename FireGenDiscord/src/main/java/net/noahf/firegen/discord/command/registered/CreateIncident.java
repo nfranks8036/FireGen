@@ -11,9 +11,9 @@ import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.incidents.structure.ContributorImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.time.LocalDate;
@@ -74,6 +74,12 @@ public class CreateIncident extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
+        if (!Main.users.hasPermission(event.getUser(), Permission.INCIDENT_CREATE)) {
+            DiscordMessages.error(event, "You don't have permission to create incidents.");
+            return;
+        }
+
+
         IncidentImpl incident = Main.incidents.createNewIncident();
 
         // ---------- incident type ----------
@@ -84,7 +90,9 @@ public class CreateIncident extends Command {
 
         // ---------- incident location ----------
         OptionMapping locationOption = event.getOption("location");
-        if (locationOption != null) {
+        if (locationOption != null &&
+                Main.users.hasPermission(event.getUser(), Permission.USE_CUSTOM_LOCATION)
+        ) {
             incident.setLocation(new IncidentLocationImpl(List.of(locationOption.getAsString())));
         }
 
@@ -146,7 +154,7 @@ public class CreateIncident extends Command {
         incident.getTime().setDate(date, time);
 
         // ---------- incident contributors // begin list ----------
-        incident.addContributor(ContributorImpl.of(event.getUser()));
+        incident.addContributor(Main.users.getByDiscord(event.getUser()));
 
         // ---------- post update for first time to channels ----------
         incident.update();

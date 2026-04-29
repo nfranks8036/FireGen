@@ -8,6 +8,7 @@ import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 /**
@@ -31,6 +32,11 @@ public class ChangeStatus implements ButtonAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        if (!this.checkUserPermission(event.getUser(), Permission.INCIDENT_CLOSE, Permission.INCIDENT_REOPEN)) {
+            DiscordMessages.error(event, "You don't have permission to change an incident's status.");
+            return;
+        }
+
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
         incident.setStatus(incident.getStatus().opposite(incident));

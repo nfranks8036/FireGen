@@ -15,6 +15,7 @@ import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.ListDiff;
 
@@ -41,6 +42,11 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_AGENCIES)) {
+            DiscordMessages.error(event, "You don't have permission to add or remove agencies from an incident.");
+            return;
+        }
+
         event.reply("Choose agencies that are responding.")
                 .setEphemeral(true)
                 .setComponents(ActionRow.of(StringSelectMenu.create(this.callbackId(ctx))

@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.util.HashMap;
@@ -34,6 +35,11 @@ public class EditType implements ButtonAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_CALL_TYPE)) {
+            DiscordMessages.error(event, "You don't have permission to change the incident type.");
+            return;
+        }
+
         Incident incident = ctx.getIncident();
 
         editIncidents.put(event.getUser(), incident);

@@ -13,6 +13,7 @@ import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.time.format.DateTimeFormatter;
@@ -61,6 +62,11 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        if (!this.checkUserPermission(event.getUser(), Permission.NARRATIVE_HIDE)) {
+            DiscordMessages.error(event, "You don't have permission to hide text from the public narrative.");
+            return;
+        }
+
         List<IncidentLogEntry> narrative = ((IncidentImpl) ctx.getIncident()).getNarrative();
         if (narrative.isEmpty()) {
             DiscordMessages.error(event, "There is no narrative text to hide.\n" +

@@ -1,7 +1,10 @@
 package net.noahf.firegen.discord.actions;
 
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.users.Permission;
 
 import java.util.Arrays;
 
@@ -36,6 +39,10 @@ public interface FireGenAction {
         commands[0] = this.getName();
         // the name of the command has to come first
         return incident.createInteractionIdString(commands);
+    }
+
+    default boolean checkUserPermission(User user, Permission permission, Permission... andPermissions) {
+        return Main.users.hasPermission(user, permission, andPermissions);
     }
 
 }

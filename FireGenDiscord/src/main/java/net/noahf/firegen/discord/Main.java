@@ -17,6 +17,7 @@ import net.noahf.firegen.discord.command.CommandManager;
 import net.noahf.firegen.discord.database.DatabaseManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.SystemMunicipalityImpl;
+import net.noahf.firegen.discord.users.UserManager;
 import net.noahf.firegen.discord.utilities.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class Main {
     public static CommandManager commands;
     public static IncidentManager incidents;
     public static ActionsManager actions;
+    public static UserManager users;
 
     public static List<TextChannel> adminChannels = new ArrayList<>();
     public static List<TextChannel> receiveChannels = new ArrayList<>();
@@ -87,6 +89,7 @@ public class Main {
         incidents = new IncidentManager();
         actions = new ActionsManager();
         commands = new CommandManager();
+        users = new UserManager(JDA, incidents);
 //        subscribers = new SubscriberManager();
 
         String status = getStatus(incidents.getMunicipality());

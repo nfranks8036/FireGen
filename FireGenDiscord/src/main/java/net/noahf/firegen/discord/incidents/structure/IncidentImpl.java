@@ -23,6 +23,7 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +54,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private transient @Getter @NotNull IncidentTime time;
 
     private transient @Getter List<IncidentLogEntry> log;
-    private transient @Getter List<Contributor> contributors;
+    private transient @Getter List<Contributor<?>> contributors;
 
     private transient List<Message> receivingMessages, adminMessages;
 
@@ -126,9 +127,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public Contributor<User> addContributor(User user) {
-        Contributor<User> contributor = ContributorImpl.of(user);
-        this.addContributor(contributor);
-        return contributor;
+        FireGenUser fireGenUser = Main.users.getByDiscord(user);
+        this.addContributor(fireGenUser);
+        return fireGenUser;
     }
 
     @Override

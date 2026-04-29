@@ -15,6 +15,7 @@ import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 /**
@@ -62,6 +63,11 @@ public class AddNarrative implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+        if (!this.checkUserPermission(event.getUser(), Permission.NARRATIVE_ADD)) {
+            DiscordMessages.error(event, "You don't have permission to add text to the narrative.");
+            return;
+        }
+
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
         ModalMapping textMapping = event.getValue("text");

@@ -16,6 +16,7 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.util.List;
@@ -39,6 +40,11 @@ public class SetType extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
+        if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_LOCATION)) {
+            DiscordMessages.error(event, "You don't have permission to change the incident type.");
+            return;
+        }
+
         IncidentImpl incident = (IncidentImpl) EditType.editIncidents.get(event.getUser());
 
         if (incident == null) {

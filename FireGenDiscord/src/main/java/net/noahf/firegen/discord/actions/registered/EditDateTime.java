@@ -16,6 +16,7 @@ import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Time;
 
@@ -42,6 +43,11 @@ public class EditDateTime implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_DATE_TIME)) {
+            DiscordMessages.error(event, "You don't have permission to change the date & time of an incident.");
+            return;
+        }
+
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
         FireGenVariables vars = ctx.getManager().getFireGenVariables();
 

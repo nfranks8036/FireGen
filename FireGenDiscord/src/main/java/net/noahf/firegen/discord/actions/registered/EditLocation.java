@@ -25,6 +25,7 @@ import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,6 +65,11 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_LOCATION)) {
+            DiscordMessages.error(event, "You don't have permission to change the incident location.");
+            return;
+        }
+
         event.reply("Choose a new location type")
                 .setEphemeral(true)
                 .setComponents(ActionRow.of(
@@ -110,7 +116,12 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
         net.noahf.firegen.api.incidents.Incident incident = ctx.getIncident();
-        LocationType type = LocationType.valueOf(ctx.getParameters().get(0));
+        LocationType type = LocationType.valueOf(ctx.getParameters().getFirst());
+
+        if (type == LocationType.CUSTOM && !this.checkUserPermission(event.getUser(), Permission.USE_CUSTOM_LOCATION)) {
+            DiscordMessages.error(event, "You don't have permission to set custom locations.");
+            return;
+        }
 
         // ------- [ GET VENUE IF SET ] --------
         ModalMapping venueMapping = event.getValue("venue");
