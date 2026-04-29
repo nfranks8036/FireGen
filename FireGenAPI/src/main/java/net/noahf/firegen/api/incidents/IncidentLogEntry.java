@@ -1,7 +1,7 @@
 package net.noahf.firegen.api.incidents;
 
-import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.Identifiable;
 
 import java.time.LocalDateTime;
 

@@ -2,14 +2,16 @@ package net.noahf.firegen.api.utilities;
 
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
-import net.noahf.firegen.api.incidents.IncidentType;
-import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
-import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.Unit;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class IdGenerator<T extends Identifiable> {
 

@@ -1,6 +1,5 @@
 package net.noahf.firegen.api.incidents.location;
 
-import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
