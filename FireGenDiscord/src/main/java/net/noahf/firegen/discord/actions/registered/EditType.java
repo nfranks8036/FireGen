@@ -35,6 +35,8 @@ public class EditType implements ButtonAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_CALL_TYPE)) {
             DiscordMessages.error(event, "You don't have permission to change the incident type.");
             return;

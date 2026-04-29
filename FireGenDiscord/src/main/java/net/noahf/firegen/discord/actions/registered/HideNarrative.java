@@ -61,6 +61,8 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         if (!this.checkUserPermission(event.getUser(), Permission.NARRATIVE_HIDE)) {
             DiscordMessages.error(event, "You don't have permission to hide text from the public narrative.");
             return;
@@ -79,9 +81,9 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
                 .setMinValues(0)
                 .build());
 
-        event.reply("Select which narrative item to hide. De-select any narratives to unhide.\n" +
+        event.getHook().editOriginal("Select which narrative item to hide. De-select any narratives to unhide.\n" +
                         "Hiding narrative text is only hides from end users, the text will remain stored.")
-                .setEphemeral(true).setComponents(row).queue();
+                .setComponents(row).queue();
     }
 
     /**
@@ -89,6 +91,8 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
         List<String> values = event.getValues();

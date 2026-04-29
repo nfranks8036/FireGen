@@ -5,7 +5,6 @@ import lombok.Setter;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.utilities.IdGenerator;
-import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +37,7 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
     }
 
     public String formatAdmin() {
-        return "<t:" + Time.getUnix(this.time) + ":T> `"+ type.name() + "` <@" + user.getId() + "> " + entry;
+        return "`" + this.time.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "` `"+ type.name() + "` <@" + user.getId() + "> " + entry;
     }
 
 }

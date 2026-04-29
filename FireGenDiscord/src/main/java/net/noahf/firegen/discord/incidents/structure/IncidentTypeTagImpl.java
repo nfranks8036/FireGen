@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.IncidentTypeTag;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

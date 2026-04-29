@@ -63,6 +63,8 @@ public class AddNarrative implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         if (!this.checkUserPermission(event.getUser(), Permission.NARRATIVE_ADD)) {
             DiscordMessages.error(event, "You don't have permission to add text to the narrative.");
             return;

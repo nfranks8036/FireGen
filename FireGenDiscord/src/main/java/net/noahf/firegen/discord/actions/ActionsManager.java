@@ -63,7 +63,7 @@ public class ActionsManager {
         }
     }
 
-    public void processAction(GenericInteractionCreateEvent event, String id) {
+    public <T extends GenericInteractionCreateEvent> void processAction(T event, String id) {
         String[] sections = id.split("-");
 
         if (sections.length < 3) {

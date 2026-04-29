@@ -51,7 +51,7 @@ public class Main {
         adminChannels.add(jda.getTextChannelById(1492362581623439581L)); // BFD Tracker - management
 
         receiveChannels.add(jda.getTextChannelById(1436406051112226959L)); // FIREWATCH - radio-activity
-        adminChannels.add(jda.getTextChannelById(1498910592822411334L)); // FIREWATCH - admin radio activity
+//        adminChannels.add(jda.getTextChannelById(1498910592822411334L)); // FIREWATCH - admin radio activity
     }
 
     public static void main(String[] args) throws InterruptedException {

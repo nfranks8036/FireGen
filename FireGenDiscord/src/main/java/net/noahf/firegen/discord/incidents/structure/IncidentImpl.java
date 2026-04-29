@@ -161,7 +161,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     @Override
     public List<Agency> getAttachedAgencies() {
-        return List.of();
+        return this.agencies;
     }
 
     @Override
@@ -220,6 +220,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
      */
     @Override
     public void update() {
+        long start = System.currentTimeMillis();
+
         if (this.receivingMessages.isEmpty()) {
             // if condition is met:
             // this incident has never been posted in any channel yet, so it's likely a new one.
@@ -248,18 +250,20 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 if (channel == null) {
                     Log.warn("ADMIN - Can't send a message here. This channel does not exist!"); continue;
                 }
-                this.adminMessages
-                        .add(channel.sendMessage("New incident " + this.type.getSelectedName() + " created by " + this.contributors.getFirst())
+                Message message = channel.sendMessage("New incident " + this.type.getSelectedName() + " created by " + this.contributors.getFirst())
                         .setComponents(this.adminComponents)
-                        .complete());
+                        .complete();
+
+                message.createThreadChannel("Incident " + this.getFormattedId() + " Discussion").complete();
+
+                this.adminMessages
+                        .add(message);
             }
         }
 
         // edit the messages with the updated detailed content
         String fullMessage = this.formatReceiving();
         for (Message message : this.receivingMessages) {
-            Log.info("Updating incident " + this.getFormattedId() + " (" + this.getType().getSelectedName()
-                    + ") message in #" + message.getChannel().getName() + " in " + message.getGuild().getName() + "...");
             message.editMessage(fullMessage).queue(null, (t) -> {
                 Log.warn("Message does not exist. Removing from the list (possibly deleted by staff).", t);
                 this.receivingMessages.remove(message);
@@ -267,13 +271,15 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         }
 
         // edit the admin messages with an updated admin panel
-        MessageEmbed adminMsg = this.formatAdmin();
+        MessageEmbed[] adminMsg = this.formatAdmin();
         for (Message message : this.adminMessages) {
 
             // add or remove the components if the status requires it
             if (this.status.isInProgress() && message.getComponents().size() <= this.adminComponents.size()) {
+                Log.info("Incident opened, adding buttons...");
                 message.editMessageComponents(this.adminComponents).queue();
             } else if (!this.status.isInProgress() && message.getComponents().size() > 1) {
+                Log.info("Incident closed, removing buttons...");
                 message.editMessageComponents(ActionRow.of(
                         Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
                         Button.success("firegen-" + this.getId() + "-status", "Re-open Incident")
@@ -287,6 +293,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 this.adminMessages.remove(message);
             });
         }
+
+        Log.info("Took " + (System.currentTimeMillis() - start) + "ms to update messages.");
     }
 
     public String formatReceiving() {
@@ -311,45 +319,50 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         );
     }
 
-    public MessageEmbed formatAdmin() {
+    public MessageEmbed[] formatAdmin() {
         List<String> narrative = this.formatNarrative(true);
-        return new EmbedBuilder()
-                        .setTitle("ADMIN OVERVIEW")
-                        .setDescription("Incident `" + this.getFormattedId() + "`"
+        MessageEmbed adminOverview = new EmbedBuilder()
+                .setTitle("ADMIN OVERVIEW")
+                .setDescription("Incident `" + this.getFormattedId() + "`"
                                 + "\nStatus: " + this.manager.getStatusEmoji(this) + " " + this.status
                                 + "\nMessages (" + this.receivingMessages.size() + "): " + String.join(" , ", this.receivingMessages.stream().map(msg ->
-                                    "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()
-                                ).toList())
-                        )
-                        .setFooter("Contributors: " + String.join(", ", this.getContributors()))
-                        .addField("Call Type",
-                                this.type + "\n\n" +
-                                        "(base `" + this.type.getType() + "`, " +
-                                        "tag `" + this.type.getTag().getTagName() + "`, " +
-                                        "qualifier `" + (this.type.getTag().getQualifier() != null ? this.type.getTag().getQualifier().getQualifiers().get(this.type.getQualifierChoice()) : "None") + "`)",
-                                true
-                        )
-                        .addField("Date/Time",
-                                "Date: <t:" + this.time.getUnix() + ":d>\n" +
-                                        "Time: <t:" + this.time.getUnix() + ":T>\n" +
-                                        "Relative: <t:" + this.time.getUnix() + ":R>\n" +
-                                        "Unix: `" + this.time.getUnix() + "`", true
-                        )
-                        .addField("Location",
-                                "Type: `" + this.location.getType().name() + "`\n" +
-                                        "Data: " + String.join(", ", this.location.getData().stream().map(s -> "`" + s + "`").toList()) + "\n" +
-                                        "Common Name: `" + (this.location.getCommonName() != null ? this.location.getCommonName() : " ") + "`\n" +
-                                        "Venue: `" + (this.location.getVenue() != null ? this.location.getVenue() : " ") + "`\n" +
-                                        "Formatted: `" + this.location + "`",
-                                false
-                        )
-                        .addField("Responding Agencies (" + this.agencies.size() + ")", this.getRespondingAgenciesJoinedString(), false)
-                        .addField("Log",
-                                !narrative.isEmpty() ? String.join("\n", narrative) : "None",
-                                false
-                        )
-                        .setColor(new Color(255, 94, 94))
+                                "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()).toList())
+                                + "\nContributors (" + this.contributors.size() + "): " + String.join(", ", this.getContributors().stream().map(c -> "<@" + c.getId() + ">").toList())
+                )
+                .addField("Call Type",
+                        this.type + "\n\n" +
+                                "Base: `" + this.type.getType() + "`\n" +
+                                "Tag: `" + this.type.getTag().getTagName() + "`\n" +
+                                "Qualifier: `" + (this.type.getTag().getQualifier() != null ? this.type.getTag().getQualifier().getQualifiers().get(this.type.getQualifierChoice()) : "None") + "`",
+                        true
+                )
+                .addField("Date/Time",
+                        "Date: <t:" + this.time.getUnix() + ":d>\n" +
+                                "Time: <t:" + this.time.getUnix() + ":T>\n" +
+                                "Relative: <t:" + this.time.getUnix() + ":R>\n" +
+                                "Unix: `" + this.time.getUnix() + "`", true
+                )
+                .addField("Location",
+                        "Type: `" + this.location.getType().name() + "`\n" +
+                                "Data: " + String.join(", ", this.location.getData().stream().map(s -> "`" + s + "`").toList()) + "\n" +
+                                "Common Name: `" + (this.location.getCommonName() != null ? this.location.getCommonName() : " ") + "`\n" +
+                                "Venue: `" + (this.location.getVenue() != null ? this.location.getVenue() : " ") + "`\n" +
+                                "Formatted: `" + this.location + "`",
+                        true
+                )
+                .setColor(new Color(255, 94, 94))
                 .build();
+        MessageEmbed respondingAgencies = new EmbedBuilder()
+                .setTitle("Responding Agencies (" + this.agencies.size() + ")")
+                .setDescription(getRespondingAgenciesJoinedString())
+                .setColor(new Color(255, 94, 94))
+                .build();
+        MessageEmbed log = new EmbedBuilder()
+                .setTitle("Incident Log (" + this.log.size() + ")")
+                .setDescription(!narrative.isEmpty() ? String.join("\n", narrative) : "None")
+                .setColor(new Color(255, 94, 94))
+                .build();
+        return new MessageEmbed[]{adminOverview, respondingAgencies, log};
     }
 
     private @NotNull String getRespondingAgenciesJoinedString() {
@@ -358,7 +371,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         for (Agency agency : this.agencies) {
             respondingAgenciesJoiner.add("- **" + agency.getLonghand().toUpperCase() + "**");
             respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
-                    "(shorthand `" + agency.getShorthand() + "`, formatted '" + agency.getFormatted() + "')"
+                    "(shorthand `" + agency.getShorthand() + "`, formatted \"" + agency.getFormatted() + "\")"
                     );
             index++;
         }

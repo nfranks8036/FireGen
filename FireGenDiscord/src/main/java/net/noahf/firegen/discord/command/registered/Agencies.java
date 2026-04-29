@@ -6,13 +6,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
-import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
-import java.awt.*;
 import java.util.List;
-import java.util.Random;
 import java.util.StringJoiner;
 
 public class Agencies extends Command {

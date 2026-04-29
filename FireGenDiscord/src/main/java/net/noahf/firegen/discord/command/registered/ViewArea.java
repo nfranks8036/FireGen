@@ -12,8 +12,6 @@ import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Time;
 
-import java.util.stream.Collectors;
-
 public class ViewArea extends Command {
 
     public ViewArea() {

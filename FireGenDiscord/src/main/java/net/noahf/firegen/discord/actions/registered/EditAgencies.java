@@ -42,13 +42,14 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_AGENCIES)) {
             DiscordMessages.error(event, "You don't have permission to add or remove agencies from an incident.");
             return;
         }
 
-        event.reply("Choose agencies that are responding.")
-                .setEphemeral(true)
+        event.getHook().editOriginal("Choose agencies that are responding.")
                 .setComponents(ActionRow.of(StringSelectMenu.create(this.callbackId(ctx))
                         .addOptions(Main.incidents.getAgencies().stream()
                                 .map(a -> (AgencyImpl) a)
@@ -68,7 +69,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
                         .setMaxValues(StringSelectMenu.OPTIONS_MAX_AMOUNT)
                         .build()
                 ))
-                .complete();
+                .queue();
     }
 
     /**
@@ -76,6 +77,8 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
         // we create a new (empty) list entitled agencies that has the new list of all agencies that are selected
@@ -110,7 +113,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
 
         incident.setAgencies(agencies);
 
-        DiscordMessages.selfDestructEdit(event, 5, narrative.toString());
+        DiscordMessages.selfDestruct(event, 5, narrative.toString());
 
         Contributor<User> user = incident.addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative.toString());

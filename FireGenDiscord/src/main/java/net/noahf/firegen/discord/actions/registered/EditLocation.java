@@ -65,13 +65,14 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_LOCATION)) {
             DiscordMessages.error(event, "You don't have permission to change the incident location.");
             return;
         }
 
-        event.reply("Choose a new location type")
-                .setEphemeral(true)
+        event.getHook().editOriginal("Choose a new location type")
                 .setComponents(ActionRow.of(
                         StringSelectMenu.create(this.callbackId(ctx))
                                 .addOptions(LOCATION_SELECT_OPTIONS)
@@ -115,6 +116,8 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         net.noahf.firegen.api.incidents.Incident incident = ctx.getIncident();
         LocationType type = LocationType.valueOf(ctx.getParameters().getFirst());
 
@@ -140,7 +143,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         incident.setLocation(location);
 
         String narrative = "Location updated: " + location.format();
-        DiscordMessages.selfDestructEdit(event, 5, "The location for this incident was updated to `" + location.format() + "`");
+        DiscordMessages.selfDestruct(event, 5, "The location for this incident was updated to `" + location.format() + "`");
 
         Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);

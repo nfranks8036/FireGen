@@ -90,6 +90,8 @@ public class EditDateTime implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
         FireGenVariables vars = ctx.getManager().getFireGenVariables();
 

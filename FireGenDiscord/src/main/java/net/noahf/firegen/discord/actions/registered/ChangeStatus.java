@@ -32,6 +32,8 @@ public class ChangeStatus implements ButtonAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
+
         if (!this.checkUserPermission(event.getUser(), Permission.INCIDENT_CLOSE, Permission.INCIDENT_REOPEN)) {
             DiscordMessages.error(event, "You don't have permission to change an incident's status.");
             return;
