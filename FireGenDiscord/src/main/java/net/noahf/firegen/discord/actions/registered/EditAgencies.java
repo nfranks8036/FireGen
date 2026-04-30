@@ -1,32 +1,38 @@
 package net.noahf.firegen.discord.actions.registered;
 
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.utilities.IdGenerator;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
-import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.ListDiff;
+import net.noahf.firegen.discord.utilities.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * Represents the "Agencies" button in the Edit row.
  */
 public class EditAgencies implements ButtonAction, StringDropdownAction {
+
+    private static final Map<Long, List<Agency>> selectedAgencies = new ConcurrentHashMap<>();
 
     /**
      * The name of the command needed to access this class
@@ -42,26 +48,29 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        event.deferReply().setEphemeral(true).queue();
-
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_AGENCIES)) {
             DiscordMessages.error(event, "You don't have permission to add or remove agencies from an incident.");
             return;
         }
 
-        event.getHook().editOriginal("Choose agencies that are responding.")
-                .setComponents(ActionRow.of(StringSelectMenu.create(this.callbackId(ctx))
+        IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+
+        event.reply("Choose agencies to update their status.")
+                .setEphemeral(true)
+                .setComponents(ActionRow.of(StringSelectMenu.create(this.callbackId(ctx, "select"))
                         .addOptions(Main.incidents.getAgencies().stream()
                                 .map(a -> (AgencyImpl) a)
-                                .map(AgencyImpl::getSelectOption)
+                                .map((a) -> {
+                                    AssignmentStatus status = incident.getAgencies().get(a);
+                                    if (status == null) {
+                                        return a.getSelectOption();
+                                    }
+                                    return a.getSelectOption().withDescription(
+                                            "Status: " + status.getName()
+                                    );
+                                })
                                 .limit(StringSelectMenu.OPTIONS_MAX_AMOUNT)
                                 .toList()
-                        )
-                        .setDefaultOptions(
-                                ctx.getIncident().getAttachedAgencies().stream()
-                                        .map(a -> (AgencyImpl) a)
-                                        .map(AgencyImpl::getSelectOption)
-                                        .toList()
                         )
                         .setRequired(true)
                         // the max amount of value IS the amount of values we have available.
@@ -77,47 +86,85 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
-        event.deferReply().setEphemeral(true).queue();
-
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
-        // we create a new (empty) list entitled agencies that has the new list of all agencies that are selected
-        // due to the fact the default values are already set in the event listed above, then we can expect that
-        // selected options will only be ones that the user wants attached. therefore we can just assume the
-        // list of values are up-to-date and accurate.
-        List<Agency> agencies = new ArrayList<>();
-        for (Agency agency : Main.incidents.getAgencies()) {
-            if (!event.getValues().contains(agency.getShorthand())) {
-                continue;
+        // FIRST STEP: Select the agencies
+        if (ctx.getParameters().getFirst().equalsIgnoreCase("select")) {
+            List<Agency> agencies = new ArrayList<>();
+            for (Agency agency : Main.incidents.getAgencies()) {
+                if (!event.getValues().contains(agency.getShorthand())) {
+                    continue;
+                }
+                agencies.add(agency);
             }
-            agencies.add(agency);
+
+            long id = ThreadLocalRandom.current().nextInt(10000, 99999);
+
+            // this way we can keep track of the selected agencies for the next step (changing their status)
+            selectedAgencies.put(id, agencies);
+
+            event.reply("You selected **" + String.join(", ", agencies) + "**.\n\n" +
+                            "Select a new status for these agencies:")
+                    .setEphemeral(true)
+                    .setComponents(ActionRow.of(StringSelectMenu.create(this.callbackId(ctx, "status", String.valueOf(id)))
+                            .addOptions(Main.incidents.getAssignmentStatuses().stream()
+                                    .map(s -> SelectOption.of(s.getName(), s.getShortName())
+                                            .withEmoji(s.getEmoji())
+                                    )
+                                    .limit(StringSelectMenu.OPTIONS_MAX_AMOUNT)
+                                    .toList()
+                            )
+                            .setRequired(true)
+                            .setMaxValues(1)
+                            .build()
+                    ))
+                    .complete();
+
         }
+        // SECOND STEP: Select the status
+        if (ctx.getParameters().getFirst().equalsIgnoreCase("status")) {
+            List<Agency> agencies = selectedAgencies.get(Long.parseLong(ctx.getParameters().get(1)));
+            if (agencies == null || agencies.isEmpty()) {
+                DiscordMessages.error(event, "You did not select any agencies.");
+                return;
+            }
 
-        // ListDiff will find out which agencies were added and which agencies were removed
-        ListDiff<Agency> diff = ListDiff.compare(incident.getAgencies(), agencies);
+            String statusStr = event.getSelectedOptions().getFirst().getValue();
+            AssignmentStatus status = Main.incidents.getAssignmentStatuses()
+                    .stream().filter(as -> as.getShortName().equalsIgnoreCase(statusStr))
+                    .findFirst().orElse(null);
+            if (status == null) {
+                DiscordMessages.error(event, "You did not select an assignment status");
+                return;
+            }
 
-        StringJoiner narrative = new StringJoiner(" and ");
-        if (!diff.getAdded().isEmpty()) {
-            narrative.add("Added agencies " +
-                    String.join(", ", diff.getAdded().stream().map(Agency::getShorthand).toList())
-            );
+            String narrative;
+            if (status.equals(AssignmentStatus.REMOVE_AGENCY)) {
+                incident.removeAgencies(agencies);
+                narrative = (agencies.size() == 1 ? "Agency " : "Agencies ") +
+                        String.join(", ", agencies) + " removed from incident";
+            } else {
+                incident.putAgencies(
+                        agencies.stream().collect(Collectors.toMap(
+                                (k) -> k, (v) -> status
+                        ))
+                );
+                narrative = (agencies.size() == 1 ? "Agency " : "Agencies ") +
+                        String.join(", ", agencies) + " " + status.getName();
+            }
+
+            if (status.equals(AssignmentStatus.HIDE_STATUS)) {
+                narrative = (agencies.size() == 1 ? "Agency " : "Agencies ") +
+                        String.join(", ", agencies) + " unset";
+            }
+
+            DiscordMessages.noMessage(event);
+
+            Contributor<User> user = incident.addContributor(event.getUser());
+            incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, narrative);
+
+            incident.update();
         }
-        if (!diff.getRemoved().isEmpty()) {
-            narrative.add(
-                    // to keep consistent capitalization. if 'getAdded' is empty, then this section will be shown first.
-                    (diff.getAdded().isEmpty() ? "R" : "r") + "emoved" +
-                            " agencies " +
-                            String.join(", ", diff.getRemoved().stream().map(Agency::getShorthand).toList())
-            );
-        }
-
-        incident.setAgencies(agencies);
-
-        DiscordMessages.noMessage(event);
-
-        Contributor<User> user = incident.addContributor(event.getUser());
-        incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative.toString());
-        incident.update();
     }
 
 

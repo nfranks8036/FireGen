@@ -10,6 +10,7 @@ import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Represents the "Type" button in the "Edit" row
@@ -19,7 +20,7 @@ public class EditType implements ButtonAction {
     /**
      * Represents the list of users that are currently editing an incident and which incident they're currently editing.
      */
-    public static final Map<User, Incident> editIncidents = new HashMap<>();
+    public static final Map<User, Incident> editIncidents = new ConcurrentHashMap<>();
 
     /**
      * The command name required to access this class.

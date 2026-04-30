@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.Arrays;
 
@@ -33,8 +34,8 @@ public interface FireGenAction {
         }
 
         String[] commands = Arrays.copyOf(additionalParameters, additionalParameters.length + 1);
-        for (int i = 0; i < commands.length - 1; i++) {
-            commands[i + 1] = commands[i];
+        for (int i = commands.length - 1; i >= 1; i--) {
+            commands[i] = commands[i - 1];
         }
         commands[0] = this.getName();
         // the name of the command has to come first

@@ -11,6 +11,7 @@ import net.noahf.firegen.api.incidents.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
@@ -101,8 +102,8 @@ public class IncidentStructureImporter {
                 manager.agencies.add(new AgencyImpl(
                         shorthand, longhand, format, emoji, AgencyType.OTHER,
                         new ArrayList<>(),
-                        SelectOption.of(format, shorthand)
-                                .withDescription("(" + shorthand + ") " + longhand)
+                        SelectOption.of(longhand, shorthand)
+                                .withDescription(null)
                                 .withEmoji(emoji)
 //                                .withEmoji(Emoji.fromFormatted(emoji))
 //                                .withEmoji(Emoji.fromCustom(emoji, 0, false))
@@ -164,6 +165,37 @@ public class IncidentStructureImporter {
             );
 
             Log.info("Imported municipality " + manager.municipality);
+        } catch (IOException exception) {
+            throw new IllegalStateException("IOException: " + exception, exception);
+        }
+    }
+
+    void importAssignmentStatuses(IncidentManager manager) {
+        FireGenVariables vars = manager.getFireGenVariables();
+        String file = vars.municipality() + "/" + vars.assignmentStatusFile();
+        try
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
+        {
+            if (input == null) {
+                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
+            }
+
+            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
+
+            manager.assignmentStatuses.addAll(List.of(AssignmentStatus.REMOVE_AGENCY, AssignmentStatus.HIDE_STATUS));
+            for (JsonElement element : array.asList()) {
+                JsonObject object = element.getAsJsonObject();
+
+                String name = object.get("name").getAsString();
+                String shortName = object.get("short").getAsString();
+                String emojiStr = object.get("emoji").getAsString();
+                Emoji emoji = Emoji.fromFormatted(emojiStr);
+
+                AssignmentStatus status = new AssignmentStatus(name, shortName, emoji);
+                manager.assignmentStatuses.add(status);
+            }
+
+            Log.info("Imported assignment statuses " + String.join(", ", manager.assignmentStatuses));
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }

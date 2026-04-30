@@ -33,10 +33,10 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
-import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Entity @Table(name = "incident")
@@ -52,7 +52,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private @Getter @Setter IncidentStatus status;
 
     private transient @Getter @Setter @NotNull IncidentType type;
-    private transient @Getter @NotNull List<Agency> agencies;
+    private transient @Getter @NotNull Map<Agency, AssignmentStatus> agencies;
     private transient @Getter @Setter @NotNull IncidentLocation location;
     private transient @Getter @NotNull IncidentTime time;
 
@@ -78,7 +78,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.location = new IncidentLocationImpl(new ArrayList<>());
         this.time = new IncidentTimeImpl(LocalDateTime.now());
 
-        this.agencies = new ArrayList<>();
+        this.agencies = new ConcurrentHashMap<>();
         this.log = new ArrayList<>();
         this.receivingMessages = new ArrayList<>();
         this.adminMessages = new ArrayList<>();
@@ -126,7 +126,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     @Override
-    public void addContributor(Contributor contributor) {
+    public void addContributor(Contributor<?> contributor) {
         if (this.contributors.contains(contributor)) {
             return;
         }
@@ -140,7 +140,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     @Override
-    public void addLog(Contributor user, IncidentLogEntry.EntryType type, String log) {
+    public void addLog(Contributor<?> user, IncidentLogEntry.EntryType type, String log) {
         this.addLog(new IncidentLogEntryImpl(LocalDateTime.now(), user, log, type));
     }
 
@@ -165,7 +165,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     @Override
     public List<Agency> getAttachedAgencies() {
-        return this.agencies;
+        return new ArrayList<>(this.agencies.keySet());
     }
 
     @Override
@@ -173,13 +173,23 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         return List.of();
     }
 
-    public void setAgencies(List<Agency> agencies) {
+    public void removeAgencies(List<Agency> agencies) {
+        agencies.forEach(a -> this.agencies.remove(a));
+    }
+
+    public void putAgencies(List<Agency> agencies) {
+        this.putAgencies(agencies.stream()
+                .collect(Collectors.toMap((a) -> a, (a) -> AssignmentStatus.HIDE_STATUS)));
+    }
+
+    public void putAgencies(Map<Agency, AssignmentStatus> agencies) {
+        this.agencies.putAll(agencies);
+
         if (agencies.isEmpty()) {
             this.status =  IncidentStatus.PENDING;
         } else {
             this.status =  IncidentStatus.ACTIVE;
         }
-        this.agencies = agencies;
     }
 
     public String createInteractionIdString(String... commands) {
@@ -264,7 +274,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 startingMessage = startingMessage + "\nWhere- " + this.location.format();
             }
             if (!this.agencies.isEmpty()) {
-                startingMessage = startingMessage + "\nWho- " + String.join(", ", this.agencies.stream().map(Agency::getShorthand).toList());
+                startingMessage = startingMessage + "\nWho- " + String.join(", ", this.getAttachedAgencies().stream().map(Agency::getShorthand).toList());
             }
             startingMessage = startingMessage + "\nWhen- <t:" + this.getTime().getUnix() + ":t>";
 
@@ -346,7 +356,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 this.getTime().formatDate(this.manager.getFireGenVariables()),
                 this.getTime().formatTimeShort(this.manager.getFireGenVariables()),
                 this.getTime().getUnix(),
-                String.join(", ", this.agencies.stream().map(Agency::getFormatted).toList()),
+                String.join(", ", this.getAttachedAgencies().stream().map(Agency::getFormatted).toList()),
                 this.location.getType().getPrefix(),
                 this.location.format(),
                 !narrative.isEmpty() ? String.join("\n", narrative) : "None"
@@ -402,7 +412,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private @NotNull String getRespondingAgenciesJoinedString() {
         StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
         int index = 0;
-        for (Agency agency : this.agencies) {
+        for (Agency agency : this.agencies.keySet()) {
             respondingAgenciesJoiner.add("- **" + agency.getLonghand().toUpperCase() + "**");
             respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
                     "(shorthand `" + agency.getShorthand() + "`, formatted \"" + agency.getFormatted() + "\")"

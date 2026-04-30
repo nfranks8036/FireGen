@@ -114,7 +114,7 @@ public class CreateIncident extends Command {
 
                 agencies.add(a);
             }
-            incident.setAgencies(agencies);
+            incident.putAgencies(agencies);
         }
 
         // ---------- incident date and time ----------

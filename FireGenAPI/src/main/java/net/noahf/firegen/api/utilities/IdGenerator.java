@@ -12,6 +12,7 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class IdGenerator<T extends Identifiable> {
 
@@ -39,7 +40,7 @@ public class IdGenerator<T extends Identifiable> {
 
 
 
-    private static final Map<Identifiable, Long> generatedIds = new HashMap<>();
+    private static final Map<Identifiable, Long> generatedIds = new ConcurrentHashMap<>();
 
     public static int getGeneratedIdsAmount() {
         return generatedIds.size();

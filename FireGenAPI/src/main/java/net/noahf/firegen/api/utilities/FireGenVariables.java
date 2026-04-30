@@ -28,6 +28,7 @@ public class FireGenVariables {
         this.agenciesFile = "agencies.json";
         this.venuesFile = "venues.json";
         this.municipalityFile = "municipality.json";
+        this.assignmentStatusFile = "assignments.json";
 
         this.usersFile = "users.json";
 
@@ -62,6 +63,7 @@ public class FireGenVariables {
     private String agenciesFile;
     private String venuesFile;
     private String municipalityFile;
+    private String assignmentStatusFile;
 
     private String usersFile;
 

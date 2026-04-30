@@ -6,6 +6,7 @@ import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -53,6 +54,8 @@ public class IncidentManager {
      */
     @Getter List<LocationVenue> venues = new ArrayList<>();
 
+    @Getter List<AssignmentStatus> assignmentStatuses = new ArrayList<>();
+
     @Getter
     SystemMunicipalityImpl municipality;
     //</editor-fold>
@@ -65,6 +68,7 @@ public class IncidentManager {
         importer.importAgencies(this);
         importer.importVenues(this);
         importer.importMunicipality(this);
+        importer.importAssignmentStatuses(this);
 
         this.fireGenVariables.setVenues(this.getVenues());
     }

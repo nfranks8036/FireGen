@@ -1,0 +1,32 @@
+[
+  {
+    "name": "DISPATCHED",
+    "short": "DSP",
+    "emoji": "<:DISPATCHED:1499196518475890818>"
+  },
+  {
+    "name": "ENROUTE",
+    "short": "ENR",
+    "emoji": "<:ENROUTE:1499197412995239987>"
+  },
+  {
+    "name": "ONSCENE",
+    "short": "ONS",
+    "emoji": "<:ONSCENE:1499197432624578701>"
+  },
+  {
+    "name": "LEFT FOR SECONDARY",
+    "short": "LEF",
+    "emoji": "<:LEFT_FOR_SECONDARY:1499197449716240384>"
+  },
+  {
+    "name": "ARRIVED SECONDARY",
+    "short": "ARR",
+    "emoji": "<:ARRIVED_SECONDARY:1499197466606571571>"
+  },
+  {
+    "name": "CLEAR",
+    "short": "CLR",
+    "emoji": "<:CLEAR:1499197493689188352>"
+  }
+]
