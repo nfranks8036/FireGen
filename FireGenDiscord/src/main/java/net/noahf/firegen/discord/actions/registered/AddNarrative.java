@@ -47,6 +47,8 @@ public class AddNarrative implements ButtonAction, ModalAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+        this.ensureIncidentOpen(event, ctx.getIncident());
+
         Modal modal = Modal.create(this.callbackId(ctx), "Add Narrative to " + ctx.getIncident().getFormattedId())
                 .addComponents(Label.of(
                         "Narrative Text",
@@ -71,6 +73,8 @@ public class AddNarrative implements ButtonAction, ModalAction {
         }
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+
+        this.ensureIncidentOpen(event, incident);
 
         ModalMapping textMapping = event.getValue("text");
         if (textMapping == null) {

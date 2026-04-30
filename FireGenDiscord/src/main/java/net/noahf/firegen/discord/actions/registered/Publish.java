@@ -22,6 +22,8 @@ public class Publish implements ButtonAction {
         event.deferReply().setEphemeral(true).queue();
 
         IncidentImpl incident = ((IncidentImpl) ctx.getIncident());
+        this.ensureIncidentOpen(event, incident);
+
         if (!incident.isPublished() && !this.checkUserPermission(event.getUser(), Permission.INCIDENT_PUBLISH)) {
             // will be published
             DiscordMessages.error(event, "You don't have permission to publish an incident.");

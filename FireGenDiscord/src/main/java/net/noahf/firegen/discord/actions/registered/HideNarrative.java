@@ -68,6 +68,8 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
             return;
         }
 
+        this.ensureIncidentOpen(event, ctx.getIncident());
+
         List<IncidentLogEntry> narrative = ((IncidentImpl) ctx.getIncident()).getNarrative();
         if (narrative.isEmpty()) {
             DiscordMessages.error(event, "There is no narrative text to hide.\n" +
@@ -94,6 +96,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
         event.deferReply().setEphemeral(true).queue();
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+        this.ensureIncidentOpen(event, incident);
 
         List<String> values = event.getValues();
         int hidden = 0, shown = 0;

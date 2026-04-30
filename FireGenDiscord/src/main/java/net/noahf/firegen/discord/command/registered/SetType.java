@@ -53,6 +53,11 @@ public class SetType extends Command {
             return;
         }
 
+        if (!incident.getStatus().isInProgress()) {
+            DiscordMessages.error(event, "This incident is closed and cannot be edited.");
+            return;
+        }
+
         // store old type for the narrative in the future
         String oldType = incident.getType().getSelectedName();
 

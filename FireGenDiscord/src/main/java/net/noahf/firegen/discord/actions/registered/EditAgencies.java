@@ -59,6 +59,8 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
             return;
         }
 
+        this.ensureIncidentOpen(event, ctx.getIncident());
+
         if (!ctx.getParameters().isEmpty()) {
             this.onSubmit(ctx, event);
             return;
@@ -222,7 +224,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
         DiscordMessages.noMessage(event);
 
         Contributor<User> user = incident.addContributor(event.getUser());
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, narrative);
+        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, narrative);
 
         incident.update();
     }

@@ -51,6 +51,8 @@ public class EditDateTime implements ButtonAction, ModalAction {
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
         FireGenVariables vars = ctx.getManager().getFireGenVariables();
 
+        this.ensureIncidentOpen(event, incident);
+
         String timeFormat = vars.longTimeFormat();
         String dateFormat = vars.dateFormat();
 
@@ -100,6 +102,8 @@ public class EditDateTime implements ButtonAction, ModalAction {
 
         ModalMapping timeMapping = event.getValue("time");
         ModalMapping dateMapping = event.getValue("date");
+
+        this.ensureIncidentOpen(event, incident);
 
         if (timeMapping == null) {
             // we place this condition at the top because it's REQUIRED regardless of what is inputted

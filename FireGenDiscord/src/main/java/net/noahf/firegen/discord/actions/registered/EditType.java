@@ -43,6 +43,8 @@ public class EditType implements ButtonAction {
             return;
         }
 
+        this.ensureIncidentOpen(event, ctx.getIncident());
+
         Incident incident = ctx.getIncident();
 
         editIncidents.put(event.getUser(), incident);

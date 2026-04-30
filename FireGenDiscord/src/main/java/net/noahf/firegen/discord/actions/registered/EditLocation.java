@@ -87,6 +87,8 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
+        this.ensureIncidentOpen(event, ctx.getIncident());
+
         LocationType type;
         // get(0) because only one option is allowed, so there should never be >0
         String selected = event.getInteraction().getSelectedOptions().getFirst().getValue();
@@ -127,6 +129,8 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
             DiscordMessages.error(event, "You don't have permission to set custom locations.");
             return;
         }
+
+        this.ensureIncidentOpen(event, incident);
 
         // ------- [ GET VENUE IF SET ] --------
         ModalMapping venueMapping = event.getValue("venue");

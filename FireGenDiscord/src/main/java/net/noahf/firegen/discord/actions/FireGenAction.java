@@ -2,9 +2,12 @@ package net.noahf.firegen.discord.actions;
 
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.Arrays;
@@ -44,6 +47,12 @@ public interface FireGenAction {
 
     default boolean checkUserPermission(User user, Permission permission, Permission... andPermissions) {
         return Main.users.hasPermission(user, permission, andPermissions);
+    }
+
+    default void ensureIncidentOpen(IReplyCallback callback, Incident incident) {
+        if (!incident.getStatus().isInProgress()) {
+            DiscordMessages.error(callback, "This incident is closed and cannot be edited.");
+        }
     }
 
 }

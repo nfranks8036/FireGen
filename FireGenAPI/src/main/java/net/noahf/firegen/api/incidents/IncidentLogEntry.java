@@ -26,6 +26,7 @@ public interface IncidentLogEntry extends Identifiable {
     enum EntryType {
         CREATE,
         UPDATE,
+        UNIT,
         NARRATIVE,
         HIDDEN
     }

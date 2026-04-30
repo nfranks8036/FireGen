@@ -404,7 +404,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                     + " (`" + agency.getShorthand() + "`)"
             );
             respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
-                    "Status: " + status.getEmoji().getFormatted() + " " + status.getName()
+                    "Status: " + (status.getEmoji() != null ? status.getEmoji().getFormatted() + " " : "") + status.getName()
                     );
             index++;
         }
