@@ -78,7 +78,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.location = new IncidentLocationImpl(new ArrayList<>());
         this.time = new IncidentTimeImpl(LocalDateTime.now());
 
-        this.agencies = new ConcurrentHashMap<>();
+        this.agencies = Collections.synchronizedMap(new LinkedHashMap<>());
         this.log = new ArrayList<>();
         this.receivingMessages = new ArrayList<>();
         this.adminMessages = new ArrayList<>();
@@ -433,17 +433,30 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     private String formatAgencies() {
         StringJoiner joiner = new StringJoiner(", ");
-        for (Map.Entry<Agency, AssignmentStatus> entry : this.getAgencies().entrySet()) {
-            Agency agency = entry.getKey();
-            AssignmentStatus status = entry.getValue();
-            String returned = agency.getFormatted();
 
-            if (status != null && !status.equals(AssignmentStatus.HIDE_STATUS)) {
-                returned = returned + " " + status.getEmoji().getFormatted();
-            }
+        this.getAgencies().entrySet().stream()
+                .sorted(
+                        Comparator
+                                .comparingInt((Map.Entry<Agency, AssignmentStatus> e)
+                                        -> e.getValue().ordinal()) // status order
+                                .thenComparing(e -> e.getKey().ordinal()) // agency name
+                )
+                .forEach(entry -> {
+                    Agency agency = entry.getKey();
+                    AssignmentStatus status = entry.getValue();
 
-            joiner.add(returned);
-        }
+                    String returned;
+                    if (this.getStatus().isInProgress()) {
+                        returned = ((AgencyImpl) agency).getFormattedStatus(status);
+                    } else {
+                        // we are not going to show the statuses when an incident is closed
+                        // the idea being that all of them are going to be "CLEAR" anyways
+                        returned = agency.getFormatted();
+                    }
+
+                    joiner.add(returned);
+                });
+
         return joiner.toString();
     }
 

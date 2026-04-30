@@ -45,6 +45,7 @@ public interface FireGenAction {
         return incident.createInteractionIdString(commands);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     default boolean checkUserPermission(User user, Permission permission, Permission... andPermissions) {
         return Main.users.hasPermission(user, permission, andPermissions);
     }

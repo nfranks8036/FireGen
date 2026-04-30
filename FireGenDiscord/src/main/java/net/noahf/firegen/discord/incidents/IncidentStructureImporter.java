@@ -92,8 +92,9 @@ public class IncidentStructureImporter {
                 throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
             }
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
-            for (JsonElement element : array.asList()) {
-                JsonObject object = element.getAsJsonObject();
+            List<JsonElement> elements = array.asList();
+            for (int i = 0; i < elements.size(); i++) {
+                JsonObject object = elements.get(i).getAsJsonObject();
                 String shorthand = object.get("short").getAsString();
                 String longhand = object.get("long").getAsString();
                 String format = object.get("format").getAsString();
@@ -101,7 +102,7 @@ public class IncidentStructureImporter {
 
                 manager.agencies.add(new AgencyImpl(
                         shorthand, longhand, format, emoji, AgencyType.OTHER,
-                        new ArrayList<>(),
+                        new ArrayList<>(), i,
                         SelectOption.of(longhand, shorthand)
                                 .withDescription(null)
                                 .withEmoji(emoji)
@@ -183,7 +184,8 @@ public class IncidentStructureImporter {
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
 
             manager.assignmentStatuses.addAll(List.of(AssignmentStatus.REMOVE_AGENCY, AssignmentStatus.HIDE_STATUS));
-            for (JsonElement element : array.asList()) {
+            for (int i = 0; i < array.asList().size(); i++) {
+                JsonElement element = array.asList().get(i);
                 JsonObject object = element.getAsJsonObject();
 
                 String name = object.get("name").getAsString();
@@ -191,7 +193,7 @@ public class IncidentStructureImporter {
                 String emojiStr = object.get("emoji").getAsString();
                 Emoji emoji = Emoji.fromFormatted(emojiStr);
 
-                AssignmentStatus status = new AssignmentStatus(name, shortName, emoji);
+                AssignmentStatus status = new AssignmentStatus(name, shortName, emoji, i);
                 manager.assignmentStatuses.add(status);
             }
 

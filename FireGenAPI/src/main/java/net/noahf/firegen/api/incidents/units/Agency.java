@@ -17,4 +17,6 @@ public interface Agency extends Identifiable, AutofilledCharSequence {
 
     List<Unit> getUnits();
 
+    int ordinal();
+
 }
