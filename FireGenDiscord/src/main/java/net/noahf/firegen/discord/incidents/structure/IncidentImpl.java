@@ -200,23 +200,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         );
     }
 
-    public @NotNull List<String> formatNarrative(boolean admin) {
-        if (this.log == null || this.log.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        List<String> response = new ArrayList<>();
-        for (IncidentLogEntry entry : this.log) {
-            if (!admin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
-                // we don't want admin update logs to be included in the narrative for the public necessarily
-                continue;
-            }
-            IncidentLogEntryImpl entryImpl = (IncidentLogEntryImpl) entry;
-            response.add(admin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
-        }
-        return response;
-    }
-
     public List<IncidentLogEntry> getNarrative() {
         return this.getLog().stream().filter(IncidentLogEntry::isNarrative).toList();
     }
@@ -356,7 +339,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 this.getTime().formatDate(this.manager.getFireGenVariables()),
                 this.getTime().formatTimeShort(this.manager.getFireGenVariables()),
                 this.getTime().getUnix(),
-                String.join(", ", this.getAttachedAgencies().stream().map(Agency::getFormatted).toList()),
+                this.formatAgencies(),
                 this.location.getType().getPrefix(),
                 this.location.format(),
                 !narrative.isEmpty() ? String.join("\n", narrative) : "None"
@@ -398,7 +381,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 .build();
         MessageEmbed respondingAgencies = new EmbedBuilder()
                 .setTitle("Responding Agencies (" + this.agencies.size() + ")")
-                .setDescription(getRespondingAgenciesJoinedString())
+                .setDescription(formatAgenciesAdmin())
                 .setColor(new Color(255, 94, 94))
                 .build();
         MessageEmbed log = new EmbedBuilder()
@@ -409,13 +392,19 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         return new MessageEmbed[]{adminOverview, respondingAgencies, log};
     }
 
-    private @NotNull String getRespondingAgenciesJoinedString() {
+    private @NotNull String formatAgenciesAdmin() {
         StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
         int index = 0;
-        for (Agency agency : this.agencies.keySet()) {
-            respondingAgenciesJoiner.add("- **" + agency.getLonghand().toUpperCase() + "**");
+        for (Map.Entry<Agency, AssignmentStatus> entry : this.getAgencies().entrySet()) {
+            AgencyImpl agency = (AgencyImpl) entry.getKey();
+            AssignmentStatus status = entry.getValue();
+
+            respondingAgenciesJoiner.add("- " + agency.getEmoji().getFormatted() + " " +
+                    "**" + agency.getLonghand().toUpperCase() + "**"
+                    + " (`" + agency.getShorthand() + "`)"
+            );
             respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
-                    "(shorthand `" + agency.getShorthand() + "`, formatted \"" + agency.getFormatted() + "\")"
+                    "Status: " + status.getEmoji().getFormatted() + " " + status.getName()
                     );
             index++;
         }
@@ -423,6 +412,39 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 :  respondingAgenciesJoiner.toString().substring(
                 0, Math.min(1024, respondingAgenciesJoiner.toString().length())
         );
+    }
+
+    private @NotNull List<String> formatNarrative(boolean admin) {
+        if (this.log == null || this.log.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<String> response = new ArrayList<>();
+        for (IncidentLogEntry entry : this.log) {
+            if (!admin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
+                // we don't want admin update logs to be included in the narrative for the public necessarily
+                continue;
+            }
+            IncidentLogEntryImpl entryImpl = (IncidentLogEntryImpl) entry;
+            response.add(admin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
+        }
+        return response;
+    }
+
+    private String formatAgencies() {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (Map.Entry<Agency, AssignmentStatus> entry : this.getAgencies().entrySet()) {
+            Agency agency = entry.getKey();
+            AssignmentStatus status = entry.getValue();
+            String returned = agency.getFormatted();
+
+            if (status != null && !status.equals(AssignmentStatus.HIDE_STATUS)) {
+                returned = returned + " " + status.getEmoji().getFormatted();
+            }
+
+            joiner.add(returned);
+        }
+        return joiner.toString();
     }
 
 

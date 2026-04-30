@@ -75,7 +75,7 @@ public class DiscordMessages {
         if (event.isAcknowledged()) {
             event.getHook().deleteOriginal().queue();
         } else {
-            event.deferReply().setEphemeral(true).complete().deleteOriginal().queue();
+            event.reply(" ").setEphemeral(true).complete().deleteOriginal().queue();
         }
     }
 

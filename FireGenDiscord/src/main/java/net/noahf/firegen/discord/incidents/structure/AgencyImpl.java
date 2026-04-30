@@ -36,6 +36,6 @@ public class AgencyImpl implements net.noahf.firegen.api.incidents.units.Agency 
 
     @Override
     public String getFormatted() {
-        return "<:" + emoji.getAsReactionCode() + "> " + this.formatted;
+        return emoji.getFormatted() + " " + this.formatted;
     }
 }
