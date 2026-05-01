@@ -93,13 +93,10 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
-        event.deferReply().setEphemeral(true).queue();
-
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
         this.ensureIncidentOpen(event, incident);
 
         List<String> values = event.getValues();
-        int hidden = 0, shown = 0;
         for (IncidentLogEntry entry : incident.getNarrative()) {
             boolean unconfirmedChanges = false;
             IncidentLogEntryImpl.EntryType type = entry.getType();
@@ -109,7 +106,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
                     values.contains(String.valueOf(entry.getId()))) {
                 // this means that the user has requested this entry to be hidden but it's currently viewable
 
-                hidden++; unconfirmedChanges = true;
+                unconfirmedChanges = true;
                 entry.setType(IncidentLogEntryImpl.EntryType.HIDDEN);
 
             } else if (
@@ -117,7 +114,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
                     !values.contains(String.valueOf(entry.getId()))) {
                 // this means that the user has requested to show this entry but it's currently hidden
 
-                shown++; unconfirmedChanges = true;
+                unconfirmedChanges = true;
                 entry.setType(IncidentLogEntryImpl.EntryType.NARRATIVE);
 
             }
@@ -130,13 +127,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
             incident.injectLog(entry);
         }
 
-        DiscordMessages.selfDestructEdit(event, 5,
-                "You have " +
-                        (hidden > 0 ? "hidden " + hidden + " narrative entries " : "") +
-                        (hidden > 0 && shown > 0 ? "and " : "") +
-                        (shown > 0 ? "revealed " + shown + " narrative entries " : "") +
-                        "for the end user."
-        );
+        DiscordMessages.noMessage(event);
 
         incident.addContributor(event.getUser());
         incident.update();

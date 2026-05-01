@@ -53,7 +53,7 @@ public class SetType extends Command {
             return;
         }
 
-        if (!incident.getStatus().isInProgress()) {
+        if (!incident.getStatus().getAttributes().isInProgress()) {
             DiscordMessages.error(event, "This incident is closed and cannot be edited.");
             return;
         }

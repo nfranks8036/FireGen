@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
@@ -83,7 +84,11 @@ public class AddNarrative implements ButtonAction, ModalAction {
         }
 
         Contributor<User> user = incident.addContributor(event.getUser());
-        incident.addLog(user, IncidentLogEntryImpl.EntryType.NARRATIVE, textMapping.getAsString());
+        incident.addLog(
+                user,
+                IncidentLogEntryImpl.EntryType.NARRATIVE,
+                textMapping.getAsString()
+        );
 
         DiscordMessages.noMessage(event);
 

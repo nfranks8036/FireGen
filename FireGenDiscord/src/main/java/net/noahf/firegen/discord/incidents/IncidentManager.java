@@ -3,6 +3,8 @@ package net.noahf.firegen.discord.incidents;
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
+import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
@@ -56,6 +58,8 @@ public class IncidentManager {
 
     @Getter List<AssignmentStatus> assignmentStatuses = new ArrayList<>();
 
+    @Getter List<IncidentStatus> incidentStatuses = new ArrayList<>();
+
     @Getter
     SystemMunicipalityImpl municipality;
     //</editor-fold>
@@ -69,6 +73,7 @@ public class IncidentManager {
         importer.importVenues(this);
         importer.importMunicipality(this);
         importer.importAssignmentStatuses(this);
+        importer.importIncidentStatuses(this);
 
         this.fireGenVariables.setVenues(this.getVenues());
     }
@@ -184,12 +189,14 @@ public class IncidentManager {
         return this.venues.stream().map(LocationVenue::getName).collect(Collectors.joining(", "));
     }
 
-    public String getStatusEmoji(net.noahf.firegen.api.incidents.Incident incident) {
-        return switch (incident.getStatus()) {
-            case ACTIVE -> ":green_circle:";
-            case PENDING -> ":blue_circle:";
-            case CLOSED, TIMED_OUT -> ":black_circle:";
-        };
+    public List<IncidentStatus> getStatusesWithAttributes(StatusAttribute attribute, StatusAttribute... andAttributes) {
+        List<IncidentStatus> returned = new ArrayList<>();
+        for (IncidentStatus status : this.incidentStatuses) {
+            if (status.getAttributes().contains(attribute, andAttributes)) {
+                returned.add(status);
+            }
+        }
+        return returned;
     }
 
 }

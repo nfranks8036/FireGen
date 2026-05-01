@@ -1,0 +1,23 @@
+[
+  {
+    "name": "PENDING",
+    "short": "PND",
+    "emojiLeft": "<:PENDINGLEFT:1499634512873652355>",
+    "emojiRight": "<:PENDINGRIGHT:1499634536353370213>",
+    "attributes": ["IN_PROGRESS", "DEFAULT"]
+  },
+  {
+    "name": "ACTIVE",
+    "short": "ACT",
+    "emojiLeft": "<:ACTIVELEFT:1499635064957304872>",
+    "emojiRight": "<:ACTIVERIGHT:1499635078677004298>",
+    "attributes": ["IN_PROGRESS", "ACTIVE"]
+  },
+  {
+    "name": "CLOSED",
+    "short": "CLS",
+    "emojiLeft": "<:CLOSEDLEFT:1499635442822418632>",
+    "emojiRight": "<:CLOSEDRIGHT:1499635454843031602>",
+    "attributes": ["CLOSED"]
+  }
+]

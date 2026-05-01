@@ -3,6 +3,7 @@ package net.noahf.firegen.api.incidents;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.Unit;
 

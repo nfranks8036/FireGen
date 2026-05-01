@@ -3,11 +3,13 @@ package net.noahf.firegen.discord.actions.registered;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.incidents.IncidentStatus;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
+import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentStatusImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
@@ -26,9 +28,7 @@ public class ChangeStatus implements ButtonAction {
 
     /**
      * The event that occurs after pressing the 'Close Incident' or 'Re-open Incident'
-     * buttons. This flip-flops the status of the incident from
-     * {@link IncidentStatus#CLOSED CLOSED} to either {@link IncidentStatus#PENDING PENDING} or
-     * {@link IncidentStatus#ACTIVE ACTIVE} and vice versa
+     * buttons.
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
@@ -41,18 +41,23 @@ public class ChangeStatus implements ButtonAction {
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
-        incident.setStatus(incident.getStatus().opposite(incident));
-        IncidentStatus newStatus = incident.getStatus();
+        StatusAttribute searchFor;
+        if (incident.getStatus().getAttributes().isInProgress()) {
+            searchFor = StatusAttribute.CLOSED;
+        } else {
+            searchFor = incident.getAgencies().isEmpty() ? StatusAttribute.DEFAULT : StatusAttribute.ACTIVE;
+        }
+
+        IncidentStatus newStatus = ctx.getManager().getStatusesWithAttributes(searchFor).getFirst();
+        incident.setStatus(newStatus);
 
         Contributor<User> user = incident.addContributor(event.getUser());
-        switch (newStatus) {
-            case PENDING, ACTIVE -> {
-                incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, "Incident re-opened");
-            }
-            case CLOSED, TIMED_OUT -> {
-                incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, "Incident closed");
-            }
-        }
+        String narrative = switch (searchFor) {
+            case DEFAULT, ACTIVE -> "Incident re-opened";
+            case CLOSED -> "Incident closed";
+            default -> "Incident status changed (unknown)";
+        };
+        incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
 
         DiscordMessages.noMessage(event);
 

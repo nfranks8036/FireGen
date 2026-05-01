@@ -51,7 +51,7 @@ public interface FireGenAction {
     }
 
     default void ensureIncidentOpen(IReplyCallback callback, Incident incident) {
-        if (!incident.getStatus().isInProgress()) {
+        if (!incident.getStatus().getAttributes().isInProgress()) {
             DiscordMessages.error(callback, "This incident is closed and cannot be edited.");
         }
     }

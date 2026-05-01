@@ -47,11 +47,10 @@ public class Main {
         receiveChannels.add(jda.getTextChannelById(1473433906681221200L)); // Personal - radio-activity-firewatch
         adminChannels.add(jda.getTextChannelById(1497787094779822170L)); // Personal - admin-chat
 
-        receiveChannels.add(jda.getTextChannelById(1492362595439611925L)); // BFD Tracker - subscriber
         adminChannels.add(jda.getTextChannelById(1492362581623439581L)); // BFD Tracker - management
 
         receiveChannels.add(jda.getTextChannelById(1436406051112226959L)); // FIREWATCH - radio-activity
-//        adminChannels.add(jda.getTextChannelById(1498910592822411334L)); // FIREWATCH - admin radio activity
+        adminChannels.add(jda.getTextChannelById(1499611450283393064L)); // FIREWATCH - admin radio activity
     }
 
     public static void main(String[] args) throws InterruptedException {

@@ -20,6 +20,7 @@ import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Time;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -126,8 +127,9 @@ public class EditDateTime implements ButtonAction, ModalAction {
 
         incident.getTime().setDate(date, time);
 
-        long unix = Time.getUnix(time.atDate(date));
-        String narrative = "Changed time to <t:" + unix + ">";
+        String narrative = "Changed date & time to " +
+                date.format(DateTimeFormatter.ofPattern(vars.dateFormat())) + " @ " +
+                time.format(DateTimeFormatter.ofPattern(vars.longTimeFormat()));
         DiscordMessages.noMessage(event);
 
         Contributor<User> user = incident.addContributor(event.getUser());
