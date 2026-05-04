@@ -74,7 +74,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     public IncidentImpl(IncidentManager manager) {
         this.manager = manager;
         this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
-        this.status = manager.getStatusesWithAttributes(StatusAttribute.DEFAULT).getFirst();
+        this.status = null;
         this.type = manager.getFireGenVariables().defaultType();
         this.location = new IncidentLocationImpl(new ArrayList<>());
         this.time = new IncidentTimeImpl(LocalDateTime.now());
@@ -91,8 +91,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 ActionRow.of(
                         Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
                         Button.danger(this.createInteractionIdString("status"), "Close Incident"),
-                        Button.danger(this.createInteractionIdString("publish"), "Publish"),
-                        Button.secondary(this.createInteractionIdString("preview"), "Preview")
+                        Button.danger(this.createInteractionIdString("publish"), "Publish")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident1", "Edit:").asDisabled(),
@@ -103,6 +102,11 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                         Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
                         Button.primary(this.createInteractionIdString("location"), "Location"),
                         Button.primary(this.createInteractionIdString("agencies"), "Agencies")
+                ),
+                ActionRow.of(
+                        Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
+                        Button.primary(this.createInteractionIdString("editmode"), "Edit Mode"),
+                        Button.primary(this.createInteractionIdString("preview"), "Preview")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-narrative", "Narrative:").asDisabled(),
@@ -242,8 +246,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.adminComponents.set(PUBLISH_INDEX,                 ActionRow.of(
                 Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
                 Button.danger(this.createInteractionIdString("status"), "Close Incident"),
-                Button.danger(this.createInteractionIdString("publish"), text),
-                Button.secondary(this.createInteractionIdString("preview"), "Preview")
+                Button.danger(this.createInteractionIdString("publish"), text)
         ));
     }
 
@@ -302,6 +305,10 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
      */
     @Override
     public void update() {
+        if (this.status == null) {
+            return;
+        }
+
         long start = System.currentTimeMillis();
 
         if (this.receivingMessages.isEmpty() || this.adminMessages.isEmpty()) {

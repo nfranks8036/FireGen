@@ -6,6 +6,7 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.errors.ActionCommandNotExist;
 import net.noahf.firegen.discord.utilities.Log;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import javax.annotation.Nullable;
@@ -63,6 +64,40 @@ public class ActionsManager {
         }
     }
 
+    public @Nullable FireGenAction getAction(String id) {
+        String[] sections = id.split("-");
+
+        if (sections.length < 3) {
+            throw new IllegalArgumentException("Returned ID does not match known format: '" + id + "'");
+        }
+
+        String actionTitle = sections[2];
+
+        Log.info("Searching for action '" + actionTitle + "'");
+        for (FireGenAction action : this.actions) {
+            if (!action.getName().equalsIgnoreCase(actionTitle)) {
+                continue;
+            }
+
+            return action;
+        }
+
+        return null;
+    }
+
+    public @Nullable FireGenAction getAction(Class<? extends FireGenAction> clazz) {
+        Log.info("Searching for action '" + clazz.getCanonicalName() + "'");
+        for (FireGenAction action : this.actions) {
+            if (!clazz.isAssignableFrom(action.getClass())) {
+                continue;
+            }
+
+            return action;
+        }
+
+        return null;
+    }
+
     public <T extends GenericInteractionCreateEvent> void processAction(T event, String id) {
         String[] sections = id.split("-");
 
@@ -79,24 +114,19 @@ public class ActionsManager {
             throw new IllegalArgumentException("Incident with ID '" + incidentNumber + "' does not exist.");
         }
 
-        Log.info("Searching for action '" + actionTitle + "'");
-        for (FireGenAction action : this.actions) {
-            if (!action.getName().equalsIgnoreCase(actionTitle)) {
-                continue;
-            }
-
-            ActionsContext context = new ActionsContext(
-                    Main.incidents,
-                    incident,
-                    actionTitle,
-                    Arrays.asList(params)
-            );
-
-            action.execute(context, event);
-            return;
+        FireGenAction action = this.getAction(id);
+        if (action == null) {
+            throw new ActionCommandNotExist(actionTitle);
         }
 
-        throw new ActionCommandNotExist(actionTitle);
+        ActionsContext context = new ActionsContext(
+                Main.incidents,
+                incident,
+                actionTitle,
+                Arrays.asList(params)
+        );
+
+        action.execute(context, event);
     }
 
 }

@@ -12,7 +12,9 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.Main;
@@ -24,6 +26,7 @@ import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,21 +62,21 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         if (!ctx.getParameters().isEmpty()) {
-            this.onSubmit(ctx, event);
+            this.onSubmit(ctx.getIncident(), event, null);
+            DiscordMessages.noMessage(event);
             return;
         }
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
         selectedAgencies.put(event.getUser(),
                 new AgenciesInput(
-                        ThreadLocalRandom.current().nextInt(100000, 999999),
                         new ArrayList<>(), null
                 )
         );
 
         SelectOption[] selectedStatus = new SelectOption[] {this.toSelectOption(
                 selectedAgencies
-                        .getOrDefault(event.getUser(), new AgenciesInput(-1, new ArrayList<>(), null))
+                        .getOrDefault(event.getUser(), new AgenciesInput(new ArrayList<>(), null))
                         .newStatus
         )};
         if (selectedStatus[0] == null) {
@@ -99,7 +102,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
                                         .toList()
                                 )
                                 .setDefaultOptions(
-                                        selectedAgencies.getOrDefault(event.getUser(), new AgenciesInput(-1, new ArrayList<>(), null))
+                                        selectedAgencies.getOrDefault(event.getUser(), new AgenciesInput(new ArrayList<>(), null))
                                                 .agencies.stream()
                                                 .map(a -> (AgencyImpl) a)
                                                 .map(a -> {
@@ -187,14 +190,14 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
         DiscordMessages.noMessage(event);
     }
 
-    private void onSubmit(ActionsContext ctx, ButtonInteractionEvent event) {
-        AgenciesInput input = selectedAgencies.get(event.getUser());
+    public void onSubmit(Incident incidentValue, IReplyCallback event, @Nullable AgenciesInput inputAgencies) {
+        AgenciesInput input = (inputAgencies == null ? selectedAgencies.get(event.getUser()) : inputAgencies);
         if (input == null) {
             DiscordMessages.error(event, "You are not currently editing incident agencies.");
             return;
         }
 
-        IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+        IncidentImpl incident = (IncidentImpl) incidentValue;
         List<Agency> agencies = input.agencies;
         AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatus.HIDE_STATUS;
 
@@ -217,8 +220,6 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
             narrative = (agencies.size() == 1 ? "Agency " : "Agencies ") +
                     String.join(", ", agencies) + " added";
         }
-
-        DiscordMessages.noMessage(event);
 
         Contributor<User> user = incident.addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntry.EntryType.AGENCY, narrative);
@@ -243,8 +244,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
 
     @AllArgsConstructor
     @Getter @Setter
-    private static class AgenciesInput {
-        private long id;
+    public static class AgenciesInput {
         private List<Agency> agencies;
         private AssignmentStatus newStatus;
     }

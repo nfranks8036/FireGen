@@ -11,9 +11,11 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationType;
@@ -25,6 +27,7 @@ import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import org.jetbrains.annotations.NotNull;
@@ -146,10 +149,15 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
 
         // ------- [ COMPLETE AND PACKAGE DATA ] -------
         IncidentLocation location = new IncidentLocationImpl(data, type, commonName, venue);
+
+        this.onSubmit(incident, event, type, location);
+        DiscordMessages.noMessage(event);
+    }
+
+    public void onSubmit(Incident incident, IReplyCallback event, LocationType type, IncidentLocation location) {
         incident.setLocation(location);
 
         String narrative = type.getPrefix() + " UPDATED: " + location.format();
-        DiscordMessages.noMessage(event);
 
         Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);

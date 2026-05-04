@@ -8,14 +8,13 @@ import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Represents the "Type" button in the "Edit" row
+ * Represents the "Edit Mode" button in the "Misc" row
  */
-public class EditType implements ButtonAction {
+public class EditMode implements ButtonAction {
 
     /**
      * Represents the list of users that are currently editing an incident and which incident they're currently editing.
@@ -27,21 +26,16 @@ public class EditType implements ButtonAction {
      */
     @Override
     public String getName() {
-        return "incidenttype";
+        return "editmode";
     }
 
     /**
-     * The event that occurs after pressing the 'Type' button in the 'Edit' row. This is not only informational but does
-     * set a value so the user can edit this incident. It creates a gateway to the `/set-type` command.
+     * The event that occurs after pressing the 'Edit Mode' button in the 'Misc' row. This is not only informational but does
+     * set a value so the user can edit this incident. It creates a gateway to the `/set-details` command.
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
-
-        if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_CALL_TYPE)) {
-            DiscordMessages.error(event, "You don't have permission to change the incident type.");
-            return;
-        }
 
         this.ensureIncidentOpen(event, ctx.getIncident());
 
@@ -51,7 +45,7 @@ public class EditType implements ButtonAction {
         DiscordMessages.selfDestruct(event, 10,
                 "You're now editing the incident " +
                         incident.getFormattedId() + " (" + incident.getType().getSelectedName() + "). "
-                + "Type `/set-type <new-type> <reason>` to change the incident type."
+                + "Type `/set-details` to change the incident details in command format."
         );
     }
 }

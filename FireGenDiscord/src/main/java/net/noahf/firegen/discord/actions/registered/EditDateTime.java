@@ -7,9 +7,11 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
@@ -123,14 +125,18 @@ public class EditDateTime implements ButtonAction, ModalAction {
             date = LocalDate.parse(dateMapping.getAsString(), DateTimeFormatter.ofPattern(dateFormat));
         }
 
+        this.onSubmit(incident, event, vars, date, time);
+        DiscordMessages.noMessage(event);
+    }
+
+    public void onSubmit(Incident incident, IReplyCallback event, FireGenVariables vars, LocalDate date, LocalTime time) {
         incident.getTime().setDate(date, time);
 
         String narrative = "Changed date & time to " +
                 date.format(DateTimeFormatter.ofPattern(vars.dateFormat())) + " @ " +
                 time.format(DateTimeFormatter.ofPattern(vars.longTimeFormat()));
-        DiscordMessages.noMessage(event);
 
-        Contributor<User> user = incident.addContributor(event.getUser());
+        Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
         incident.update();
     }

@@ -100,6 +100,15 @@ public class IncidentManager {
         return null;
     }
 
+    public AssignmentStatus getAssignmentStatusByShortName(String shortName) {
+        for (AssignmentStatus status : this.assignmentStatuses) {
+            if (status.getShortName().equalsIgnoreCase(shortName)) {
+                return status;
+            }
+        }
+        return null;
+    }
+
     /**
      * Requests the list of all allowed {@link IncidentTypeImpl IncidentTypes} and their qualifiers from the manager.
      * @return the list of allowed types
