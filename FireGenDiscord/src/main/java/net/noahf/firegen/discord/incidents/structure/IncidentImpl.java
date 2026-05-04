@@ -30,6 +30,7 @@ import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationIm
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -53,7 +54,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     private transient @Getter @Setter @NotNull IncidentType type;
     private transient @Getter @NotNull Map<Agency, AssignmentStatus> agencies;
-    private transient @Getter @Setter @NotNull IncidentLocation location;
+    private transient @Getter @NotNull IncidentLocation location;
     private transient @Getter @NotNull IncidentTime time;
 
     private transient @Getter List<IncidentLogEntry> log;
@@ -175,6 +176,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     public void removeAgencies(List<Agency> agencies) {
         agencies.forEach(a -> this.agencies.remove(a));
+        this.refreshStatus();
     }
 
     public void putAgencies(List<Agency> agencies) {
@@ -184,7 +186,10 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     public void putAgencies(Map<Agency, AssignmentStatus> agencies) {
         this.agencies.putAll(agencies);
+        this.refreshStatus();
+    }
 
+    public void refreshStatus() {
         if (agencies.isEmpty()) {
             this.status = this.manager.getStatusesWithAttributes(StatusAttribute.DEFAULT)
                     .getFirst();
@@ -192,6 +197,14 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             this.status = this.manager.getStatusesWithAttributes(StatusAttribute.ACTIVE)
                     .getFirst();
         }
+    }
+
+    @Override
+    public void setLocation(@Nullable IncidentLocation location) {
+        if (location == null) {
+            location = new IncidentLocationImpl(new ArrayList<>());
+        }
+        this.location = location;
     }
 
     public String createInteractionIdString(String... commands) {
@@ -352,8 +365,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                         **Responding:** %s
                         **%s:** %s""" +
                         (!narrative.isEmpty() ? "\n\n**Narrative:**\n%s" : ""),
-                status.getEmojisFormattedCombined(),
                 this.type.getSelectedName(),
+                status.getEmojisFormattedCombined(),
                 this.getTime().formatDate(this.manager.getFireGenVariables()),
                 this.getTime().formatTimeShort(this.manager.getFireGenVariables()),
                 this.getTime().getUnix(),
@@ -370,7 +383,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         MessageEmbed adminOverview = new EmbedBuilder()
                 .setTitle("ADMIN OVERVIEW")
                 .setDescription("Incident `" + this.getFormattedId() + "`"
-                                + "\nStatus: " + status.getEmojisFormattedCombined() + " " + status
+                                + "\nStatus: " + status.getEmojisFormattedCombined()
                                 + "\nMessages (" + this.receivingMessages.size() + "): " + String.join(" , ", this.receivingMessages.stream().map(msg ->
                                 "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()).toList())
                                 + "\nContributors (" + this.contributors.size() + "): " + String.join(", ", this.getContributors().stream().map(c -> "<@" + c.getId() + ">").toList())

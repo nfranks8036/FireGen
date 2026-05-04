@@ -1,0 +1,311 @@
+{
+  "630 WASHINGTON ST": {
+    "location": "630 Washington St SW",
+    "common_name": "Pritchard Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "260 ALUMNI MALL": {
+    "location": "260 Alumni Mall",
+    "common_name": "Pearson Hall East",
+    "venue": "VIRGINIA TECH"
+  },
+  "310 ALUMNI MALL": {
+    "location": "310 Alumni Mall",
+    "common_name": "Pearson Hall West",
+    "venue": "VIRGINIA TECH"
+  },
+  "385 WEST CAMPUS DR": {
+    "location": "385 West Campus Dr",
+    "common_name": "Hillcrest Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "410 WASHINGTON ST": {
+    "location": "410 Washington St SW",
+    "common_name": "Miles Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "355 OLD TURNER ST": {
+    "location": "355 Old Turner St",
+    "common_name": "Corps Leadership and Military Science",
+    "venue": "VIRGINIA TECH"
+  },
+  "21 BEAMER WAY": {
+    "location": "21 Beamer Way",
+    "common_name": "Athletic Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "201 AG QUAD LN": {
+    "location": "201 Ag Quad Ln",
+    "common_name": "Slusher Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "180 KENT ST": {
+    "location": "180 Kent St",
+    "common_name": "Vawter Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "530 WASHINGTON ST": {
+    "location": "530 Washington St SW",
+    "common_name": "O'Shaughnessy Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "410 DRILLFIELD DR": {
+    "location": "410 Drillfield Dr",
+    "common_name": "Eggleston West",
+    "venue": "VIRGINIA TECH"
+  },
+  "440 DRILLFIELD DR": {
+    "location": "440 Drillfield Dr",
+    "common_name": "Eggleston Main",
+    "venue": "VIRGINIA TECH"
+  },
+  "500 DRILLFIELD DR": {
+    "location": "500 Drillfield Dr",
+    "common_name": "Eggleston East",
+    "venue": "VIRGINIA TECH"
+  },
+  "570 WASHINGTON ST": {
+    "location": "570 Washington St SW",
+    "common_name": "Hoge Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "200 KENT ST": {
+    "location": "200 Kent St",
+    "common_name": "Newman Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "175 WEST CAMPUS DR": {
+    "location": "175 West Campus Dr",
+    "common_name": "Litton-Reaves Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "610 WASHINGTON ST": {
+    "location": "610 Washington St SW",
+    "common_name": "Peddrew-Yates Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "240 WEST CAMPUS DR": {
+    "location": "240 West Campus Dr",
+    "common_name": "Harper Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "600 WASHINGTON ST": {
+    "location": "600 Washington St SW",
+    "common_name": "Payne Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "320 DRILLFIELD DR": {
+    "location": "320 Drillfield Dr",
+    "common_name": "Campbell Hall East",
+    "venue": "VIRGINIA TECH"
+  },
+  "300 DRILLFIELD DR": {
+    "location": "300 Drillfield Dr",
+    "common_name": "Campbell Hall Main",
+    "venue": "VIRGINIA TECH"
+  },
+  "770 WASHINGTON ST": {
+    "location": "770 Washington St SW",
+    "common_name": "Cochrane Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "155 OTEY ST": {
+    "location": "155 Otey St NW",
+    "common_name": "Graduate Life Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "500 WASHINGTON ST": {
+    "location": "500 Washington St SW",
+    "common_name": "Johnson Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "590 WASHINGTON ST": {
+    "location": "590 Washington St SW",
+    "common_name": "New Residence Hall East",
+    "venue": "VIRGINIA TECH"
+  },
+  "2750 OAK LN": {
+    "location": "2750 Oak Ln",
+    "common_name": "Alpha Chi Omega",
+    "unit": "SPH A",
+    "venue": "VIRGINIA TECH"
+  },
+  "2740 OAK LN": {
+    "location": "2740 Oak Ln",
+    "common_name": "Pi Kappa Alpha",
+    "unit": "SPH B",
+    "venue": "VIRGINIA TECH"
+  },
+  "2720 OAK LN": {
+    "location": "2720 Oak Ln",
+    "common_name": "Phi Kappa Psi",
+    "unit": "SPH C",
+    "venue": "VIRGINIA TECH"
+  },
+  "2805 OAK LN": {
+    "location": "2805 Oak Ln",
+    "common_name": "Sigma Kappa",
+    "unit": "SPH D",
+    "venue": "VIRGINIA TECH"
+  },
+  "2705 OAK LN": {
+    "location": "2705 Oak Ln",
+    "common_name": "Pi Beta Phi",
+    "unit": "SPH E",
+    "venue": "VIRGINIA TECH"
+  },
+  "2615 OAK LN": {
+    "location": "2615 Oak Ln",
+    "common_name": "Alpha Phi",
+    "unit": "SPH F",
+    "venue": "VIRGINIA TECH"
+  },
+  "2575 OAK LN": {
+    "location": "2575 Oak Ln",
+    "common_name": "Delta Delta Delta",
+    "unit": "SPH G",
+    "venue": "VIRGINIA TECH"
+  },
+  "2875 OAK LN": {
+    "location": "2875 Oak Ln",
+    "common_name": "Alpha Tau Omega & Alpha Sigma Phi/Phi Kappa Tau & Alpha Delta Pi",
+    "unit": "SPH H & R & Q",
+    "venue": "VIRGINIA TECH"
+  },
+  "3160 OAK LN": {
+    "location": "3160 Oak Ln",
+    "common_name": "Delta Gamma",
+    "unit": "SPH I",
+    "venue": "VIRGINIA TECH"
+  },
+  "3170 OAK LN": {
+    "location": "3170 Oak Ln",
+    "common_name": "Kappa Kappa Gamma",
+    "unit": "SPH J",
+    "venue": "VIRGINIA TECH"
+  },
+  "3115 OAK LN": {
+    "location": "3115 Oak Ln",
+    "common_name": "Gamma Phi Beta & Zeta Tau Alpha",
+    "unit": "SPH K & L",
+    "venue": "VIRGINIA TECH"
+  },
+  "3025 OAK LN": {
+    "location": "3025 Oak Ln",
+    "common_name": "Chi Omega & Kappa Alpha Theta",
+    "unit": "SPH M & N",
+    "venue": "VIRGINIA TECH"
+  },
+  "2965 OAK LN": {
+    "location": "2965 Oak Ln",
+    "common_name": "Kappa Delta & Delta Sigma Phi",
+    "unit": "SPH O & P",
+    "venue": "VIRGINIA TECH"
+  },
+  "2475 OAK LN": {
+    "location": "2475 Oak Ln",
+    "common_name": "Sigma Phi Epsilon & Main Office",
+    "unit": "SPEH",
+    "venue": "VIRGINIA TECH"
+  },
+  "185 KENT ST": {
+    "location": "185 Kent St",
+    "common_name": "CID",
+    "venue": "VIRGINIA TECH"
+  },
+  "245 DUCK POND DR": {
+    "location": "245 Duck Pond Dr",
+    "common_name": "VT Vet Med Phase I",
+    "venue": "VIRGINIA TECH"
+  },
+  "285 DUCK POND DR": {
+    "location": "285 Duck Pond Dr",
+    "common_name": "Veterinary Medicine",
+    "venue": "VIRGINIA TECH"
+  },
+  "620 DRILLFIELD DR": {
+    "location": "620 Drillfield Dr",
+    "common_name": "Torgersen Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "185 BEAMER WAY": {
+    "location": "185 Beamer Way",
+    "common_name": "Lane Stadium",
+    "venue": "VIRGINIA TECH"
+  },
+  "330 STERRETT DR": {
+    "location": "330 Sterrett Dr",
+    "common_name": "Virginia Tech Police Department",
+    "venue": "VIRGINIA TECH"
+  },
+  "550 N MAIN ST": {
+    "location": "550 North Main St",
+    "common_name": "Church on Main",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1311 SOUTH MAIN ST": {
+    "location": "1311 South Main St",
+    "common_name": "Cook Out",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1614 SOUTH MAIN ST": {
+    "location": "1614 South Main St",
+    "common_name": "B&B Theatres Blacksburg",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "868 PRICES FORK RD": {
+    "location": "868 Prices Fork Rd",
+    "common_name": "Chipotle Mexican Grill",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "900 PLANTATION RD": {
+    "location": "900 Plantation Rd",
+    "common_name": "Hilton Garden Inn Blacksburg",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "200 PROGRESS ST": {
+    "location": "200 Progress St",
+    "common_name": "Blacksburg Fire Department Station #1",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "3700 S MAIN ST": {
+    "location": "3700 South Main St",
+    "common_name": "LewisGale Hospital Montgomery",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1601 RESEARCH CENTER DR": {
+    "location": "1601 Research Center Dr",
+    "common_name": "VT Montgomery Airport",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1300 PROGRESS ST": {
+    "location": "1300 Progress St",
+    "common_name": "Blacksburg Rescue Squad",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "200 CLAY ST": {
+    "location": "200 Clay St",
+    "common_name": "Blacksburg Police Department",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "5277 PRICES FORK RD": {
+    "location": "5277 Prices Fork Rd",
+    "common_name": "VPI Sanitation Authority",
+    "venue": "MONTGOMERY COUNTY"
+  },
+  "4033 PANDAPAS POND RD": {
+    "location": "4033 Pandapas Pond Rd",
+    "common_name": "Pandapas Pond Parking Lot",
+    "venue": "MONTGOMERY COUNTY"
+  },
+  "198 CRAIG CREEK RD": {
+    "location": "198 Craig Creek Rd",
+    "common_name": "Blacksburg Shooting Range",
+    "venue": "MONTGOMERY COUNTY"
+  },
+  "1636 MERRIMAC RD": {
+    "location": "1636 Merrimac Rd",
+    "common_name": "Blacksburg Fire Department Training Center",
+    "venue": "MONTGOMERY COUNTY"
+  }
+}

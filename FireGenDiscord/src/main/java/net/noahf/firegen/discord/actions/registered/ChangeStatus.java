@@ -9,7 +9,6 @@ import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
-import net.noahf.firegen.discord.incidents.structure.IncidentStatusImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 

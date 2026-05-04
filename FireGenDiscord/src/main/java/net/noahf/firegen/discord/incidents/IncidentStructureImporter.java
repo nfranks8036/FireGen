@@ -14,6 +14,7 @@ import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.*;
+import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.utilities.Log;
 
@@ -22,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class IncidentStructureImporter {
 
@@ -239,6 +241,31 @@ public class IncidentStructureImporter {
             }
 
             Log.info("Imported incident statuses " + String.join(", ", manager.incidentStatuses));
+        } catch (IOException exception) {
+            throw new IllegalStateException("IOException: " + exception, exception);
+        }
+    }
+
+    void importLocationPresets(IncidentManager manager) {
+        FireGenVariables vars = manager.getFireGenVariables();
+        String file = vars.municipality() + "/" + vars.locationPresetsFile();
+        try
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
+        {
+            if (input == null) {
+                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
+            }
+
+            JsonObject root = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonObject();
+            for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
+                String key = entry.getKey();
+                JsonObject value = entry.getValue().getAsJsonObject();
+
+                LocationPreset preset = new LocationPreset(manager, key, value);
+                manager.presetLocations.add(preset);
+            }
+
+            Log.info("Imported " + manager.getPresetLocations().size() + " preset locations.");
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }

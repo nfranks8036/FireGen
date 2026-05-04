@@ -18,9 +18,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.Time;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

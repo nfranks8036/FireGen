@@ -2,6 +2,7 @@ package net.noahf.firegen.discord.incidents;
 
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.IncidentType;
+import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
@@ -12,12 +13,15 @@ import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.noahf.firegen.discord.Main.MUNICIPALITY_FOLDER;
 
@@ -60,6 +64,8 @@ public class IncidentManager {
 
     @Getter List<IncidentStatus> incidentStatuses = new ArrayList<>();
 
+    @Getter List<LocationPreset> presetLocations = new ArrayList<>();
+
     @Getter
     SystemMunicipalityImpl municipality;
     //</editor-fold>
@@ -74,6 +80,7 @@ public class IncidentManager {
         importer.importMunicipality(this);
         importer.importAssignmentStatuses(this);
         importer.importIncidentStatuses(this);
+        importer.importLocationPresets(this);
 
         this.fireGenVariables.setVenues(this.getVenues());
     }
@@ -109,6 +116,23 @@ public class IncidentManager {
      */
     public List<String> listAllIncidentTypesForAutocomplete() {
         return this.listAllIncidentTypes().stream().map(IncidentType::getSelectedName).toList();
+    }
+
+    public List<String> listAllPresetLocationsForAutocomplete() {
+        return Stream.concat(
+                        this.presetLocations.stream().map(IncidentLocationImpl::getCommonName).filter(Objects::nonNull),
+                        this.presetLocations.stream().map(lp -> String.join(" ", lp.getData()))
+                )
+                .toList();
+    }
+
+    public @Nullable IncidentLocation getPresetByAnyName(String text) {
+        return this.presetLocations.stream()
+                .filter(lp ->
+                        (lp.getCommonName() != null ? lp.getCommonName() : "").equalsIgnoreCase(text)
+                        || String.join(" ", lp.getData()).equalsIgnoreCase(text)
+                )
+                .findFirst().orElse(null);
     }
 
     /**

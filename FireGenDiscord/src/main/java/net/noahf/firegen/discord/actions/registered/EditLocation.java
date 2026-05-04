@@ -148,7 +148,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         IncidentLocation location = new IncidentLocationImpl(data, type, commonName, venue);
         incident.setLocation(location);
 
-        String narrative = "Location updated: " + location.format();
+        String narrative = type.getPrefix() + " UPDATED: " + location.format();
         DiscordMessages.noMessage(event);
 
         Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());

@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure.location;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,8 +72,8 @@ public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSeq
 //                    .build()
 //    );
 
-    private List<String> data;
-    private LocationType type;
+    private @Setter(value = AccessLevel.PROTECTED) List<String> data;
+    private @Setter(value = AccessLevel.PROTECTED) LocationType type;
     private @Nullable @Setter String commonName;
     private @Nullable @Setter LocationVenue venue;
 

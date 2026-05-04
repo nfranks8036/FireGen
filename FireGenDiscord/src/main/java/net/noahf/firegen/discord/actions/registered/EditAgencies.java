@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.units.Agency;
-import net.noahf.firegen.api.utilities.IdGenerator;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
@@ -25,8 +24,6 @@ import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.Log;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -224,7 +221,7 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
         DiscordMessages.noMessage(event);
 
         Contributor<User> user = incident.addContributor(event.getUser());
-        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, narrative);
+        incident.addLog(user, IncidentLogEntry.EntryType.AGENCY, narrative);
 
         incident.update();
     }
