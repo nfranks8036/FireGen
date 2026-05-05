@@ -238,6 +238,12 @@
     "common_name": "Virginia Tech Police Department",
     "venue": "VIRGINIA TECH"
   },
+  "285 AG-QUAD LN": {
+    "location": "285 Ag-Quad Ln",
+    "common_name": "Dietrick Hall",
+    "venue": "VIRGINIA TECH"
+  },
+
   "550 N MAIN ST": {
     "location": "550 North Main St",
     "common_name": "Church on Main",
@@ -288,6 +294,17 @@
     "common_name": "Blacksburg Police Department",
     "venue": "TOWN OF BLACKSBURG"
   },
+  "105 SOUTHPARK DR": {
+    "location": "105 Southpark Dr",
+    "common_name": "Courtyard by Marriot",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "220 N MAIN ST": {
+    "location": "220 N Main St",
+    "common_name": "Sharkey's",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+
   "5277 PRICES FORK RD": {
     "location": "5277 Prices Fork Rd",
     "common_name": "VPI Sanitation Authority",
