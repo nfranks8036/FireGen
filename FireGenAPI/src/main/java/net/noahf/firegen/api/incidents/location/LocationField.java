@@ -1,10 +1,17 @@
 package net.noahf.firegen.api.incidents.location;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder(builderMethodName = "", setterPrefix = "set", toBuilder = true)
 @Getter
+@EqualsAndHashCode
+@ToString
 public class LocationField {
 
     public static LocationFieldBuilder newField(String title, String description, String id, TextType type) {
@@ -55,9 +62,33 @@ public class LocationField {
     private int maxLength = -1;
     private String placeholder = null;
 
-
     public enum TextType {
         SHORT, PARAGRAPH
+    }
+
+
+
+    private static boolean setFields = false;
+
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @Deprecated
+    public static void setKnownVenues(List<LocationVenue> venues) {
+        if (setFields) {
+            throw new IllegalStateException("Already patched the venue descriptions, setKnownVenues has been disabled.");
+        }
+
+        for (LocationType value : LocationType.values()) {
+            LocationField.VENUE = LocationField.VENUE.toBuilder()
+                    .setDescription(VENUE.getDescription().replace(
+                            "{VENUES}",
+                            venues.stream().map(LocationVenue::getName)
+                                    .collect(Collectors.joining(", "))
+                    ))
+                    .build();
+            value.patchVenue(LocationField.VENUE);
+        }
+
+        setFields = true;
     }
 
 }

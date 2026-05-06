@@ -100,7 +100,10 @@ public class IncidentStructureImporter {
                 String shorthand = object.get("short").getAsString();
                 String longhand = object.get("long").getAsString();
                 String format = object.get("format").getAsString();
-                Emoji emoji = Emoji.fromFormatted(object.get("emoji").getAsString());
+
+                JsonElement element = object.get("emoji");
+                String emojiStr = element.isJsonNull() ? null : element.getAsString();
+                Emoji emoji = emojiStr != null ? Emoji.fromFormatted(emojiStr) : null;
 
                 manager.agencies.add(new AgencyImpl(
                         shorthand, longhand, format, emoji, AgencyType.OTHER,
@@ -138,6 +141,7 @@ public class IncidentStructureImporter {
                 manager.venues.add(new LocationVenueImpl(name, display));
             }
 
+            vars.setVenues(manager.venues);
             Log.info("Imported venues " + String.join(", ", manager.venues));
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);

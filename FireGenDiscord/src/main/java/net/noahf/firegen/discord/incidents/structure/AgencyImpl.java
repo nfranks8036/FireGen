@@ -38,12 +38,15 @@ public class AgencyImpl implements net.noahf.firegen.api.incidents.units.Agency 
 
     @Override
     public String getFormatted() {
-        return emoji.getFormatted() + " " + this.formatted;
+        return (this.emoji != null ? emoji.getFormatted() + " " : "") +
+                this.formatted;
     }
 
     public String getFormattedStatus(AssignmentStatus status) {
         if (status != null && status.getEmoji() != null && !status.equals(AssignmentStatus.HIDE_STATUS)) {
-            return emoji.getFormatted() + " " + status.getEmoji().getFormatted() + " " + this.formatted;
+            return (this.emoji != null ? emoji.getFormatted() + " " : "") +
+                    status.getEmoji().getFormatted() + " " +
+                    this.formatted;
         }
         return this.getFormatted();
     }

@@ -137,4 +137,15 @@ public enum LocationType {
         this.fields = fields;
     }
 
+    void patchVenue(LocationField field) {
+        for (int i = 0; i < this.fields.length; i++) {
+            if (!this.fields[i].getTitle().equalsIgnoreCase(field.getTitle())) {
+                continue;
+            }
+
+            this.fields[i] = field;
+            break;
+        }
+    }
+
 }

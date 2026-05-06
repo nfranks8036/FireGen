@@ -1,50 +1,63 @@
 [
-  {
-    "short": "RES1",
-    "long": "RESCUE 1",
-    "format": "Rescue 1",
-    "emoji": "<:1449916134714511481:"
-  },
-  {
-    "short": "CO1",
-    "long": "COMPANY 1",
-    "format": "Company 1",
-    "emoji": "<:1449916134714511481:"
-  },
-  {
-    "short": "RES2",
-    "long": "RESCUE 2",
-    "format": "Rescue 2",
-    "emoji": "<:1449916134714511481:"
-  },
-  {
-    "short": "CO2",
-    "long": "COMPANY 2",
-    "format": "Company 2",
-    "emoji": "<:1449916134714511481:"
-  },
+    { "short": "RES1",  "long": "RESCUE 1",  "format": "Rescue 1",  "emoji": null },
+    { "short": "CO1",   "long": "COMPANY 1", "format": "Company 1", "emoji": null },
+
+    { "short": "RES2",  "long": "RESCUE 2",  "format": "Rescue 2",  "emoji": null },
+    { "short": "CO2",   "long": "COMPANY 2", "format": "Company 2", "emoji": null },
+
+    { "short": "RES3",  "long": "RESCUE 3",  "format": "Rescue 3",  "emoji": null },
+    { "short": "CO3",   "long": "COMPANY 3", "format": "Company 3", "emoji": null },
+
+    { "short": "RES4",  "long": "RESCUE 4",  "format": "Rescue 4",  "emoji": null },
+    { "short": "CO4",   "long": "COMPANY 4", "format": "Company 4", "emoji": null },
+
+    { "short": "RES5",  "long": "RESCUE 5",  "format": "Rescue 5",  "emoji": null },
+    { "short": "CO5",   "long": "COMPANY 5", "format": "Company 5", "emoji": null },
+
+    { "short": "RES6",  "long": "RESCUE 6",  "format": "Rescue 6",  "emoji": null },
+    { "short": "CO6",   "long": "COMPANY 6", "format": "Company 6", "emoji": null },
+
+    { "short": "RES7",  "long": "RESCUE 7",  "format": "Rescue 7",  "emoji": null },
+    { "short": "CO7",   "long": "COMPANY 7", "format": "Company 7", "emoji": null },
+
+    { "short": "RES8",  "long": "RESCUE 8",  "format": "Rescue 8",  "emoji": null },
+    { "short": "CO8",   "long": "COMPANY 8", "format": "Company 8", "emoji": null },
+
+    { "short": "RES9",  "long": "RESCUE 9",  "format": "Rescue 9",  "emoji": null },
+    { "short": "CO9",   "long": "COMPANY 9", "format": "Company 9", "emoji": null },
+
+    { "short": "RES10", "long": "RESCUE 10", "format": "Rescue 10", "emoji": null },
+    { "short": "CO10",  "long": "COMPANY 10","format": "Company 10","emoji": null },
+
+    { "short": "RES11", "long": "RESCUE 11", "format": "Rescue 11", "emoji": null },
+    { "short": "CO11",  "long": "COMPANY 11","format": "Company 11","emoji": null },
+
+    { "short": "RES12", "long": "RESCUE 12", "format": "Rescue 12", "emoji": null },
+    { "short": "CO12",  "long": "COMPANY 12","format": "Company 12","emoji": null },
+
+
   {
     "short": "EMS2",
     "long": "EMS 2",
     "format": "EMS 2",
-    "emoji": "<:1449916134714511481:"
+    "emoji": null
   },
   {
     "short": "BATT1",
     "long": "BATTALION 1",
     "format": "Battalion 1",
-    "emoji": "<:1449916134714511481:"
+    "emoji": null
   },
   {
     "short": "VPD",
     "long": "VINTON POLICE DEPARTMENT",
     "format": "Vinton Police",
-    "emoji": "<:1449916134714511481:"
+    "emoji": null
   },
   {
     "short": "RCPD",
     "long": "ROANOKE COUNTY POLICE DEPARTMENT",
     "format": "Roanoke County Police",
-    "emoji": "<:1449916134714511481:"
+    "emoji": null
   }
 ]

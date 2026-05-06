@@ -78,14 +78,9 @@ public class FireGenVariables {
     private IncidentTypeTag defaultTag;
     private IncidentType defaultType;
 
+    @SuppressWarnings("deprecation")
     public void setVenues(List<LocationVenue> venues) {
-        String description = LocationField.VENUE.getDescription();
-        LocationField.VENUE = LocationField.VENUE.toBuilder()
-                .setDescription(description.replace(
-                        "{VENUES}",
-                        venues.stream().map(LocationVenue::getName).collect(Collectors.joining(", "))
-                ))
-                .build();
+        LocationField.setKnownVenues(venues);
     }
 
 }

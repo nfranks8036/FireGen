@@ -95,7 +95,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident1", "Edit:").asDisabled(),
-                        Button.primary(this.createInteractionIdString("incidenttype"), "Type"),
+                        Button.primary(this.createInteractionIdString("editmode"), "Edit Mode"),
                         Button.primary(this.createInteractionIdString("datetime"), "Date/Time")
                 ),
                 ActionRow.of(
@@ -105,7 +105,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
-                        Button.primary(this.createInteractionIdString("editmode"), "Edit Mode"),
                         Button.primary(this.createInteractionIdString("preview"), "Preview")
                 ),
                 ActionRow.of(
@@ -268,7 +267,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                     this.adminMessages
                             .add(message);
                 } catch (Exception exception) {
-                    Log.error("Can't send message to " + (channel != null ? channel.getName() : null) + ": " + exception, exception);
+                    Log.error("ADMIN - Can't send message to " + (channel != null ? channel.getName() : null) + ": " + exception, exception);
                 }
             }
         }
@@ -292,7 +291,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                     Log.info("Sending starting message in #" + channel.getName() + " in " + channel.getGuild().getName() + "...");
                     this.receivingMessages.add(channel.sendMessage(startingMessage).complete());
                 } catch (Exception exception) {
-                    Log.error("Can't send message to " + (channel != null ? channel.getName() : null) + ": " + exception, exception);
+                    Log.error("RECEIVE - Can't send message to " + (channel != null ? channel.getName() : null) + ": " + exception, exception);
                 }
             }
         }
@@ -309,6 +308,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             return;
         }
 
+        long ELAPSED_TIME_THRESHOLD = 25; // milliseconds
         long start = System.currentTimeMillis();
 
         if (this.receivingMessages.isEmpty() || this.adminMessages.isEmpty()) {
@@ -333,19 +333,18 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
         // edit the admin messages with an updated admin panel
         MessageEmbed[] adminMsg = this.formatAdmin();
+        List<MessageTopLevelComponent> buttons = this.adminComponents;
+        if (!this.status.getAttributes().isInProgress()) {
+            buttons = new ArrayList<>(List.of(ActionRow.of(
+                    Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
+                    Button.success("firegen-" + this.getId() + "-status", "Re-open Incident")
+            )));
+        }
+
         for (Message message : this.adminMessages) {
             try {
                 // add or remove the components if the status requires it
-                if (this.status.getAttributes().isInProgress() && message.getComponents().size() <= this.adminComponents.size()) {
-                    Log.info("Incident opened, adding buttons...");
-                    message.editMessageComponents(this.adminComponents).queue();
-                } else if (!this.status.getAttributes().isInProgress() && message.getComponents().size() > 1) {
-                    Log.info("Incident closed, removing buttons...");
-                    message.editMessageComponents(ActionRow.of(
-                            Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
-                            Button.success("firegen-" + this.getId() + "-status", "Re-open Incident")
-                    )).queue();
-                }
+                message.editMessageComponents(buttons).queue();
 
                 message.editMessageEmbeds(adminMsg).queue(null, (t) -> {
                     Log.warn("Admin message in #" + message.getChannel().getName() + " in " +
@@ -358,7 +357,10 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             }
         }
 
-        Log.info("Took " + (System.currentTimeMillis() - start) + "ms to update messages.");
+        long elapsed = System.currentTimeMillis() - start;
+        if (elapsed > ELAPSED_TIME_THRESHOLD) {
+            Log.info("Took " + elapsed + "ms to update messages.");
+        }
     }
 
     public String formatReceiving() {
@@ -372,8 +374,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                         **Responding:** %s
                         **%s:** %s""" +
                         (!narrative.isEmpty() ? "\n\n**Narrative:**\n%s" : ""),
-                this.type.getSelectedName(),
                 status.getEmojisFormattedCombined(),
+                this.type.getSelectedName(),
                 this.getTime().formatDate(this.manager.getFireGenVariables()),
                 this.getTime().formatTimeShort(this.manager.getFireGenVariables()),
                 this.getTime().getUnix(),
@@ -438,7 +440,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             AgencyImpl agency = (AgencyImpl) entry.getKey();
             AssignmentStatus status = entry.getValue();
 
-            respondingAgenciesJoiner.add("- " + agency.getEmoji().getFormatted() + " " +
+            respondingAgenciesJoiner.add("- " + (agency.getEmoji() != null ? agency.getEmoji().getFormatted() + " " : "") +
                     "**" + agency.getLonghand().toUpperCase() + "**"
                     + " (`" + agency.getShorthand() + "`)"
             );

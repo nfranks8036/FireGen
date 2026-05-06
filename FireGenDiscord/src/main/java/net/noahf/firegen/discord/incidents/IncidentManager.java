@@ -81,8 +81,6 @@ public class IncidentManager {
         importer.importAssignmentStatuses(this);
         importer.importIncidentStatuses(this);
         importer.importLocationPresets(this);
-
-        this.fireGenVariables.setVenues(this.getVenues());
     }
 
     /**

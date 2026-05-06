@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.EditMode;
 import net.noahf.firegen.discord.command.Command;
@@ -63,7 +64,20 @@ public class SetDetails extends Command {
 
         OptionMapping typeOption = event.getOption("type");
         if (typeOption != null) {
+            IncidentType oldType = incident.getType();
             incident.setTypeBySearch(typeOption.getAsString());
+            IncidentType newType = incident.getType();
+
+            if (oldType.equals(newType)) {
+                DiscordMessages.error(event, "An unknown error occurred, the incident type did not change.");
+                return;
+            }
+
+            String narrative = "CHANGED INCIDENT TYPE FROM " + oldType.getSelectedName() + " TO " + newType.getSelectedName();
+
+            Contributor<User> user = incident.addContributor(event.getUser());
+            incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
+            incident.update();
         }
 
         OptionMapping locationOption = event.getOption("location");
