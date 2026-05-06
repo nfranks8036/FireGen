@@ -96,7 +96,7 @@ public class SetDetails extends Command {
             return;
         }
 
-        DiscordMessages.selfDestruct(event, 10,
+        DiscordMessages.selfDestruct(event, 5,
                 "Those details have been changed if they were able to. Check the Incident Log for information."
         );
     }
