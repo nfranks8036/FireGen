@@ -192,6 +192,23 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.refreshStatus();
     }
 
+    public Map<Agency, AssignmentStatus> getSortedAgencies() {
+        List<Map.Entry<Agency, AssignmentStatus>> sortedEntries = new ArrayList<>(this.getAgencies().entrySet());
+        sortedEntries.sort(
+                Comparator
+                        .comparingInt((Map.Entry<Agency, AssignmentStatus> e)
+                                -> e.getValue().ordinal()) // status order
+                        .thenComparing(e -> e.getKey().ordinal()) // agency name
+        );
+
+        Map<Agency, AssignmentStatus> result = new LinkedHashMap<>();
+        for (Map.Entry<Agency, AssignmentStatus> entry : sortedEntries) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result;
+    }
+
     public void refreshStatus() {
         if (agencies.isEmpty()) {
             this.status = this.manager.getStatusesWithAttributes(StatusAttribute.DEFAULT)
@@ -436,17 +453,22 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private @NotNull String formatAgenciesAdmin() {
         StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
         int index = 0;
-        for (Map.Entry<Agency, AssignmentStatus> entry : this.getAgencies().entrySet()) {
+        AssignmentStatus current = null;
+        for (Map.Entry<Agency, AssignmentStatus> entry : this.getSortedAgencies().entrySet()) {
             AgencyImpl agency = (AgencyImpl) entry.getKey();
             AssignmentStatus status = entry.getValue();
 
-            respondingAgenciesJoiner.add("- " + (agency.getEmoji() != null ? agency.getEmoji().getFormatted() + " " : "") +
-                    "**" + agency.getLonghand().toUpperCase() + "**"
-                    + " (`" + agency.getShorthand() + "`)"
+            if (current == null || !current.equals(status)) {
+                respondingAgenciesJoiner.add("- " + status.getEmoji().getFormatted() + " " + status.getName());
+            }
+
+            respondingAgenciesJoiner.add((current == null ? "  " : "") + "  - " +
+                            (agency.getEmoji() != null ? agency.getEmoji().getFormatted() + " " : "") +
+                            "**" + agency.getLonghand().toUpperCase() + "**"
+                            + " (`" + agency.getShorthand() + "`)"
             );
-            respondingAgenciesJoiner.add((index == 0 ? "  " : "") + "  - " +
-                    "Status: " + (status.getEmoji() != null ? status.getEmoji().getFormatted() + " " : "") + status.getName()
-                    );
+
+            current = status;
             index++;
         }
         return respondingAgenciesJoiner.toString().isBlank() ? "None"
@@ -475,28 +497,21 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private String formatAgencies() {
         StringJoiner joiner = new StringJoiner(", ");
 
-        this.getAgencies().entrySet().stream()
-                .sorted(
-                        Comparator
-                                .comparingInt((Map.Entry<Agency, AssignmentStatus> e)
-                                        -> e.getValue().ordinal()) // status order
-                                .thenComparing(e -> e.getKey().ordinal()) // agency name
-                )
-                .forEach(entry -> {
-                    Agency agency = entry.getKey();
-                    AssignmentStatus status = entry.getValue();
+        for (Map.Entry<Agency, AssignmentStatus> entry : this.getSortedAgencies().entrySet()) {
+            Agency agency = entry.getKey();
+            AssignmentStatus status = entry.getValue();
 
-                    String returned;
-                    if (this.getStatus().getAttributes().isInProgress()) {
-                        returned = ((AgencyImpl) agency).getFormattedStatus(status);
-                    } else {
-                        // we are not going to show the statuses when an incident is closed
-                        // the idea being that all of them are going to be "CLEAR" anyways
-                        returned = agency.getFormatted();
-                    }
+            String returned;
+            if (this.getStatus().getAttributes().isInProgress()) {
+                returned = ((AgencyImpl) agency).getFormattedStatus(status);
+            } else {
+                // we are not going to show the statuses when an incident is closed
+                // the idea being that all of them are going to be "CLEAR" anyways
+                returned = agency.getFormatted();
+            }
 
-                    joiner.add(returned);
-                });
+            joiner.add(returned);
+        }
 
         return joiner.toString();
     }

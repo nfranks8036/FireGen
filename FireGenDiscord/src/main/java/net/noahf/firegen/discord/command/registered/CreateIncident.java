@@ -16,6 +16,7 @@ import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.FireGenAction;
+import net.noahf.firegen.discord.actions.registered.AddNarrative;
 import net.noahf.firegen.discord.actions.registered.EditAgencies;
 import net.noahf.firegen.discord.actions.registered.EditDateTime;
 import net.noahf.firegen.discord.actions.registered.EditLocation;
@@ -81,8 +82,14 @@ public class CreateIncident extends Command {
                                 new OptionData(OptionType.STRING, "agencies",
                                         "Any agencies attached, separated with a comma.",
                                         false, true
+                                ),
+                                new OptionData(OptionType.STRING, "initial-narrative",
+                                        "The initial narrative line (NOTE: Only the FIRST line)",
+                                        false, true
                                 )
+                                        .setRequiredLength(AddNarrative.MIN_NARRATIVE_LENGTH, AddNarrative.MAX_NARRATIVE_LENGTH)
                         })
+                        .aliases(new String[]{"ci"})
                         .finish()
         );
     }
@@ -123,6 +130,12 @@ public class CreateIncident extends Command {
         OptionMapping dateOption = event.getOption("date");
         OptionMapping timeOption = event.getOption("time");
         if ((dateOption != null || timeOption != null) && !Helper.setDateTime(incident, event, dateOption, timeOption)) {
+            return;
+        }
+
+        // ---------- incident initial narrative ----------
+        OptionMapping initialNarrativeOption = event.getOption("initial-narrative");
+        if (initialNarrativeOption != null && !Helper.setInitialNarrative(incident, event, initialNarrativeOption)) {
             return;
         }
 
@@ -265,6 +278,25 @@ public class CreateIncident extends Command {
             }
 
             actions.onSubmit(incident, event, Main.incidents.getFireGenVariables(), date, time);
+            return true;
+        }
+
+        static boolean setInitialNarrative(IncidentImpl incident, IReplyCallback event, OptionMapping initialNarrative) {
+            if (!Main.users.hasPermission(event.getUser(), Permission.NARRATIVE_ADD)) {
+                DiscordMessages.error(event, "You don't have permission to add to the narrative.");
+                return false;
+            }
+
+            if (initialNarrative == null) {
+                DiscordMessages.error(event, "Expected narrative to not be null.");
+                return false;
+            }
+
+            AddNarrative action = findAction(AddNarrative.class);
+
+            String narrative = initialNarrative.getAsString();
+
+            action.onSubmit(incident, event, narrative);
             return true;
         }
 

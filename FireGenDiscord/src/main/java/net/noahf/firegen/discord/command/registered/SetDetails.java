@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.actions.registered.AddNarrative;
 import net.noahf.firegen.discord.actions.registered.EditMode;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
@@ -30,9 +31,9 @@ public class SetDetails extends Command {
         super("set-details", "Sets specific details of an incident. Press 'Edit Type' on an incident to start editing.",
                 CommandFlags.include()
                         .options(new OptionData[]{
+                                new OptionData(OptionType.STRING, "agencies", "The new agencies for this incident. Note this will only affect inputted agencies.", false, true),
                                 new OptionData(OptionType.STRING, "type", "The new incident type for this incident.", false, true),
                                 new OptionData(OptionType.STRING, "location", "The new present location for this incident.", false, true),
-                                new OptionData(OptionType.STRING, "agencies", "The new agencies for this incident. Note this will only affect inputted agencies.", false, true),
                                 new OptionData(OptionType.STRING, "time",
                                         "The new time (" + TIME_CREATE_FORMAT +") of the incident",
                                         false, false
@@ -41,8 +42,11 @@ public class SetDetails extends Command {
                                         "The new date (" + DATE_CREATE_FORMAT + ") of the incident, MUST set " +
                                                 "a 'time' field if this field is set.",
                                         false, false
-                                )
+                                ),
+                                new OptionData(OptionType.STRING, "narrative", "Add a new line to the narrative.", false, false)
+                                        .setRequiredLength(AddNarrative.MIN_NARRATIVE_LENGTH, AddNarrative.MAX_NARRATIVE_LENGTH)
                         })
+                        .aliases(new String[]{"sd"})
                         .finish());
     }
 
@@ -93,6 +97,11 @@ public class SetDetails extends Command {
         OptionMapping timeOption = event.getOption("time");
         OptionMapping dateOption = event.getOption("date");
         if ((timeOption != null || dateOption != null) && !CreateIncident.Helper.setDateTime(incident, event, dateOption, timeOption)) {
+            return;
+        }
+
+        OptionMapping narrativeOption = event.getOption("narrative");
+        if (narrativeOption != null && !CreateIncident.Helper.setInitialNarrative(incident, event, narrativeOption)) {
             return;
         }
 

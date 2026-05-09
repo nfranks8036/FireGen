@@ -7,9 +7,11 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
@@ -24,12 +26,15 @@ import net.noahf.firegen.discord.utilities.DiscordMessages;
  */
 public class AddNarrative implements ButtonAction, ModalAction {
 
+    public static final int MIN_NARRATIVE_LENGTH = 5;
+    public static final int MAX_NARRATIVE_LENGTH = 256;
+
     /**
      * Represents the text input field in the modal for the add narrative
      */
     private static final TextInput TEXT_INPUT =
             TextInput.create("text", TextInputStyle.SHORT)
-            .setRequiredRange(5, 256)
+            .setRequiredRange(MIN_NARRATIVE_LENGTH, MAX_NARRATIVE_LENGTH)
                 .setRequired(true)
                 .setPlaceholder("Add narrative text here...")
                 .build();
@@ -83,14 +88,27 @@ public class AddNarrative implements ButtonAction, ModalAction {
             return;
         }
 
-        Contributor<User> user = incident.addContributor(event.getUser());
+        this.onSubmit(incident, event, textMapping.getAsString());
+        DiscordMessages.noMessage(event);
+    }
+
+    public void onSubmit(Incident incident, IReplyCallback event, String narrative) {
+        if (narrative.length() < MIN_NARRATIVE_LENGTH) {
+            DiscordMessages.error(event, "Your narrative is too short! (" + narrative.length() + " < " + MIN_NARRATIVE_LENGTH + ")");
+            return;
+        }
+
+        if (narrative.length() > MAX_NARRATIVE_LENGTH) {
+            DiscordMessages.error(event, "Your narrative is too long! (" + narrative.length() + " > " + MAX_NARRATIVE_LENGTH + ")");
+            return;
+        }
+
+        Contributor<User> user = ((IncidentImpl)incident).addContributor(event.getUser());
         incident.addLog(
                 user,
                 IncidentLogEntryImpl.EntryType.NARRATIVE,
-                textMapping.getAsString()
+                narrative
         );
-
-        DiscordMessages.noMessage(event);
 
         incident.update();
     }
