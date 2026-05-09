@@ -28,5 +28,10 @@
     "name": "CLEAR",
     "short": "CLR",
     "emoji": "<:CLEAR:1499197493689188352>"
+  },
+  {
+    "name": "ADVISED",
+    "short": "ADV",
+    "emoji": "<:ADVISED:1499197493689188352>"
   }
 ]
