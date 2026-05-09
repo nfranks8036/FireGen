@@ -124,6 +124,21 @@
     "common_name": "New Residence Hall East",
     "venue": "VIRGINIA TECH"
   },
+  "190 WEST CAMPUS DR": {
+    "location": "190 West Campus Dr",
+    "common_name": "New Hall West",
+    "venue": "VIRGINIA TECH"
+  },
+  "700 WASHINGTON ST": {
+    "location": "700 Washington St SW",
+    "common_name": "Ambler Johnston East",
+    "venue": "VIRGINIA TECH"
+  },
+  "720 WASHINGTON ST": {
+    "location": "720 Washington St SW",
+    "common_name": "Ambler Johnston West",
+    "venue": "VIRGINIA TECH"
+  },
   "2750 OAK LN": {
     "location": "2750 Oak Ln",
     "common_name": "Alpha Chi Omega",
@@ -238,8 +253,8 @@
     "common_name": "Virginia Tech Police Department",
     "venue": "VIRGINIA TECH"
   },
-  "285 AG-QUAD LN": {
-    "location": "285 Ag-Quad Ln",
+  "285 AG QUAD LN": {
+    "location": "285 Ag Quad Ln",
     "common_name": "Dietrick Hall",
     "venue": "VIRGINIA TECH"
   },
