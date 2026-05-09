@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.IncidentTime;
@@ -26,6 +25,7 @@ import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.IncidentManager;
+import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
@@ -60,11 +60,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private transient @Getter List<IncidentLogEntry> log;
     private transient @Getter List<Contributor<?>> contributors;
 
-    private transient @Getter boolean published;
-
-    private transient List<Message> receivingMessages, adminMessages;
-
-    private transient List<MessageTopLevelComponent> adminComponents;
+    private transient @Getter IncidentMessagingService messagingService;
 
     public IncidentImpl() {
         this.manager = null;
@@ -81,38 +77,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
         this.agencies = Collections.synchronizedMap(new LinkedHashMap<>());
         this.log = new ArrayList<>();
-        this.receivingMessages = new ArrayList<>();
-        this.adminMessages = new ArrayList<>();
         this.contributors = new ArrayList<>();
 
-        this.adminComponents = new ArrayList<>(List.of(
-                // components following are the button row that are used in the admin channel
-                // id should be in the format of 'firegen-<incident ID>-<command>-<additional info>'
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
-                        Button.danger(this.createInteractionIdString("status"), "Close Incident"),
-                        Button.danger(this.createInteractionIdString("publish"), "Publish")
-                ),
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-incident1", "Edit:").asDisabled(),
-                        Button.primary(this.createInteractionIdString("editmode"), "Edit Mode"),
-                        Button.primary(this.createInteractionIdString("datetime"), "Date/Time")
-                ),
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
-                        Button.primary(this.createInteractionIdString("location"), "Location"),
-                        Button.primary(this.createInteractionIdString("agencies"), "Agencies")
-                ),
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
-                        Button.primary(this.createInteractionIdString("preview"), "Preview")
-                ),
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-narrative", "Narrative:").asDisabled(),
-                        Button.success(this.createInteractionIdString("addnarrative"), "Add"),
-                        Button.danger(this.createInteractionIdString("hidenarrative"), "Hide")
-                )
-        ));
+        this.messagingService = new IncidentMessagingService(this);
     }
 
     public void setTypeBySearch(String type) {
@@ -246,72 +213,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public void togglePublished() {
-        final int PUBLISH_INDEX = 0;
-
-        this.published = !this.published;
-        String text;
-        if (this.published) {
-            text = "Unpublish";
-        } else {
-            text = "Publish";
-            for (Message message : this.receivingMessages) {
-                message.delete().complete();
-            }
-            this.receivingMessages.clear();
-        }
-        this.adminComponents.set(PUBLISH_INDEX,                 ActionRow.of(
-                Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
-                Button.danger(this.createInteractionIdString("status"), "Close Incident"),
-                Button.danger(this.createInteractionIdString("publish"), text)
-        ));
-    }
-
-    private void sendStartMessages() {
-        if (this.adminMessages.isEmpty()) {
-            // send a starting message to the admin channels, this will be quickly changed by the following edit THOUGH
-            // the content will remain
-            for (TextChannel channel : Main.adminChannels) {
-                try {
-                    if (channel == null) {
-                        Log.warn("ADMIN - Can't send a message here. This channel does not exist!"); continue;
-                    }
-                    Message message = channel.sendMessage("New incident " + this.type.getSelectedName() + " created by " + this.contributors.getFirst())
-                            .setComponents(this.adminComponents)
-                            .complete();
-
-                    message.createThreadChannel("Incident " + this.getFormattedId() + " Discussion").complete();
-
-                    this.adminMessages
-                            .add(message);
-                } catch (Exception exception) {
-                    Log.error("ADMIN - Can't send message to " + (channel != null ? channel.getName() : null) + ": " + exception, exception);
-                }
-            }
-        }
-
-        if (this.isPublished() && this.receivingMessages.isEmpty()) {
-            String startingMessage = "New Call- " + this.type.getSelectedName();
-            if (this.location.isSet() && !this.location.format().isBlank()) {
-                startingMessage = startingMessage + "\nWhere- " + this.location.format();
-            }
-            if (!this.agencies.isEmpty()) {
-                startingMessage = startingMessage + "\nWho- " + String.join(", ", this.getAttachedAgencies().stream().map(Agency::getShorthand).toList());
-            }
-            startingMessage = startingMessage + "\nWhen- <t:" + this.getTime().getUnix() + ":t>";
-
-            // send a starting message to the subscribed channels, this will be quickly changed by the following edit
-            for (TextChannel channel : Main.receiveChannels) {
-                try {
-                    if (channel == null) {
-                        Log.warn("RECEIVE - Can't send a message here. This channel does not exist!"); continue;
-                    }
-                    Log.info("Sending starting message in #" + channel.getName() + " in " + channel.getGuild().getName() + "...");
-                    this.receivingMessages.add(channel.sendMessage(startingMessage).complete());
-                } catch (Exception exception) {
-                    Log.error("RECEIVE - Can't send message to " + (channel != null ? channel.getName() : null) + ": " + exception, exception);
-                }
-            }
-        }
+        this.messagingService.togglePublished();
     }
 
     /**
