@@ -361,7 +361,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             AssignmentStatus status = entry.getValue();
 
             if (current == null || !current.equals(status)) {
-                respondingAgenciesJoiner.add("- " + status.getEmoji().getFormatted() + " " + status.getName());
+                respondingAgenciesJoiner.add("- " + (
+                        status.getEmoji() != null ? status.getEmoji().getFormatted() + " " : ""
+                        ) + status.getName());
             }
 
             respondingAgenciesJoiner.add((current == null ? "  " : "") + "  - " +

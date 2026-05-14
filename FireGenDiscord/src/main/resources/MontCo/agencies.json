@@ -159,5 +159,12 @@
     "long": "NEW RIVER VALLEY 911 AUTHORITY",
     "format": "New River Valley 911 Authority",
     "emoji": "<:nrv:1449915761563799703>"
+  },
+
+  {
+    "short": "M13-5",
+    "long": "MEDIC 13-5",
+    "format": "Medic 13-5",
+    "emoji": "<:mcfr:1449929970926358649>"
   }
 ]
