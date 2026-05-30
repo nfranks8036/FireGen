@@ -352,48 +352,19 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         return new MessageEmbed[]{adminOverview, respondingAgencies, log};
     }
 
-    private @NotNull String formatAgenciesAdmin() {
-        StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
-        int index = 0;
-        AssignmentStatus current = null;
-        for (Map.Entry<Agency, AssignmentStatus> entry : this.getSortedAgencies().entrySet()) {
-            AgencyImpl agency = (AgencyImpl) entry.getKey();
-            AssignmentStatus status = entry.getValue();
-
-            if (current == null || !current.equals(status)) {
-                respondingAgenciesJoiner.add("- " + (
-                        status.getEmoji() != null ? status.getEmoji().getFormatted() + " " : ""
-                        ) + status.getName());
-            }
-
-            respondingAgenciesJoiner.add((current == null ? "  " : "") + "  - " +
-                            (agency.getEmoji() != null ? agency.getEmoji().getFormatted() + " " : "") +
-                            "**" + agency.getLonghand().toUpperCase() + "**"
-                            + " (`" + agency.getShorthand() + "`)"
-            );
-
-            current = status;
-            index++;
-        }
-        return respondingAgenciesJoiner.toString().isBlank() ? "None"
-                :  respondingAgenciesJoiner.toString().substring(
-                0, Math.min(1024, respondingAgenciesJoiner.toString().length())
-        );
-    }
-
-    private @NotNull List<String> formatNarrative(boolean admin) {
+    public @NotNull List<String> getNarrativeFormatted(boolean asAdmin) {
         if (this.log == null || this.log.isEmpty()) {
             return new ArrayList<>();
         }
 
         List<String> response = new ArrayList<>();
         for (IncidentLogEntry entry : this.log) {
-            if (!admin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
+            if (!asAdmin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
                 // we don't want admin update logs to be included in the narrative for the public necessarily
                 continue;
             }
             IncidentLogEntryImpl entryImpl = (IncidentLogEntryImpl) entry;
-            response.add(admin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
+            response.add(asAdmin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
         }
         return response;
     }

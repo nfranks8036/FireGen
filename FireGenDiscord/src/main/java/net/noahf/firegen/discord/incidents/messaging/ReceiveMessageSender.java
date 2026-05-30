@@ -6,9 +6,9 @@ import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.utilities.Log;
 
-public class ReceiveMessageFormatter implements MessageFormatter {
+public class ReceiveMessageSender implements MessageSender {
     @Override
-    public void formatInitial(MessageContext ctx) {
+    public void sendInitial(MessageContext ctx) {
         if (!ctx.getService().isPublished()) {
             return;
         }
@@ -50,7 +50,7 @@ public class ReceiveMessageFormatter implements MessageFormatter {
     }
 
     @Override
-    public void formatEdited(MessageContext ctx) {
+    public void sendEdited(MessageContext ctx) {
 
     }
 }
