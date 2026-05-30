@@ -263,6 +263,16 @@
     "common_name": "Data & Decision Sciences",
     "venue": "VIRGINIA TECH"
   },
+  "1345 PERRY ST": {
+    "location": "1345 Perry St",
+    "common_name": "Bishop-Favrao Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "280 STANGER ST": {
+    "location": "280 Stanger St",
+    "common_name": "Upper Quad Hall North",
+    "venue": "VIRGINIA TECH"
+  },
 
   "550 N MAIN ST": {
     "location": "550 North Main St",
@@ -327,6 +337,61 @@
   "117 S MAIN ST": {
     "location": "117 S Main St",
     "common_name": "Cabo Fish Taco",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1205 OLD MILL RD": {
+    "location": "1205 Old Mill Rd",
+    "common_name": "St. Mary's Catholic Church",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "902 PRICES FORK RD": {
+    "location": "902 Prices Fork Rd",
+    "common_name": "University Gateway Center",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "830 DAVIS ST": {
+    "location": "830 Davis St",
+    "common_name": "LewisGale Physicians ENT & The Hearing Clinic",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "829 DAVIS ST": {
+    "location": "829 Davis St",
+    "common_name": "Blacksburg Pediatrics PLC",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "825 DAVIS ST": {
+    "location": "825 Davis St",
+    "common_name": "LewisGale Physicians Internal Medicine",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "817 DAVIS ST": {
+    "location": "817 Davis St",
+    "common_name": "LewisGale Physicians Breast Care & Carilion Clinic Cosmetic Center",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "801 DAVIS ST": {
+    "location": "801 Davis St",
+    "common_name": "LewisGale Physicians Cardiology",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "810 HOSPITAL DR": {
+    "location": "810 Hospital Dr",
+    "common_name": "Medical Associates of SWVA",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "3706 S MAIN ST": {
+    "location": "3706 S Main St",
+    "common_name": "River Ridge Dermatology",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "3708 S MAIN ST": {
+    "location": "3708 S Main St",
+    "common_name": "NRV Endodontics & Opulent Pediatrics",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "3610 S MAIN ST": {
+    "location": "3610 S Main St",
+    "common_name": "Heritage Hall Healthcare & Rehabilitation Center",
     "venue": "TOWN OF BLACKSBURG"
   },
 
