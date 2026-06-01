@@ -43,6 +43,10 @@ public interface Incident extends Identifiable {
 
     void addContributor(Contributor<?> contributor);
 
+    IncidentPublishedStatus getPublished();
+
+    void setPublished(IncidentPublishedStatus newStatus);
+
     void update();
 
 }

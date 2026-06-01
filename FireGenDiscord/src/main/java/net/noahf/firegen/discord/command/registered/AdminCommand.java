@@ -64,7 +64,6 @@ public class AdminCommand extends Command {
                     return;
                 }
 
-                incident.admin_wipeMessages();
                 incident.update();
                 DiscordMessages.selfDestruct(event, 5, "Sent an update.");
             }

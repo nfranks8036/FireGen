@@ -7,76 +7,90 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.utilities.Log;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class IncidentMessagingService {
 
     private final IncidentImpl incident;
 
-    private @Getter boolean published;
-
-    private @Getter(value = AccessLevel.PACKAGE) List<Message> receivingMessages, adminMessages;
-
-    private @Getter(value = AccessLevel.PACKAGE) List<MessageTopLevelComponent> adminComponents;
+    private @Getter(value = AccessLevel.PACKAGE) List<MessageSender> messages;
 
     public IncidentMessagingService(IncidentImpl incident) {
         this.incident = incident;
 
-        this.adminComponents = new ArrayList<>(List.of(
-                // components following are the button row that are used in the admin channel
-                // id should be in the format of 'firegen-<incident ID>-<command>-<additional info>'
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
-                        Button.danger(this.incident.createInteractionIdString("status"), "Close Incident"),
-                        Button.danger(this.incident.createInteractionIdString("publish"), "Publish")
-                ),
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-incident1", "Edit:").asDisabled(),
-                        Button.primary(this.incident.createInteractionIdString("editmode"), "Edit Mode"),
-                        Button.primary(this.incident.createInteractionIdString("datetime"), "Date/Time")
-                ),
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
-                        Button.primary(this.incident.createInteractionIdString("location"), "Location"),
-                        Button.primary(this.incident.createInteractionIdString("agencies"), "Agencies")
-                ),
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
-                        Button.primary(this.incident.createInteractionIdString("preview"), "Preview")
-                ),
-                ActionRow.of(
-                        Button.secondary("firegen-disabled-narrative", "Narrative:").asDisabled(),
-                        Button.success(this.incident.createInteractionIdString("addnarrative"), "Add"),
-                        Button.danger(this.incident.createInteractionIdString("hidenarrative"), "Hide")
+        this.messages = new ArrayList<>(
+                List.of(
+                        new AdminMessageSender(this, incident),
+                        new ReceiveMessageSender(this, incident)
                 )
-        ));
+        );
     }
 
-    public void togglePublished() {
-        final int PUBLISH_INDEX = 0;
-
-        this.published = !this.published;
-        String text;
-        if (this.published) {
-            text = "Unpublish";
+    public void send(MessageSender sender) {
+        if (sender.getMessages().isEmpty()) {
+            sender.sendInitial();
         } else {
-            text = "Publish";
-            for (Message message : this.receivingMessages) {
-                message.delete().complete();
-            }
-            this.receivingMessages.clear();
+            sender.sendEdited();
         }
-        this.adminComponents.set(PUBLISH_INDEX,                 ActionRow.of(
-                Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
-                Button.danger(this.incident.createInteractionIdString("status"), "Close Incident"),
-                Button.danger(this.incident.createInteractionIdString("publish"), text)
-        ));
+    }
+
+    public <T extends MessageSender> void send(Class<T> messageSender) {
+        T sender = this.get(messageSender);
+        if (sender == null) {
+            throw new IllegalArgumentException("Entered class is not a valid/instantiated MessageSender: " + messageSender);
+        }
+
+        this.send(sender);
+    }
+
+    public void sendAll() {
+        for (MessageSender sender : this.messages) {
+            this.send(sender);
+        }
+    }
+
+    public <T extends MessageSender> T get(Class<T> messageSender) {
+        for (MessageSender ms : this.messages) {
+            if (ms.getClass().isAssignableFrom(messageSender)) {
+                return messageSender.cast(ms);
+            }
+        }
+        return null;
+    }
+
+    public @NotNull List<String> getNarrativeFormatted(Incident incident, boolean asAdmin) {
+        if (incident.getLog() == null || incident.getLog().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<String> response = new ArrayList<>();
+        for (IncidentLogEntry entry : incident.getLog()) {
+            if (!asAdmin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
+                // we don't want admin update logs to be included in the narrative for the public necessarily
+                continue;
+            }
+            IncidentLogEntryImpl entryImpl = (IncidentLogEntryImpl) entry;
+            response.add(asAdmin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
+        }
+
+        return response;
+    }
+
+    public void notifyPublishChange() {
+        for (MessageSender sender : this.messages) {
+            sender.onPublishEvent(this.incident.getPublished());
+        }
     }
 
 }

@@ -34,7 +34,7 @@ public class Publish implements ButtonAction {
             return;
         }
 
-        incident.togglePublished();
+        incident.setPublished(incident.getPublished().opposite());
 
         Contributor<User> contributor = incident.addContributor(event.getUser());
         incident.addLog(contributor, IncidentLogEntry.EntryType.UPDATE,
