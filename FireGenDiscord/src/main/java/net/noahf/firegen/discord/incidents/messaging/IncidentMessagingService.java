@@ -31,9 +31,9 @@ public class IncidentMessagingService {
     public void send(MessageSender sender) {
         if (sender.getMessages().isEmpty()) {
             sender.sendInitial();
-        } else {
-            sender.sendEdited();
         }
+
+        sender.sendEdited();
     }
 
     public <T extends MessageSender> void send(Class<T> messageSender) {

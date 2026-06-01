@@ -38,3 +38,9 @@ jar {
 }
 
 compileJava.options.encoding = 'UTF-8'
+
+idea {
+    module {
+        downloadSources = true
+    }
+}

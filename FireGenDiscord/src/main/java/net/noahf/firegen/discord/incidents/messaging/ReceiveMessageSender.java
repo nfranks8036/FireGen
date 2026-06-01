@@ -1,6 +1,9 @@
 package net.noahf.firegen.discord.incidents.messaging;
 
+import kotlin.Pair;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
@@ -8,8 +11,11 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -63,26 +69,26 @@ public class ReceiveMessageSender extends MessageSender {
                         ": " + exception, exception);
             }
         }
-
-        this.sendEdited();
     }
 
     @Override
     public void sendEdited() {
-        String fullMessage = this.getReceivingString();
+        ImmutablePair<String, List<MessageEmbed>> response = this.getReceivingFormat();
         for (Message message : super.getMessages()) {
             try {
-                message.editMessage(fullMessage).queue(null, (t) -> {
-                    Log.warn("Message does not exist. Removing from the list (possibly deleted by staff).", t);
-                    super.getMessages().remove(message);
-                });
+                message.editMessage(response.getFirstElement())
+                        .setEmbeds(response.getSecondElement())
+                        .queue(null, (t) -> {
+                            Log.warn("Message does not exist. Removing from the list (possibly deleted by staff).", t);
+                            super.getMessages().remove(message);
+                        });
             } catch (Exception exception) {
                 Log.error("Can't edit message: " + exception, exception);
             }
         }
     }
 
-    public String getReceivingString() {
+    public ImmutablePair<String, List<MessageEmbed>> getReceivingFormat() {
         IncidentImpl incident = super.getIncident();
 
         List<String> log = super.getService().getNarrativeFormatted(incident, false);
@@ -91,13 +97,13 @@ public class ReceiveMessageSender extends MessageSender {
         IncidentTimeImpl time = (IncidentTimeImpl) incident.getTime();
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();
 
-        return String.format(
+        String stringForm = String.format(
                 """
                         # %s %s
                         [`%s` @ `%s` // <t:%d:R>]
                         
                         **Responding:** %s
-                        **%s:** %s""" +
+                        **%s:** %s""" + Character.MAX_VALUE +
                         (!log.isEmpty() ? "\n\n**Narrative:**\n%s" : ""),
                 status.getEmojisFormattedCombined(),
                 incident.getType().getSelectedName(),
@@ -109,6 +115,16 @@ public class ReceiveMessageSender extends MessageSender {
                 location.format(),
                 !log.isEmpty() ? String.join("\n", log) : "None"
         );
+        List<MessageEmbed> embedForm = new ArrayList<>();
+        if (stringForm.length() >= Message.MAX_CONTENT_LENGTH) {
+            stringForm = stringForm.split(String.valueOf(Character.MAX_VALUE))[0];
+            embedForm.add(new EmbedBuilder()
+                    .setTitle("Narrative")
+                    .setDescription(DiscordMessages.truncate(String.join("\n", log), MessageEmbed.DESCRIPTION_MAX_LENGTH, "... *unable to show full output!*"))
+                    .build());
+        }
+
+        return ImmutablePair.of(stringForm, embedForm);
     }
 
     private String getUnitsFormatted() {

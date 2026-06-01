@@ -12,6 +12,7 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
 
 import java.awt.*;
@@ -96,7 +97,7 @@ public class AdminMessageSender extends MessageSender {
         IncidentImpl incident = super.getIncident();
 
         // edit the admin messages with an updated admin panel
-        MessageEmbed[] adminMsg = this.getAdminEmbed();
+        List<MessageEmbed> adminMsg = this.getAdminEmbed();
         List<MessageTopLevelComponent> buttons = super.getComponents();
         if (!incident.getStatus().getAttributes().isInProgress()) {
             buttons = new ArrayList<>(List.of(ActionRow.of(
@@ -122,7 +123,8 @@ public class AdminMessageSender extends MessageSender {
         }
     }
 
-    public MessageEmbed[] getAdminEmbed() {
+    public List<MessageEmbed> getAdminEmbed() {
+        List<MessageEmbed> returned = new ArrayList<>();
         IncidentImpl incident = super.getIncident();
 
         List<String> log = super.getService().getNarrativeFormatted(incident, true);
@@ -132,7 +134,7 @@ public class AdminMessageSender extends MessageSender {
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();
         ReceiveMessageSender receiver = super.getService().get(ReceiveMessageSender.class);
 
-        MessageEmbed adminOverview = new EmbedBuilder()
+        returned.add(new EmbedBuilder()
                 .setTitle("ADMIN OVERVIEW")
                 .setDescription("Incident `" + incident.getFormattedId() + "`"
                         + "\nStatus: " + status.getEmojisFormattedCombined()
@@ -163,18 +165,20 @@ public class AdminMessageSender extends MessageSender {
                         true
                 )
                 .setColor(new Color(255, 94, 94))
-                .build();
-        MessageEmbed respondingUnits = new EmbedBuilder()
+                .build());
+        returned.add(new EmbedBuilder()
                 .setTitle("Responding Units (" + incident.getAttachedUnits().size() + ")")
                 .setDescription(this.getUnitsFormatted())
                 .setColor(new Color(255, 94, 94))
-                .build();
-        MessageEmbed incidentLog = new EmbedBuilder()
+                .build());
+
+        String logText = String.join("\n", log);
+        returned.add(new EmbedBuilder()
                 .setTitle("Incident Log (" + log.size() + ")")
-                .setDescription(!log.isEmpty() ? String.join("\n", log) : "None")
+                .setDescription(!log.isEmpty() ? DiscordMessages.truncate(logText, MessageEmbed.DESCRIPTION_MAX_LENGTH, "... *unable to show full output*!") : "None")
                 .setColor(new Color(255, 94, 94))
-                .build();
-        return new MessageEmbed[]{adminOverview, respondingUnits, incidentLog};
+                .build());
+        return returned;
     }
 
     public String getUnitsFormatted() {
