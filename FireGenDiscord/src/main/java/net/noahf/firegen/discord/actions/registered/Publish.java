@@ -38,7 +38,7 @@ public class Publish implements ButtonAction {
 
         Contributor<User> contributor = incident.addContributor(event.getUser());
         incident.addLog(contributor, IncidentLogEntry.EntryType.UPDATE,
-                "INCIDENT " + (incident.isPublished() ? "PUBLISHED TO" : "UNPUBLISHED FROM") + " RECEIVERS"
+                "INCIDENT " + incident.getPublished().name()
         );
 
         incident.update();
