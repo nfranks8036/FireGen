@@ -6,9 +6,9 @@ import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
-import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.FireGenVariables;
-import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.UnitImpl;
 import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
@@ -49,10 +49,10 @@ public class IncidentManager {
     @Getter List<IncidentType> incidentTypes = new ArrayList<>();
 
     /**
-     * This is the list of {@link AgencyImpl Agencies} in this system.
-     * This is imported from the {@link FireGenVariables#agenciesFile()} agencies file}.
+     * This is the list of {@link UnitImpl Agencies} in this system.
+     * This is imported from the {@link FireGenVariables#unitsFile()} agencies file}.
      */
-    @Getter List<Agency> agencies = new ArrayList<>();
+    @Getter List<Unit> units = new ArrayList<>();
 
     /**
      * This is the list of allowed {@link LocationVenueImpl Venues}.
@@ -75,7 +75,7 @@ public class IncidentManager {
 
         IncidentStructureImporter importer = new IncidentStructureImporter();
         importer.importIncidentTypes(this);
-        importer.importAgencies(this);
+        importer.importUnits(this);
         importer.importVenues(this);
         importer.importMunicipality(this);
         importer.importAssignmentStatuses(this);
@@ -172,12 +172,12 @@ public class IncidentManager {
     }
 
     /**
-     * Retrieves an {@link Agency agency} from the manager by the {@link Agency#getShorthand() shorthand name}.
+     * Retrieves an {@link Unit agency} from the manager by the {@link Unit#getShorthand() shorthand name}.
      * @param shorthand the shorthand for the agency name
      * @return the associated agency with that shorthand name, or {@code null} if it's not found
      */
-    public @Nullable Agency getAgencyByShorthand(String shorthand) {
-        for (Agency a : this.agencies) {
+    public @Nullable Unit getUnitByShorthand(String shorthand) {
+        for (Unit a : this.units) {
             if (a.getShorthand().equalsIgnoreCase(shorthand)) {
                 return a;
             }
@@ -185,8 +185,8 @@ public class IncidentManager {
         return null;
     }
 
-    public @Nullable Agency getAgencyByLonghand(String longhand) {
-        for (Agency a : this.agencies) {
+    public @Nullable Unit getUnitByLonghand(String longhand) {
+        for (Unit a : this.units) {
             if (a.getLonghand().equalsIgnoreCase(longhand)) {
                 return a;
             }

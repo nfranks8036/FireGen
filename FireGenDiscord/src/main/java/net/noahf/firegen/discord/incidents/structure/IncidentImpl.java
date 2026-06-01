@@ -7,12 +7,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.components.MessageTopLevelComponent;
-import net.dv8tion.jda.api.components.actionrow.ActionRow;
-import net.dv8tion.jda.api.components.buttons.Button;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
@@ -22,7 +16,6 @@ import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
-import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.IncidentManager;
@@ -33,7 +26,6 @@ import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -54,7 +46,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private transient @Getter @Setter IncidentStatus status;
 
     private transient @Getter @Setter @NotNull IncidentType type;
-    private transient @Getter @NotNull Map<Agency, AssignmentStatus> agencies;
+    private transient @Getter @NotNull Map<Unit, AssignmentStatus> units;
     private transient @Getter @NotNull IncidentLocation location;
     private transient @Getter @NotNull IncidentTime time;
     private transient @Getter @NotNull IncidentPublishedStatus published;
@@ -78,7 +70,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.time = new IncidentTimeImpl(LocalDateTime.now());
         this.published = IncidentPublishedStatus.UNPUBLISHED;
 
-        this.agencies = Collections.synchronizedMap(new LinkedHashMap<>());
+        this.units = Collections.synchronizedMap(new LinkedHashMap<>());
         this.log = new ArrayList<>();
         this.contributors = new ArrayList<>();
 
@@ -148,41 +140,36 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     @Override
-    public List<Agency> getAttachedAgencies() {
-        return new ArrayList<>(this.agencies.keySet());
-    }
-
-    @Override
     public List<Unit> getAttachedUnits() {
-        return List.of();
+        return new ArrayList<>(this.units.keySet());
     }
 
-    public void removeAgencies(List<Agency> agencies) {
-        agencies.forEach(a -> this.agencies.remove(a));
+    public void removeUnits(List<Unit> units) {
+        units.forEach(a -> this.units.remove(a));
         this.refreshStatus();
     }
 
-    public void putAgencies(List<Agency> agencies) {
-        this.putAgencies(agencies.stream()
+    public void putUnits(List<Unit> units) {
+        this.putUnits(units.stream()
                 .collect(Collectors.toMap((a) -> a, (a) -> AssignmentStatus.HIDE_STATUS)));
     }
 
-    public void putAgencies(Map<Agency, AssignmentStatus> agencies) {
-        this.agencies.putAll(agencies);
+    public void putUnits(Map<Unit, AssignmentStatus> units) {
+        this.units.putAll(units);
         this.refreshStatus();
     }
 
-    public Map<Agency, AssignmentStatus> getSortedAgencies() {
-        List<Map.Entry<Agency, AssignmentStatus>> sortedEntries = new ArrayList<>(this.getAgencies().entrySet());
+    public Map<Unit, AssignmentStatus> getSortedUnits() {
+        List<Map.Entry<Unit, AssignmentStatus>> sortedEntries = new ArrayList<>(this.getUnits().entrySet());
         sortedEntries.sort(
                 Comparator
-                        .comparingInt((Map.Entry<Agency, AssignmentStatus> e)
+                        .comparingInt((Map.Entry<Unit, AssignmentStatus> e)
                                 -> e.getValue().ordinal()) // status order
-                        .thenComparing(e -> e.getKey().ordinal()) // agency name
+                        .thenComparing(e -> e.getKey().ordinal()) // unit name
         );
 
-        Map<Agency, AssignmentStatus> result = new LinkedHashMap<>();
-        for (Map.Entry<Agency, AssignmentStatus> entry : sortedEntries) {
+        Map<Unit, AssignmentStatus> result = new LinkedHashMap<>();
+        for (Map.Entry<Unit, AssignmentStatus> entry : sortedEntries) {
             result.put(entry.getKey(), entry.getValue());
         }
 
@@ -190,7 +177,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public void refreshStatus() {
-        if (agencies.isEmpty()) {
+        if (units.isEmpty()) {
             this.status = this.manager.getStatusesWithAttributes(StatusAttribute.DEFAULT)
                     .getFirst();
         } else {

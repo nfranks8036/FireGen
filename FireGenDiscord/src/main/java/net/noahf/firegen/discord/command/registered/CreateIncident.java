@@ -12,12 +12,12 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
-import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.FireGenAction;
 import net.noahf.firegen.discord.actions.registered.AddNarrative;
-import net.noahf.firegen.discord.actions.registered.EditAgencies;
+import net.noahf.firegen.discord.actions.registered.EditUnits;
 import net.noahf.firegen.discord.actions.registered.EditDateTime;
 import net.noahf.firegen.discord.actions.registered.EditLocation;
 import net.noahf.firegen.discord.command.Command;
@@ -27,7 +27,6 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -79,8 +78,8 @@ public class CreateIncident extends Command {
                                         "The location of the incident.",
                                         false, true
                                 ),
-                                new OptionData(OptionType.STRING, "agencies",
-                                        "Any agencies attached, separated with a comma.",
+                                new OptionData(OptionType.STRING, "units",
+                                        "Any units attached, separated with a comma.",
                                         false, true
                                 ),
                                 new OptionData(OptionType.STRING, "initial-narrative",
@@ -121,8 +120,8 @@ public class CreateIncident extends Command {
         }
 
         // ---------- incident agencies ----------
-        OptionMapping agenciesOption = event.getOption("agencies");
-        if (agenciesOption != null && !Helper.setAgencies(incident, event, agenciesOption)) {
+        OptionMapping unitsOption = event.getOption("units");
+        if (unitsOption != null && !Helper.setUnits(incident, event, unitsOption)) {
             return;
         }
 
@@ -159,8 +158,8 @@ public class CreateIncident extends Command {
             case "location" ->
                     Main.incidents.listAllPresetLocationsForAutocomplete();
 
-            case "agencies" ->
-                Helper.autocompleteAgencies(focused);
+            case "units" ->
+                Helper.autocompleteUnits(focused);
 
             default -> null;
         };
@@ -189,48 +188,48 @@ public class CreateIncident extends Command {
             return true;
         }
 
-        static boolean setAgencies(IncidentImpl incident, IReplyCallback event, OptionMapping agenciesOption) {
-            if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_AGENCIES)) {
-                DiscordMessages.error(event, "You don't have permission to change the incident agencies.");
+        static boolean setUnits(IncidentImpl incident, IReplyCallback event, OptionMapping unitsOption) {
+            if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_UNITS)) {
+                DiscordMessages.error(event, "You don't have permission to change the incident units.");
                 return false;
             }
 
-            EditAgencies action = findAction(EditAgencies.class);
+            EditUnits action = findAction(EditUnits.class);
 
             // remove whitespace from the agencies string, we don't care if they put a space or not after a comma
-            String agenciesString = agenciesOption.getAsString().replaceAll("\\s+", "");
+            String unitsString = unitsOption.getAsString().replaceAll("\\s+", "");
 
-            if (agenciesString.endsWith(",") || agenciesString.endsWith(":")) {
-                agenciesString = agenciesString.substring(0, agenciesString.length() - 1);
+            if (unitsString.endsWith(",") || unitsString.endsWith(":")) {
+                unitsString = unitsString.substring(0, unitsString.length() - 1);
             }
 
-            String[] agenciesList = agenciesString.split(",");
+            String[] unitsList = unitsString.split(",");
 
-            Map<AssignmentStatus, EditAgencies.AgenciesInput> agencies = new HashMap<>();
-            for (String optionItem : agenciesList) {
-                String agencyString = optionItem;
+            Map<AssignmentStatus, EditUnits.UnitsChangeInput> units = new HashMap<>();
+            for (String optionItem : unitsList) {
+                String unitString = optionItem;
                 String statusString = AssignmentStatus.HIDE_STATUS.getShortName();
 
                 if (optionItem.contains(":")) {
                     String[] parts = optionItem.split(":");
-                    agencyString = parts[0];
+                    unitString = parts[0];
                     statusString = parts[1];
                 }
 
                 // required syntax of command is the shorthand. e.g., "BFD,BVRS:DSP,SUP5:ENR,BPD,VTPD"
-                Agency a = Main.incidents.getAgencyByShorthand(agencyString);
+                Unit a = Main.incidents.getUnitByShorthand(unitString);
                 if (a == null) continue;
 
                 AssignmentStatus s = Main.incidents.getAssignmentStatusByShortName(statusString);
 
-                EditAgencies.AgenciesInput input = agencies.getOrDefault(s, new EditAgencies.AgenciesInput(new ArrayList<>(), s));
-                List<Agency> inputAgencies = input.getAgencies();
-                inputAgencies.add(a);
-                input.setAgencies(inputAgencies);
-                agencies.put(s, input);
+                EditUnits.UnitsChangeInput input = units.getOrDefault(s, new EditUnits.UnitsChangeInput(new ArrayList<>(), s));
+                List<Unit> inputUnits = input.getUnits();
+                inputUnits.add(a);
+                input.setUnits(inputUnits);
+                units.put(s, input);
             }
 
-            for (Map.Entry<AssignmentStatus, EditAgencies.AgenciesInput> entry : agencies.entrySet()) {
+            for (Map.Entry<AssignmentStatus, EditUnits.UnitsChangeInput> entry : units.entrySet()) {
                 action.onSubmit(incident, event, entry.getValue());
             }
 
@@ -302,7 +301,7 @@ public class CreateIncident extends Command {
 
 
 
-        static List<String> autocompleteAgencies(AutoCompleteQuery focused) {
+        static List<String> autocompleteUnits(AutoCompleteQuery focused) {
             // -------- [ BELOW THIS LINE CONTAINS SOME LLM-WRITTEN OR MODIFIED CODE ] --------
             /*
              * Format now supports:
@@ -322,13 +321,13 @@ public class CreateIncident extends Command {
                     .replaceAll("\\s+", "")
                     .toUpperCase();
 
-            List<String> allAgencies = Main.incidents.getAgencies().stream()
-                    .map(Agency::getShorthand)
+            List<String> allUnits = Main.incidents.getUnits().stream()
+                    .map(Unit::getShorthand)
                     .map(String::toUpperCase)
                     .toList();
 
             if (input.endsWith(",")) {
-                return allAgencies.stream()
+                return allUnits.stream()
                         .map(s -> input + s)
                         .toList();
             }
@@ -339,17 +338,17 @@ public class CreateIncident extends Command {
                     .toList();
 
             String[] parts = input.split(",");
-            List<String> selectedAgencies = new ArrayList<>();
+            List<String> selectedUnits = new ArrayList<>();
 
             // completed entries except last token
             for (int i = 0; i < parts.length - 1; i++) {
                 String token = parts[i].trim();
                 if (!token.isEmpty()) {
-                    String agency = token.contains(":")
+                    String unit = token.contains(":")
                             ? token.substring(0, token.indexOf(':'))
                             : token;
 
-                    selectedAgencies.add(agency);
+                    selectedUnits.add(unit);
                 }
             }
 
@@ -357,7 +356,7 @@ public class CreateIncident extends Command {
                     ? ""
                     : parts[parts.length - 1].trim();
 
-            String prefix = selectedAgencies.isEmpty()
+            String prefix = selectedUnits.isEmpty()
                     ? ""
                     : String.join(",", parts).substring(0,
                     input.lastIndexOf(currentToken));
@@ -372,17 +371,17 @@ public class CreateIncident extends Command {
              */
             if (currentToken.contains(":")) {
 
-                String agency = currentToken.substring(0, currentToken.indexOf(':'));
+                String unit = currentToken.substring(0, currentToken.indexOf(':'));
                 String statusPart = currentToken.substring(currentToken.indexOf(':') + 1);
 
-                // if agency invalid, no suggestions
-                if (!allAgencies.contains(agency)) {
+                // if unit invalid, no suggestions
+                if (!allUnits.contains(unit)) {
                     return List.of();
                 }
 
                 return allStatuses.stream()
                         .filter(s -> s.startsWith(statusPart))
-                        .map(s -> prefix + agency + ":" + s + ",")
+                        .map(s -> prefix + unit + ":" + s + ",")
                         .limit(25)
                         .toList();
             }
@@ -395,8 +394,8 @@ public class CreateIncident extends Command {
              * SUP5
              * -----------------------------------------
              */
-            if (allAgencies.contains(currentToken)
-                    && !selectedAgencies.contains(currentToken)) {
+            if (allUnits.contains(currentToken)
+                    && !selectedUnits.contains(currentToken)) {
 
                 List<String> out = new ArrayList<>();
 
@@ -415,8 +414,8 @@ public class CreateIncident extends Command {
              * BFD,B
              * -----------------------------------------
              */
-            return allAgencies.stream()
-                    .filter(a -> !selectedAgencies.contains(a))
+            return allUnits.stream()
+                    .filter(a -> !selectedUnits.contains(a))
                     .filter(a -> a.startsWith(currentToken))
                     .map(a -> prefix + a)
                     .limit(25)

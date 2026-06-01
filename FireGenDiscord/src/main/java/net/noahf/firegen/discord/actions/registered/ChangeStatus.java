@@ -44,7 +44,7 @@ public class ChangeStatus implements ButtonAction {
         if (incident.getStatus().getAttributes().isInProgress()) {
             searchFor = StatusAttribute.CLOSED;
         } else {
-            searchFor = incident.getAgencies().isEmpty() ? StatusAttribute.DEFAULT : StatusAttribute.ACTIVE;
+            searchFor = incident.getUnits().isEmpty() ? StatusAttribute.DEFAULT : StatusAttribute.ACTIVE;
         }
 
         IncidentStatus newStatus = ctx.getManager().getStatusesWithAttributes(searchFor).getFirst();

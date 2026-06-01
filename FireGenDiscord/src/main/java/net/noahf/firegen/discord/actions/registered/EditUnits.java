@@ -16,12 +16,12 @@ import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
-import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
-import net.noahf.firegen.discord.incidents.structure.AgencyImpl;
+import net.noahf.firegen.discord.incidents.structure.UnitImpl;
 import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
@@ -30,22 +30,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
  * Represents the "Agencies" button in the Edit row.
  */
-public class EditAgencies implements ButtonAction, StringDropdownAction {
+public class EditUnits implements ButtonAction, StringDropdownAction {
 
-    private static final Map<User, AgenciesInput> selectedAgencies = new ConcurrentHashMap<>();
+    private static final Map<User, UnitsChangeInput> selectedUnits = new ConcurrentHashMap<>();
 
     /**
      * The name of the command needed to access this class
      */
     @Override
     public String getName() {
-        return "agencies";
+        return "units";
     }
 
     /**
@@ -54,8 +53,8 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_AGENCIES)) {
-            DiscordMessages.error(event, "You don't have permission to change agencies' status on an incident.");
+        if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_UNITS)) {
+            DiscordMessages.error(event, "You don't have permission to change unit statuses on an incident.");
             return;
         }
 
@@ -68,29 +67,29 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
         }
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
-        selectedAgencies.put(event.getUser(),
-                new AgenciesInput(
+        selectedUnits.put(event.getUser(),
+                new UnitsChangeInput(
                         new ArrayList<>(), null
                 )
         );
 
         SelectOption[] selectedStatus = new SelectOption[] {this.toSelectOption(
-                selectedAgencies
-                        .getOrDefault(event.getUser(), new AgenciesInput(new ArrayList<>(), null))
+                selectedUnits
+                        .getOrDefault(event.getUser(), new UnitsChangeInput(new ArrayList<>(), null))
                         .newStatus
         )};
         if (selectedStatus[0] == null) {
             selectedStatus = new SelectOption[0];
         }
 
-        event.reply("Choose agencies to update their status.")
+        event.reply("Choose units to update their status.")
                 .setEphemeral(true)
                 .setComponents(
                         ActionRow.of(StringSelectMenu.create(this.callbackId(ctx, "select"))
-                                .addOptions(Main.incidents.getAgencies().stream()
-                                        .map(a -> (AgencyImpl) a)
+                                .addOptions(Main.incidents.getUnits().stream()
+                                        .map(a -> (UnitImpl) a)
                                         .map((a) -> {
-                                            AssignmentStatus status = incident.getAgencies().get(a);
+                                            AssignmentStatus status = incident.getUnits().get(a);
                                             if (status == null) {
                                                 return a.getSelectOption();
                                             }
@@ -102,11 +101,11 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
                                         .toList()
                                 )
                                 .setDefaultOptions(
-                                        selectedAgencies.getOrDefault(event.getUser(), new AgenciesInput(new ArrayList<>(), null))
-                                                .agencies.stream()
-                                                .map(a -> (AgencyImpl) a)
+                                        selectedUnits.getOrDefault(event.getUser(), new UnitsChangeInput(new ArrayList<>(), null))
+                                                .units.stream()
+                                                .map(a -> (UnitImpl) a)
                                                 .map(a -> {
-                                                    AssignmentStatus status = incident.getAgencies().get(a);
+                                                    AssignmentStatus status = incident.getUnits().get(a);
                                                     if (status == null) {
                                                         return a.getSelectOption();
                                                     }
@@ -146,25 +145,25 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
      */
     @Override
     public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
-        // FIRST STEP: Select the agencies
+        // FIRST STEP: Select the units
         if (ctx.getParameters().getFirst().equalsIgnoreCase("select")) {
-            List<Agency> agencies = new ArrayList<>();
-            for (Agency agency : Main.incidents.getAgencies()) {
-                if (!event.getValues().contains(agency.getShorthand())) {
+            List<Unit> units = new ArrayList<>();
+            for (Unit unit : Main.incidents.getUnits()) {
+                if (!event.getValues().contains(unit.getShorthand())) {
                     continue;
                 }
-                agencies.add(agency);
+                units.add(unit);
             }
 
-            // this way we can keep track of the selected agencies for the next step (changing their status)
-            AgenciesInput input = selectedAgencies.get(event.getUser());
+            // this way we can keep track of the selected units for the next step (changing their status)
+            UnitsChangeInput input = selectedUnits.get(event.getUser());
             if (input == null) {
-                DiscordMessages.error(event, "You are not currently editing incident agencies.");
+                DiscordMessages.error(event, "You are not currently editing incident units.");
                 return;
             }
 
-            input.agencies = agencies;
-            selectedAgencies.put(event.getUser(), input);
+            input.units = units;
+            selectedUnits.put(event.getUser(), input);
         }
         // SECOND STEP: Select the status
         if (ctx.getParameters().getFirst().equalsIgnoreCase("status")) {
@@ -177,52 +176,49 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
                 return;
             }
 
-            AgenciesInput input = selectedAgencies.get(event.getUser());
+            UnitsChangeInput input = selectedUnits.get(event.getUser());
             if (input == null) {
                 DiscordMessages.error(event, "You are not currently editing incident agencies.");
                 return;
             }
 
             input.newStatus = status;
-            selectedAgencies.put(event.getUser(), input);
+            selectedUnits.put(event.getUser(), input);
         }
 
         DiscordMessages.noMessage(event);
     }
 
-    public void onSubmit(Incident incidentValue, IReplyCallback event, @Nullable AgenciesInput inputAgencies) {
-        AgenciesInput input = (inputAgencies == null ? selectedAgencies.get(event.getUser()) : inputAgencies);
+    public void onSubmit(Incident incidentValue, IReplyCallback event, @Nullable EditUnits.UnitsChangeInput inputUnits) {
+        UnitsChangeInput input = (inputUnits == null ? selectedUnits.get(event.getUser()) : inputUnits);
         if (input == null) {
-            DiscordMessages.error(event, "You are not currently editing incident agencies.");
+            DiscordMessages.error(event, "You are not currently editing incident units.");
             return;
         }
 
         IncidentImpl incident = (IncidentImpl) incidentValue;
-        List<Agency> agencies = input.agencies;
+        List<Unit> units = input.units;
         AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatus.HIDE_STATUS;
 
-        String narrative;
-        if (status.equals(AssignmentStatus.REMOVE_AGENCY)) {
-            incident.removeAgencies(agencies);
-            narrative = (agencies.size() == 1 ? "Agency " : "Agencies ") +
-                    String.join(", ", agencies) + " removed";
+        String narrative = "Unit" + (units.size() == 1 ? "" : "s") + " ";
+        if (status.equals(AssignmentStatus.REMOVE_UNIT)) {
+            incident.removeUnits(units);
+            narrative = narrative + String.join(", ", units) + " removed";
         } else {
-            incident.putAgencies(
-                    agencies.stream().collect(Collectors.toMap(
+            incident.putUnits(
+                    units.stream().collect(Collectors.toMap(
                             (k) -> k, (v) -> status
                     ))
             );
-            narrative = (agencies.size() == 1 ? "Agency " : "Agencies ") +
-                    String.join(", ", agencies) + " " + status.getName();
+            narrative = narrative + String.join(", ", units) + " " + status.getName();
         }
 
         if (status.equals(AssignmentStatus.HIDE_STATUS)) {
-            narrative = (agencies.size() == 1 ? "Agency " : "Agencies ") +
-                    String.join(", ", agencies) + " added";
+            narrative = narrative + String.join(", ", units) + " added";
         }
 
         Contributor<User> user = incident.addContributor(event.getUser());
-        incident.addLog(user, IncidentLogEntry.EntryType.AGENCY, narrative);
+        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, narrative);
 
         incident.update();
     }
@@ -244,8 +240,8 @@ public class EditAgencies implements ButtonAction, StringDropdownAction {
 
     @AllArgsConstructor
     @Getter @Setter
-    public static class AgenciesInput {
-        private List<Agency> agencies;
+    public static class UnitsChangeInput {
+        private List<Unit> units;
         private AssignmentStatus newStatus;
     }
 

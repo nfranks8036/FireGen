@@ -13,13 +13,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
-public class AgencyImpl implements net.noahf.firegen.api.incidents.units.Agency {
+public class UnitImpl implements Unit {
 
     private @Getter String shorthand;
     private @Getter String longhand;
     private String formatted;
     private @Getter Emoji emoji;
-    private @Getter AgencyType type;
+    private @Getter AgencyType agencyType;
     private @Getter List<Unit> units;
     private @Getter @Accessors(fluent = true) int ordinal;
 
@@ -33,7 +33,7 @@ public class AgencyImpl implements net.noahf.firegen.api.incidents.units.Agency 
 
     @Override
     public long getId() {
-        return IdGenerator.generateAgencyId(this);
+        return IdGenerator.generateUnitId(this);
     }
 
     @Override

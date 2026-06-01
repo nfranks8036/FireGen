@@ -15,7 +15,7 @@ public class AssignmentStatus implements AutofilledCharSequence {
             "[HIDE STATUS]", "HID", null, Integer.MIN_VALUE + 1
     );
 
-    public static final AssignmentStatus REMOVE_AGENCY = new AssignmentStatus(
+    public static final AssignmentStatus REMOVE_UNIT = new AssignmentStatus(
             "[REMOVE]", "REM", null, Integer.MIN_VALUE
     );
 

@@ -8,9 +8,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
-import net.noahf.firegen.api.incidents.IncidentType;
-import net.noahf.firegen.api.incidents.location.IncidentLocation;
-import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -43,7 +41,7 @@ public class AdminMessageSender extends MessageSender {
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
                         Button.primary(super.getIncident().createInteractionIdString("location"), "Location"),
-                        Button.primary(super.getIncident().createInteractionIdString("agencies"), "Agencies")
+                        Button.primary(super.getIncident().createInteractionIdString("units"), "Units")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
@@ -166,9 +164,9 @@ public class AdminMessageSender extends MessageSender {
                 )
                 .setColor(new Color(255, 94, 94))
                 .build();
-        MessageEmbed respondingAgencies = new EmbedBuilder()
-                .setTitle("Responding Agencies (" + incident.getAttachedAgencies().size() + ")")
-                .setDescription(this.getAgenciesFormatted())
+        MessageEmbed respondingUnits = new EmbedBuilder()
+                .setTitle("Responding Units (" + incident.getAttachedUnits().size() + ")")
+                .setDescription(this.getUnitsFormatted())
                 .setColor(new Color(255, 94, 94))
                 .build();
         MessageEmbed incidentLog = new EmbedBuilder()
@@ -176,25 +174,25 @@ public class AdminMessageSender extends MessageSender {
                 .setDescription(!log.isEmpty() ? String.join("\n", log) : "None")
                 .setColor(new Color(255, 94, 94))
                 .build();
-        return new MessageEmbed[]{adminOverview, respondingAgencies, incidentLog};
+        return new MessageEmbed[]{adminOverview, respondingUnits, incidentLog};
     }
 
-    public String getAgenciesFormatted() {
+    public String getUnitsFormatted() {
         IncidentImpl incident = super.getIncident();
-        StringJoiner respondingAgenciesJoiner = new StringJoiner("\n");
+        StringJoiner respondingUnitsJoiner = new StringJoiner("\n");
         AssignmentStatus current = null;
 
-        for (Map.Entry<Agency, AssignmentStatus> entry : incident.getSortedAgencies().entrySet()) {
-            AgencyImpl agency = (AgencyImpl) entry.getKey();
+        for (Map.Entry<Unit, AssignmentStatus> entry : incident.getSortedUnits().entrySet()) {
+            UnitImpl agency = (UnitImpl) entry.getKey();
             AssignmentStatus status = entry.getValue();
 
             if (current == null || !current.equals(status)) {
-                respondingAgenciesJoiner.add("- " + (
+                respondingUnitsJoiner.add("- " + (
                         status.getEmoji() != null ? status.getEmoji().getFormatted() + " " : ""
                 ) + status.getName());
             }
 
-            respondingAgenciesJoiner.add((current == null ? "  " : "") + "  - " +
+            respondingUnitsJoiner.add((current == null ? "  " : "") + "  - " +
                     (agency.getEmoji() != null ? agency.getEmoji().getFormatted() + " " : "") +
                     "**" + agency.getLonghand().toUpperCase() + "**"
                     + " (`" + agency.getShorthand() + "`)"
@@ -202,9 +200,9 @@ public class AdminMessageSender extends MessageSender {
 
             current = status;
         }
-        return respondingAgenciesJoiner.toString().isBlank() ? "None"
-                :  respondingAgenciesJoiner.toString().substring(
-                0, Math.min(1024, respondingAgenciesJoiner.toString().length())
+        return respondingUnitsJoiner.toString().isBlank() ? "None"
+                :  respondingUnitsJoiner.toString().substring(
+                0, Math.min(1024, respondingUnitsJoiner.toString().length())
         );
     }
 

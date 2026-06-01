@@ -29,7 +29,7 @@ public class ViewArea extends Command {
                 .addField("Municipality", municipality.getName() + " (" + municipality.getShortName() + ")", true)
                 .addField("Dispatch Center", municipality.getDispatchName(), true)
                 .addField("State", municipality.getState().getName() + " (" + municipality.getState().getAbbreviation() + ")", true)
-                .addField("Agencies", "`" + incidents.getAgencies().size() + "` registered", true)
+                .addField("Units", "`" + incidents.getUnits().size() + "` registered", true)
                 .addField("Incident Types", "`" + incidents.getIncidentTypes().size() + "` registered", true)
                 .addField("Identifiers", "`" + IdGenerator.getGeneratedIdsAmount() + "` identifiers generated", true)
                 .addField("Venues", String.join("\n", incidents.getVenues()), true)

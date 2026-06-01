@@ -15,7 +15,7 @@ public enum Permission implements AutofilledCharSequence {
 
     USE_CUSTOM_LOCATION,
 
-    CHANGE_AGENCIES,
+    CHANGE_UNITS,
 
     NARRATIVE_ADD,
 

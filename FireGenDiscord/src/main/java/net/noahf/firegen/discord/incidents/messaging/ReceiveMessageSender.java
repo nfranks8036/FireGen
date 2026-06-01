@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
-import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -39,11 +39,11 @@ public class ReceiveMessageSender extends MessageSender {
             startingMessage = startingMessage + "\nWhere- " + formattedLocation;
         }
 
-        List<Agency> attachedAgencies = incident.getAttachedAgencies();
-        if (!attachedAgencies.isEmpty()) {
+        List<Unit> attachedUnits = incident.getAttachedUnits();
+        if (!attachedUnits.isEmpty()) {
             startingMessage = startingMessage + "\n" +
                     "Who- " + String.join(", ",
-                    attachedAgencies.stream().map(Agency::getShorthand).toList()
+                    attachedUnits.stream().map(Unit::getShorthand).toList()
                     );
         }
 
@@ -104,28 +104,28 @@ public class ReceiveMessageSender extends MessageSender {
                 time.formatDate(Main.incidents.getFireGenVariables()),
                 time.formatTimeShort(Main.incidents.getFireGenVariables()),
                 time.getUnix(),
-                this.getAgenciesFormatted(),
+                this.getUnitsFormatted(),
                 location.getType().getPrefix(),
                 location.format(),
                 !log.isEmpty() ? String.join("\n", log) : "None"
         );
     }
 
-    private String getAgenciesFormatted() {
+    private String getUnitsFormatted() {
         IncidentImpl incident = super.getIncident();
         StringJoiner joiner = new StringJoiner(", ");
 
-        for (Map.Entry<Agency, AssignmentStatus> entry : incident.getSortedAgencies().entrySet()) {
-            Agency agency = entry.getKey();
+        for (Map.Entry<Unit, AssignmentStatus> entry : incident.getSortedUnits().entrySet()) {
+            Unit unit = entry.getKey();
             AssignmentStatus status = entry.getValue();
 
             String returned;
             if (incident.getStatus().getAttributes().isInProgress()) {
-                returned = ((AgencyImpl) agency).getFormattedStatus(status);
+                returned = ((UnitImpl) unit).getFormattedStatus(status);
             } else {
                 // we are not going to show the statuses when an incident is closed
                 // the idea being that all of them are going to be "CLEAR" anyways
-                returned = agency.getFormatted();
+                returned = unit.getFormatted();
             }
 
             joiner.add(returned);

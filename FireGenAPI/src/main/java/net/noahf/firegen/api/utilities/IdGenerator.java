@@ -6,10 +6,8 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.IncidentType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
-import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.Unit;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,12 +26,8 @@ public class IdGenerator<T extends Identifiable> {
         return id(entry, 5);
     }
 
-    public static long generateAgencyId(Agency agency) {
-        return id(agency, 4);
-    }
-
     public static long generateUnitId(Unit unit) {
-        return id(unit, 3);
+        return id(unit, 4);
     }
 
     public static long generateVenueId(LocationVenue venue) { return id(venue, 2); }

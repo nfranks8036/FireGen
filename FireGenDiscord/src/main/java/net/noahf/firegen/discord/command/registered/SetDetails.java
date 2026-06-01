@@ -16,8 +16,6 @@ import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
-import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
-import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.util.List;
@@ -31,7 +29,7 @@ public class SetDetails extends Command {
         super("set-details", "Sets specific details of an incident. Press 'Edit Type' on an incident to start editing.",
                 CommandFlags.include()
                         .options(new OptionData[]{
-                                new OptionData(OptionType.STRING, "agencies", "The new agencies for this incident. Note this will only affect inputted agencies.", false, true),
+                                new OptionData(OptionType.STRING, "units", "The new units for this incident. Note this will only affect inputted agencies.", false, true),
                                 new OptionData(OptionType.STRING, "type", "The new incident type for this incident.", false, true),
                                 new OptionData(OptionType.STRING, "location", "The new present location for this incident.", false, true),
                                 new OptionData(OptionType.STRING, "time",
@@ -89,8 +87,8 @@ public class SetDetails extends Command {
             return;
         }
 
-        OptionMapping agenciesOption = event.getOption("agencies");
-        if (agenciesOption != null && !CreateIncident.Helper.setAgencies(incident, event, agenciesOption)) {
+        OptionMapping unitsOption = event.getOption("units");
+        if (unitsOption != null && !CreateIncident.Helper.setUnits(incident, event, unitsOption)) {
             return;
         }
 
@@ -115,7 +113,7 @@ public class SetDetails extends Command {
         return switch (focused.getName()) {
             case "type" -> Main.incidents.listAllIncidentTypesForAutocomplete();
             case "location" -> Main.incidents.listAllPresetLocationsForAutocomplete();
-            case "agencies" -> CreateIncident.Helper.autocompleteAgencies(focused);
+            case "units" -> CreateIncident.Helper.autocompleteUnits(focused);
             default -> null;
         };
     }

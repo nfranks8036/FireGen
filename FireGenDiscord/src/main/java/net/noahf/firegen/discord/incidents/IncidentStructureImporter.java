@@ -84,15 +84,16 @@ public class IncidentStructureImporter {
         }
     }
 
-    void importAgencies(IncidentManager manager) {
+    void importUnits(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.municipality() + "/" + vars.agenciesFile();
+        String file = vars.municipality() + "/" + vars.unitsFile();
         try
                 (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
         {
             if (input == null) {
                 throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
             }
+
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
             List<JsonElement> elements = array.asList();
             for (int i = 0; i < elements.size(); i++) {
@@ -105,7 +106,7 @@ public class IncidentStructureImporter {
                 String emojiStr = element.isJsonNull() ? null : element.getAsString();
                 Emoji emoji = emojiStr != null ? Emoji.fromFormatted(emojiStr) : null;
 
-                manager.agencies.add(new AgencyImpl(
+                manager.units.add(new UnitImpl(
                         shorthand, longhand, format, emoji, AgencyType.OTHER,
                         new ArrayList<>(), i,
                         SelectOption.of(longhand, shorthand)
@@ -116,7 +117,7 @@ public class IncidentStructureImporter {
                 ));
             }
 
-            Log.info("Imported agencies " + String.join(", ", manager.agencies));
+            Log.info("Imported units " + String.join(", ", manager.units));
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }
@@ -189,7 +190,7 @@ public class IncidentStructureImporter {
 
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
 
-            manager.assignmentStatuses.addAll(List.of(AssignmentStatus.REMOVE_AGENCY, AssignmentStatus.HIDE_STATUS));
+            manager.assignmentStatuses.addAll(List.of(AssignmentStatus.REMOVE_UNIT, AssignmentStatus.HIDE_STATUS));
             for (int i = 0; i < array.asList().size(); i++) {
                 JsonElement element = array.asList().get(i);
                 JsonObject object = element.getAsJsonObject();

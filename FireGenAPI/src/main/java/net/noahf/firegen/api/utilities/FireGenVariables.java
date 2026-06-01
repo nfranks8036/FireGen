@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter @Accessors(fluent = true, chain = true)
 @Setter
@@ -25,7 +24,7 @@ public class FireGenVariables {
         this.municipality = municipality;
 
         this.incidentTypesFile = "incident_types.json";
-        this.agenciesFile = "agencies.json";
+        this.unitsFile = "units.json";
         this.venuesFile = "venues.json";
         this.municipalityFile = "municipality.json";
         this.assignmentStatusFile = "assignments.json";
@@ -62,7 +61,7 @@ public class FireGenVariables {
     private String municipality;
 
     private String incidentTypesFile;
-    private String agenciesFile;
+    private String unitsFile;
     private String venuesFile;
     private String municipalityFile;
     private String assignmentStatusFile;

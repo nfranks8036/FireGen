@@ -1,20 +1,22 @@
 package net.noahf.firegen.api.incidents.units;
 
 import net.noahf.firegen.api.Identifiable;
-import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 
-public interface Unit extends Identifiable {
+import java.util.List;
 
-    Agency getAgency();
+public interface Unit extends Identifiable, AutofilledCharSequence {
 
-    UnitType getUnitType();
+    AgencyType getAgencyType();
 
-    int getUnitNumber();
+    String getShorthand();
 
-    String getUnitCallsign();
+    String getLonghand();
 
-    UnitAssignment currentAssignment();
+    String getFormatted();
 
-    UnitAssignment assign(Incident incident);
+    List<Unit> getUnits();
+
+    int ordinal();
 
 }
