@@ -98,11 +98,8 @@ public class UserManager extends Manager<UserManager> {
                 long id = userObject.get("id").getAsLong();
                 Permission[] permissions = this.getPermissionArray(userObject.get("permissions").getAsJsonArray());
                 User discordUser = jda.getUserById(id);
-                boolean cached = true;
 
                 if (discordUser == null) {
-                    cached = false;
-                    Log.info("Retrieving user '" + id + "' with API request...");
                     discordUser = jda.retrieveUserById(id).complete();
                 }
 
@@ -117,10 +114,6 @@ public class UserManager extends Manager<UserManager> {
                 );
                 user.togglePermissions(permissions);
                 user.togglePermissions(Permission.DEFAULT);
-
-                if (!cached) {
-                    Log.info("Found " + discordUser.getEffectiveName() + " (" + discordUser.getName() + " // " + id + ")");
-                }
 
                 this.addUser(user);
             }
