@@ -124,6 +124,8 @@ public class ReceiveMessageSender extends MessageSender {
                     .build());
         }
 
+        stringForm = stringForm.replace(String.valueOf(Character.MAX_VALUE), "");
+
         return ImmutablePair.of(stringForm, embedForm);
     }
 
