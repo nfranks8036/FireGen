@@ -193,6 +193,7 @@
     {"name": "ASSAULT W/ INJURIES", "tag": "GENERIC"},
     {"name": "MASS CASUALTY INCIDENT", "tag": "GENERIC"},
     {"name": "ALARM TESTING", "tag": "GENERIC"},
+    {"name": "AIRPLANE CRASH", "tag": "GENERIC"},
 
     {"name": "COMMUNITY EVENT", "tag": "GENERIC"},
     {"name": "COMMUNITY EVENT - PARK WALK AND TALK", "tag": "GENERIC"},
