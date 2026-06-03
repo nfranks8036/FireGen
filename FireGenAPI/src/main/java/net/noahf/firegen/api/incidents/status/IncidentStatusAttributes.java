@@ -1,8 +1,5 @@
 package net.noahf.firegen.api.incidents.status;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,14 +8,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-@Entity
 public class IncidentStatusAttributes {
-
-    private @Id @GeneratedValue long id;
-
-    protected IncidentStatusAttributes() {
-        // required for Hibernate JPA
-    }
 
     private List<StatusAttribute> attributes;
 

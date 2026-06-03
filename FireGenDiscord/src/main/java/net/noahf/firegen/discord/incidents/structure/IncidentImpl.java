@@ -46,10 +46,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     final long id;
 
-    private @OneToOne(cascade = CascadeType.ALL, targetEntity = IncidentStatusImpl.class)
-            IncidentStatus status;
-    private @OneToOne(cascade = CascadeType.ALL, targetEntity = IncidentTypeImpl.class) @NotNull
-            IncidentType type;
+    private transient IncidentStatus status;
+    private transient @NotNull IncidentType type;
     private transient List<UnitAssignment> units;
     private transient @Getter @NotNull IncidentLocation location;
     private transient @Getter @NotNull IncidentTime time;
@@ -74,7 +72,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.time = new IncidentTimeImpl(LocalDateTime.now());
         this.published = IncidentPublishedStatus.UNPUBLISHED;
 
-        this.units = Collections.synchronizedMap(new LinkedHashMap<>());
+        this.units = new ArrayList<>();
         this.log = new ArrayList<>();
         this.contributors = new ArrayList<>();
 
@@ -145,7 +143,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     @Override
     public List<Unit> getAttachedUnits() {
-        return new ArrayList<>(this.units.keySet());
+        return new ArrayList<>(this.units.stream().map(UnitAssignment::getUnit).toList());
     }
 
     public void removeUnits(List<Unit> units) {

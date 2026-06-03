@@ -6,6 +6,7 @@ import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.api.incidents.types.IncidentTypeTagQualifierList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class FireGenVariables {
         this.defaultTag = new IncidentTypeTag() {
             @Override public String getTagName() { return "Not Set"; }
             @Override public List<String> getPriorities() { return List.of("1", "2", "3"); }
-            @Override public Qualifier getQualifiers() { return null; }
+            @Override public IncidentTypeTagQualifierList getQualifiers() { return null; }
             @Override public List<String> findTypeOptions(String name) { return Collections.singletonList(name); }
             @Override @NotNull public String toString() {
                 return this.getTagName().toUpperCase();

@@ -3,6 +3,7 @@ package net.noahf.firegen.api.database;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.experimental.Accessors;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 
 @Builder(builderMethodName = "search", buildMethodName = "finish", setterPrefix = "by")
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Accessors(fluent = true)
 public class IncidentQuery {
 
     private IncidentType type;
