@@ -1,18 +1,26 @@
-package net.noahf.firegen.discord.incidents.structure;
+package net.noahf.firegen.discord.incidents.structure.types;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
-import net.noahf.firegen.api.incidents.IncidentType;
-import net.noahf.firegen.api.incidents.IncidentTypeTag;
+import lombok.NoArgsConstructor;
+import net.noahf.firegen.api.incidents.types.IncidentType;
+import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
+@Entity
+@NoArgsConstructor(force = true)
 public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
 
-    private final long id;
+    private @Id final long id;
     private final @NotNull String type;
-    private final @NotNull IncidentTypeTag tag;
+    private @OneToOne(cascade = CascadeType.ALL, targetEntity = IncidentTypeTagImpl.class) final @NotNull
+            IncidentTypeTag tag;
     private final int qualifierChoice;
 
     public IncidentTypeImpl(@NotNull String type, @NotNull IncidentTypeTag tag, int qualifierChoice) {

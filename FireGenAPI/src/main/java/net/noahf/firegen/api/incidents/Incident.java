@@ -4,6 +4,7 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
+import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.units.Unit;
 
 import java.util.List;

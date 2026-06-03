@@ -1,4 +1,4 @@
-package net.noahf.firegen.discord.incidents.structure;
+package net.noahf.firegen.discord.incidents.structure.units;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,9 +8,8 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.IdGenerator;
+import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 @AllArgsConstructor
 public class UnitImpl implements Unit {
@@ -20,7 +19,6 @@ public class UnitImpl implements Unit {
     private String formatted;
     private @Getter Emoji emoji;
     private @Getter AgencyType agencyType;
-    private @Getter List<Unit> units;
     private @Getter @Accessors(fluent = true) int ordinal;
 
     private @Getter SelectOption selectOption;

@@ -15,8 +15,6 @@ public interface Unit extends Identifiable, AutofilledCharSequence {
 
     String getFormatted();
 
-    List<Unit> getUnits();
-
     int ordinal();
 
 }

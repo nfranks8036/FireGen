@@ -1,9 +1,7 @@
 package net.noahf.firegen.discord.incidents.structure;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -12,15 +10,18 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.IncidentTime;
-import net.noahf.firegen.api.incidents.IncidentType;
+import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
+import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
@@ -33,20 +34,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Entity @Table(name = "incident")
+@Getter @Setter
+@Entity @Table(name = "incidents")
 public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
-    private final transient IncidentManager manager;
+    private final transient @Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
+            IncidentManager manager;
 
     private
     @Getter
-    @Id @Column(name="id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     final long id;
 
-    private transient @Getter @Setter IncidentStatus status;
-
-    private transient @Getter @Setter @NotNull IncidentType type;
-    private transient @Getter @NotNull Map<Unit, AssignmentStatus> units;
+    private @OneToOne(cascade = CascadeType.ALL, targetEntity = IncidentStatusImpl.class)
+            IncidentStatus status;
+    private @OneToOne(cascade = CascadeType.ALL, targetEntity = IncidentTypeImpl.class) @NotNull
+            IncidentType type;
+    private transient List<UnitAssignment> units;
     private transient @Getter @NotNull IncidentLocation location;
     private transient @Getter @NotNull IncidentTime time;
     private transient @Getter @NotNull IncidentPublishedStatus published;
@@ -58,7 +62,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     public IncidentImpl() {
         this.manager = null;
-        this.id = Integer.MIN_VALUE;
+        this.id = Long.MIN_VALUE;
     }
 
     public IncidentImpl(IncidentManager manager) {
@@ -205,7 +209,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     public List<IncidentLogEntry> getNarrative() {
         return this.getLog().stream().filter(IncidentLogEntry::isNarrative).toList();
     }
-
 
     public String getFormattedId() {
         return this.time.getDateTime().format(DateTimeFormatter.ofPattern("yyyy")) + "-" +

@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.api.incidents.IncidentType;
-import net.noahf.firegen.api.incidents.IncidentTypeTag;
+import net.noahf.firegen.api.incidents.types.IncidentType;
+import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.IncidentStatusAttributes;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
@@ -16,6 +16,9 @@ import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
+import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
+import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Log;
 
 import java.io.IOException;
@@ -62,7 +65,7 @@ public class IncidentStructureImporter {
                 if (tagStr.equalsIgnoreCase("NEW_INCIDENT")) {
                     vars.defaultType(new IncidentTypeImpl(name, tag, 0));
                     types.add(vars.defaultType());
-                } else if (tag.getQualifier() == null) {
+                } else if (tag.getQualifiers() == null) {
                     types.add(new IncidentTypeImpl(name, tag, 0));
                 } else {
                     List<String> stringTags = tag.findTypeOptions(name);
@@ -108,7 +111,7 @@ public class IncidentStructureImporter {
 
                 manager.units.add(new UnitImpl(
                         shorthand, longhand, format, emoji, AgencyType.OTHER,
-                        new ArrayList<>(), i,
+                        i,
                         SelectOption.of(longhand, shorthand)
                                 .withDescription(null)
                                 .withEmoji(emoji)

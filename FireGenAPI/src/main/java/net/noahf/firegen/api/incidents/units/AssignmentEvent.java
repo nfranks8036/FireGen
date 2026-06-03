@@ -4,10 +4,14 @@ import java.time.LocalDateTime;
 
 public interface AssignmentEvent {
 
-    String getStatus();
+    String getName();
+
+    String getShortName();
 
     LocalDateTime getTime();
 
     String getNarrative();
+
+    int ordinal();
 
 }

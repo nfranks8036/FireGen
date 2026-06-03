@@ -1,4 +1,4 @@
-package net.noahf.firegen.api.incidents;
+package net.noahf.firegen.api.incidents.types;
 
 import net.noahf.firegen.api.Identifiable;
 

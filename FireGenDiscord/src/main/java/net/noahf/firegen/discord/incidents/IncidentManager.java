@@ -1,17 +1,17 @@
 package net.noahf.firegen.discord.incidents;
 
 import lombok.Getter;
-import net.noahf.firegen.api.incidents.IncidentType;
+import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.FireGenVariables;
-import net.noahf.firegen.discord.incidents.structure.UnitImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
-import net.noahf.firegen.discord.incidents.structure.IncidentTypeImpl;
+import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;

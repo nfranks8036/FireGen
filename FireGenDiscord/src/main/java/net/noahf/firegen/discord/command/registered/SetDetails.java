@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.incidents.IncidentType;
+import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.AddNarrative;
 import net.noahf.firegen.discord.actions.registered.EditMode;

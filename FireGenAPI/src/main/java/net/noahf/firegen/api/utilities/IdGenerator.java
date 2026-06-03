@@ -4,7 +4,7 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
-import net.noahf.firegen.api.incidents.IncidentType;
+import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.units.Unit;
 
