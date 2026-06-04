@@ -17,10 +17,7 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.FireGenAction;
-import net.noahf.firegen.discord.actions.registered.AddNarrative;
-import net.noahf.firegen.discord.actions.registered.EditUnits;
-import net.noahf.firegen.discord.actions.registered.EditDateTime;
-import net.noahf.firegen.discord.actions.registered.EditLocation;
+import net.noahf.firegen.discord.actions.registered.*;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
@@ -142,6 +139,8 @@ public class CreateIncident extends Command {
         // ---------- post update for first time to channels ----------
         incident.setStatus(Main.incidents.getStatusesWithAttributes(StatusAttribute.DEFAULT).getFirst());
         incident.update();
+
+        EditMode.editIncidents.put(event.getUser(), incident);
 
         DiscordMessages.selfDestruct(event, 5,
                 "Created new incident with those details. Check an admin channel for more information."

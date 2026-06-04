@@ -1,5 +1,6 @@
 package net.noahf.firegen.api.incidents;
 
+import lombok.EqualsAndHashCode;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
@@ -10,6 +11,7 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Incident extends Identifiable {
 
@@ -37,7 +39,7 @@ public interface Incident extends Identifiable {
 
     List<IncidentLogEntry> getLog();
 
-    List<UnitAssignment> getUnitAssignments();
+    Set<UnitAssignment> getUnitAssignments();
 
     void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus type);
 

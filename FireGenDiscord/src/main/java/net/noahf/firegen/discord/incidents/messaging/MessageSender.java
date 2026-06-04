@@ -16,7 +16,7 @@ public abstract class MessageSender {
 
     private final IncidentMessagingService service;
     private final IncidentImpl incident;
-    private final List<Message> messages;
+    private @Getter(value = AccessLevel.PUBLIC) final List<Message> messages;
 
     private @Setter(value = AccessLevel.PROTECTED) List<MessageTopLevelComponent> components;
 

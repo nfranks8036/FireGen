@@ -98,30 +98,35 @@ public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSeq
             joiner.add(this.getCommonName());
         }
 
-        switch (this.getType()) {
-            case ADDRESS -> {
-                String delimiter = returnUnlessNull(dataDelimiter, " ");
-                joiner.add(data.get(0) + delimiter + data.get(1));
-            }
-            case MILE_MARKER -> {
-                String delimiter = returnUnlessNull(dataDelimiter, " @ ");
-                joiner.add(data.get(0) + delimiter + data.get(1));
-            }
-            case INTERSECTION -> {
-                String delimiter = returnUnlessNull(dataDelimiter, " / ");
-                joiner.add(String.join(delimiter, data));
-            }
-            case CROSS_STREETS, LATITUDE_LONGITUDE, CUSTOM -> {
-                String delimiter = returnUnlessNull(dataDelimiter, ", ");
-                joiner.add(String.join(delimiter, data));
-            }
-        }
+        joiner.add(this.getRequiredData(dataDelimiter));
 
         if (this.getVenue() != null) {
             joiner.add(this.getVenue().getDisplayName());
         }
 
         return joiner.toString();
+    }
+
+    public String getRequiredData(@Nullable String dataDelimiter) {
+        return switch (this.getType()) {
+            case ADDRESS -> {
+                String delimiter = returnUnlessNull(dataDelimiter, " ");
+                yield data.get(0) + delimiter + data.get(1);
+            }
+            case MILE_MARKER -> {
+                String delimiter = returnUnlessNull(dataDelimiter, " @ ");
+                yield data.get(0) + delimiter + data.get(1);
+            }
+            case INTERSECTION -> {
+                String delimiter = returnUnlessNull(dataDelimiter, " / ");
+                yield String.join(delimiter, data);
+            }
+            case CROSS_STREETS, LATITUDE_LONGITUDE, CUSTOM -> {
+                String delimiter = returnUnlessNull(dataDelimiter, ", ");
+                yield String.join(delimiter, data);
+            }
+            default -> " ";
+        };
     }
 
     private String returnUnlessNull(@Nullable String userInput, String def) {

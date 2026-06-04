@@ -1,16 +1,33 @@
 package net.noahf.firegen.discord.command.registered;
 
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import kotlin.Pair;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
-import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.utilities.ImmutablePair;
+import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.ansi.AnsiTableBuilder;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.StringJoiner;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 public class Units extends Command {
 
@@ -20,23 +37,69 @@ public class Units extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        List<Unit> units = Main.incidents.getUnits();
-        String areaName = Main.incidents.getMunicipality().getName();
+        event.reply(createAnsiReply())
+                .setEphemeral(true)
+                .setComponents(
+                        ActionRow.of(
+                                Button.primary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh")
+                        )
+                )
+                .queue();
+    }
 
-        StringJoiner joiner = new StringJoiner("\n");
-        for (Unit unit : units) {
-            String emoji = ((UnitImpl) unit).getEmoji().getFormatted();
-            joiner.add(emoji + " " + unit.getLonghand() + " (`" + unit.getShorthand() + "`)");
+    public static String createAnsiReply() {
+        Set<UnitAssignment> assignments = Main.incidents.getAssignments();;
+
+        if (assignments.isEmpty()) {
+            return "```diff\n- No units have been assigned any incidents right now. Try again later. -```";
         }
 
-        MessageEmbed embed = new EmbedBuilder()
-                .setTitle("There are " + units.size() + " units that serve " + areaName)
-                .setDescription(joiner.toString())
-                .setColor(DiscordMessages.randomColorForEmbed())
-                .setFooter("Use \"/unit-emoji <unit>\" to obtain the name of the emoji used.")
-                .build();
+        AnsiTableBuilder table = new AnsiTableBuilder()
+                .header("time", "unit", "status", "incident type", "incident location")
+                .disallowDuplicateOnColumn(1);
+        for (UnitAssignment assignment : assignments) {
+            Unit unit = assignment.getUnit();
+            Incident incident = assignment.getIncident();
+            AssignmentEvent e = assignment.getLatestAssignment();
+            LocalDateTime time = e.timestamp();
+            AssignmentStatusImpl status = (AssignmentStatusImpl) e.status();
 
-        event.replyEmbeds(embed).setEphemeral(true).queue();
+            table = table
+                    .row(time.toEpochSecond(ZoneOffset.UTC), status.getAnsiColor(),
+                            time.format(DateTimeFormatter.ofPattern(Main.incidents.getFireGenVariables().longTimeFormat())),
+                            unit.getShorthand(),
+                            status.getName(),
+                            incident.getType().toString(),
+                            ((IncidentLocationImpl)incident.getLocation()).getRequiredData(null)
+                    );
+        }
+
+        ImmutablePair<String, Integer> returned = table.build(25);
+        int amount = returned.getSecondElement();
+
+        return "Returned `" + (amount >= 25 ? "25`/`25" : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen." +
+                "\n```ansi\n" + returned.getFirstElement() + "```";
+    }
+
+    public static class UnitsRefreshButtonDetector extends ListenerAdapter {
+
+        @Override
+        public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+            String id = event.getComponentId();
+            User user = event.getUser();
+
+            if (!id.startsWith("firegenuser") || !id.endsWith("refreshunits")) {
+                return;
+            }
+
+            Log.info(user.getName() + " (" + user.getIdLong() + ") pressed button '" + id + "'");
+
+            try {
+                event.editMessage(createAnsiReply()).queue();
+            } catch (Exception exception) {
+                DiscordMessages.error(event, "An error occurred processing your button press", exception);
+            }
+        }
     }
 
 }

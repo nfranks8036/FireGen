@@ -13,6 +13,7 @@ import net.noahf.firegen.discord.actions.listeners.ButtonDetector;
 import net.noahf.firegen.discord.actions.listeners.ModalDetector;
 import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.command.CommandManager;
+import net.noahf.firegen.discord.command.registered.Units;
 import net.noahf.firegen.discord.database.DatabaseManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.users.UserManager;
@@ -78,7 +79,7 @@ public class Main {
                 .setEnabledIntents(
                         GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_EXPRESSIONS
                 )
-                .addEventListeners(new ButtonDetector(), new ModalDetector(), new StringSelectDetector())
+                .addEventListeners(new ButtonDetector(), new ModalDetector(), new StringSelectDetector(), new Units.UnitsRefreshButtonDetector())
                 .build()
                 .awaitReady();
         loadChannels(JDA);

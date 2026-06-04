@@ -23,6 +23,7 @@ import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.RadioChannelImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -205,8 +206,10 @@ public class IncidentStructureImporter {
                 String shortName = object.get("short").getAsString();
                 String emojiStr = object.get("emoji").getAsString();
                 Emoji emoji = Emoji.fromFormatted(emojiStr);
+                String ansiStr = object.get("ansi").getAsString();
+                AnsiColor ansi = AnsiColor.valueOf(ansiStr.toUpperCase());
 
-                AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, i);
+                AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, new AnsiColor[]{ansi}, i);
                 manager.assignmentStatuses.add(status);
             }
 

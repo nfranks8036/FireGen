@@ -1,18 +1,21 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.discord.Main;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-@Getter
+@Getter @EqualsAndHashCode(of = {"incident", "unit"})
 public class UnitAssignmentImpl implements UnitAssignment {
 
     public UnitAssignmentImpl(Incident incident,
@@ -45,6 +48,9 @@ public class UnitAssignmentImpl implements UnitAssignment {
     }
 
     public void assign(AssignmentEvent newEvent) {
+        ((UnitImpl)unit).addAssignment(this);
+        Main.incidents.getAssignments().add(this);
+
         this.assignments.add(newEvent);
     }
 
@@ -53,5 +59,4 @@ public class UnitAssignmentImpl implements UnitAssignment {
     public String toString() {
         return unit.getFormatted() + " (" + this.getLatestAssignment().status().getName() + ")";
     }
-
 }

@@ -8,8 +8,11 @@ import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 @AllArgsConstructor
 @EqualsAndHashCode(of = "ordinal")
@@ -23,6 +26,8 @@ public class UnitImpl implements Unit {
     private @Getter @Accessors(fluent = true) int ordinal;
 
     private @Getter SelectOption selectOption;
+
+    private transient @Getter final Set<UnitAssignment> assignments = new LinkedHashSet<>();
 
     @Override
     @NotNull
@@ -39,6 +44,10 @@ public class UnitImpl implements Unit {
     public String getFormatted() {
         return (this.emoji != null ? emoji.getFormatted() + " " : "") +
                 this.formatted;
+    }
+
+    void addAssignment(UnitAssignment a) {
+        this.assignments.add(a);
     }
 
     public String getFormattedStatus(AssignmentStatusImpl status) {

@@ -187,20 +187,21 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatusImpl.HIDE_STATUS;
         Contributor<User> user = incident.addContributor(event.getUser());
 
-        String narrative = "Unit" + (units.size() == 1 ? "" : "s") + " ";
         if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {
-            incident.removeUnits(units);
-            narrative = narrative + String.join(", ", units) + " removed";
-        } else if (!status.equals(AssignmentStatusImpl.HIDE_STATUS)) {
+
+            units.forEach(incident::removeUnit);
+
+        } else {
+
             units.forEach(u -> incident.assignUnit(u, user, status));
-            narrative = narrative + String.join(", ", units) + " " + status.getName();
+
         }
 
-        if (status.equals(AssignmentStatusImpl.HIDE_STATUS)) {
-            narrative = narrative + String.join(", ", units) + " added";
-        }
-
-        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, narrative);
+        incident.addLog(user, IncidentLogEntry.EntryType.UNIT,
+                "Unit" + (units.size() == 1 ? "" : "s") + " " +
+                        String.join(", ", units) + " " +
+                        status.getName()
+        );
 
         incident.update();
     }

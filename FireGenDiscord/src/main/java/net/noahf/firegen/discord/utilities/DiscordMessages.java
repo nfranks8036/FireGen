@@ -1,6 +1,7 @@
 package net.noahf.firegen.discord.utilities;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.callbacks.IMessageEditCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import org.jetbrains.annotations.Nullable;
@@ -89,6 +90,19 @@ public class DiscordMessages {
             return message.substring(0, length - end.length()) + end;
         }
         return message;
+    }
+
+    public static String createLink(Message message) {
+        if (message == null) {
+            return null;
+        }
+
+        return String.format(
+                "https://discord.com/channels/%d/%d/%d",
+                message.getGuildIdLong(),
+                message.getChannelIdLong(),
+                message.getIdLong()
+        );
     }
 
 }

@@ -1,10 +1,7 @@
 package net.noahf.firegen.discord.incidents.structure;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
@@ -24,6 +21,7 @@ import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationIm
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +33,7 @@ import java.util.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Getter @Setter
+@Getter @Setter @EqualsAndHashCode(of = {"id"})
 @Entity @Table(name = "incidents")
 public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
@@ -49,7 +47,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     private transient IncidentStatus status;
     private transient @NotNull IncidentType type;
-    private transient List<UnitAssignment> unitAssignments;
+    private transient @Getter Set<UnitAssignment> unitAssignments;
     private transient @Getter @NotNull IncidentLocation location;
     private transient @Getter @NotNull IncidentTime time;
     private transient @Getter @NotNull IncidentPublishedStatus published;
@@ -73,7 +71,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.time = new IncidentTimeImpl(LocalDateTime.now());
         this.published = IncidentPublishedStatus.UNPUBLISHED;
 
-        this.unitAssignments = new ArrayList<>();
+        this.unitAssignments = new HashSet<>();
         this.log = new ArrayList<>();
         this.contributors = new ArrayList<>();
 
@@ -143,11 +141,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     @Override
-    public List<UnitAssignment> getUnitAssignments() {
-        return this.unitAssignments;
-    }
-
-    @Override
     public void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus assignment) {
         UnitAssignment unitAssignment = this.getUnitAssignmentFor(unit);
         if (unitAssignment == null) {
@@ -168,14 +161,11 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         return null;
     }
 
-    public void removeUnits(List<Unit> units) {
-        this.unitAssignments.forEach(a -> {
-            if (!units.contains(a.getUnit())) {
-                return;
-            }
-            this.unitAssignments.remove(a);
-        });
+    public void removeUnit(Unit unit) {
+        Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit));
+        ((UnitImpl)unit).getAssignments().removeIf(ua -> ua.getIncident().equals(this));
 
+        this.unitAssignments.removeIf(a -> a.getUnit().equals(unit));
         this.refreshStatus();
     }
 
