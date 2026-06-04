@@ -20,6 +20,7 @@ import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.Time;
 import net.noahf.firegen.discord.utilities.ansi.AnsiTableBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Units extends Command {
 
@@ -51,7 +55,9 @@ public class Units extends Command {
         Set<UnitAssignment> assignments = Main.incidents.getAssignments();;
 
         if (assignments.isEmpty()) {
-            return "```diff\n- No units have been assigned any incidents right now. Try again later. -```";
+            return "```diff\n- No units have been assigned to any incidents right now. Try again later. -```\n"
+                    + "(as of <t:" + (Time.getUnix()) + ":R>)"
+                    ;
         }
 
         AnsiTableBuilder table = new AnsiTableBuilder()
@@ -77,7 +83,7 @@ public class Units extends Command {
         ImmutablePair<String, Integer> returned = table.build(25);
         int amount = returned.getSecondElement();
 
-        return "Returned `" + (amount >= 25 ? "25`/`25" : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen." +
+        return "Returned `" + (amount >= 25 ? "25`/`25" : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + (Time.getUnix()) + ":R>." +
                 "\n```ansi\n" + returned.getFirstElement() + "```";
     }
 
@@ -95,7 +101,18 @@ public class Units extends Command {
             Log.info(user.getName() + " (" + user.getIdLong() + ") pressed button '" + id + "'");
 
             try {
-                event.editMessage(createAnsiReply()).queue();
+                event.editMessage(createAnsiReply())
+                        .setComponents(
+                                ActionRow.of(
+                                        Button.secondary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh (Wait 5s)").asDisabled()
+                                )
+                        )
+                        .complete().editOriginalComponents(
+                                ActionRow.of(
+                                        Button.primary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh").asEnabled()
+                                )
+                        ).completeAfter(5, TimeUnit.SECONDS);
+                ;
             } catch (Exception exception) {
                 DiscordMessages.error(event, "An error occurred processing your button press", exception);
             }
