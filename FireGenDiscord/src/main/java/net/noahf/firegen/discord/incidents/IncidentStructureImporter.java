@@ -18,6 +18,7 @@ import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Log;
 
@@ -193,7 +194,7 @@ public class IncidentStructureImporter {
 
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
 
-            manager.assignmentStatuses.addAll(List.of(AssignmentStatus.REMOVE_UNIT, AssignmentStatus.HIDE_STATUS));
+            manager.assignmentStatuses.addAll(List.of(AssignmentStatusImpl.REMOVE_UNIT, AssignmentStatusImpl.HIDE_STATUS));
             for (int i = 0; i < array.asList().size(); i++) {
                 JsonElement element = array.asList().get(i);
                 JsonObject object = element.getAsJsonObject();
@@ -203,7 +204,7 @@ public class IncidentStructureImporter {
                 String emojiStr = object.get("emoji").getAsString();
                 Emoji emoji = Emoji.fromFormatted(emojiStr);
 
-                AssignmentStatus status = new AssignmentStatus(name, shortName, emoji, i);
+                AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, i);
                 manager.assignmentStatuses.add(status);
             }
 
@@ -230,10 +231,8 @@ public class IncidentStructureImporter {
 
                 String name = object.get("name").getAsString();
                 String shortName = object.get("short").getAsString();
-                String leftEmojiString = object.get("emojiLeft").getAsString();
-                Emoji leftEmoji = Emoji.fromFormatted(leftEmojiString);
-                String rightEmojiString = object.get("emojiRight").getAsString();
-                Emoji rightEmoji = Emoji.fromFormatted(rightEmojiString);
+                String leftEmoji = object.get("emojiLeft").getAsString();
+                String rightEmoji = object.get("emojiRight").getAsString();
                 List<StatusAttribute> attributesList = object.get("attributes").getAsJsonArray()
                         .asList().stream()
                         .map(JsonElement::getAsString)

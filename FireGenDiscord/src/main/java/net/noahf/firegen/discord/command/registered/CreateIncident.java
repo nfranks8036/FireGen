@@ -12,6 +12,7 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
@@ -22,7 +23,7 @@ import net.noahf.firegen.discord.actions.registered.EditDateTime;
 import net.noahf.firegen.discord.actions.registered.EditLocation;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.users.Permission;
@@ -208,7 +209,7 @@ public class CreateIncident extends Command {
             Map<AssignmentStatus, EditUnits.UnitsChangeInput> units = new HashMap<>();
             for (String optionItem : unitsList) {
                 String unitString = optionItem;
-                String statusString = AssignmentStatus.HIDE_STATUS.getShortName();
+                String statusString = AssignmentStatusImpl.HIDE_STATUS.getShortName();
 
                 if (optionItem.contains(":")) {
                     String[] parts = optionItem.split(":");

@@ -1,38 +1,57 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
-import net.noahf.firegen.api.incidents.units.AssignmentEvent;
-import net.noahf.firegen.api.incidents.units.RadioChannel;
-import net.noahf.firegen.api.incidents.units.Unit;
-import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.incidents.units.*;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
 public class UnitAssignmentImpl implements UnitAssignment {
+
+    public UnitAssignmentImpl(Incident incident,
+                              Unit unit,
+                              Contributor<?> contributorWhoInitiatedEvent,
+                              AssignmentStatus... assignments
+    ) {
+        this.incident = incident;
+        this.unit = unit;
+        this.assignments = new LinkedList<>();
+
+        for (AssignmentStatus event : assignments) {
+            this.assign(contributorWhoInitiatedEvent, event);
+        }
+    }
 
     private final Incident incident;
     private final Unit unit;
 
     private @Setter RadioChannel radioChannel;
-    private List<AssignmentEvent> assignments;
+    private final List<AssignmentEvent> assignments;
 
     @Override
     public AssignmentEvent getLatestAssignment() {
         return this.assignments.getLast();
     }
 
+    public void assign(Contributor<?> contributor, AssignmentStatus newAssignment) {
+        this.assign(new AssignmentEvent(LocalDateTime.now(), newAssignment, contributor));
+    }
+
+    public void assign(AssignmentEvent newEvent) {
+        this.assignments.add(newEvent);
+    }
+
     @Override
     @NotNull
     public String toString() {
-        return unit.getFormatted() + " (" + this.getLatestAssignment().getName() + ")";
+        return unit.getFormatted() + " (" + this.getLatestAssignment().getStatus().getName() + ")";
     }
 
 }

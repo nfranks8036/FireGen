@@ -8,11 +8,15 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
+import net.noahf.firegen.api.incidents.units.AssignmentEvent;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
@@ -169,7 +173,7 @@ public class AdminMessageSender extends MessageSender {
                 .setColor(new Color(255, 94, 94))
                 .build());
         returned.add(new EmbedBuilder()
-                .setTitle("Responding Units (" + incident.getAttachedUnits().size() + ")")
+                .setTitle("Responding Units (" + incident.getUnitAssignments().size() + ")")
                 .setDescription(this.getUnitsFormatted())
                 .setColor(new Color(255, 94, 94))
                 .build());
@@ -186,11 +190,12 @@ public class AdminMessageSender extends MessageSender {
     public String getUnitsFormatted() {
         IncidentImpl incident = super.getIncident();
         StringJoiner respondingUnitsJoiner = new StringJoiner("\n");
-        AssignmentStatus current = null;
+        AssignmentStatusImpl current = null;
 
-        for (Map.Entry<Unit, AssignmentStatus> entry : incident.getSortedUnits().entrySet()) {
-            UnitImpl agency = (UnitImpl) entry.getKey();
-            AssignmentStatus status = entry.getValue();
+        for (UnitAssignment unitAssignment : incident.getSortedAssignments()) {
+            UnitImpl unit = (UnitImpl) unitAssignment.getUnit();
+            AssignmentEvent assignment = unitAssignment.getLatestAssignment();
+            AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.getStatus();
 
             if (current == null || !current.equals(status)) {
                 respondingUnitsJoiner.add("- " + (
@@ -199,9 +204,9 @@ public class AdminMessageSender extends MessageSender {
             }
 
             respondingUnitsJoiner.add((current == null ? "  " : "") + "  - " +
-                    (agency.getEmoji() != null ? agency.getEmoji().getFormatted() + " " : "") +
-                    "**" + agency.getLonghand().toUpperCase() + "**"
-                    + " (`" + agency.getShorthand() + "`)"
+                    (unit.getEmoji() != null ? unit.getEmoji().getFormatted() + " " : "") +
+                    "**" + unit.getLonghand().toUpperCase() + "**"
+                    + " (`" + unit.getShorthand() + "`)"
             );
 
             current = status;

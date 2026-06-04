@@ -14,6 +14,7 @@ import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
@@ -22,6 +23,8 @@ import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +34,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Getter @Setter
@@ -48,7 +50,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     private transient IncidentStatus status;
     private transient @NotNull IncidentType type;
-    private transient List<UnitAssignment> units;
+    private transient List<UnitAssignment> unitAssignments;
     private transient @Getter @NotNull IncidentLocation location;
     private transient @Getter @NotNull IncidentTime time;
     private transient @Getter @NotNull IncidentPublishedStatus published;
@@ -72,7 +74,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.time = new IncidentTimeImpl(LocalDateTime.now());
         this.published = IncidentPublishedStatus.UNPUBLISHED;
 
-        this.units = new ArrayList<>();
+        this.unitAssignments = new ArrayList<>();
         this.log = new ArrayList<>();
         this.contributors = new ArrayList<>();
 
@@ -142,44 +144,53 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     @Override
-    public List<Unit> getAttachedUnits() {
-        return new ArrayList<>(this.units.stream().map(UnitAssignment::getUnit).toList());
+    public List<UnitAssignment> getUnitAssignments() {
+        return this.unitAssignments;
+    }
+
+    @Override
+    public void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus assignment) {
+        UnitAssignment unitAssignment = this.getUnitAssignmentFor(unit);
+        if (unitAssignment == null) {
+            unitAssignment = new UnitAssignmentImpl(this, unit, contributor);
+            this.unitAssignments.add(unitAssignment);
+        }
+
+        unitAssignment.assign(contributor, assignment);
+    }
+
+    public UnitAssignment getUnitAssignmentFor(Unit unit) {
+        for (UnitAssignment assignment : this.unitAssignments) {
+            if (assignment.getUnit().equals(unit)) {
+                return assignment;
+            }
+        }
+
+        return null;
     }
 
     public void removeUnits(List<Unit> units) {
-        units.forEach(a -> this.units.remove(a));
+        this.unitAssignments.forEach(a -> {
+            if (!units.contains(a.getUnit())) {
+                return;
+            }
+            this.unitAssignments.remove(a);
+        });
+
         this.refreshStatus();
     }
 
-    public void putUnits(List<Unit> units) {
-        this.putUnits(units.stream()
-                .collect(Collectors.toMap((a) -> a, (a) -> AssignmentStatus.HIDE_STATUS)));
-    }
-
-    public void putUnits(Map<Unit, AssignmentStatus> units) {
-        this.units.putAll(units);
-        this.refreshStatus();
-    }
-
-    public Map<Unit, AssignmentStatus> getSortedUnits() {
-        List<Map.Entry<Unit, AssignmentStatus>> sortedEntries = new ArrayList<>(this.getUnits().entrySet());
-        sortedEntries.sort(
-                Comparator
-                        .comparingInt((Map.Entry<Unit, AssignmentStatus> e)
-                                -> e.getValue().ordinal()) // status order
-                        .thenComparing(e -> e.getKey().ordinal()) // unit name
+    public List<UnitAssignment> getSortedAssignments() {
+        List<UnitAssignment> sorted = new ArrayList<>(this.getUnitAssignments());
+        sorted.sort(Comparator
+                .comparingInt((UnitAssignment a) -> a.getLatestAssignment().getStatus().ordinal()) // status order
+                .thenComparing(e -> e.getUnit().ordinal()) // unit name
         );
-
-        Map<Unit, AssignmentStatus> result = new LinkedHashMap<>();
-        for (Map.Entry<Unit, AssignmentStatus> entry : sortedEntries) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-
-        return result;
+        return sorted;
     }
 
     public void refreshStatus() {
-        if (units.isEmpty()) {
+        if (unitAssignments.isEmpty()) {
             this.status = this.manager.getStatusesWithAttributes(StatusAttribute.DEFAULT)
                     .getFirst();
         } else {

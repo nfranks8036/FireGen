@@ -1,21 +1,22 @@
-package net.noahf.firegen.discord.incidents.structure;
+package net.noahf.firegen.discord.incidents.structure.units;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 @Getter
-public class AssignmentStatus implements AutofilledCharSequence {
+public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.firegen.api.incidents.units.AssignmentStatus {
 
-    public static final AssignmentStatus HIDE_STATUS = new AssignmentStatus(
+    public static final AssignmentStatus HIDE_STATUS = new AssignmentStatusImpl(
             "[HIDE STATUS]", "HID", null, Integer.MIN_VALUE + 1
     );
 
-    public static final AssignmentStatus REMOVE_UNIT = new AssignmentStatus(
+    public static final AssignmentStatus REMOVE_UNIT = new AssignmentStatusImpl(
             "[REMOVE]", "REM", null, Integer.MIN_VALUE
     );
 
@@ -29,4 +30,5 @@ public class AssignmentStatus implements AutofilledCharSequence {
     public String toString() {
         return this.name;
     }
+
 }

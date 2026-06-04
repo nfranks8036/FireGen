@@ -5,7 +5,9 @@ import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 
 import java.util.List;
 
@@ -35,7 +37,9 @@ public interface Incident extends Identifiable {
 
     List<IncidentLogEntry> getLog();
 
-    List<Unit> getAttachedUnits();
+    List<UnitAssignment> getUnitAssignments();
+
+    void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus type);
 
     List<Contributor<?>> getContributors();
 

@@ -16,16 +16,19 @@ import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
-import net.noahf.firegen.discord.incidents.structure.AssignmentStatus;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -89,31 +92,16 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                                 .addOptions(Main.incidents.getUnits().stream()
                                         .map(a -> (UnitImpl) a)
                                         .map((a) -> {
-                                            AssignmentStatus status = incident.getUnits().get(a);
+                                            UnitAssignment status = incident.getUnitAssignmentFor(a);
                                             if (status == null) {
                                                 return a.getSelectOption();
                                             }
                                             return a.getSelectOption().withDescription(
-                                                    "Status: " + status.getName()
+                                                    "Status: " + status.getLatestAssignment().getStatus().getName()
                                             );
                                         })
                                         .limit(StringSelectMenu.OPTIONS_MAX_AMOUNT)
                                         .toList()
-                                )
-                                .setDefaultOptions(
-                                        selectedUnits.getOrDefault(event.getUser(), new UnitsChangeInput(new ArrayList<>(), null))
-                                                .units.stream()
-                                                .map(a -> (UnitImpl) a)
-                                                .map(a -> {
-                                                    AssignmentStatus status = incident.getUnits().get(a);
-                                                    if (status == null) {
-                                                        return a.getSelectOption();
-                                                    }
-                                                    return a.getSelectOption().withDescription(
-                                                            "Status: " + status.getName()
-                                                    );
-                                                })
-                                                .toList()
                                 )
                                 .setRequired(true)
                                 // the max amount of value IS the amount of values we have available.
@@ -198,36 +186,33 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
 
         IncidentImpl incident = (IncidentImpl) incidentValue;
         List<Unit> units = input.units;
-        AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatus.HIDE_STATUS;
+        AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatusImpl.HIDE_STATUS;
+        Contributor<User> user = incident.addContributor(event.getUser());
 
         String narrative = "Unit" + (units.size() == 1 ? "" : "s") + " ";
-        if (status.equals(AssignmentStatus.REMOVE_UNIT)) {
+        if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {
             incident.removeUnits(units);
             narrative = narrative + String.join(", ", units) + " removed";
-        } else {
-            incident.putUnits(
-                    units.stream().collect(Collectors.toMap(
-                            (k) -> k, (v) -> status
-                    ))
-            );
+        } else if (!status.equals(AssignmentStatusImpl.HIDE_STATUS)) {
+            units.forEach(u -> incident.assignUnit(u, user, status));
             narrative = narrative + String.join(", ", units) + " " + status.getName();
         }
 
-        if (status.equals(AssignmentStatus.HIDE_STATUS)) {
+        if (status.equals(AssignmentStatusImpl.HIDE_STATUS)) {
             narrative = narrative + String.join(", ", units) + " added";
         }
 
-        Contributor<User> user = incident.addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntry.EntryType.UNIT, narrative);
 
         incident.update();
     }
 
 
-    private SelectOption toSelectOption(AssignmentStatus status) {
-        if (status == null) {
+    private SelectOption toSelectOption(AssignmentStatus assignmentStatus) {
+        if (assignmentStatus == null) {
             return null;
         }
+        AssignmentStatusImpl status = (AssignmentStatusImpl) assignmentStatus;
         return SelectOption.of(status.getName(), status.getShortName())
                 .withEmoji(status.getEmoji());
     }

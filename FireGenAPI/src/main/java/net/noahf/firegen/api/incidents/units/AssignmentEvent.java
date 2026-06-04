@@ -1,17 +1,24 @@
 package net.noahf.firegen.api.incidents.units;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import org.jetbrains.annotations.NotNull;
+
 import java.time.LocalDateTime;
 
-public interface AssignmentEvent {
+@RequiredArgsConstructor
+@Getter
+public class AssignmentEvent implements AutofilledCharSequence {
 
-    String getName();
+    private final LocalDateTime timestamp;
+    private final AssignmentStatus status;
+    private final Contributor<?> contributor;
 
-    String getShortName();
-
-    LocalDateTime getTime();
-
-    String getNarrative();
-
-    int ordinal();
-
+    @Override
+    @NotNull
+    public String toString() {
+        return "[time=" + timestamp.toString() + ", status=" + status.toString() + ", contributor=" + contributor.toString() + "]";
+    }
 }

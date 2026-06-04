@@ -7,9 +7,11 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
@@ -45,11 +47,11 @@ public class ReceiveMessageSender extends MessageSender {
             startingMessage = startingMessage + "\nWhere- " + formattedLocation;
         }
 
-        List<Unit> attachedUnits = incident.getAttachedUnits();
+        List<UnitAssignment> attachedUnits = incident.getSortedAssignments();
         if (!attachedUnits.isEmpty()) {
             startingMessage = startingMessage + "\n" +
                     "Who- " + String.join(", ",
-                    attachedUnits.stream().map(Unit::getShorthand).toList()
+                    attachedUnits.stream().map(UnitAssignment::getUnit).map(Unit::getShorthand).toList()
                     );
         }
 
@@ -133,9 +135,9 @@ public class ReceiveMessageSender extends MessageSender {
         IncidentImpl incident = super.getIncident();
         StringJoiner joiner = new StringJoiner(", ");
 
-        for (Map.Entry<Unit, AssignmentStatus> entry : incident.getSortedUnits().entrySet()) {
-            Unit unit = entry.getKey();
-            AssignmentStatus status = entry.getValue();
+        for (UnitAssignment unitAssignment : incident.getSortedAssignments()) {
+            Unit unit = unitAssignment.getUnit();
+            AssignmentStatusImpl status = (AssignmentStatusImpl) unitAssignment.getLatestAssignment().getStatus();
 
             String returned;
             if (incident.getStatus().getAttributes().isInProgress()) {
