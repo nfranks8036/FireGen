@@ -23,7 +23,6 @@ import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
-import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
@@ -183,7 +182,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     public List<UnitAssignment> getSortedAssignments() {
         List<UnitAssignment> sorted = new ArrayList<>(this.getUnitAssignments());
         sorted.sort(Comparator
-                .comparingInt((UnitAssignment a) -> a.getLatestAssignment().getStatus().ordinal()) // status order
+                .comparingInt((UnitAssignment a) -> a.getLatestAssignment().status().ordinal()) // status order
                 .thenComparing(e -> e.getUnit().ordinal()) // unit name
         );
         return sorted;

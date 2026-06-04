@@ -51,7 +51,7 @@ public class UnitAssignmentImpl implements UnitAssignment {
     @Override
     @NotNull
     public String toString() {
-        return unit.getFormatted() + " (" + this.getLatestAssignment().getStatus().getName() + ")";
+        return unit.getFormatted() + " (" + this.getLatestAssignment().status().getName() + ")";
     }
 
 }

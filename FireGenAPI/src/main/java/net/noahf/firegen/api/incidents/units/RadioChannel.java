@@ -5,11 +5,11 @@ import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 
 public interface RadioChannel extends Identifiable, AutofilledCharSequence {
 
-    String getName();
+    String name();
 
-    String getAlphaTag();
+    String alphaTag();
 
-    int getTalkgroupId();
+    int talkgroupId();
 
 
 }

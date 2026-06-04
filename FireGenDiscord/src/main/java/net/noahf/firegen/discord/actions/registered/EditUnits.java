@@ -28,12 +28,10 @@ import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * Represents the "Agencies" button in the Edit row.
@@ -97,7 +95,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                                                 return a.getSelectOption();
                                             }
                                             return a.getSelectOption().withDescription(
-                                                    "Status: " + status.getLatestAssignment().getStatus().getName()
+                                                    "Status: " + status.getLatestAssignment().status().getName()
                                             );
                                         })
                                         .limit(StringSelectMenu.OPTIONS_MAX_AMOUNT)

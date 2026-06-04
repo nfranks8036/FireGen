@@ -9,8 +9,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
-import net.noahf.firegen.api.incidents.units.AssignmentStatus;
-import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.*;
@@ -24,7 +22,6 @@ import net.noahf.firegen.discord.utilities.Log;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 public class AdminMessageSender extends MessageSender {
@@ -195,7 +192,7 @@ public class AdminMessageSender extends MessageSender {
         for (UnitAssignment unitAssignment : incident.getSortedAssignments()) {
             UnitImpl unit = (UnitImpl) unitAssignment.getUnit();
             AssignmentEvent assignment = unitAssignment.getLatestAssignment();
-            AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.getStatus();
+            AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.status();
 
             if (current == null || !current.equals(status)) {
                 respondingUnitsJoiner.add("- " + (

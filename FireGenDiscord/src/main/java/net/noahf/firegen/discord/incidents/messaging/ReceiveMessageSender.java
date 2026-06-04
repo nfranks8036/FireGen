@@ -19,7 +19,6 @@ import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 public class ReceiveMessageSender extends MessageSender {
@@ -137,7 +136,7 @@ public class ReceiveMessageSender extends MessageSender {
 
         for (UnitAssignment unitAssignment : incident.getSortedAssignments()) {
             Unit unit = unitAssignment.getUnit();
-            AssignmentStatusImpl status = (AssignmentStatusImpl) unitAssignment.getLatestAssignment().getStatus();
+            AssignmentStatusImpl status = (AssignmentStatusImpl) unitAssignment.getLatestAssignment().status();
 
             String returned;
             if (incident.getStatus().getAttributes().isInProgress()) {
