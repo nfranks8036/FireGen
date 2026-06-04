@@ -31,6 +31,7 @@ public class FireGenVariables {
         this.assignmentStatusFile = "assignments.json";
         this.incidentStatusFile = "incident_status.json";
         this.locationPresetsFile = "locations.json";
+        this.radioChannelsFile = "radio_channels.json";
 
         this.usersFile = "users.json";
 
@@ -68,6 +69,7 @@ public class FireGenVariables {
     private String assignmentStatusFile;
     private String incidentStatusFile;
     private String locationPresetsFile;
+    private String radioChannelsFile;
 
     private String usersFile;
 

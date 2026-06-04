@@ -7,6 +7,7 @@ import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.RadioChannel;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
@@ -67,6 +68,8 @@ public class IncidentManager {
 
     @Getter List<LocationPreset> presetLocations = new ArrayList<>();
 
+    @Getter List<RadioChannel> radioChannels = new ArrayList<>();
+
     @Getter
     SystemMunicipalityImpl municipality;
     //</editor-fold>
@@ -82,6 +85,7 @@ public class IncidentManager {
         importer.importAssignmentStatuses(this);
         importer.importIncidentStatuses(this);
         importer.importLocationPresets(this);
+        importer.importRadioChannels(this);
     }
 
     /**

@@ -12,6 +12,7 @@ import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.IncidentStatusAttributes;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.AgencyType;
+import net.noahf.firegen.api.incidents.units.RadioChannel;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
@@ -19,6 +20,7 @@ import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.units.RadioChannelImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Log;
 
@@ -273,6 +275,35 @@ public class IncidentStructureImporter {
             }
 
             Log.info("Imported " + manager.getPresetLocations().size() + " preset locations.");
+        } catch (IOException exception) {
+            throw new IllegalStateException("IOException: " + exception, exception);
+        }
+    }
+
+    void importRadioChannels(IncidentManager manager) {
+        FireGenVariables vars = manager.getFireGenVariables();
+        String file = vars.municipality() + "/" + vars.radioChannelsFile();
+        try
+                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
+        {
+            if (input == null) {
+                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
+            }
+
+            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
+            for (JsonElement element : array.asList()) {
+                JsonObject object = element.getAsJsonObject();
+
+                String name = object.get("name").getAsString();
+                String alphaTag = object.get("alpha_tag").getAsString();
+                int talkgroupId = object.get("talkgroup_id").getAsInt();
+
+                RadioChannel channel = new RadioChannelImpl(name, alphaTag, talkgroupId);
+
+                manager.radioChannels.add(channel);
+            }
+
+            Log.info("Imported radio channels " + String.join(", ", manager.radioChannels));
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }
