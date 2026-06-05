@@ -8,12 +8,12 @@ public interface IncidentType extends Identifiable {
 
     IncidentTypeTag getTag();
 
+    int getPriorityChoice();
+
     int getQualifierChoice();
 
 
 
     String getSelectedName();
-
-    String getSelectedPriority();
 
 }

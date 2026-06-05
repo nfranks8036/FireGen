@@ -52,8 +52,8 @@ public class FireGenVariables {
             @Override public String getType() { return ">NEW<"; }
             @Override public IncidentTypeTag getTag() { return FireGenVariables.this.defaultTag; }
             @Override public int getQualifierChoice() { return 0; }
+            @Override public int getPriorityChoice() { return 0; }
             @Override public String getSelectedName() { return this.getType(); }
-            @Override public String getSelectedPriority() { return ""; }
             @Override public long getId() { return 0; }
         };
 

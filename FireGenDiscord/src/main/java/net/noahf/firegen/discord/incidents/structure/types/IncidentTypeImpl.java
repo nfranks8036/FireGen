@@ -31,17 +31,17 @@ public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
     }
 
     @Override
+    public int getPriorityChoice() {
+        return Integer.MIN_VALUE;
+    }
+
+    @Override
     public String getSelectedName() {
         try {
             return tag.findTypeOptions(this.type).get(this.qualifierChoice);
         } catch (NullPointerException nullPointerException) {
             return null;
         }
-    }
-
-    @Override
-    public String getSelectedPriority() {
-        return " ";
     }
 
     @Override
