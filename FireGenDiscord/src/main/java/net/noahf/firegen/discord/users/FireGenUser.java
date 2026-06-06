@@ -1,6 +1,12 @@
 package net.noahf.firegen.discord.users;
 
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.entities.User;
@@ -10,16 +16,26 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Getter
 @RequiredArgsConstructor
+@Entity
 public class FireGenUser implements Contributor<User> {
 
+    @Id
     private final long id;
-    private final String name;
-    private final String displayName;
-    private final User userObject;
-    private @Accessors(fluent = true) final boolean isFromJson;
 
+    private final String name;
+
+    private final String displayName;
+
+    private transient final User userObject;
+
+    @Accessors(fluent = true)
+    private transient final boolean isFromJson;
+
+    @ElementCollection
+    @Enumerated
     private final List<Permission> permissions = new ArrayList<>(List.of(Permission.DEFAULT));
 
     public boolean hasPermission(Permission permission, Permission... andPermission) {
@@ -51,6 +67,7 @@ public class FireGenUser implements Contributor<User> {
     @Override
     @NotNull
     public String toString() {
+        if (this.name == null) return "[Unknown User]";
         return this.name;
     }
 }

@@ -1,8 +1,7 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -14,18 +13,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-@AllArgsConstructor
 @EqualsAndHashCode(of = "ordinal")
+@AllArgsConstructor @NoArgsConstructor
+@Getter
+@Entity @Table(name = "units")
 public class UnitImpl implements Unit {
 
-    private @Getter String shorthand;
-    private @Getter String longhand;
-    private String formatted;
-    private @Getter Emoji emoji;
-    private @Getter AgencyType agencyType;
-    private @Getter @Accessors(fluent = true) int ordinal;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private @Getter SelectOption selectOption;
+    private String shorthand;
+    private String longhand;
+    private @Getter(value = AccessLevel.NONE) String formatted;
+    private transient Emoji emoji;
+    private @Enumerated AgencyType agencyType;
+    private @Accessors(fluent = true) int ordinal;
+
+    private transient @Getter SelectOption selectOption;
 
     private transient @Getter final Set<UnitAssignment> assignments = new LinkedHashSet<>();
 

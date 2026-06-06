@@ -1,29 +1,47 @@
 package net.noahf.firegen.discord.incidents.structure;
 
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.utilities.IdGenerator;
+import net.noahf.firegen.discord.users.FireGenUser;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@NoArgsConstructor(force = true)
+@Getter
+@Entity
 public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     private static final String NARRATIVE_TIME_FORMAT = "HH:mm";
 
-    private final @Getter long id;
-    private final @Getter LocalDateTime time;
-    private final @Getter Contributor user;
-    private final @Getter String entry;
+    @Id
+    private final long id;
 
-    private @Getter @Setter IncidentLogEntry.EntryType type;
+    private final LocalDateTime time;
 
-    IncidentLogEntryImpl(LocalDateTime time, Contributor user, String entry, IncidentLogEntry.EntryType type) {
+    @OneToOne(cascade = CascadeType.ALL)
+    private final FireGenUser user;
+
+    private final String entry;
+
+    @Setter
+    @Enumerated
+    private IncidentLogEntry.EntryType type;
+
+    IncidentLogEntryImpl(LocalDateTime time, Contributor<?> user, String entry, IncidentLogEntry.EntryType type) {
+        if (!(user instanceof FireGenUser fireGenUser)) {
+            throw new IllegalArgumentException("Expected user to be of type " + FireGenUser.class + ": " + user.toString());
+        }
+
         this.id = IdGenerator.generateNarrativeId(this);
         this.time = time;
-        this.user = user;
+        this.user = fireGenUser;
         this.entry = entry.toUpperCase()
                 .strip()
                 .replace("\n", "") // don't allow newLine characters

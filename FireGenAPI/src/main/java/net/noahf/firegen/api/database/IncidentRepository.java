@@ -12,15 +12,13 @@ public interface IncidentRepository {
 
     Incident save(Incident incident);
 
-    List<Incident> save(Incident... incidents);
-
     void delete(long id);
 
     void delete(Incident incident);
 
     Optional<Incident> findIncidentByNumber(String incidentNumber);
 
-    Optional<Incident> findIncidentById(int id);
+    Optional<Incident> findIncidentById(long id);
 
     List<Incident> search(IncidentQuery query);
 

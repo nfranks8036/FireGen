@@ -1,9 +1,7 @@
 package net.noahf.firegen.discord.incidents.structure.location;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
@@ -18,8 +16,9 @@ import java.util.StringJoiner;
 /**
  * Represents a location of an {@link IncidentImpl Incident}.
  */
-@AllArgsConstructor
-@Getter
+@NoArgsConstructor(force = true)
+@Getter @Setter
+@Entity
 public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSequence {
 
     /**
@@ -27,6 +26,13 @@ public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSeq
      */
     public IncidentLocationImpl(List<String> custom) {
         this(custom, LocationType.CUSTOM, null, null);
+    }
+
+    public IncidentLocationImpl(List<String> data, LocationType type, @Nullable String commonName, @Nullable LocationVenue venue) {
+        this.data = data;
+        this.type = type;
+        this.commonName = commonName;
+        this.venue = venue;
     }
 
 //    /**
@@ -72,10 +78,23 @@ public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSeq
 //                    .build()
 //    );
 
-    private @Setter(value = AccessLevel.PROTECTED) List<String> data;
-    private @Setter(value = AccessLevel.PROTECTED) LocationType type;
-    private @Nullable @Setter String commonName;
-    private @Nullable @Setter LocationVenue venue;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id = 0L;
+
+    @Setter(value = AccessLevel.PROTECTED)
+    private List<String> data;
+
+    @Setter(value = AccessLevel.PROTECTED)
+    @Enumerated
+    private LocationType type;
+
+    @Nullable
+    private String commonName;
+
+    @Nullable
+    @OneToOne(targetEntity = LocationVenueImpl.class, cascade = CascadeType.ALL)
+    private LocationVenue venue;
+
 
     @Override
     public boolean isSet() {

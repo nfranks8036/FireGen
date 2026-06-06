@@ -114,6 +114,7 @@ public class IncidentStructureImporter {
                 Emoji emoji = emojiStr != null ? Emoji.fromFormatted(emojiStr) : null;
 
                 manager.units.add(new UnitImpl(
+                        0L,
                         shorthand, longhand, format, emoji, AgencyType.OTHER,
                         i,
                         SelectOption.of(longhand, shorthand)

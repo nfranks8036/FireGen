@@ -40,20 +40,47 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private final transient @Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
             IncidentManager manager;
 
-    private
     @Getter
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    final long id;
+    @Id
+    private final long id;
 
-    private transient IncidentStatus status;
-    private transient @NotNull IncidentType type;
-    private transient @Getter Set<UnitAssignment> unitAssignments;
-    private transient @Getter @NotNull IncidentLocation location;
-    private transient @Getter @NotNull IncidentTime time;
-    private transient @Getter @NotNull IncidentPublishedStatus published;
+    @OneToOne(
+            targetEntity = IncidentStatusImpl.class, cascade = CascadeType.ALL
+    )
+    private IncidentStatus status;
 
-    private transient @Getter List<IncidentLogEntry> log;
-    private transient @Getter List<Contributor<?>> contributors;
+    @OneToOne(
+            targetEntity = IncidentTypeImpl.class, cascade = CascadeType.ALL
+    )
+    @NotNull
+    private IncidentType type;
+
+    @OneToMany(
+            targetEntity = UnitAssignmentImpl.class, cascade = CascadeType.ALL
+    )
+    private Set<UnitAssignment> unitAssignments;
+
+    @NotNull
+    @OneToOne(
+            targetEntity = IncidentLocationImpl.class, cascade = CascadeType.ALL
+    )
+    private IncidentLocation location;
+
+    @NotNull
+    @OneToOne(
+            targetEntity = IncidentTimeImpl.class, cascade = CascadeType.ALL
+    )
+    private IncidentTime time;
+
+    @NotNull
+    @Enumerated
+    private IncidentPublishedStatus published;
+
+    @OneToMany(targetEntity = IncidentLogEntryImpl.class, cascade = CascadeType.ALL)
+    private List<IncidentLogEntry> log;
+
+    @OneToMany(targetEntity = FireGenUser.class, cascade = CascadeType.ALL)
+    private List<Contributor<?>> contributors;
 
     private transient @Getter IncidentMessagingService messagingService;
 

@@ -1,7 +1,6 @@
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version "8.1.1"
-    id 'org.hibernate.orm' version "7.3.2.Final"
 }
 
 group = 'net.noahf.firegen.discord'
@@ -26,6 +25,13 @@ dependencies {
     // lombok used to simplify boiler-plate
     compileOnly("org.projectlombok:lombok:1.18.44")
     annotationProcessor("org.projectlombok:lombok:1.18.44")
+
+    // database structuring
+    implementation 'jakarta.data:jakarta.data-api:1.0.1'
+    implementation 'org.hibernate.orm:hibernate-core:7.4.0.Final'
+    implementation 'org.hibernate.orm:hibernate-processor:7.4.0.Final'
+    implementation 'org.postgresql:postgresql'
+    annotationProcessor 'org.hibernate.orm:hibernate-processor:7.4.0.Final'
 }
 
 shadowJar {
