@@ -1,6 +1,7 @@
 package net.noahf.firegen.discord.incidents;
 
 import lombok.Getter;
+import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
@@ -11,6 +12,8 @@ import net.noahf.firegen.api.incidents.units.RadioChannel;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.incidents.structure.IncidentTimeImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
@@ -20,6 +23,7 @@ import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,6 +91,15 @@ public class IncidentManager {
         importer.importIncidentStatuses(this);
         importer.importLocationPresets(this);
         importer.importRadioChannels(this);
+
+        Main.database.getDatabase().save(
+                new IncidentImpl(
+                        this, 15, getIncidentTypes().getFirst(),
+                        new IncidentLocationImpl(List.of("415 OAK LN")),
+                        new IncidentTimeImpl(LocalDateTime.now()),
+                        IncidentPublishedStatus.UNPUBLISHED
+                )
+        );
     }
 
     /**

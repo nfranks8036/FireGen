@@ -1,33 +1,41 @@
 package net.noahf.firegen.discord.database;
 
 import jakarta.data.repository.*;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.noahf.firegen.api.database.IncidentQuery;
 import net.noahf.firegen.api.database.IncidentRepository;
 import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface IncidentDatabase extends IncidentRepository {
+@Repository @Transactional
+public interface IncidentDatabase {
 
-    @Override
     @Save
-    Incident save(Incident incident);
+    IncidentImpl save(IncidentImpl incident);
 
-    @Override
     @Delete
     void delete(long id);
 
-    @Override
     @Delete
-    void delete(Incident incident);
+    void delete(IncidentImpl incident);
 
-    @Override
-    default Optional<Incident> findIncidentByNumber(String incidentNumber) {
+    @Find
+    Optional<IncidentImpl> findIncidentById(long id);
+
+    @Find
+    List<IncidentImpl> findByStatus(IncidentStatus status);
+
+
+    default Optional<IncidentImpl> findIncidentByNumber(String incidentNumber) {
         final String INVALID_FORM = "Invalid form of incident number. Expected: YYYY-IIIIIIII, where Y is the year and I is the identifier.";
 
         long id;
@@ -45,7 +53,4 @@ public interface IncidentDatabase extends IncidentRepository {
         return this.findIncidentById(id);
     }
 
-    @Override
-    @Find
-    Optional<Incident> findIncidentById(@By(value = "id") long id);
 }

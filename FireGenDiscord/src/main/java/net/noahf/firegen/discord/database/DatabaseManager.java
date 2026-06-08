@@ -1,23 +1,40 @@
 package net.noahf.firegen.discord.database;
 
+import jakarta.inject.Inject;
 import lombok.Getter;
-import net.noahf.firegen.api.database.IncidentRepository;
 import net.noahf.firegen.discord.database.errors.GenerateSessionFailure;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentTimeImpl;
+import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
+import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
+import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagQualifierListImpl;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.units.RadioChannelImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Manager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.spi.InjectService;
 
 @Getter
 public class DatabaseManager extends Manager<DatabaseManager> {
 
-    private Configuration config;
-    private Session session;
+    private final Configuration config;
 
-    private IncidentRepository repository;
+    private SessionFactory factory;
+
+    @Inject
+    private IncidentDatabase database;
 
     public DatabaseManager() {
         super(DatabaseManager.class, "Database");
@@ -29,19 +46,37 @@ public class DatabaseManager extends Manager<DatabaseManager> {
         this.config = new Configuration();
         this.config.configure();
 
-        this.repository = new IncidentDatabase(this);
-
-        this.generateSession();
+        this.setUp();
 
         Log.info("-".repeat(20) + " [ DATABASE END ] " + "-".repeat(20));
     }
 
-    private void generateSession() {
-        try (SessionFactory factory = this.config.buildSessionFactory()) {
-            this.session = factory.openSession();
+    private void setUp() {
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure()
+                .applySetting("hibernate.hbm2ddl.auto", "update")
+                .applySetting("hibernate.show_sql", true)
+                .applySetting("hibernate.format_sql", true)
+                .build();
+        try {
+            this.factory = new MetadataSources(registry)
+                    .addAnnotatedClasses(
+                            IncidentImpl.class, IncidentLogEntryImpl.class, IncidentStatusImpl.class,
+                            IncidentTimeImpl.class, IncidentLocationImpl.class, LocationVenueImpl.class,
+                            IncidentTypeImpl.class, IncidentTypeTagImpl.class, IncidentTypeTagQualifierListImpl.class,
+                            AssignmentStatusImpl.class, RadioChannelImpl.class, UnitAssignmentImpl.class,
+                            UnitImpl.class
+                    )
+                    .buildMetadata()
+                    .buildSessionFactory();
         } catch (Exception exception) {
+            StandardServiceRegistryBuilder.destroy(registry);
             throw new GenerateSessionFailure(exception);
         }
+    }
+
+    private Session generateSession() {
+        return this.factory.openSession();
     }
 
 }
