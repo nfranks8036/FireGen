@@ -91,15 +91,6 @@ public class IncidentManager {
         importer.importIncidentStatuses(this);
         importer.importLocationPresets(this);
         importer.importRadioChannels(this);
-
-        Main.database.getDatabase().save(
-                new IncidentImpl(
-                        this, 15, getIncidentTypes().getFirst(),
-                        new IncidentLocationImpl(List.of("415 OAK LN")),
-                        new IncidentTimeImpl(LocalDateTime.now()),
-                        IncidentPublishedStatus.UNPUBLISHED
-                )
-        );
     }
 
     /**
