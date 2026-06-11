@@ -220,7 +220,7 @@ public class AdminMessageSender extends MessageSender {
         this.getComponents().set(0, ActionRow.of(
                 Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
                 Button.danger(super.getIncident().createInteractionIdString("status"), "Close Incident"),
-                Button.danger(super.getIncident().createInteractionIdString("publish"), super.getButtonText(status))
+                Button.danger(super.getIncident().createInteractionIdString("publish"), super.getButtonText(status.opposite()))
         ));
     }
 }
