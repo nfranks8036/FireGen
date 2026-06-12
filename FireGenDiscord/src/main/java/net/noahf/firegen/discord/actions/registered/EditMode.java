@@ -42,10 +42,16 @@ public class EditMode implements ButtonAction {
         Incident incident = ctx.getIncident();
 
         editIncidents.put(event.getUser(), incident);
-        DiscordMessages.selfDestruct(event, 5,
-                "You're now editing the incident " +
-                        incident.getFormattedId() + " (" + incident.getType().getSelectedName() + "). "
-                + "Type `/set-details` to change the incident details in command format."
-        );
+
+        // we don't need to keep telling the user this
+        if (!editIncidents.containsKey(event.getUser())) {
+
+            DiscordMessages.selfDestruct(event, 5,
+                    "You're now editing the incident " +
+                            incident.getFormattedId() + " (" + incident.getType().getSelectedName() + "). "
+                            + "Type `/set-details` to change the incident details in command format."
+            );
+
+        } else DiscordMessages.noMessage(event);
     }
 }

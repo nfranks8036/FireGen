@@ -2,12 +2,14 @@ package net.noahf.firegen.discord.utilities;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.callbacks.IMessageEditCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -34,8 +36,8 @@ public class DiscordMessages {
         }
 
         if (event.isAcknowledged()) {
-            // if this interaction has already been acknowledged, then we can't reply again so we must instead edit
             event.getHook().editOriginalEmbeds(responseBuilder.build()).queue();
+            // if this interaction has already been acknowledged, then we can't reply again so we must instead edit
         } else {
             // if the interaction has never been acknowledged, we can safely send a reply embed
             event.replyEmbeds(responseBuilder.build()).setEphemeral(true).queue();

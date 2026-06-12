@@ -165,6 +165,7 @@ public class CreateIncident extends Command {
         };
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static class Helper {
         static boolean setLocation(IncidentImpl incident, IReplyCallback event, OptionMapping locationOption) {
             if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_LOCATION)) {
@@ -177,7 +178,9 @@ public class CreateIncident extends Command {
             IncidentLocation location = Main.incidents.getPresetByAnyName(locationOption.getAsString());
             if (location == null) {
                 if (!Main.users.hasPermission(event.getUser(), Permission.USE_CUSTOM_LOCATION)) {
-                    return true;
+                    DiscordMessages.error(event, "You don't have permission to set a custom location, " +
+                            "so the location was not set. Please use a preset or the buttons.");
+                    return false;
                 }
 
                 location = new IncidentLocationImpl(List.of(locationOption.getAsString()));
@@ -205,6 +208,7 @@ public class CreateIncident extends Command {
 
             String[] unitsList = unitsString.split(",");
 
+            boolean returned = true;
             Map<AssignmentStatus, EditUnits.UnitsChangeInput> units = new HashMap<>();
             for (String optionItem : unitsList) {
                 String unitString = optionItem;
@@ -218,9 +222,19 @@ public class CreateIncident extends Command {
 
                 // required syntax of command is the shorthand. e.g., "BFD,BVRS:DSP,SUP5:ENR,BPD,VTPD"
                 Unit a = Main.incidents.getUnitByShorthand(unitString);
-                if (a == null) continue;
+                if (a == null) {
+                    DiscordMessages.error(event, "No unit exist by the name '" + unitString + "'");
+                    returned = false;
+                    continue;
+                }
 
                 AssignmentStatus s = Main.incidents.getAssignmentStatusByShortName(statusString);
+                if (s == null) {
+                    s = AssignmentStatusImpl.HIDE_STATUS;
+                    DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +
+                            " defaulting to " + s.getShortName() + " for " + a.getShorthand());
+                    returned = false;
+                }
 
                 EditUnits.UnitsChangeInput input = units.getOrDefault(s, new EditUnits.UnitsChangeInput(new ArrayList<>(), s));
                 List<Unit> inputUnits = input.getUnits();
@@ -233,7 +247,7 @@ public class CreateIncident extends Command {
                 action.onSubmit(incident, event, entry.getValue());
             }
 
-            return true;
+            return returned;
         }
 
         static boolean setDateTime(IncidentImpl incident, IReplyCallback event, OptionMapping dateOption, OptionMapping timeOption) {

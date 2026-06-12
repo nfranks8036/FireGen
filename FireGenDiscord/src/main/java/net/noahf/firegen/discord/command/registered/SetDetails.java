@@ -50,6 +50,7 @@ public class SetDetails extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
+        event.deferReply().setEphemeral(true).queue();
         IncidentImpl incident = (IncidentImpl) EditMode.editIncidents.get(event.getUser());
 
         if (incident == null) {
@@ -103,9 +104,7 @@ public class SetDetails extends Command {
             return;
         }
 
-        DiscordMessages.selfDestruct(event, 5,
-                "Those details have been changed if they were able to. Check the Incident Log for information."
-        );
+        DiscordMessages.noMessage(event);
     }
 
     @Override
