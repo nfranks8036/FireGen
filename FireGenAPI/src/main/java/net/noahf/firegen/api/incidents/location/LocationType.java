@@ -39,7 +39,7 @@ public enum LocationType {
             newField("Mile-Marker / Landmark", "The mile-marker or landmark. Add 'MM' before a mile-marker.", "milemarker-landmark", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(1)
-                    .setMaxLength(20)
+                    .setMaxLength(40)
                     .setPlaceholder("Ex: MM 114 *OR* Exit 5")
                     .build(),
             VENUE

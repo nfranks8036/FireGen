@@ -54,6 +54,7 @@ public class AdminMessageSender extends MessageSender {
                 ActionRow.of(
                         Button.secondary("firegen-disabled-narrative", "Narrative:").asDisabled(),
                         Button.success(super.getIncident().createInteractionIdString("addnarrative"), "Add"),
+                        Button.primary(super.getIncident().createInteractionIdString("notate"), "Notate"),
                         Button.danger(super.getIncident().createInteractionIdString("hidenarrative"), "Hide")
                 )
         )));

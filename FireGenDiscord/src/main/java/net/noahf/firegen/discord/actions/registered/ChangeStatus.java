@@ -6,6 +6,7 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
@@ -14,6 +15,8 @@ import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
+
+import java.util.ArrayList;
 
 /**
  * Represents the "Close Incident" or "Re-open Incident" buttons in the Status row.
@@ -46,9 +49,6 @@ public class ChangeStatus implements ButtonAction {
         StatusAttribute searchFor;
         if (incident.getStatus().getAttributes().isInProgress()) {
             searchFor = StatusAttribute.CLOSED;
-            incident.getUnitAssignments().forEach(ua -> {
-                incident.removeUnit(ua.getUnit());
-            });
         } else {
             searchFor = incident.getUnitAssignments().isEmpty() ? StatusAttribute.DEFAULT : StatusAttribute.ACTIVE;
         }

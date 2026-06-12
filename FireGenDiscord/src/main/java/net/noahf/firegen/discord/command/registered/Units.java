@@ -72,11 +72,17 @@ public class Units extends Command {
 
             table = table
                     .row(time.toEpochSecond(ZoneOffset.UTC), status.getAnsiColor(),
-                            time.format(DateTimeFormatter.ofPattern(Main.incidents.getFireGenVariables().longTimeFormat())),
+                            time.format(DateTimeFormatter.ofPattern(
+                                    Main.incidents.getFireGenVariables().dateFormat() + " " +
+                                    Main.incidents.getFireGenVariables().longTimeFormat()
+                            )),
                             unit.getShorthand(),
                             status.getName(),
-                            incident.getType().toString(),
-                            ((IncidentLocationImpl)incident.getLocation()).getRequiredData(null)
+                            DiscordMessages.truncate(incident.getType().toString(), 21, "..."),
+                            DiscordMessages.truncate(
+                                    ((IncidentLocationImpl)incident.getLocation()).getRequiredData(null),
+                                    24, "..."
+                            )
                     );
         }
 

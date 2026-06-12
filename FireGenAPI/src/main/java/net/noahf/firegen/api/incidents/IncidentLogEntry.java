@@ -28,6 +28,7 @@ public interface IncidentLogEntry extends Identifiable {
         UPDATE,
         UNIT,
         NARRATIVE,
+        NOTE,
         HIDDEN;
 
 //        private static final int MAX_LENGTH = Arrays.stream(EntryType.values())

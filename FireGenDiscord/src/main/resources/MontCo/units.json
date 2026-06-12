@@ -31,12 +31,6 @@
     "emoji": "<:bvrs:1449916532770476134>"
   },
   {
-    "short": "SUP5",
-    "long": "SUPERVISOR 5",
-    "format": "Supervisor 5",
-    "emoji": "<:bvrs:1449916532770476134>"
-  },
-  {
     "short": "LMFD",
     "long": "LONGSHOP-MCCOY FIRE DEPARTMENT",
     "format": "Longshop-McCoy Fire",
@@ -55,12 +49,6 @@
     "emoji": "<:crs:1449927312861565142>"
   },
   {
-    "short": "SUP9",
-    "long": "SUPERVISOR 9",
-    "format": "Supervisor 9",
-    "emoji": "<:crs:1449927312861565142>"
-  },
-  {
     "short": "RVRS",
     "long": "RINER VOLUNTEER RESCUE SQUAD",
     "format": "Riner Rescue",
@@ -73,21 +61,9 @@
     "emoji": "<:mcfr:1449929970926358649>"
   },
   {
-    "short": "SUP13",
-    "long": "SUPERVISOR 13",
-    "format": "Supervisor 13",
-    "emoji": "<:mcfr:1449929970926358649>"
-  },
-  {
     "short": "VTRS",
     "long": "VIRGINIA TECH RESCUE SQUAD",
     "format": "Virginia Tech Rescue",
-    "emoji": "<:vtrs:1449920222940369018>"
-  },
-  {
-    "short": "SUP15",
-    "long": "SUPERVISOR 15",
-    "format": "Supervisor 15",
     "emoji": "<:vtrs:1449920222940369018>"
   },
 
@@ -204,6 +180,7 @@
   {"short": "E49", "long": "RFD ENGINE 49", "format": "Engine 49", "emoji": "<:rfd:1449932933665128468>"},
   {"short": "T48", "long": "RFD TANKER 48", "format": "Tanker 48", "emoji": "<:rfd:1449932933665128468>"},
 
+  {"short": "SUP5", "long": "BVRS SUPERVISOR 5", "format": "Supervisor 5", "emoji": "<:bvrs:1449916532770476134>"},
   {"short": "R51", "long": "BVRS RESCUE 51", "format": "Rescue 51", "emoji": "<:bvrs:1449916532770476134>"},
   {"short": "R52", "long": "BVRS RESCUE 52", "format": "Rescue 52", "emoji": "<:bvrs:1449916532770476134>"},
   {"short": "R53", "long": "BVRS RESCUE 53", "format": "Rescue 53", "emoji": "<:bvrs:1449916532770476134>"},
@@ -244,6 +221,7 @@
   {"short": "B83", "long": "CFD BRUSH 83", "format": "Brush 83", "emoji": "<:cfd:1449926970296107150>"},
   {"short": "B86", "long": "CFD BRUSH 86", "format": "Brush 86", "emoji": "<:cfd:1449926970296107150>"},
 
+  {"short": "SUP9", "long": "CRS SUPERVISOR 9", "format": "Supervisor 9", "emoji": "<:crs:1449927312861565142>"},
   {"short": "R90", "long": "CRS RESCUE 90", "format": "Rescue 90", "emoji": "<:crs:1449927312861565142>"},
   {"short": "R91", "long": "CRS RESCUE 91", "format": "Rescue 91", "emoji": "<:crs:1449927312861565142>"},
   {"short": "R92", "long": "CRS RESCUE 92", "format": "Rescue 92", "emoji": "<:crs:1449927312861565142>"},
@@ -261,24 +239,27 @@
   {"short": "RP98", "long": "CRS RESPONSE 98", "format": "Response 98", "emoji": "<:crs:1449927312861565142>"},
 
 
-  {"short": "R11-1", "long": "RESCUE 11-1", "format": "Rescue 11-1", "emoji": "<:rvrs:1449934079620288558>"},
-  {"short": "R11-2", "long": "RESCUE 11-2", "format": "Rescue 11-2", "emoji": "<:rvrs:1449934079620288558>"},
-  {"short": "R11-3", "long": "RESCUE 11-3", "format": "Rescue 11-3", "emoji": "<:rvrs:1449934079620288558>"},
-  {"short": "M11-1", "long": "MEDIC 11-1", "format": "Medic 11-1", "emoji": "<:rvrs:1449934079620288558>"},
-  {"short": "M11-2", "long": "MEDIC 11-2", "format": "Medic 11-2", "emoji": "<:rvrs:1449934079620288558>"},
-  {"short": "M11-3", "long": "MEDIC 11-3", "format": "Medic 11-3", "emoji": "<:rvrs:1449934079620288558>"},
-  {"short": "RP11-5", "long": "RESPONSE 11-5", "format": "Response 11-5", "emoji": "<:rvrs:1449934079620288558>"},
-  {"short": "UTV11-6", "long": "UTV 11-6", "format": "UTV 11-6", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "SUP11", "long": "RVRS SUPERVISOR 11", "format": "Supervisor 11", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "R11-1", "long": "RVRS RESCUE 11-1", "format": "Rescue 11-1", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "R11-2", "long": "RVRS RESCUE 11-2", "format": "Rescue 11-2", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "R11-3", "long": "RVRS RESCUE 11-3", "format": "Rescue 11-3", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "M11-1", "long": "RVRS MEDIC 11-1", "format": "Medic 11-1", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "M11-2", "long": "RVRS MEDIC 11-2", "format": "Medic 11-2", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "M11-3", "long": "RVRS MEDIC 11-3", "format": "Medic 11-3", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "RP11-5", "long": "RVRS RESPONSE 11-5", "format": "Response 11-5", "emoji": "<:rvrs:1449934079620288558>"},
+  {"short": "UTV11-6", "long": "RVRS UTV 11-6", "format": "UTV 11-6", "emoji": "<:rvrs:1449934079620288558>"},
 
 
-  {"short": "M13-1", "long": "MEDIC 13-1", "format": "Medic 13-1", "emoji": "<:mcfr:1449929970926358649>"},
-  {"short": "M13-2", "long": "MEDIC 13-2", "format": "Medic 13-2", "emoji": "<:mcfr:1449929970926358649>"},
-  {"short": "M13-3", "long": "MEDIC 13-3", "format": "Medic 13-3", "emoji": "<:mcfr:1449929970926358649>"},
-  {"short": "M13-4", "long": "MEDIC 13-4", "format": "Medic 13-4", "emoji": "<:mcfr:1449929970926358649>"},
-  {"short": "M13-5", "long": "MEDIC 13-5", "format": "Medic 13-5", "emoji": "<:mcfr:1449929970926358649>"},
-  {"short": "M13-6", "long": "MEDIC 13-6", "format": "Medic 13-6", "emoji": "<:mcfr:1449929970926358649>"},
+  {"short": "SUP13", "long": "MCFR SUPERVISOR 13", "format": "Supervisor 13", "emoji": "<:mcfr:1449929970926358649>"},
+  {"short": "M13-1", "long": "MCFR MEDIC 13-1", "format": "Medic 13-1", "emoji": "<:mcfr:1449929970926358649>"},
+  {"short": "M13-2", "long": "MCFR MEDIC 13-2", "format": "Medic 13-2", "emoji": "<:mcfr:1449929970926358649>"},
+  {"short": "M13-3", "long": "MCFR MEDIC 13-3", "format": "Medic 13-3", "emoji": "<:mcfr:1449929970926358649>"},
+  {"short": "M13-4", "long": "MCFR MEDIC 13-4", "format": "Medic 13-4", "emoji": "<:mcfr:1449929970926358649>"},
+  {"short": "M13-5", "long": "MCFR MEDIC 13-5", "format": "Medic 13-5", "emoji": "<:mcfr:1449929970926358649>"},
+  {"short": "M13-6", "long": "MCFR MEDIC 13-6", "format": "Medic 13-6", "emoji": "<:mcfr:1449929970926358649>"},
 
 
+  {"short": "SUP15", "long": "VTRS SUPERVISOR 15", "format": "Supervisor 15", "emoji": "<:vtrs:1449920222940369018>"},
   {"short": "R15-3", "long": "VTRS RESCUE 15-3", "format": "Rescue 15-3", "emoji": "<:vtrs:1449920222940369018>"},
   {"short": "R15-4", "long": "VTRS RESCUE 15-4", "format": "Rescue 15-4", "emoji": "<:vtrs:1449920222940369018>"},
   {"short": "R15-5", "long": "VTRS RESCUE 15-5", "format": "Rescue 15-5", "emoji": "<:vtrs:1449920222940369018>"},
