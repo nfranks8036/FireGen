@@ -56,7 +56,7 @@ public class UnitImpl implements Unit {
     }
 
     public String getFormattedStatus(AssignmentStatusImpl status) {
-        if (status != null && status.getEmoji() != null && !status.equals(AssignmentStatusImpl.HIDE_STATUS)) {
+        if (status != null && status.getEmoji() != null && !status.equals(AssignmentStatusImpl.ADD_UNIT)) {
             return (this.emoji != null ? emoji.getFormatted() + " " : "") +
                     status.getEmoji().getFormatted() + " " +
                     this.formatted;

@@ -195,12 +195,14 @@
     {"name": "ALARM TESTING", "tag": "GENERIC"},
     {"name": "AIRPLANE CRASH", "tag": "GENERIC"},
 
+    {"name": "TRAINING", "tag": "GENERIC"},
+
     {"name": "COMMUNITY EVENT", "tag": "GENERIC"},
     {"name": "COMMUNITY EVENT - PARK WALK AND TALK", "tag": "GENERIC"},
-    {"name": "COMMUNITY EVENT - EDUCATIONAL", "tag": "GENERIC"},
-    {"name": "COMMUNITY EVENT - RECREATIONAL", "tag": "GENERIC"},
-    {"name": "COMMUNITY EVENT - OUT OF JURISDICTION", "tag": "GENERIC"},
+    {"name": "COMMUNITY EVENT - EDUCATION", "tag": "GENERIC"},
+    {"name": "COMMUNITY EVENT - RECREATION", "tag": "GENERIC"},
     {"name": "COMMUNITY EVENT - TRAINING", "tag": "GENERIC"},
+    {"name": "COMMUNITY EVENT - OUT OF JURISDICTION", "tag": "GENERIC"},
 
     {"name": "TEST CALL", "tag":  "GENERIC"}
   ],

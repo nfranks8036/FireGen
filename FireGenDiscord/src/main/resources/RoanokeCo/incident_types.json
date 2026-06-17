@@ -125,6 +125,7 @@
 
     {"name": "ALSPD", "tag": "EMS"},
     {"name": "ALSC", "tag": "EMS"},
+    {"name": "ALSF", "tag": "EMS"},
     {"name": "ALS", "tag": "EMS"},
     {"name": "BLS", "tag": "EMS"},
     {"name": "ESERVICE", "tag": "EMS"},

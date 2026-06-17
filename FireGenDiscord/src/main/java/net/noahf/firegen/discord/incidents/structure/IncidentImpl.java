@@ -261,6 +261,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         if (elapsed > ELAPSED_TIME_THRESHOLD) {
             Log.info("Took " + elapsed + "ms to update messages.");
         }
+
+        this.refreshStatus();
     }
 
 }

@@ -184,7 +184,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
 
         IncidentImpl incident = (IncidentImpl) incidentValue;
         List<Unit> units = input.units;
-        AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatusImpl.HIDE_STATUS;
+        AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatusImpl.ADD_UNIT;
         Contributor<User> user = incident.addContributor(event.getUser());
 
         if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {

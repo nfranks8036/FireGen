@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.firegen.api.incidents.units.AssignmentStatus {
 
-    public static final AssignmentStatus HIDE_STATUS = new AssignmentStatusImpl(
+    public static final AssignmentStatus ADD_UNIT = new AssignmentStatusImpl(
             "ADDED", "ADD", null, new AnsiColor[] {AnsiColor.BACKGROUND_WHITE, AnsiColor.BLACK}, Integer.MIN_VALUE
     );
 
     public static final AssignmentStatus REMOVE_UNIT = new AssignmentStatusImpl(
-            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MIN_VALUE + 1
+            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MAX_VALUE
     );
 
     private final String name;

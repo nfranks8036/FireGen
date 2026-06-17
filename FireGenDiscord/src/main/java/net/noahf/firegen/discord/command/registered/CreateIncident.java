@@ -212,7 +212,7 @@ public class CreateIncident extends Command {
             Map<AssignmentStatus, EditUnits.UnitsChangeInput> units = new HashMap<>();
             for (String optionItem : unitsList) {
                 String unitString = optionItem;
-                String statusString = AssignmentStatusImpl.HIDE_STATUS.getShortName();
+                String statusString = AssignmentStatusImpl.ADD_UNIT.getShortName();
 
                 if (optionItem.contains(":")) {
                     String[] parts = optionItem.split(":");
@@ -230,7 +230,7 @@ public class CreateIncident extends Command {
 
                 AssignmentStatus s = Main.incidents.getAssignmentStatusByShortName(statusString);
                 if (s == null) {
-                    s = AssignmentStatusImpl.HIDE_STATUS;
+                    s = AssignmentStatusImpl.ADD_UNIT;
                     DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +
                             " defaulting to " + s.getShortName() + " for " + a.getShorthand());
                     returned = false;

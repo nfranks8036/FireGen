@@ -188,7 +188,7 @@ public class IncidentStructureImporter {
 
     void importAssignmentStatuses(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.assignmentStatusFile();
+        String file = vars.municipality() + "/" + vars.assignmentStatusFile();
         try
                 (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
         {
@@ -198,7 +198,7 @@ public class IncidentStructureImporter {
 
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
 
-            manager.assignmentStatuses.addAll(List.of(AssignmentStatusImpl.REMOVE_UNIT, AssignmentStatusImpl.HIDE_STATUS));
+            manager.assignmentStatuses.addAll(List.of(AssignmentStatusImpl.REMOVE_UNIT, AssignmentStatusImpl.ADD_UNIT));
             for (int i = 0; i < array.asList().size(); i++) {
                 JsonElement element = array.asList().get(i);
                 JsonObject object = element.getAsJsonObject();

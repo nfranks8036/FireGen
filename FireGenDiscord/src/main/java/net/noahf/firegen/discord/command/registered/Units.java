@@ -63,6 +63,7 @@ public class Units extends Command {
         AnsiTableBuilder table = new AnsiTableBuilder()
                 .header("time", "unit", "status", "incident type", "incident location")
                 .disallowDuplicateOnColumn(1);
+        long refreshed = Time.getUnix();
         for (UnitAssignment assignment : assignments) {
             Unit unit = assignment.getUnit();
             Incident incident = assignment.getIncident();
@@ -89,7 +90,7 @@ public class Units extends Command {
         ImmutablePair<String, Integer> returned = table.build(25);
         int amount = returned.getSecondElement();
 
-        return "Returned `" + (amount >= 25 ? "25`/`25" : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + (Time.getUnix()) + ":R>." +
+        return "Returned `" + (amount >= 25 ? "25`/`25" : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + refreshed + ":R>." +
                 "\n```ansi\n" + returned.getFirstElement() + "```";
     }
 

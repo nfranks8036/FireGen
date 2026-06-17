@@ -63,15 +63,20 @@ public class IdGenerator<T extends Identifiable> {
             );
         }
 
-        long newId = new Random(object.hashCode()).nextLong(origin, bound);
-
-        if (generatedIds.containsValue(newId)) {
-            // try again because clearly this value is already taken (rare but possible)
-            return id(object, length);
-        }
+        long newId = generate(new Random(object.hashCode()), origin, bound);
 
         generatedIds.put(object, newId);
         return newId;
+    }
+
+    private static long generate(Random random, long origin, long bound) {
+        long id = random.nextLong(origin, bound);
+        if (generatedIds.containsValue(id)) {
+            // try again because clearly this value is already taken (rare but possible)
+            System.err.println("Id '" + id + "' was already taken in range [" + origin + ", " + bound + ")");
+            return generate(random, origin, bound);
+        }
+        return id;
     }
 
 }
