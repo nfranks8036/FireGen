@@ -95,7 +95,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                                                 return a.getSelectOption();
                                             }
                                             return a.getSelectOption().withDescription(
-                                                    "Status: " + status.getLatestAssignment().status().getName()
+                                                    "Status: " + status.getLatestAssignment().getStatus().getName()
                                             );
                                         })
                                         .limit(StringSelectMenu.OPTIONS_MAX_AMOUNT)

@@ -6,11 +6,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
-import net.noahf.firegen.api.incidents.status.IncidentStatus;
-import net.noahf.firegen.api.incidents.status.IncidentStatusAttributes;
-import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.RadioChannel;
 import net.noahf.firegen.api.utilities.FireGenVariables;
@@ -236,21 +234,10 @@ public class IncidentStructureImporter {
                 JsonObject object = element.getAsJsonObject();
 
                 String name = object.get("name").getAsString();
-                String shortName = object.get("short").getAsString();
                 String leftEmoji = object.get("emojiLeft").getAsString();
                 String rightEmoji = object.get("emojiRight").getAsString();
-                List<StatusAttribute> attributesList = object.get("attributes").getAsJsonArray()
-                        .asList().stream()
-                        .map(JsonElement::getAsString)
-                        .map(StatusAttribute::valueOf)
-                        .toList();
 
-                IncidentStatusAttributes attributes = new IncidentStatusAttributes(attributesList);
-                IncidentStatus status = new IncidentStatusImpl(
-                        name, shortName, leftEmoji, rightEmoji, attributes
-                );
-
-                manager.incidentStatuses.add(status);
+                manager.incidentStatuses.add(new IncidentStatusEmoji(name, leftEmoji, rightEmoji));
             }
 
             Log.info("Imported incident statuses " + String.join(", ", manager.incidentStatuses));

@@ -11,16 +11,14 @@
         </property>
 
         <property name="hibernate.connection.url">
-            jdbc:postgresql://postgres:5432/firegen
+            jdbc:postgresql://localhost:5432/firegen
         </property>
 
         <property name="hibernate.connection.username">
-            firegen_user
+            root
         </property>
 
-        <property name="hibernate.connection.password">
-            HAHSDFQ!H(T!(@$GH!@($H@F
-        </property>
+        <property name="hibernate.connection.password">Jlnk1254$</property>
 
     </session-factory>
 </hibernate-configuration>

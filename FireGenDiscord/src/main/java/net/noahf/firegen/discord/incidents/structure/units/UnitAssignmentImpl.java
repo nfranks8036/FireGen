@@ -8,18 +8,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
-import net.noahf.firegen.discord.incidents.structure.IncidentStatusImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 @NoArgsConstructor(force = true)
 @Getter @EqualsAndHashCode(of = {"incident", "unit"})
@@ -59,7 +56,10 @@ public class UnitAssignmentImpl implements UnitAssignment {
     )
     private @Setter RadioChannel radioChannel;
 
-    private final List<AssignmentEvent> assignments;
+    @OneToMany(
+            targetEntity = AssignmentEventImpl.class, cascade = CascadeType.ALL
+    )
+    private List<AssignmentEvent> assignments;
 
     @Override
     public AssignmentEvent getLatestAssignment() {
@@ -67,7 +67,7 @@ public class UnitAssignmentImpl implements UnitAssignment {
     }
 
     public void assign(Contributor<?> contributor, AssignmentStatus newAssignment) {
-        this.assign(new AssignmentEvent(LocalDateTime.now(), newAssignment, contributor));
+        this.assign(new AssignmentEventImpl(LocalDateTime.now(), newAssignment, contributor));
     }
 
     public void assign(AssignmentEvent newEvent) {
@@ -80,6 +80,6 @@ public class UnitAssignmentImpl implements UnitAssignment {
     @Override
     @NotNull
     public String toString() {
-        return unit.getFormatted() + " (" + this.getLatestAssignment().status().getName() + ")";
+        return unit.getFormatted() + " (" + this.getLatestAssignment().getStatus().getName() + ")";
     }
 }

@@ -1,13 +1,34 @@
 package net.noahf.firegen.api.incidents.status;
 
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import net.noahf.firegen.api.incidents.Incident;
 
-public interface IncidentStatus extends AutofilledCharSequence {
+@AllArgsConstructor @Getter
+public enum IncidentStatus {
 
-    String getName();
+    PENDING("PND"),
 
-    String getShortName();
+    ACTIVE("ACT"),
 
-    IncidentStatusAttributes getAttributes();
+    CLOSED("CLO"),
+
+    CLOSED_TIMED_OUT("CTO");
+
+    private final String shortName;
+
+    public boolean isInProgress() {
+        return switch (this) {
+            case PENDING, ACTIVE -> true;
+            case CLOSED, CLOSED_TIMED_OUT -> false;
+        };
+    }
+
+    public IncidentStatus opposite(Incident incident) {
+        return switch (incident.getStatus()) {
+            case ACTIVE, PENDING -> CLOSED;
+            case CLOSED, CLOSED_TIMED_OUT -> PENDING;
+        };
+    }
 
 }

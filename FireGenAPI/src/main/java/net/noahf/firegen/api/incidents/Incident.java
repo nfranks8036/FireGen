@@ -1,6 +1,5 @@
 package net.noahf.firegen.api.incidents;
 
-import lombok.EqualsAndHashCode;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;

@@ -1,8 +1,8 @@
 package net.noahf.firegen.api.database;
 
 import net.noahf.firegen.api.incidents.Incident;
-import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
+import net.noahf.firegen.api.incidents.types.IncidentType;
 
 import java.time.LocalDateTime;
 import java.util.List;

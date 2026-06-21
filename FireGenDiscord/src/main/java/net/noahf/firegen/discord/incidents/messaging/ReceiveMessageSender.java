@@ -94,7 +94,7 @@ public class ReceiveMessageSender extends MessageSender {
 
         List<String> log = super.getService().getNarrativeFormatted(incident, false);
 
-        IncidentStatusImpl status = (IncidentStatusImpl) incident.getStatus();
+        IncidentStatusEmoji status = Main.incidents.getEmoji(incident.getStatus());
         IncidentTimeImpl time = (IncidentTimeImpl) incident.getTime();
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();
 
@@ -136,10 +136,10 @@ public class ReceiveMessageSender extends MessageSender {
 
         for (UnitAssignment unitAssignment : incident.getSortedAssignments()) {
             Unit unit = unitAssignment.getUnit();
-            AssignmentStatusImpl status = (AssignmentStatusImpl) unitAssignment.getLatestAssignment().status();
+            AssignmentStatusImpl status = (AssignmentStatusImpl) unitAssignment.getLatestAssignment().getStatus();
 
             String returned;
-            if (incident.getStatus().getAttributes().isInProgress()) {
+            if (incident.getStatus().isInProgress()) {
                 returned = ((UnitImpl) unit).getFormattedStatus(status);
             } else {
                 // we are not going to show the statuses when an incident is closed

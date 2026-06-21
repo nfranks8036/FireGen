@@ -4,19 +4,12 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
-import net.noahf.firegen.api.incidents.status.StatusAttribute;
-import net.noahf.firegen.api.incidents.units.AssignmentStatus;
-import net.noahf.firegen.api.incidents.units.UnitAssignment;
-import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
-import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
-
-import java.util.ArrayList;
 
 /**
  * Represents the "Close Incident" or "Re-open Incident" buttons in the Status row.
@@ -46,19 +39,13 @@ public class ChangeStatus implements ButtonAction {
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
-        StatusAttribute searchFor;
-        if (incident.getStatus().getAttributes().isInProgress()) {
-            searchFor = StatusAttribute.CLOSED;
-        } else {
-            searchFor = incident.getUnitAssignments().isEmpty() ? StatusAttribute.DEFAULT : StatusAttribute.ACTIVE;
-        }
-
-        IncidentStatus newStatus = ctx.getManager().getStatusesWithAttributes(searchFor).getFirst();
+        IncidentStatus newStatus = incident.getStatus().opposite(incident);
         incident.setStatus(newStatus);
+        incident.refreshStatus();
 
         Contributor<User> user = incident.addContributor(event.getUser());
-        String narrative = switch (searchFor) {
-            case DEFAULT, ACTIVE -> "Incident re-opened";
+        String narrative = switch (newStatus) {
+            case PENDING, ACTIVE -> "Incident re-opened";
             case CLOSED -> "Incident closed";
             default -> "Incident status changed (unknown)";
         };

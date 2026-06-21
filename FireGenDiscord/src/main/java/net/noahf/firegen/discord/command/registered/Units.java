@@ -68,8 +68,8 @@ public class Units extends Command {
             Unit unit = assignment.getUnit();
             Incident incident = assignment.getIncident();
             AssignmentEvent e = assignment.getLatestAssignment();
-            LocalDateTime time = e.timestamp();
-            AssignmentStatusImpl status = (AssignmentStatusImpl) e.status();
+            LocalDateTime time = e.getTimestamp();
+            AssignmentStatusImpl status = (AssignmentStatusImpl) e.getStatus();
 
             table = table
                     .row(time.toEpochSecond(ZoneOffset.UTC), status.getAnsiColor(),

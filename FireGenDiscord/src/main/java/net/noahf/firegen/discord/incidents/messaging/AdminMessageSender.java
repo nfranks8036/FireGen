@@ -103,7 +103,7 @@ public class AdminMessageSender extends MessageSender {
         // edit the admin messages with an updated admin panel
         List<MessageEmbed> adminMsg = this.getAdminEmbed();
         List<MessageTopLevelComponent> buttons = super.getComponents();
-        if (!incident.getStatus().getAttributes().isInProgress()) {
+        if (!incident.getStatus().isInProgress()) {
             buttons = new ArrayList<>(List.of(ActionRow.of(
                     Button.secondary("firegen-disabled-status", "Status:").asDisabled(),
                     Button.success("firegen-" + incident.getId() + "-status", "Re-open Incident")
@@ -132,7 +132,7 @@ public class AdminMessageSender extends MessageSender {
         IncidentImpl incident = super.getIncident();
 
         List<String> log = super.getService().getNarrativeFormatted(incident, true);
-        IncidentStatusImpl status = (IncidentStatusImpl) incident.getStatus();
+        IncidentStatusEmoji status = Main.incidents.getEmoji(incident.getStatus());
         IncidentTypeImpl type = (IncidentTypeImpl) incident.getType();
         long time = incident.getTime().getUnix();
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();
@@ -193,7 +193,7 @@ public class AdminMessageSender extends MessageSender {
         for (UnitAssignment unitAssignment : incident.getSortedAssignments()) {
             UnitImpl unit = (UnitImpl) unitAssignment.getUnit();
             AssignmentEvent assignment = unitAssignment.getLatestAssignment();
-            AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.status();
+            AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.getStatus();
 
             if (current == null || !current.equals(status)) {
                 respondingUnitsJoiner.add("- " + (

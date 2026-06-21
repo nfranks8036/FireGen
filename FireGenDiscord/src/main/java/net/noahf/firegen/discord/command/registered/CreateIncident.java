@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
-import net.noahf.firegen.api.incidents.status.StatusAttribute;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.FireGenVariables;
@@ -137,7 +137,7 @@ public class CreateIncident extends Command {
         }
 
         // ---------- post update for first time to channels ----------
-        incident.setStatus(Main.incidents.getStatusesWithAttributes(StatusAttribute.DEFAULT).getFirst());
+        incident.setStatus(IncidentStatus.PENDING);
         incident.update();
 
         EditMode.editIncidents.put(event.getUser(), incident);

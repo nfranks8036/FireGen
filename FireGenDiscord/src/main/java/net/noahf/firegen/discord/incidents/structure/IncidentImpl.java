@@ -7,10 +7,9 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.IncidentTime;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
-import net.noahf.firegen.api.incidents.status.IncidentStatus;
-import net.noahf.firegen.api.incidents.status.StatusAttribute;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
@@ -44,9 +43,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @Id
     private final long id;
 
-    @OneToOne(
-            targetEntity = IncidentStatusImpl.class, cascade = CascadeType.ALL
-    )
+    @Enumerated
     private IncidentStatus status;
 
     @OneToOne(
@@ -200,7 +197,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     public List<UnitAssignment> getSortedAssignments() {
         List<UnitAssignment> sorted = new ArrayList<>(this.getUnitAssignments());
         sorted.sort(Comparator
-                .comparingInt((UnitAssignment a) -> a.getLatestAssignment().status().ordinal()) // status order
+                .comparingInt((UnitAssignment a) -> a.getLatestAssignment().getStatus().ordinal()) // status order
                 .thenComparing(e -> e.getUnit().ordinal()) // unit name
         );
         return sorted;
@@ -208,11 +205,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     public void refreshStatus() {
         if (unitAssignments.isEmpty()) {
-            this.status = this.manager.getStatusesWithAttributes(StatusAttribute.DEFAULT)
-                    .getFirst();
+            this.status = IncidentStatus.PENDING;
         } else {
-            this.status = this.manager.getStatusesWithAttributes(StatusAttribute.ACTIVE)
-                    .getFirst();
+            this.status = IncidentStatus.ACTIVE;
         }
     }
 

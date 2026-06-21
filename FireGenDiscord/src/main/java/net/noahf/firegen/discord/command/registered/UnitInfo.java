@@ -26,6 +26,7 @@ import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
+import org.hibernate.Session;
 
 import java.awt.*;
 import java.util.*;
@@ -54,6 +55,26 @@ public class UnitInfo extends Command {
         OptionMapping unitMapping = event.getOption("unit");
         if (unitMapping == null) {
             DiscordMessages.error(event, "You must specify a specific unit (see: /units).");
+            return;
+        }
+
+        String a = unitMapping.getAsString();
+        Session session = Main.database.getFactory().openSession();
+        long id = Long.parseLong(a.substring(1).substring(6));
+        if (a.startsWith("f")) {
+            IncidentImpl i = session.find(IncidentImpl.class, id);
+            DiscordMessages.selfDestruct(event, 20, (i != null ? i.toString() : "null"));
+        } else if (a.startsWith("p")) {
+            IncidentImpl i = (IncidentImpl) Main.incidents.getIncidentBy(id);
+            if (i != null)
+                session.persist(i);
+            DiscordMessages.selfDestruct(event, 20, "Persisted------" + (i != null ? i.toString() : "null"));
+        } else {
+            DiscordMessages.selfDestruct(event, 5, "Invalid command: " + a.charAt(0));
+        }
+        session.close();
+
+        if (2 > 1) {
             return;
         }
 
@@ -94,7 +115,7 @@ public class UnitInfo extends Command {
             Map<String, String> statuses = new HashMap<>();
             for (UnitAssignment assignment : assignments) {
                 IncidentImpl incident = (IncidentImpl) assignment.getIncident();
-                AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.getLatestAssignment().status();
+                AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.getLatestAssignment().getStatus();
 
                 ReceiveMessageSender sender = incident.getMessagingService().get(ReceiveMessageSender.class);
                 String link = "*No incident link*";

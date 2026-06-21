@@ -1,16 +1,8 @@
 package net.noahf.firegen.discord.database;
 
 import jakarta.data.repository.*;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import net.noahf.firegen.api.database.IncidentQuery;
-import net.noahf.firegen.api.database.IncidentRepository;
-import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
-import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 
 import java.util.List;
