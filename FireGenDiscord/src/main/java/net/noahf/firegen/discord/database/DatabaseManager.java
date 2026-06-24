@@ -34,11 +34,11 @@ public class DatabaseManager extends Manager<DatabaseManager> {
     public DatabaseManager() {
         super(DatabaseManager.class, "Database");
 
-//        if (2 > 1) {
-//            Log.warn("Database disabled. No persistent data will be stored.");
-//            this.config = null;
-//            return;
-//        }
+        if (2 > 1) {
+            Log.warn("Database disabled. No persistent data will be stored.");
+            this.config = null;
+            return;
+        }
 
         Log.info("-".repeat(20) + " [ DATABASE START ] " + "-".repeat(20));
         Log.info("Loading the database...");

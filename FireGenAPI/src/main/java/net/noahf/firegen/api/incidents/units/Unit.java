@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface Unit extends Identifiable, AutofilledCharSequence {
 
-    AgencyType getAgencyType();
+    Agency getAgency();
 
     String getShorthand();
 

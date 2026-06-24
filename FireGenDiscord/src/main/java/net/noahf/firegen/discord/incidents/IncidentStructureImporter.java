@@ -9,14 +9,17 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
+import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.RadioChannel;
+import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
+import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.RadioChannelImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
@@ -100,30 +103,65 @@ public class IncidentStructureImporter {
             }
 
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
-            List<JsonElement> elements = array.asList();
-            for (int i = 0; i < elements.size(); i++) {
-                JsonObject object = elements.get(i).getAsJsonObject();
-                String shorthand = object.get("short").getAsString();
-                String longhand = object.get("long").getAsString();
-                String format = object.get("format").getAsString();
+            List<JsonElement> agencyElements = array.asList();
+            for (int i = 0; i < agencyElements.size(); i++) {
+                JsonObject agencyObj = agencyElements.get(i).getAsJsonObject();
 
-                JsonElement element = object.get("emoji");
-                String emojiStr = element.isJsonNull() ? null : element.getAsString();
-                Emoji emoji = emojiStr != null ? Emoji.fromFormatted(emojiStr) : null;
-
-                manager.units.add(new UnitImpl(
-                        0L,
-                        shorthand, longhand, format, emoji, AgencyType.OTHER,
+                Emoji emoji = Emoji.fromFormatted(agencyObj.get("emoji").getAsString());
+                Agency agency = new AgencyImpl(
+                        agencyObj.get("agency_title").getAsString(),
+                        agencyObj.get("agency_short").getAsString(),
+                        agencyObj.get("agency_format").getAsString(),
+                        agencyObj.get("agency_station").getAsString(),
+                        AgencyType.valueOf(agencyObj.get("type").getAsString()),
+                        emoji,
                         i,
-                        SelectOption.of(longhand, shorthand)
-                                .withDescription(null)
-                                .withEmoji(emoji)
-//                                .withEmoji(Emoji.fromFormatted(emoji))
-//                                .withEmoji(Emoji.fromCustom(emoji, 0, false))
-                ));
+                        new ArrayList<>()
+                );
+
+                List<JsonElement> unitElements = agencyObj.get("units").getAsJsonArray().asList();
+                for (int j = 0; j < unitElements.size(); j++) {
+                    JsonObject unitObj = unitElements.get(j).getAsJsonObject();
+
+                    JsonElement unitEmojiElement = unitObj.get("emoji");
+                    Emoji unitEmoji = unitEmojiElement != null ? Emoji.fromFormatted(unitEmojiElement.getAsString()) : emoji;
+                    String longhand = unitObj.get("long").getAsString();
+                    String shorthand = unitObj.get("short").getAsString();
+
+                    Unit unit = new UnitImpl(
+                            shorthand,
+                            longhand,
+                            unitObj.get("format").getAsString(),
+                            unitEmoji,
+                            agency,
+                            j,
+                            false,
+                            SelectOption.of(longhand, shorthand)
+                                    .withDescription(null)
+                                    .withEmoji(emoji)
+                    );
+
+                    agency.getUnits().add(unit);
+                }
+
+                manager.units.addAll(agency.getUnits());
+                manager.agencies.add(agency);
             }
 
-            Log.info("Imported units " + String.join(", ", manager.units));
+            List<Agency> agencies = manager.agencies.reversed();
+            for (int i = 0; i < agencies.size(); i++) {
+                Agency agency = agencies.get(i);
+                manager.units.addFirst(
+                        new UnitImpl(agency.getShorthand(), agency.getTitle(), agency.getFormatted(),
+                                ((AgencyImpl)agency).getEmoji(), agency, Integer.MIN_VALUE + i, true,
+                                SelectOption.of(agency.getTitle(), agency.getShorthand())
+                                        .withDescription(null)
+                                        .withEmoji(((AgencyImpl)agency).getEmoji())
+                        )
+                );
+            }
+
+            Log.info("Imported " + manager.units.size() + " units (" + agencies.size() + " agencies).");
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }
@@ -294,7 +332,7 @@ public class IncidentStructureImporter {
                 manager.radioChannels.add(channel);
             }
 
-            Log.info("Imported radio channels " + String.join(", ", manager.radioChannels));
+            Log.info("Imported " + manager.radioChannels.size() + " radio channels.");
         } catch (IOException exception) {
             throw new IllegalStateException("IOException: " + exception, exception);
         }

@@ -5,10 +5,7 @@ import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
-import net.noahf.firegen.api.incidents.units.AssignmentStatus;
-import net.noahf.firegen.api.incidents.units.RadioChannel;
-import net.noahf.firegen.api.incidents.units.Unit;
-import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
@@ -54,6 +51,8 @@ public class IncidentManager {
      * This is imported from the {@link FireGenVariables#unitsFile()} agencies file}.
      */
     @Getter List<Unit> units = new ArrayList<>();
+
+    @Getter List<Agency> agencies = new ArrayList<>();
 
     /**
      * This is the list of allowed {@link LocationVenueImpl Venues}.
@@ -194,6 +193,24 @@ public class IncidentManager {
     public @Nullable Unit getUnitByLonghand(String longhand) {
         for (Unit a : this.units) {
             if (a.getLonghand().equalsIgnoreCase(longhand)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public @Nullable Agency getAgencyByShorthand(String shorthand) {
+        for (Agency a : this.agencies) {
+            if (a.getShorthand().equalsIgnoreCase(shorthand)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public @Nullable Agency getAgencyByLonghand(String longhand) {
+        for (Agency a : this.agencies) {
+            if (a.getTitle().equalsIgnoreCase(longhand)) {
                 return a;
             }
         }

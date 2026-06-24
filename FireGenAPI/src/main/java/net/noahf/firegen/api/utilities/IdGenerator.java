@@ -14,6 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class IdGenerator<T extends Identifiable> {
 
+    public static final int MAX_RETRIES = 500;
+
+
     public static long generateIncidentId(Incident incident) {
         return id(incident, 8);
     }
@@ -63,18 +66,22 @@ public class IdGenerator<T extends Identifiable> {
             );
         }
 
-        long newId = generate(new Random(object.hashCode()), origin, bound);
+        long newId = generate(0, new Random(object.hashCode()), origin, bound);
 
         generatedIds.put(object, newId);
         return newId;
     }
 
-    private static long generate(Random random, long origin, long bound) {
+    private static long generate(int search, Random random, long origin, long bound) {
+        if (search > MAX_RETRIES) {
+            throw new IllegalStateException("Maximum retries for [" + origin + ", " + bound + ").");
+        }
+
         long id = random.nextLong(origin, bound);
         if (generatedIds.containsValue(id)) {
             // try again because clearly this value is already taken (rare but possible)
-            System.err.println("Id '" + id + "' was already taken in range [" + origin + ", " + bound + ")");
-            return generate(random, origin, bound);
+            System.err.println("[" + search + "] Id '" + id + "' was already taken in range [" + origin + ", " + bound + ")");
+            return generate(search + 1, random, origin, bound);
         }
         return id;
     }

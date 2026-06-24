@@ -8,13 +8,19 @@ public enum AgencyType {
 
     FIRE_EMS,
 
+    EMS_BY_AIR,
+
     POLICE,
 
     SHERIFF,
 
+    SECURITY,
+
     STATE_POLICE,
 
     MENTAL_HEALTH_ASSISTANCE,
+
+    TRANSIT,
 
     MEDICAL_EXAMINER,
 
@@ -31,6 +37,8 @@ public enum AgencyType {
     FUNERAL_SERVICE,
 
     TOWING,
+
+    DISPATCH,
 
     OTHER
 

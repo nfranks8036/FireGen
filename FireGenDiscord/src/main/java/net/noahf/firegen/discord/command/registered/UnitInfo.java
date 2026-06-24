@@ -58,25 +58,25 @@ public class UnitInfo extends Command {
             return;
         }
 
-        String a = unitMapping.getAsString();
-        Session session = Main.database.getFactory().openSession();
-        long id = Long.parseLong(a.substring(1).substring(6));
-        if (a.startsWith("f")) {
-            IncidentImpl i = session.find(IncidentImpl.class, id);
-            DiscordMessages.selfDestruct(event, 20, (i != null ? i.toString() : "null"));
-        } else if (a.startsWith("p")) {
-            IncidentImpl i = (IncidentImpl) Main.incidents.getIncidentBy(id);
-            if (i != null)
-                session.persist(i);
-            DiscordMessages.selfDestruct(event, 20, "Persisted------" + (i != null ? i.toString() : "null"));
-        } else {
-            DiscordMessages.selfDestruct(event, 5, "Invalid command: " + a.charAt(0));
-        }
-        session.close();
-
-        if (2 > 1) {
-            return;
-        }
+//        String a = unitMapping.getAsString();
+//        Session session = Main.database.getFactory().openSession();
+//        long id = Long.parseLong(a.substring(1).substring(6));
+//        if (a.startsWith("f")) {
+//            IncidentImpl i = session.find(IncidentImpl.class, id);
+//            DiscordMessages.selfDestruct(event, 20, (i != null ? i.toString() : "null"));
+//        } else if (a.startsWith("p")) {
+//            IncidentImpl i = (IncidentImpl) Main.incidents.getIncidentBy(id);
+//            if (i != null)
+//                session.persist(i);
+//            DiscordMessages.selfDestruct(event, 20, "Persisted------" + (i != null ? i.toString() : "null"));
+//        } else {
+//            DiscordMessages.selfDestruct(event, 5, "Invalid command: " + a.charAt(0));
+//        }
+//        session.close();
+//
+//        if (2 > 1) {
+//            return;
+//        }
 
         String unitString = unitMapping.getAsString();
         Unit iUnit = Main.incidents.getUnitByLonghand(unitString);
@@ -89,6 +89,11 @@ public class UnitInfo extends Command {
             return;
         }
         UnitImpl unit = (UnitImpl) iUnit;
+        if (unit.isPlaceholder()) {
+            DiscordMessages.error(event, "This unit is considered a 'placeholder', which means it's information cannot be viewed.");
+            return;
+        }
+
         Set<UnitAssignment> assignments = unit.getAssignments();
 
         List<MessageEmbed> returned = new ArrayList<>();
@@ -97,8 +102,9 @@ public class UnitInfo extends Command {
                 new EmbedBuilder()
                         .setColor(new Color(255, 90, 90))
                         .setTitle(unit.getLonghand())
-                        .addField("Incidents", "Involved in `" + assignments.size() + "` incidents", true)
                         .addField("Emoji", unit.getEmoji().getFormatted() + " (`:" + unit.getEmoji().getName() + ":`)", true)
+                        .addField("Order", "#" + unit.ordinal(), true)
+                        .addField("Agency", unit.getAgency().getTitle(), true)
                         .addField("Names",
                                 "Short: `" + unit.getShorthand() + "`\n" +
                                         "Long: `" + unit.getLonghand() + "`\n" +
@@ -154,7 +160,7 @@ public class UnitInfo extends Command {
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         if (focused.getName().equalsIgnoreCase("unit")) {
-            return Main.incidents.getUnits().stream().map(Unit::getLonghand).toList();
+            return Main.incidents.getUnits().stream().map(u -> (UnitImpl) u).filter(u -> !u.isPlaceholder()).map(Unit::getLonghand).toList();
         }
         return null;
     }

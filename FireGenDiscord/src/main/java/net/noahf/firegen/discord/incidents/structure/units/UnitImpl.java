@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
@@ -14,23 +15,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 @EqualsAndHashCode(of = "ordinal")
-@AllArgsConstructor @NoArgsConstructor
+@RequiredArgsConstructor @NoArgsConstructor(force = true)
 @Getter
 @Entity @Table(name = "units")
 public class UnitImpl implements Unit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id = -1L;
 
-    private String shorthand;
-    private String longhand;
-    private @Getter(value = AccessLevel.NONE) String formatted;
-    private transient Emoji emoji;
-    private @Enumerated AgencyType agencyType;
-    private @Accessors(fluent = true) int ordinal;
+    private final String shorthand;
+    private final String longhand;
+    private final @Getter(value = AccessLevel.NONE) String formatted;
+    private final transient Emoji emoji;
+    private final @Enumerated Agency agency;
+    private final @Accessors(fluent = true) int ordinal;
 
-    private transient @Getter SelectOption selectOption;
+    private final boolean isPlaceholder;
+    private final transient @Getter SelectOption selectOption;
 
     private transient @Getter final Set<UnitAssignment> assignments = new LinkedHashSet<>();
 

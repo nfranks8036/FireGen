@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class Units extends Command {
 
     public Units() {
-        super("units", "View the list of units that serve the area.");
+        super("units", "View the list of units that were most recently active on calls.");
     }
 
     @Override
