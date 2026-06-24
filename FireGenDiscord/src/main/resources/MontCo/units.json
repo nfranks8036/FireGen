@@ -3,7 +3,7 @@
     "agency_title": "BLACKSBURG FIRE DEPARTMENT",
     "agency_short": "BFD",
     "agency_format": "Blacksburg Fire",
-    "agency_station": "BFD Station #1, 200 Progress St NE, Blacksburg, VA\nBFD Station #2, 2700 Prices Fork Rd, Blacksburg, VA\nBFD Station #3, 407 Hubbard St, Blacksburg, VA\n(all considered Montgomery County Station #1)",
+    "agency_station": "BFD Station #1, 200 Progress St NE, Blacksburg, VA\nBFD Station #2, 2700 Prices Fork Rd, Blacksburg, VA\nBFD Station #3, 407 Hubbard St, Blacksburg, VA\n(units named with convention of NRV Station #1)",
     "type": "FIRE",
     "emoji": "<:bfd:1449916134714511481>",
     "units": [
@@ -355,9 +355,7 @@
     "agency_station": "Virginia State Police Division 6 Headquarters, 3775 W Main St, Salem, VA",
     "type": "STATE_POLICE",
     "emoji": "<:vsp:1449930105592746125>",
-    "units": [
-      {"short": "VSP", "long": "VIRGINIA STATE POLICE", "format": "Virginia State Police"}
-    ]
+    "units": []
   },
   {
     "agency_title": "BLACKSBURG TRANSIT",
@@ -366,9 +364,7 @@
     "agency_station": "2800 Commerce St, Blacksburg, VA",
     "type": "TRANSIT",
     "emoji": "<:bt:1449917533976133773>",
-    "units": [
-      {"short": "BT", "long": "BLACKSBURG TRANSIT", "format": "Blacksburg Transit"}
-    ]
+    "units": []
   },
   {
     "agency_title": "CARILION LIFE-GUARD",
@@ -378,7 +374,6 @@
     "type": "EMS_BY_AIR",
     "emoji": "<:lifeguard:1510828226287505439>",
     "units": [
-      {"short": "LG", "long": "CARILION LIFE-GUARD", "format": "Carilion Life-Guard"},
       {"short": "LG10", "long": "CARILION LIFE-GUARD 10", "format": "Carilion Life-Guard 10"},
       {"short": "LG11", "long": "CARILION LIFE-GUARD 11", "format": "Carilion Life-Guard 11"},
       {"short": "LG12", "long": "CARILION LIFE-GUARD 12", "format": "Carilion Life-Guard 12"}
@@ -391,9 +386,7 @@
     "agency_station": "Public Safety Building, 330 Sterrett Dr, Blacksburg, VA",
     "type": "SECURITY",
     "emoji": "<:vtsc:1449924056127373567>",
-    "units": [
-      {"short": "VTSC", "long": "VIRGINIA TECH SECURITY CENTER", "format": "Virginia Tech Security"}
-    ]
+    "units": []
   },
   {
     "agency_title": "NEW RIVER VALLEY 911 AUTHORITY",
@@ -402,8 +395,6 @@
     "agency_station": "1 E Main St #400, Christiansburg, VA",
     "type": "DISPATCH",
     "emoji": "<:nrv:1449915761563799703>",
-    "units": [
-      {"short": "NRV", "long": "NEW RIVER VALLEY 911 AUTHORITY", "format": "New River Valley Communications"}
-    ]
+    "units": []
   }
 ]

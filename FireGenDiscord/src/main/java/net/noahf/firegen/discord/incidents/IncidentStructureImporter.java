@@ -104,6 +104,7 @@ public class IncidentStructureImporter {
 
             JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
             List<JsonElement> agencyElements = array.asList();
+            int lastUnitCount = 0;
             for (int i = 0; i < agencyElements.size(); i++) {
                 JsonObject agencyObj = agencyElements.get(i).getAsJsonObject();
 
@@ -134,7 +135,7 @@ public class IncidentStructureImporter {
                             unitObj.get("format").getAsString(),
                             unitEmoji,
                             agency,
-                            j,
+                            lastUnitCount + j,
                             false,
                             SelectOption.of(longhand, shorthand)
                                     .withDescription(null)
@@ -146,6 +147,8 @@ public class IncidentStructureImporter {
 
                 manager.units.addAll(agency.getUnits());
                 manager.agencies.add(agency);
+
+                lastUnitCount = lastUnitCount + agency.getUnits().size();
             }
 
             List<Agency> agencies = manager.agencies.reversed();

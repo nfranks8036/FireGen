@@ -68,6 +68,7 @@ public class AgencyInfo extends Command {
 
         returned.add(new EmbedBuilder()
                 .setColor(new Color(200, 200, 0))
+                .setAuthor("Agency View")
                 .setTitle(agency.getTitle())
                 .addField("Emoji", agency.getEmoji().getFormatted() + " (`:" + agency.getEmoji().getName() + ":`)", true)
                 .addField("Order", "#" + agency.ordinal(), true)

@@ -90,7 +90,7 @@ public class UnitInfo extends Command {
         }
         UnitImpl unit = (UnitImpl) iUnit;
         if (unit.isPlaceholder()) {
-            DiscordMessages.error(event, "This unit is considered a 'placeholder', which means it's information cannot be viewed.");
+            DiscordMessages.error(event, "This unit is considered a 'placeholder', which means it's information cannot be viewed.\nYou may be able to view information about it by viewing its parent agency by using `/agency-info <agency>`.");
             return;
         }
 
@@ -101,15 +101,16 @@ public class UnitInfo extends Command {
         returned.add(
                 new EmbedBuilder()
                         .setColor(new Color(255, 90, 90))
+                        .setAuthor("Unit View")
                         .setTitle(unit.getLonghand())
                         .addField("Emoji", unit.getEmoji().getFormatted() + " (`:" + unit.getEmoji().getName() + ":`)", true)
                         .addField("Order", "#" + unit.ordinal(), true)
-                        .addField("Agency", unit.getAgency().getTitle(), true)
                         .addField("Names",
                                 "Short: `" + unit.getShorthand() + "`\n" +
                                         "Long: `" + unit.getLonghand() + "`\n" +
                                         "Formatted: " + unit.getFormatted()
                                 , false)
+                        .addField("Parent Agency", unit.getAgency().getTitle(), false)
                         .build()
         );
 
