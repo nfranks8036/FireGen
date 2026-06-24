@@ -19,6 +19,7 @@
     {"name": "ILLEGAL BURN", "tag": "FIRE"},
     {"name": "SMOKE INVESTIGATION", "tag": "FIRE"},
     {"name": "ELEVATOR ENTRAPMENT", "tag": "FIRE"},
+    {"name": "WILDFIRE", "tag": "FIRE"},
 
     {"name": "SPILL / LEAK", "tag": "FIRE"},
     {"name": "ODOR INVESTIGATION", "tag": "FIRE"},
@@ -218,9 +219,9 @@
       "priorities": ["PD 1", "PD 2", "PD 3", "PD HBP"],
       "qualifiers": {
         "required": false,
-        "unique": false,
+        "unique": true,
         "syntax": "{T} W/ {Q}",
-        "list": ["WEAPON", "INJURIES"]
+        "list": ["WEAPON", "INJURIES", "WEAPON, INJURIES"]
       }
     },
 

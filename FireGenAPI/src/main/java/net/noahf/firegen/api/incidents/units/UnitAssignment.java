@@ -2,10 +2,11 @@ package net.noahf.firegen.api.incidents.units;
 
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 
 import java.util.List;
 
-public interface UnitAssignment {
+public interface UnitAssignment extends AutofilledCharSequence {
 
     Incident getIncident();
 

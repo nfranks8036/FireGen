@@ -204,6 +204,10 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public void refreshStatus() {
+        if (this.status != null && !this.status.isInProgress()) {
+            return;
+        }
+
         if (unitAssignments.isEmpty()) {
             this.status = IncidentStatus.PENDING;
         } else {

@@ -1,5 +1,7 @@
 package net.noahf.firegen.discord;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -17,6 +19,7 @@ import net.noahf.firegen.discord.command.registered.Units;
 import net.noahf.firegen.discord.database.DatabaseManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.users.UserManager;
+import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,16 +46,6 @@ public class Main {
     public static List<TextChannel> receiveChannels = new ArrayList<>();
 
     public static final long botStartTime = System.currentTimeMillis();
-
-    private static void loadChannels(JDA jda) {
-        receiveChannels.add(jda.getTextChannelById(1473433906681221200L)); // Personal - radio-activity-firewatch
-        adminChannels.add(jda.getTextChannelById(1497787094779822170L)); // Personal - admin-chat
-
-        adminChannels.add(jda.getTextChannelById(1492362581623439581L)); // BFD Tracker - management
-
-        receiveChannels.add(jda.getTextChannelById(1436406051112226959L)); // FIREWATCH - radio-activity
-        adminChannels.add(jda.getTextChannelById(1499611450283393064L)); // FIREWATCH - admin radio activity
-    }
 
     public static void main(String[] args) throws InterruptedException {
         long start = System.currentTimeMillis();
@@ -123,6 +116,21 @@ public class Main {
         }
 
         return status;
+    }
+
+    private static void loadChannels(JDA jda) {
+        JsonUtilities.stream(null, "discord.json", (e) -> {
+            JsonObject object = e.getAsJsonObject();
+            receiveChannels = object.get("receiver_channel_ids").getAsJsonArray().asList().stream()
+                    .map(JsonElement::getAsLong)
+                    .map(jda::getTextChannelById)
+                    .toList();
+            adminChannels = object.get("admin_channel_ids").getAsJsonArray().asList().stream()
+                    .map(JsonElement::getAsLong)
+                    .map(jda::getTextChannelById)
+                    .toList();
+            Log.info("Found " + receiveChannels.size() + " receiver channels and " + adminChannels.size() + " admin channels.");
+        });
     }
 
 }

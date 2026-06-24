@@ -419,10 +419,50 @@
 	"common_name": "Nellies Cave Park",
 	"venue": "TOWN OF BLACKSBURG"
   },
+  "3401 BRUIN LN": {
+    "location": "3401 Bruin Ln",
+    "common_name": "Blacksburg High School",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "3109 PRICES FORK RD": {
+    "location": "3109 Prices Fork Rd",
+    "common_name": "Blacksburg Middle School",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "813 TOMS CREEK RD": {
+    "location": "813 Toms Creek Rd",
+    "common_name": "Gilbert Linkous Elementary School",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "429 HARDING AVE": {
+    "location": "429 Harding Ave",
+    "common_name": "Harding Avenue Elementary School",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "2801 PRICES FORK RD": {
+    "location": "2801 Prices Fork Rd",
+    "common_name": "Kipps Elementary School",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "709 AIRPORT RD": {
+    "location": "709 Airport Rd",
+    "common_name": "Margaret Beeks Elementary School",
+    "venue": "TOWN OF BLACKSBURG"
+  },
 
   "125 SHOPPERS WAY": {
     "location": "125 Shoppers Way",
     "common_name": "Ross Dress for Less",
+    "venue": "TOWN OF CHRISTIANSBURG"
+  },
+  "750 IMPERIAL ST": {
+    "location": "750 Imperial St",
+    "common_name": "Montgomery County Government Building",
+    "venue": "TOWN OF CHRISTIANSBURG"
+  },
+  "200 JUNKIN ST": {
+    "location": "200 Junkin St",
+    "common_name": "Montgomery County Public Schools",
     "venue": "TOWN OF CHRISTIANSBURG"
   },
 
@@ -444,6 +484,11 @@
   "1636 MERRIMAC RD": {
     "location": "1636 Merrimac Rd",
     "common_name": "Blacksburg Fire Department Training Center",
+    "venue": "MONTGOMERY COUNTY"
+  },
+  "4021 PRICES FORK RD": {
+    "location": "4021 Prices Fork Rd",
+    "common_name": "Prices Fork Elementary School",
     "venue": "MONTGOMERY COUNTY"
   }
 }

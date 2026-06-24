@@ -389,6 +389,24 @@
     "units": []
   },
   {
+    "agency_title": "ATMOS ENERGY CORPORATION",
+    "agency_short": "ATMOS",
+    "agency_format": "Atmos Energy",
+    "agency_station": "1013 W Main St, Radford, VA",
+    "type": "UTILITY_COMPANY",
+    "emoji": "<:atmos:1519396654254657646>",
+    "units": []
+  },
+  {
+    "agency_title": "APPALACHIAN POWER",
+    "agency_short": "AEP",
+    "agency_format": "Appalachian Power",
+    "agency_station": "2255 Prospect Dr, Christiansburg, VA",
+    "type": "UTILITY_COMPANY",
+    "emoji": "<:appalachian_power:1519396930373812224>",
+    "units": []
+  },
+  {
     "agency_title": "NEW RIVER VALLEY 911 AUTHORITY",
     "agency_short": "NRV",
     "agency_format": "New River Valley Communications",

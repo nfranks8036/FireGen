@@ -32,7 +32,7 @@ public class ViewArea extends Command {
                 .addField("Units", "`" + incidents.getUnits().size() + "` registered", true)
                 .addField("Incident Types", "`" + incidents.getIncidentTypes().size() + "` registered", true)
                 .addField("Identifiers", "`" + IdGenerator.getGeneratedIdsAmount() + "` identifiers generated", true)
-                .addField("Venues", String.join("\n", incidents.getVenues()), true)
+                .addField("Venues", String.join(", ", incidents.getVenues()), true)
                 .addField("Date & Time Formats", "Date: `" + vars.dateFormat() + "`\nTime (Long): `" + vars.longTimeFormat() + "`\nTime (Short): `" + vars.shortTimeFormat() + "`", true)
                 .addField("Defaults", "Default Incident Type: `" + vars.defaultType() + "`\nDefault Incident Tag: `" + vars.defaultTag().toString() + "`", true)
                 .setFooter("The bot has been online for " + Time.getTimeDifference(System.currentTimeMillis(), Main.botStartTime, Time.TimeDiffStyle.COMPACT) + ".")

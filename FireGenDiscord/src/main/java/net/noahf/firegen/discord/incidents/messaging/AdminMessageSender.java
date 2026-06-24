@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
+import net.noahf.firegen.api.incidents.types.IncidentType;
+import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
@@ -52,7 +54,7 @@ public class AdminMessageSender extends MessageSender {
                         Button.primary(super.getIncident().createInteractionIdString("preview"), "Preview")
                 ),
                 ActionRow.of(
-                        Button.secondary("firegen-disabled-narrative", "Narrative:").asDisabled(),
+                        Button.secondary("firegen-disabled-narrative", "Log:").asDisabled(),
                         Button.success(super.getIncident().createInteractionIdString("addnarrative"), "Add"),
                         Button.primary(super.getIncident().createInteractionIdString("notate"), "Notate"),
                         Button.danger(super.getIncident().createInteractionIdString("hidenarrative"), "Hide")
@@ -151,7 +153,7 @@ public class AdminMessageSender extends MessageSender {
                         type + "\n\n" +
                                 "Base: `" + type.getType() + "`\n" +
                                 "Tag: `" + type.getTag().getTagName() + "`\n" +
-                                "Qualifier: `" + (type.getTag().getQualifiers() != null ? type.getTag().getQualifiers().getQualifiers().get(type.getQualifierChoice()) : "None") + "`",
+                                "Qualifier: `" + this.getQualifierChoice(type) + "`",
                         true
                 )
                 .addField("Date/Time",
@@ -213,6 +215,18 @@ public class AdminMessageSender extends MessageSender {
                 :  respondingUnitsJoiner.toString().substring(
                 0, Math.min(1024, respondingUnitsJoiner.toString().length())
         );
+    }
+
+    private String getQualifierChoice(IncidentType type) {
+        IncidentTypeTag tag = type.getTag();
+        if (tag.getQualifiers() == null) {
+            return "None";
+        }
+        List<String> qualifiers = tag.getQualifiers().getQualifiers();
+        if (type.getQualifierChoice() > qualifiers.size() || type.getQualifierChoice() < 0) {
+            return "None (OOB)";
+        }
+        return qualifiers.get(type.getQualifierChoice());
     }
 
 

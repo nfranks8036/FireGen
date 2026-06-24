@@ -23,4 +23,5 @@ public class IncidentTypeTagQualifierListImpl implements AutofilledCharSequence,
     protected final boolean unique;
     protected final String syntax;
     protected final List<String> qualifiers;
+
 }

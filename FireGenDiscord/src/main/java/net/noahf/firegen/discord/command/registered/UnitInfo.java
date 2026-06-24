@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UnitInfo extends Command {
 
@@ -154,6 +155,12 @@ public class UnitInfo extends Command {
 
             returned.add(incidentInformation.build());
         }
+//
+//        returned.add(new EmbedBuilder()
+//                .setTitle("Extra Information")
+//                .addField("Unit Assignments:", unit.getAssignments().stream().map(Object::toString).collect(Collectors.joining("\n")), false)
+//                .build()
+//        );
 
         event.replyEmbeds(returned).setEphemeral(true).queue();
     }

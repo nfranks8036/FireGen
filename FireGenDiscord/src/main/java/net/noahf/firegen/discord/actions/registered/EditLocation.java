@@ -112,7 +112,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
                                 "..."
                         )
                 )
-                .addComponents(this.getLocationModalFields(type))
+                .addComponents(this.getLocationModalFields(type, ctx.getIncident()))
                 .build();
 
         event.replyModal(modal).queue();
@@ -200,22 +200,23 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
 
 
 
-    private Label[] getLocationModalFields(LocationType type) {
+    private Label[] getLocationModalFields(LocationType type, Incident incident) {
         LocationField[] fields = type.getFields();
         Label[] labels = new Label[fields.length];
         for (int i = 0; i < fields.length; i++) {
-            labels[i] = this.convertToLabel(fields[i]);
+            labels[i] = this.convertToLabel(fields[i], incident);
         }
         return labels;
     }
 
-    private Label convertToLabel(LocationField field) {
-        return Label.of(field.getTitle(), field.getDescription(),
+    private Label convertToLabel(LocationField field, Incident incident) {
+        return Label.of(field.getTitle(), DiscordMessages.truncate(field.getDescription(), Label.DESCRIPTION_MAX_LENGTH, "..."),
                 TextInput.create(field.getId(), TextInputStyle.valueOf(field.getType().name()))
                         .setRequired(field.isRequired())
                         .setMinLength(field.getMinLength())
                         .setMaxLength(field.getMaxLength())
                         .setPlaceholder(field.getPlaceholder())
+                        .setValue(field.getAutofill().apply(incident))
                         .build()
         );
     }

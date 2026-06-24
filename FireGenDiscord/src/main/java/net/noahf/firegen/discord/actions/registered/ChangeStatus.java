@@ -39,7 +39,7 @@ public class ChangeStatus implements ButtonAction {
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
-        IncidentStatus newStatus = incident.getStatus().opposite(incident);
+        IncidentStatus newStatus = incident.getStatus().opposite();
         incident.setStatus(newStatus);
         incident.refreshStatus();
 
@@ -47,7 +47,7 @@ public class ChangeStatus implements ButtonAction {
         String narrative = switch (newStatus) {
             case PENDING, ACTIVE -> "Incident re-opened";
             case CLOSED -> "Incident closed";
-            default -> "Incident status changed (unknown)";
+            default -> "Incident status changed to " + newStatus.name();
         };
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
 

@@ -23,6 +23,7 @@ import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.RadioChannelImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 

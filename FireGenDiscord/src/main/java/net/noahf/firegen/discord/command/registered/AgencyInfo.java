@@ -22,9 +22,12 @@ import net.noahf.firegen.discord.utilities.DiscordMessages;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class AgencyInfo extends Command {
+
+    private static final Function<? super Unit, String> DELETE_EMOJI = u -> u.getFormatted().replaceAll("<:[A-Za-z_]+:\\d+>\\s", "");
 
     public AgencyInfo() {
         super(
@@ -82,14 +85,13 @@ public class AgencyInfo extends Command {
                 .addField("Station", agency.getStation(), false)
                 .build());
         if (!agency.getUnits().isEmpty()) {
-            returned.add(new EmbedBuilder()
+            EmbedBuilder builder = new EmbedBuilder()
                     .setColor(new Color(255, 98, 0))
                     .setTitle("Units (" + agency.getUnits().size() + ")")
                     .setDescription(
-                            agency.getUnits().stream().map(u -> u.getFormatted().replaceAll("<:[A-Za-z_]+:\\d+>\\s", "")).collect(Collectors.joining(", "))
-                    )
-                    .build()
-            );
+                            agency.getUnits().stream().map(u -> (UnitImpl) u)
+                                    .map(DELETE_EMOJI).collect(Collectors.joining(", "))
+                    );
         }
 
         event.replyEmbeds(returned).setEphemeral(true).queue();

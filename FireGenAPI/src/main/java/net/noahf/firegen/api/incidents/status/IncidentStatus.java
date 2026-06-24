@@ -24,8 +24,8 @@ public enum IncidentStatus {
         };
     }
 
-    public IncidentStatus opposite(Incident incident) {
-        return switch (incident.getStatus()) {
+    public IncidentStatus opposite() {
+        return switch (this) {
             case ACTIVE, PENDING -> CLOSED;
             case CLOSED, CLOSED_TIMED_OUT -> PENDING;
         };

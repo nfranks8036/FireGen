@@ -4,8 +4,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import net.noahf.firegen.api.incidents.Incident;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Builder(builderMethodName = "", setterPrefix = "set", toBuilder = true)
@@ -13,6 +15,20 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @ToString
 public class LocationField {
+
+    public static Function<Incident, String> requireType(Function<IncidentLocation, String> function, String type) {
+        return (i) -> {
+            try {
+                IncidentLocation location = i.getLocation();
+                if (!location.getType().name().equalsIgnoreCase(type)) {
+                    return null;
+                }
+                return function.apply(location);
+            } catch (Exception exception) {
+                return null;
+            }
+        };
+    }
 
     public static LocationFieldBuilder newField(String title, String description, String id, TextType type) {
         return new LocationFieldBuilder()
@@ -36,6 +52,11 @@ public class LocationField {
             TextType.SHORT
     )
             .setRequired(false)
+            .setAutofill((i) -> {
+                IncidentLocation location = i.getLocation();
+                if (location.getVenue() == null) return null;
+                return location.getVenue().getName();
+            })
             .build();
 
     public static final LocationField COMMON_NAME = LocationField.newField(
@@ -47,6 +68,7 @@ public class LocationField {
             .setRequired(false)
             .setMaxLength(100)
             .setPlaceholder("Ex: Municipal Building")
+            .setAutofill((i) -> i.getLocation().getCommonName())
             .build();
 
 
@@ -61,6 +83,9 @@ public class LocationField {
     private int minLength = -1;
     private int maxLength = -1;
     private String placeholder = null;
+    private Function<Incident, String> autofill = null;
+
+
 
     public enum TextType {
         SHORT, PARAGRAPH
