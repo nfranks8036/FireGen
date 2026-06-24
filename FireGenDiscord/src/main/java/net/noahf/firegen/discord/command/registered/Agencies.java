@@ -1,7 +1,16 @@
 package net.noahf.firegen.discord.command.registered;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
+import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Agencies extends Command {
 
@@ -13,7 +22,19 @@ public class Agencies extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        event.reply("This command is not in service yet!").setEphemeral(true).queue();
+        List<Agency> agencies = new ArrayList<>(Main.incidents.getAgencies());
+        event.replyEmbeds(new EmbedBuilder()
+                .setColor(new Color(128, 252, 222))
+                .setTitle("Agencies (" + agencies.size() + ")")
+                .setDescription(
+                        "These agencies serve " + Main.incidents.getMunicipality().getName() + ":\n\n" +
+                        agencies.stream().map(a -> (AgencyImpl) a).map(a ->
+                                "- " + (a.getEmoji() != null ? a.getEmoji().getFormatted() + " " : "") + a.getFormatted()
+                                + " (`" + a.getShorthand() + "`)"
+                                ).collect(Collectors.joining("\n"))
+                )
+                .build()
+        ).setEphemeral(true).queue();
     }
 
 }
