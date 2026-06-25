@@ -15,6 +15,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -81,5 +82,13 @@ public class UnitAssignmentImpl implements UnitAssignment {
     @NotNull
     public String toString() {
         return unit.getFormatted() + " (" + this.getLatestAssignment().getStatus().getName() + ")";
+    }
+
+    @Override
+    public int compareTo(@NotNull UnitAssignment o) {
+        return Comparator
+                .comparingInt((UnitAssignment ua) -> ua.getLatestAssignment().getStatus().ordinal())
+                .thenComparingInt(ua -> ua.getUnit().ordinal())
+                .compare(this, o);
     }
 }

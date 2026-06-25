@@ -186,8 +186,14 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         return null;
     }
 
+    public boolean containsUnit(Unit unit) {
+        return Main.incidents.getAssignments().stream()
+                .filter(u -> u.getIncident().equals(this))
+                .anyMatch(u -> u.getUnit().equals(unit));
+    }
+
     public void removeUnit(Unit unit) {
-        Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit));
+        Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit) && ua.getIncident().equals(this));
         ((UnitImpl)unit).getAssignments().removeIf(ua -> ua.getIncident().equals(this));
 
         this.unitAssignments.removeIf(a -> a.getUnit().equals(unit));
@@ -196,10 +202,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     public List<UnitAssignment> getSortedAssignments() {
         List<UnitAssignment> sorted = new ArrayList<>(this.getUnitAssignments());
-        sorted.sort(Comparator
-                .comparingInt((UnitAssignment a) -> a.getLatestAssignment().getStatus().ordinal()) // status order
-                .thenComparing(e -> e.getUnit().ordinal()) // unit name
-        );
+        Collections.sort(sorted);
         return sorted;
     }
 

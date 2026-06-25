@@ -34,7 +34,7 @@ public class IncidentManager {
     /**
      * List of {@link IncidentImpl} that are currently ongoing right now. Closed incidents may still show up in this list.
      */
-    private final List<net.noahf.firegen.api.incidents.Incident> incidents = new ArrayList<>();
+    private final @Getter List<net.noahf.firegen.api.incidents.Incident> incidents = new ArrayList<>();
 
     private final @Getter FireGenVariables fireGenVariables;
 

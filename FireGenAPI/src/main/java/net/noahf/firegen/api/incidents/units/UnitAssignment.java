@@ -4,9 +4,10 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 
+import java.util.Comparator;
 import java.util.List;
 
-public interface UnitAssignment extends AutofilledCharSequence {
+public interface UnitAssignment extends AutofilledCharSequence, Comparable<UnitAssignment> {
 
     Incident getIncident();
 
@@ -19,6 +20,5 @@ public interface UnitAssignment extends AutofilledCharSequence {
     AssignmentEvent getLatestAssignment();
 
     void assign(Contributor<?> contributor, AssignmentStatus newAssignment);
-
 
 }
