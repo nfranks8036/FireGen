@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
@@ -15,10 +16,7 @@ import org.reflections.Reflections;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents the Command Manager, the conduit of information between any commands, including how the commands get
@@ -100,7 +98,6 @@ public class CommandManager extends ListenerAdapter {
      * @param <T> the type parameter of that command
      */
     public <T extends Command> T getCommandClass(Class<T> clazz) {
-        Command cmd = null;
         for (Command c : this.commands) {
             if (!c.getClass().getCanonicalName().equalsIgnoreCase(clazz.getCanonicalName()))
                 continue;
@@ -136,7 +133,7 @@ public class CommandManager extends ListenerAdapter {
         String commandString = event.getCommandString();
         Command command;
 
-        Log.info(user.getName() + " (" + user.getIdLong() + "): /" + event.getFullCommandName());
+        Log.info(user.getName() + " (" + user.getIdLong() + "): " + getCommand(event));
         try {
 
 //            if (Main.maintenance && !Main.allowedDuringMaintenance.contains(user.getIdLong())) {
@@ -152,6 +149,15 @@ public class CommandManager extends ListenerAdapter {
             Log.error("An error occurred while executing '" +  commandString + "' for " + user.getName() + ": " + exception, exception);
             DiscordMessages.error(event, "An error occurred while executing this command. Your request could not be fulfilled.", exception);
         }
+    }
+
+    private String getCommand(SlashCommandInteractionEvent event) {
+        StringJoiner command = new StringJoiner(" ", "/" + event.getFullCommandName() + " ", "");
+        List<OptionMapping> options = event.getOptions();
+        for (OptionMapping option : options) {
+            command.add(option.getName() + ":" + option.getAsString());
+        }
+        return command.toString();
     }
 
     @Override

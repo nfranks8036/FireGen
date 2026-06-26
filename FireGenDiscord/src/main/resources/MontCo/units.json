@@ -308,7 +308,6 @@
     "type": "SHERIFF",
     "emoji": "<:mcso:1449929686963458140>",
     "units": [
-      {"short": "MCSO", "long": "MONTGOMERY COUNTY SHERIFF'S OFFICE", "format": "Montgomery County Sheriff"},
       {"short": "MCSOCR", "long": "MONTGOMERY COUNTY SHERIFF'S OFFICE W/ CO-RESPONDER", "format": "Montgomery County Sheriff (w/ Co-Responder)"}
     ]
   },
@@ -320,7 +319,6 @@
     "type": "POLICE",
     "emoji": "<:cpd:1449927471414902826>",
     "units": [
-      {"short": "CPD", "long": "CHRISTIANSBURG POLICE DEPARTMENT", "format": "Christiansburg Police"},
       {"short": "CPDCR", "long": "CHRISTIANSBURG POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Christiansburg Police (w/ Co-Responder)"}
     ]
   },
@@ -332,7 +330,6 @@
     "type": "POLICE",
     "emoji": "<:bpd:1449916806931153110>",
     "units": [
-      {"short": "BPD", "long": "BLACKSBURG POLICE DEPARTMENT", "format": "Blacksburg Police"},
       {"short": "BPDCR", "long": "BLACKSBURG POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Blacksburg Police (w/ Co-Responder)"}
     ]
   },
@@ -344,7 +341,6 @@
     "type": "POLICE",
     "emoji": "<:vtpd:1449922611550093474>",
     "units": [
-      {"short": "VTPD", "long": "VIRGINIA TECH POLICE DEPARTMENT", "format": "Virginia Tech Police"},
       {"short": "VTPDCR", "long": "VIRGINIA TECH POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Virginia Tech Police (w/ Co-Responder)"}
     ]
   },

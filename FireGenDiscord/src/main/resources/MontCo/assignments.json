@@ -33,7 +33,8 @@
     "name": "CLEAR",
     "short": "CLR",
     "emoji": "<:CLEAR:1499197493689188352>",
-    "ansi": "WHITE"
+    "ansi": "WHITE",
+    "purpose": "UNIT_AVAILABLE_FOR_CALLS"
   },
   {
     "name": "ADVISED",

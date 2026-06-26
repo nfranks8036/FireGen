@@ -36,7 +36,7 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     IncidentLogEntryImpl(LocalDateTime time, Contributor<?> user, String entry, IncidentLogEntry.EntryType type) {
         if (!(user instanceof FireGenUser fireGenUser)) {
-            throw new IllegalArgumentException("Expected user to be of type " + FireGenUser.class + ": " + user.toString());
+            throw new IllegalArgumentException("Expected user to be of type " + FireGenUser.class + ": " + (user != null ? user.toString() : "<null>"));
         }
 
         this.id = IdGenerator.generateNarrativeId(this);

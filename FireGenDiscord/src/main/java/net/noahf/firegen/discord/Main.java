@@ -129,6 +129,10 @@ public class Main {
                     .map(JsonElement::getAsLong)
                     .map(jda::getTextChannelById)
                     .toList();
+
+            receiveChannels = new ArrayList<>(receiveChannels);
+            adminChannels = new ArrayList<>(adminChannels);
+
             Log.info("Found " + receiveChannels.size() + " receiver channels and " + adminChannels.size() + " admin channels.");
         });
     }

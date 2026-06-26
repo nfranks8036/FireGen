@@ -32,9 +32,9 @@ public class DiscordMessages {
         if (cause != null) {
             responseBuilder = responseBuilder
                     .addField("Caused by:", truncate(cause.toString(), 1024-("Caused by:".length()), "..."), false);
-            Log.error(event.getUser().getName() + " caused: " + message, cause);
         }
 
+        Log.error(event.getUser().getName() + " got an error: \"" + message + "\"" + (cause != null ? " [caused by \"" + cause + "\"]" : ""));
         if (event.isAcknowledged()) {
             event.getHook().editOriginalEmbeds(responseBuilder.build()).queue();
             // if this interaction has already been acknowledged, then we can't reply again so we must instead edit

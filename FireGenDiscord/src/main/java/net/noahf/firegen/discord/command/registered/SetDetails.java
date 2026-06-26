@@ -16,6 +16,7 @@ import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
 
 import java.util.List;
@@ -67,6 +68,11 @@ public class SetDetails extends Command {
 
         OptionMapping typeOption = event.getOption("type");
         if (typeOption != null) {
+            if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_CALL_TYPE)) {
+                DiscordMessages.error(event, "You don't have permission to change the incident type.");
+                return;
+            }
+
             IncidentType oldType = incident.getType();
             incident.setTypeBySearch(typeOption.getAsString());
             IncidentType newType = incident.getType();

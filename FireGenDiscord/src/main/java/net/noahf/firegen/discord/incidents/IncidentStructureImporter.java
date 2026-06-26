@@ -9,10 +9,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
-import net.noahf.firegen.api.incidents.units.Agency;
-import net.noahf.firegen.api.incidents.units.AgencyType;
-import net.noahf.firegen.api.incidents.units.RadioChannel;
-import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
@@ -249,8 +246,10 @@ public class IncidentStructureImporter {
                 Emoji emoji = Emoji.fromFormatted(emojiStr);
                 String ansiStr = object.get("ansi").getAsString();
                 AnsiColor ansi = AnsiColor.valueOf(ansiStr.toUpperCase());
+                JsonElement purposeElement = object.get("purpose");
+                AssignmentPurpose purpose = purposeElement != null ? AssignmentPurpose.valueOf(purposeElement.getAsString()) : null;
 
-                AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, new AnsiColor[]{ansi}, i);
+                AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, new AnsiColor[]{ansi}, i, purpose);
                 manager.assignmentStatuses.add(status);
             }
 

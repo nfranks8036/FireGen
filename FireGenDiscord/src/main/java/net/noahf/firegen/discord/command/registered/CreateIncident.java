@@ -1,5 +1,7 @@
 package net.noahf.firegen.discord.command.registered;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -12,8 +14,10 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
+import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.FireGenAction;
@@ -53,6 +57,16 @@ public class CreateIncident extends Command {
      * See {@link DateTimeFormatter} for more information.
      */
     public static final String TIME_CREATE_FORMAT = "HH:mm";
+
+    public static final char AGENCY_PREFIX = '@';
+    public static final char WILDCARD = '*';
+
+    @AllArgsConstructor
+    enum UnitsTargetType {
+        UNIT,
+        AGENCY,
+        WILDCARD;
+    }
 
     public CreateIncident() {
         super("create-incident", "Creates an incident to put in radio activity.",
@@ -206,24 +220,59 @@ public class CreateIncident extends Command {
                 unitsString = unitsString.substring(0, unitsString.length() - 1);
             }
 
-            String[] unitsList = unitsString.split(",");
+            String[] targetsList = unitsString.split(",");
 
             boolean returned = true;
             Map<AssignmentStatus, EditUnits.UnitsChangeInput> units = new HashMap<>();
-            for (String optionItem : unitsList) {
-                String unitString = optionItem;
+            for (String optionItem : targetsList) {
+                String targetString = optionItem;
+
+                UnitsTargetType type = switch (targetString.charAt(0)) {
+                    case WILDCARD -> UnitsTargetType.WILDCARD;
+                    case AGENCY_PREFIX -> UnitsTargetType.AGENCY;
+                    default -> UnitsTargetType.UNIT;
+                };
+
                 String statusString = AssignmentStatusImpl.ADD_UNIT.getShortName();
 
                 if (optionItem.contains(":")) {
                     String[] parts = optionItem.split(":");
-                    unitString = parts[0];
+                    targetString = parts[0];
                     statusString = parts[1];
                 }
 
                 // required syntax of command is the shorthand. e.g., "BFD,BVRS:DSP,SUP5:ENR,BPD,VTPD"
-                Unit a = Main.incidents.getUnitByShorthand(unitString);
-                if (a == null) {
-                    DiscordMessages.error(event, "No unit exist by the name '" + unitString + "'");
+                List<Unit> inputUnits = new ArrayList<>();
+                switch (type) {
+                    case UNIT -> {
+                        Unit u = Main.incidents.getUnitByShorthand(targetString);
+                        if (u == null) {
+                            DiscordMessages.error(event, "No unit exist by the name '" + targetString + "'");
+                            returned = false;
+                            continue;
+                        }
+                        inputUnits.add(u);
+                    }
+                    case AGENCY -> {
+                        Agency a = Main.incidents.getAgencyByShorthand(targetString.substring(1));
+                        if (a == null) {
+                            DiscordMessages.error(event, "No agency exist by the name '" + targetString + "'");
+                            returned = false;
+                            continue;
+                        }
+                        inputUnits.addAll(incident.getUnitAssignments().stream()
+                                .map(UnitAssignment::getUnit)
+                                .filter(unit -> unit.getAgency().equals(a))
+                                .toList()
+                        );
+                    }
+                    case WILDCARD -> {
+                        inputUnits.addAll(incident.getUnitAssignments().stream().map(UnitAssignment::getUnit).toList());
+                    }
+                }
+
+                if (inputUnits.isEmpty()) {
+                    DiscordMessages.error(event, "You attempted to add no units to the call with input '" + unitsString + "'. Did you attempt to " + AGENCY_PREFIX + " an Agency that isn't attached to this call?");
                     returned = false;
                     continue;
                 }
@@ -232,13 +281,11 @@ public class CreateIncident extends Command {
                 if (s == null) {
                     s = AssignmentStatusImpl.ADD_UNIT;
                     DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +
-                            " defaulting to " + s.getShortName() + " for " + a.getShorthand());
+                            " defaulting to " + s.getShortName() + " for " + targetString);
                     returned = false;
                 }
 
                 EditUnits.UnitsChangeInput input = units.getOrDefault(s, new EditUnits.UnitsChangeInput(new ArrayList<>(), s));
-                List<Unit> inputUnits = input.getUnits();
-                inputUnits.add(a);
                 input.setUnits(inputUnits);
                 units.put(s, input);
             }
@@ -335,13 +382,20 @@ public class CreateIncident extends Command {
                     .replaceAll("\\s+", "")
                     .toUpperCase();
 
-            List<String> allUnits = Main.incidents.getUnits().stream()
+            List<String> allTargets = new ArrayList<>(Main.incidents.getUnits().stream()
                     .map(Unit::getShorthand)
                     .map(String::toUpperCase)
-                    .toList();
+                    .toList());
+            allTargets.addAll(Main.incidents.getAgencies().stream()
+                    .map(Agency::getShorthand)
+                    .map(String::toUpperCase)
+                    .map(s -> AGENCY_PREFIX + s)
+                    .toList()
+            );
+            allTargets.add(String.valueOf(WILDCARD));
 
             if (input.endsWith(",")) {
-                return allUnits.stream()
+                return allTargets.stream()
                         .map(s -> input + s)
                         .toList();
             }
@@ -352,7 +406,7 @@ public class CreateIncident extends Command {
                     .toList();
 
             String[] parts = input.split(",");
-            List<String> selectedUnits = new ArrayList<>();
+            List<String> selectedTargets = new ArrayList<>();
 
             // completed entries except last token
             for (int i = 0; i < parts.length - 1; i++) {
@@ -362,7 +416,7 @@ public class CreateIncident extends Command {
                             ? token.substring(0, token.indexOf(':'))
                             : token;
 
-                    selectedUnits.add(unit);
+                    selectedTargets.add(unit);
                 }
             }
 
@@ -370,7 +424,7 @@ public class CreateIncident extends Command {
                     ? ""
                     : parts[parts.length - 1].trim();
 
-            String prefix = selectedUnits.isEmpty()
+            String prefix = selectedTargets.isEmpty()
                     ? ""
                     : String.join(",", parts).substring(0,
                     input.lastIndexOf(currentToken));
@@ -385,17 +439,17 @@ public class CreateIncident extends Command {
              */
             if (currentToken.contains(":")) {
 
-                String unit = currentToken.substring(0, currentToken.indexOf(':'));
+                String target = currentToken.substring(0, currentToken.indexOf(':'));
                 String statusPart = currentToken.substring(currentToken.indexOf(':') + 1);
 
                 // if unit invalid, no suggestions
-                if (!allUnits.contains(unit)) {
+                if (!allTargets.contains(target)) {
                     return List.of();
                 }
 
                 return allStatuses.stream()
                         .filter(s -> s.startsWith(statusPart))
-                        .map(s -> prefix + unit + ":" + s + ",")
+                        .map(s -> prefix + target + ":" + s + ",")
                         .limit(25)
                         .toList();
             }
@@ -408,8 +462,8 @@ public class CreateIncident extends Command {
              * SUP5
              * -----------------------------------------
              */
-            if (allUnits.contains(currentToken)
-                    && !selectedUnits.contains(currentToken)) {
+            if (allTargets.contains(currentToken)
+                    && !selectedTargets.contains(currentToken)) {
 
                 List<String> out = new ArrayList<>();
 
@@ -428,8 +482,8 @@ public class CreateIncident extends Command {
              * BFD,B
              * -----------------------------------------
              */
-            return allUnits.stream()
-                    .filter(a -> !selectedUnits.contains(a))
+            return allTargets.stream()
+                    .filter(a -> !selectedTargets.contains(a))
                     .filter(a -> a.startsWith(currentToken))
                     .map(a -> prefix + a)
                     .limit(25)

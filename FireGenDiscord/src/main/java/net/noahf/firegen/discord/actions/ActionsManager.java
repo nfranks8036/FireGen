@@ -73,7 +73,6 @@ public class ActionsManager {
 
         String actionTitle = sections[2];
 
-        Log.info("Searching for action '" + actionTitle + "'");
         for (FireGenAction action : this.actions) {
             if (!action.getName().equalsIgnoreCase(actionTitle)) {
                 continue;
@@ -86,7 +85,6 @@ public class ActionsManager {
     }
 
     public @Nullable FireGenAction getAction(Class<? extends FireGenAction> clazz) {
-        Log.info("Searching for action '" + clazz.getCanonicalName() + "'");
         for (FireGenAction action : this.actions) {
             if (!clazz.isAssignableFrom(action.getClass())) {
                 continue;

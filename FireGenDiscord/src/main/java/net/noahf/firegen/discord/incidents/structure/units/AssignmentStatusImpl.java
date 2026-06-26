@@ -9,10 +9,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.noahf.firegen.api.incidents.units.AssignmentPurpose;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -21,18 +23,19 @@ import java.util.Arrays;
 public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.firegen.api.incidents.units.AssignmentStatus {
 
     public static final AssignmentStatus ADD_UNIT = new AssignmentStatusImpl(
-            "ADDED", "ADD", null, new AnsiColor[] {AnsiColor.BACKGROUND_WHITE, AnsiColor.BLACK}, Integer.MIN_VALUE
+            "ADDED", "ADD", null, new AnsiColor[] {AnsiColor.BACKGROUND_WHITE, AnsiColor.BLACK}, Integer.MIN_VALUE, AssignmentPurpose.UNIT_ATTACHED
     );
 
     public static final AssignmentStatus REMOVE_UNIT = new AssignmentStatusImpl(
-            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MAX_VALUE
+            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MAX_VALUE, AssignmentPurpose.UNIT_AVAILABLE_FOR_CALLS
     );
 
-    public AssignmentStatusImpl(String name, String shortName, Emoji emoji, AnsiColor[] ansiColor, int ordinal) {
+    public AssignmentStatusImpl(String name, String shortName, Emoji emoji, AnsiColor[] ansiColor, int ordinal, @Nullable AssignmentPurpose purpose) {
         this(name, shortName,
                 (emoji != null ? emoji.getFormatted() : null),
                 Arrays.stream(ansiColor).map(Enum::name).toArray(String[]::new),
-                ordinal
+                ordinal,
+                purpose
         );
     }
 
@@ -45,6 +48,7 @@ public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.f
     private final String[] ansiColorStrings;
 
     private final @Getter @Accessors(fluent = true) int ordinal;
+    private final @Getter @Nullable AssignmentPurpose purpose;
 
     private transient Emoji emoji = null;
     private transient AnsiColor[] ansiColor = null;

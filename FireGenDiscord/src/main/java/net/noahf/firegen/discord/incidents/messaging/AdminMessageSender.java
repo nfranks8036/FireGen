@@ -24,6 +24,7 @@ import net.noahf.firegen.discord.utilities.Log;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 public class AdminMessageSender extends MessageSender {
@@ -73,10 +74,15 @@ public class AdminMessageSender extends MessageSender {
         String contents = "New incident " +
                 super.getIncident().getType().getSelectedName() + " created by " +
                 super.getIncident().getContributors().getFirst();
-        for (TextChannel channel : Main.adminChannels) {
+
+        List<TextChannel> channels = new ArrayList<>(Main.adminChannels);
+        boolean shouldRemoveNulls = false;
+        for (TextChannel channel : channels) {
             try {
                 if (channel == null) {
-                    Log.warn("ADMIN - Can't send a message here. This channel does not exist!"); continue;
+                    Log.warn("ADMIN - Can't send a message here. This channel does not exist! Marked for removal.");
+                    shouldRemoveNulls = true;
+                    continue;
                 }
 
                 Message message = channel.sendMessage(contents)
@@ -91,6 +97,13 @@ public class AdminMessageSender extends MessageSender {
                 Log.error("ADMIN - Can't send message to " + (channel != null ? channel.getName() : null)
                         + ": " + exception, exception);
             }
+        }
+
+        if (shouldRemoveNulls) {
+            int sizeBefore = Main.adminChannels.size();
+            Main.adminChannels.removeIf(Objects::isNull);
+
+            Log.warn("Removed " + (sizeBefore - Main.adminChannels.size()) + " null (non-existent) admin channels.");
         }
     }
 

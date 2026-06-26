@@ -19,6 +19,7 @@ import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 public class ReceiveMessageSender extends MessageSender {
@@ -57,10 +58,14 @@ public class ReceiveMessageSender extends MessageSender {
         startingMessage = startingMessage + "\nWhen- <t:" + incident.getTime().getUnix() + ":t>";
 
         // send a starting message to the subscribed channels, this will be quickly changed by the following edit
-        for (TextChannel channel : Main.receiveChannels) {
+        List<TextChannel> channels = new ArrayList<>(Main.receiveChannels);
+        boolean shouldRemoveNulls = false;
+        for (TextChannel channel : channels) {
             try {
                 if (channel == null) {
-                    Log.warn("RECEIVE - Can't send a message here. This channel does not exist!"); continue;
+                    Log.warn("RECEIVE - Can't send a message here. This channel does not exist! Marked for removal.");
+                    shouldRemoveNulls = true;
+                    continue;
                 }
 
                 Message message = channel.sendMessage(startingMessage).complete();
@@ -69,6 +74,12 @@ public class ReceiveMessageSender extends MessageSender {
                 Log.error("RECEIVE - Can't send message to " + (channel != null ? channel.getName() : null) +
                         ": " + exception, exception);
             }
+        }
+
+        if (shouldRemoveNulls) {
+            int sizeBefore = Main.receiveChannels.size();
+            Main.receiveChannels.removeIf(Objects::isNull);
+            Log.warn("Removed " + (sizeBefore - Main.receiveChannels.size()) + " null (non-existent) receiver channels.");
         }
     }
 

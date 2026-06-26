@@ -79,7 +79,9 @@ public class UnitInfo extends Command {
 //            return;
 //        }
 
-        String unitString = unitMapping.getAsString();
+        String input = unitMapping.getAsString();
+        String unitString = input.replace("-BYP", "");
+        boolean bypassRestrictions = input.contains("-BYP");
         Unit iUnit = Main.incidents.getUnitByLonghand(unitString);
         if (iUnit == null) {
             iUnit = Main.incidents.getUnitByShorthand(unitString);
@@ -90,7 +92,7 @@ public class UnitInfo extends Command {
             return;
         }
         UnitImpl unit = (UnitImpl) iUnit;
-        if (unit.isPlaceholder()) {
+        if (unit.isPlaceholder() && !bypassRestrictions) {
             DiscordMessages.error(event, "This unit is considered a 'placeholder', which means it's information cannot be viewed.\nYou may be able to view information about it by viewing its parent agency by using `/agency-info <agency>`.");
             return;
         }

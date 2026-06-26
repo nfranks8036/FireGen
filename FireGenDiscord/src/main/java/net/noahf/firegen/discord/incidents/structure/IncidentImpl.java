@@ -10,6 +10,7 @@ import net.noahf.firegen.api.incidents.IncidentTime;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
+import net.noahf.firegen.api.incidents.units.AssignmentPurpose;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
@@ -174,6 +175,10 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
         unitAssignment.assign(contributor, assignment);
         this.refreshStatus();
+
+        if (assignment.getPurpose() == AssignmentPurpose.UNIT_AVAILABLE_FOR_CALLS) {
+            this.removeUnit0(unit, false);
+        }
     }
 
     public UnitAssignment getUnitAssignmentFor(Unit unit) {
@@ -193,7 +198,14 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public void removeUnit(Unit unit) {
-        Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit) && ua.getIncident().equals(this));
+        this.removeUnit0(unit, true);
+    }
+
+    private void removeUnit0(Unit unit, boolean fromAll) {
+        if (fromAll) {
+            Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit) && ua.getIncident().equals(this));
+        }
+
         ((UnitImpl)unit).getAssignments().removeIf(ua -> ua.getIncident().equals(this));
 
         this.unitAssignments.removeIf(a -> a.getUnit().equals(unit));

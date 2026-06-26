@@ -3,6 +3,7 @@ package net.noahf.firegen.discord.command.registered;
 import kotlin.Pair;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -90,8 +91,11 @@ public class Units extends Command {
         ImmutablePair<String, Integer> returned = table.build(25);
         int amount = returned.getSecondElement();
 
-        return "Returned `" + (amount >= 25 ? "25`/`25" : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + refreshed + ":R>." +
-                "\n```ansi\n" + returned.getFirstElement() + "```";
+        return DiscordMessages.truncate(
+                "Returned `" + (amount >= 25 ? "25`/`25" : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + refreshed + ":R>." +
+                        "\n```ansi\n" + returned.getFirstElement() + "```",
+                Message.MAX_CONTENT_LENGTH, "``` *[unable to show any more content]*"
+        );
     }
 
     public static class UnitsRefreshButtonDetector extends ListenerAdapter {

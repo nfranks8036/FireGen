@@ -223,10 +223,17 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
     }
 
     @AllArgsConstructor
-    @Getter @Setter
+    @Getter
     public static class UnitsChangeInput {
-        private List<Unit> units;
+        private List<Unit> units = null;
         private AssignmentStatus newStatus;
+
+        public void setUnits(List<Unit> units) {
+            if (this.units == null) {
+                this.units = new ArrayList<>();
+            }
+            this.units.addAll(units);
+        }
     }
 
 //    String narrative;

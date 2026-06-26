@@ -111,9 +111,14 @@ public class AgencyInfo extends Command {
                         .sorted()
                         .toList();
 
+                if (assignments.isEmpty()) {
+                    continue;
+                }
+
                 List<String> formatted = new LinkedList<>();
                 for (UnitAssignment a : assignments) {
                     UnitImpl unit = (UnitImpl) a.getUnit();
+                    units.remove(unit);
                     String formattedStatus = unit.getFormattedStatus((AssignmentStatusImpl) a.getLatestAssignment().getStatus());
                     formatted.add(formattedStatus);
                 }
@@ -129,6 +134,7 @@ public class AgencyInfo extends Command {
                     .map(u -> (UnitImpl) u)
                     .map(DELETE_EMOJI)
                     .collect(Collectors.joining(", "))
+                    + (embed.getFields().isEmpty() ? "" : "\n\nActive Incidents:")
             );
 
             returned.add(embed.build());
