@@ -177,7 +177,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.refreshStatus();
 
         if (assignment.getPurpose() == AssignmentPurpose.UNIT_AVAILABLE_FOR_CALLS) {
-            this.removeUnit0(unit, false);
+            this.removeUnit(unit, false);
         }
     }
 
@@ -198,10 +198,10 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public void removeUnit(Unit unit) {
-        this.removeUnit0(unit, true);
+        this.removeUnit(unit, true);
     }
 
-    private void removeUnit0(Unit unit, boolean fromAll) {
+    private void removeUnit(Unit unit, boolean fromAll) {
         if (fromAll) {
             Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit) && ua.getIncident().equals(this));
         }

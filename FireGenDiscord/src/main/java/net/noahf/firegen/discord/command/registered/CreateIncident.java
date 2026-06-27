@@ -266,9 +266,8 @@ public class CreateIncident extends Command {
                                 .toList()
                         );
                     }
-                    case WILDCARD -> {
-                        inputUnits.addAll(incident.getUnitAssignments().stream().map(UnitAssignment::getUnit).toList());
-                    }
+                    case WILDCARD ->
+                            inputUnits.addAll(incident.getUnitAssignments().stream().map(UnitAssignment::getUnit).toList());
                 }
 
                 if (inputUnits.isEmpty()) {

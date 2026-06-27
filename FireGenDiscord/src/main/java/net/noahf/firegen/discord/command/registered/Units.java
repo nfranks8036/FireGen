@@ -22,6 +22,7 @@ import net.noahf.firegen.discord.utilities.DiscordMessages;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
+import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 import net.noahf.firegen.discord.utilities.ansi.AnsiTableBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +57,9 @@ public class Units extends Command {
         Set<UnitAssignment> assignments = Main.incidents.getAssignments();;
 
         if (assignments.isEmpty()) {
-            return "```diff\n- No units have been assigned to any incidents right now. Try again later. -```\n"
-                    + "(as of <t:" + (Time.getUnix()) + ":R>)"
-                    ;
+            return "Returned `0` unit statuses from FireGen as of <t:" + Time.getUnix() + ":R>.\n" +
+                    "```ansi\n" + AnsiColor.BACKGROUND_RED.wrap("No units have been assigned to any incidents right now. Try again later.") +
+                    "```\n";
         }
 
         AnsiTableBuilder table = new AnsiTableBuilder()
