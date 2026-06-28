@@ -110,7 +110,7 @@ public class SetDetails extends Command {
             return;
         }
 
-        DiscordMessages.noMessage(event);
+        DiscordMessages.noMessage(event, false);
     }
 
     @Override

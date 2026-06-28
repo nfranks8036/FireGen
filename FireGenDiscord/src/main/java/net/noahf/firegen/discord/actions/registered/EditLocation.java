@@ -151,7 +151,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         IncidentLocation location = new IncidentLocationImpl(data, type, commonName, venue);
 
         this.onSubmit(incident, event, type, location);
-        DiscordMessages.noMessage(event);
+        DiscordMessages.noMessage(event, false);
     }
 
     public void onSubmit(Incident incident, IReplyCallback event, LocationType type, IncidentLocation location) {

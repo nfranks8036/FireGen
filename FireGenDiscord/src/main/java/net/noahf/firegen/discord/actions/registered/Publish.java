@@ -43,6 +43,6 @@ public class Publish implements ButtonAction {
 
         incident.update();
 
-        DiscordMessages.noMessage(event);
+        DiscordMessages.noMessage(event, false);
     }
 }

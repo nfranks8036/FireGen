@@ -127,7 +127,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
             incident.injectLog(entry);
         }
 
-        DiscordMessages.noMessage(event);
+        DiscordMessages.noMessage(event, false);
 
         incident.addContributor(event.getUser());
         incident.update();

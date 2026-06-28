@@ -85,7 +85,7 @@ public class Notate implements ButtonAction, ModalAction {
         }
 
         this.onSubmit(incident, event, textMapping.getAsString());
-        DiscordMessages.noMessage(event);
+        DiscordMessages.noMessage(event, false);
     }
 
     public void onSubmit(Incident incident, IReplyCallback event, String note) {

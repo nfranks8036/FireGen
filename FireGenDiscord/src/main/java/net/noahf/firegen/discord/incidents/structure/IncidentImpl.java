@@ -175,10 +175,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
         unitAssignment.assign(contributor, assignment);
         this.refreshStatus();
-
-        if (assignment.getPurpose() == AssignmentPurpose.UNIT_AVAILABLE_FOR_CALLS) {
-            this.removeUnit(unit, false);
-        }
     }
 
     public UnitAssignment getUnitAssignmentFor(Unit unit) {

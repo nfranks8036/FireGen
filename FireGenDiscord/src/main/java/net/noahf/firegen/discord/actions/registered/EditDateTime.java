@@ -126,7 +126,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
         }
 
         this.onSubmit(incident, event, vars, date, time);
-        DiscordMessages.noMessage(event);
+        DiscordMessages.noMessage(event, false);
     }
 
     public void onSubmit(Incident incident, IReplyCallback event, FireGenVariables vars, LocalDate date, LocalTime time) {

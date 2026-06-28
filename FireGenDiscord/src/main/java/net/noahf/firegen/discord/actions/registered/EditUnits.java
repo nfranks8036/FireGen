@@ -63,7 +63,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
 
         if (!ctx.getParameters().isEmpty()) {
             this.onSubmit(ctx.getIncident(), event, null);
-            DiscordMessages.noMessage(event);
+            DiscordMessages.noMessage(event, false);
             return;
         }
 
@@ -172,7 +172,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             selectedUnits.put(event.getUser(), input);
         }
 
-        DiscordMessages.noMessage(event);
+        DiscordMessages.noMessage(event, false);
     }
 
     public void onSubmit(Incident incidentValue, IReplyCallback event, @Nullable EditUnits.UnitsChangeInput inputUnits) {
@@ -186,6 +186,18 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         List<Unit> units = input.units;
         AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatusImpl.ADD_UNIT;
         Contributor<User> user = incident.addContributor(event.getUser());
+
+        if (units.isEmpty()) {
+            DiscordMessages.error(event, """
+                    You cannot set the unit status of zero units.
+                    
+                    -# *Imagine that you have zero cookies and you attempt to split them between one person. \
+                    How much of the cookie does this one person get? See? It doesn't make sense. \
+                    And the Cookie Monster is sad there are no cookies, and you are sad that the Cookie Monster \
+                    is your only friend.*"""
+            );
+            return;
+        }
 
         if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {
 

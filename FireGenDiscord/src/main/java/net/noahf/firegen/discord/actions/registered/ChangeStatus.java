@@ -51,7 +51,7 @@ public class ChangeStatus implements ButtonAction {
         };
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
 
-        DiscordMessages.noMessage(event);
+        DiscordMessages.noMessage(event, false);
 
         incident.update();
     }

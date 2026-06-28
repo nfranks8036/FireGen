@@ -52,6 +52,6 @@ public class EditMode implements ButtonAction {
                             + "Type `/set-details` to change the incident details in command format."
             );
 
-        } else DiscordMessages.noMessage(event);
+        } else DiscordMessages.noMessage(event, false);
     }
 }
