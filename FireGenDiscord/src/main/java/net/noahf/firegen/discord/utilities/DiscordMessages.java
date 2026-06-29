@@ -76,7 +76,6 @@ public class DiscordMessages {
 
     public static void noMessage(IReplyCallback event, boolean deleteIfExists) {
         if (event.isAcknowledged()) {
-            if (!deleteIfExists) return;
             event.getHook().deleteOriginal().queue();
         } else {
             event.reply(" ").setEphemeral(true).complete().deleteOriginal().queue();
