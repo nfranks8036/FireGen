@@ -1,0 +1,54 @@
+package net.noahf.firegen.discord.utilities;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import net.dv8tion.jda.api.components.MessageTopLevelComponentUnion;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.utils.AttachedFile;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageData;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+public class MessageGenericData {
+
+    public static MessageGenericData fromMessage(String message) {
+        return new MessageGenericData(message, null);
+    }
+
+    public static MessageGenericData fromEmbed(MessageEmbed embed) {
+        return new MessageGenericData(null, embed);
+    }
+
+    private final String content;
+    private final MessageEmbed embed;
+
+    public MessageCreateData asCreate() {
+        if (content != null) {
+            return MessageCreateData.fromContent(content);
+        }
+        if (embed != null) {
+            return MessageCreateData.fromEmbeds(embed);
+        }
+        throw new IllegalStateException("No values set.");
+    }
+
+    public MessageEditData asEdit() {
+        if (content != null) {
+            return MessageEditData.fromContent(content);
+        }
+        if (embed != null) {
+            return MessageEditData.fromEmbeds(embed);
+        }
+        throw new IllegalStateException("No values set.");
+    }
+
+}
