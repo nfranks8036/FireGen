@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static net.noahf.firegen.discord.command.registered.Units.BLANK_EMOJI;
+import static net.noahf.firegen.discord.command.registered.Units.MAX_UNITS_TABLE;
 
 public enum UnitsResponseType {
     TABLE("Table View", assignments -> {
@@ -60,7 +61,7 @@ public enum UnitsResponseType {
 
         return MessageGenericData.fromMessage(
                 DiscordMessages.truncate(
-                        "Returned `" + (amount >= 25 ? "25`/`25" : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + refreshed + ":R>." +
+                        "Returned `" + (amount >= MAX_UNITS_TABLE ? MAX_UNITS_TABLE + "`/`" + MAX_UNITS_TABLE : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + refreshed + ":R>." +
                                 "\n```ansi\n" + returned.getFirstElement() + "```",
                         Message.MAX_CONTENT_LENGTH, "``` *[unable to show any more content]*"
                 )

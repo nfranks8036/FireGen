@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 public class Units extends Command {
 
     public static final String BLANK_EMOJI = " ".repeat(7);
+    public static final int MAX_UNITS_TABLE = 16;
 
     private static final Map<Long, UnitsResponseType> useMobileMode = new ConcurrentHashMap<>();
 
