@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class Units extends Command {
 
     public static final String BLANK_EMOJI = " ".repeat(7);
+    public static final int MAX_UNITS_TABLE = 16;
 
     private static final Map<Long, UnitsResponseType> userIdToViewType = new ConcurrentHashMap<>();
 

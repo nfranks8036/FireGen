@@ -74,6 +74,7 @@
       {"short": "303", "long": "LMRS 303", "format": "303", "emoji": "<:lmfr:1449926826079158413>"},
       {"short": "304", "long": "LMRS 304", "format": "304", "emoji": "<:lmfr:1449926826079158413>"},
       {"short": "305", "long": "LMRS 305", "format": "305", "emoji": "<:lmfr:1449926826079158413>"},
+      {"short": "SUP3", "long": "LMRS SUPERVISOR 3", "format": "Supervisor 3", "emoji": "<:lmfr:1449926826079158413>"},
       {"short": "RP30", "long": "LMRS RESPONSE 30", "format": "Response 30", "emoji": "<:lmfr:1449926826079158413>"},
       {"short": "R34", "long": "LMRS RESCUE 34", "format": "Rescue 34", "emoji": "<:lmfr:1449926826079158413>"},
       {"short": "R35", "long": "LMRS RESCUE 35", "format": "Rescue 35", "emoji": "<:lmfr:1449926826079158413>"},
