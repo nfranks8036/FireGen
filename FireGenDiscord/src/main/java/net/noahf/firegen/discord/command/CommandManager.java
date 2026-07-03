@@ -1,11 +1,13 @@
 package net.noahf.firegen.discord.command;
 
+import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
@@ -85,6 +87,10 @@ public class CommandManager extends ListenerAdapter {
 //            command.data.forEach(cd ->
 //                    Main.JDA.getGuildById(725503420512862220L).upsertCommand(cd).queue());
         }
+
+        allCommandData.add(
+                Commands.context(net.dv8tion.jda.api.interactions.commands.Command.Type.MESSAGE, "Show incident details")
+        );
 
         Main.JDA.updateCommands().addCommands(allCommandData).complete();
         Log.info("Successfully registered all commands with JDA, returned with " + this.commands.size() + " commands.");

@@ -40,4 +40,8 @@ public interface IncidentTime {
         return this.getDateTime().format(DateTimeFormatter.ofPattern(vars.dateFormat()));
     }
 
+    default String formatDateAndTime(FireGenVariables vars, String separator) {
+        return this.formatDate(vars) + separator + this.formatTimeLong(vars);
+    }
+
 }

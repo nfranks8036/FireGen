@@ -107,7 +107,7 @@ public class CreateIncident extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        FireGenVariables vars = Main.incidents.getFireGenVariables();
+        event.deferReply(true).queue();
         if (!Main.users.hasPermission(event.getUser(), Permission.INCIDENT_CREATE)) {
             DiscordMessages.error(event, "You don't have permission to create incidents.");
             return;

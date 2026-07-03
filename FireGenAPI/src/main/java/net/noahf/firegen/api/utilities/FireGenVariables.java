@@ -9,6 +9,8 @@ import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTagQualifierList;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -83,6 +85,11 @@ public class FireGenVariables {
     @SuppressWarnings("deprecation")
     public void setVenues(List<LocationVenue> venues) {
         LocationField.setKnownVenues(venues);
+    }
+
+    public String formatTime(LocalDateTime time, boolean withDate) {
+        return (withDate ? time.format(DateTimeFormatter.ofPattern(this.dateFormat())) + " ": "")
+                + time.format(DateTimeFormatter.ofPattern(this.longTimeFormat()));
     }
 
 }

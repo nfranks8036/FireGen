@@ -18,6 +18,12 @@
     "ansi": "GREEN"
   },
   {
+    "name": "STAGED",
+    "short": "STA",
+    "emoji": "<:STAGED:0>",
+    "ansi": "BACKGROUND_GREEN"
+  },
+  {
     "name": "LEFT FOR SECONDARY",
     "short": "LEF",
     "emoji": "<:LEFT_FOR_SECONDARY:1499197449716240384>",

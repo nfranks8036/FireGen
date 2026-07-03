@@ -98,12 +98,7 @@ public enum LocationType {
                     .setMaxLength(20)
                     .setAutofill(requireType((l) -> l.getData().get(2), "INTERSECTION"))
                     .build(),
-            newField("Intersection: Road #4", "OPTIONAL: The fourth road in the intersection.", "intersection-road4", TextType.SHORT)
-                    .setRequired(false)
-                    .setPlaceholder("Ex: Winston Ave")
-                    .setMaxLength(20)
-                    .setAutofill(requireType((l) -> l.getData().get(3), "INTERSECTION"))
-                    .build()
+            VENUE
     ),
 
     CROSS_STREETS(
@@ -128,12 +123,7 @@ public enum LocationType {
                     .setMaxLength(20)
                     .setAutofill(requireType((l) -> l.getData().get(2), "CROSS_STREETS"))
                     .build(),
-            newField("Cross-street: Road #4", "OPTIONAL: The quaternary road in the cross-streets.", "crossstreets-road4", TextType.SHORT)
-                    .setRequired(false)
-                    .setPlaceholder("Ex: Winston Ave")
-                    .setMaxLength(20)
-                    .setAutofill(requireType((l) -> l.getData().get(3), "CROSS_STREETS"))
-                    .build()
+            VENUE
     ),
 
     CUSTOM(
@@ -144,7 +134,8 @@ public enum LocationType {
                     .setRequired(true)
                     .setMaxLength(200)
                     .setAutofill(requireType((l) -> l.getData().getFirst(), "CUSTOM"))
-                    .build()
+                    .build(),
+            VENUE
     );
 
     private final String prefix, title, description;
