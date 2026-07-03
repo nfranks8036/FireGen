@@ -31,11 +31,13 @@ public class Units extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        event.reply(createReply(event.getMember()).asCreate())
+        MessageGenericData reply = createReply(event.getMember());
+        event.reply(reply.asCreate())
                 .setEphemeral(true)
                 .setComponents(
                         ActionRow.of(
-                                Button.primary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh")
+                                Button.primary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh"),
+                                Button.primary("firegenuser-" + event.getUser().getIdLong() + "-changetype", "Change to " + reply.guessType().nextOnList().getDescriptor())
                         )
                 )
                 .queue();
@@ -43,14 +45,6 @@ public class Units extends Command {
 
     public static MessageGenericData createReply(Member user) {
         Set<UnitAssignment> assignments = Main.incidents.getAssignments();;
-
-        if (assignments.isEmpty()) {
-            return MessageGenericData.fromMessage(
-                    "Returned `0` unit statuses from FireGen as of <t:" + Time.getUnix() + ":R>.\n" +
-                            "```ansi\n" + AnsiColor.BACKGROUND_RED.wrap("No units have been assigned to any incidents right now. Try again later.") +
-                            "```\n"
-            );
-        }
 
         UnitsResponseType type = UnitsResponseType.TABLE;
 
@@ -73,7 +67,11 @@ public class Units extends Command {
             };
         }
 
-        return type.apply(assignments);
+        if (assignments.isEmpty()) {
+            return type.applyNone();
+        }
+
+        return type.applyData(assignments);
     }
 
     public static class UnitsRefreshButtonDetector extends ListenerAdapter {
@@ -84,14 +82,13 @@ public class Units extends Command {
             User user = event.getUser();
 
             if (!id.startsWith("firegenuser")
-                    || !id.endsWith("refreshunits")
-                    || !id.endsWith("changetype")
+                    || !(id.endsWith("refreshunits") || id.endsWith("changetype"))
             ) {
                 return;
             }
 
             Log.info(user.getName() + " (" + user.getIdLong() + ") pressed button '" + id + "'");
-            UnitsResponseType currentView = userIdToViewType.getOrDefault(user.getIdLong(), UnitsResponseType.NOT_SET);
+            UnitsResponseType currentView = userIdToViewType.getOrDefault(user.getIdLong(), UnitsResponseType.TABLE);
             if (id.endsWith("changetype")) {
                 currentView = currentView.nextOnList();
                 userIdToViewType.put(user.getIdLong(), currentView);
@@ -100,24 +97,21 @@ public class Units extends Command {
             String changeText = "Change to " + currentView.nextOnList().getDescriptor();
 
             try {
-                event.editMessage(createReply(event.getMember()).asEdit())
+                event.editMessage(" ").setEmbeds(new ArrayList<>())
+                                .applyData(createReply(event.getMember()).asEdit())
                         .setComponents(
                                 ActionRow.of(
-                                        Button.secondary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh (Wait 5s)").asDisabled()
-                                ),
-                                ActionRow.of(
-                                        Button.secondary("firegenuser-" + event.getUser().getIdLong() + "-changetype", changeText).asDisabled()
+                                        Button.secondary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh").asDisabled(),
+                                        Button.secondary("firegenuser-" + event.getUser().getIdLong() + "-changetype", changeText).asDisabled(),
+                                        Button.danger("firegenuser-wait", "(Wait 5 seconds)").asDisabled()
                                 )
                         )
                         .complete().editOriginalComponents(
                                 ActionRow.of(
-                                        Button.primary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh").asEnabled()
-                                ),
-                                ActionRow.of(
+                                        Button.primary("firegenuser-" + event.getUser().getIdLong() + "-refreshunits", "Refresh").asEnabled(),
                                         Button.primary("firegenuser-" + event.getUser().getIdLong() + "-changetype", changeText).asEnabled()
                                 )
                         ).completeAfter(5, TimeUnit.SECONDS);
-                ;
             } catch (Exception exception) {
                 DiscordMessages.error(event, "An error occurred processing your button press", exception);
             }

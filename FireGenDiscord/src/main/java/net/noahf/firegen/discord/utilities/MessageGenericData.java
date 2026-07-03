@@ -51,4 +51,14 @@ public class MessageGenericData {
         throw new IllegalStateException("No values set.");
     }
 
+    public UnitsResponseType guessType() {
+        if (this.content != null) {
+            return UnitsResponseType.TABLE;
+        }
+        if (this.embed != null) {
+            return UnitsResponseType.EMBED;
+        }
+        return UnitsResponseType.NOT_SET;
+    }
+
 }

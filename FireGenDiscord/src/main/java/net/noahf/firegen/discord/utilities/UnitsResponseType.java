@@ -11,17 +11,18 @@ import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 import net.noahf.firegen.discord.utilities.ansi.AnsiTableBuilder;
 
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringJoiner;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.noahf.firegen.discord.command.registered.Units.BLANK_EMOJI;
@@ -66,7 +67,13 @@ public enum UnitsResponseType {
                         Message.MAX_CONTENT_LENGTH, "``` *[unable to show any more content]*"
                 )
         );
-    }),
+    },
+            () -> MessageGenericData.fromMessage(
+                    "Returned `0` unit statuses from FireGen as of <t:" + Time.getUnix() + ":R>.\n" +
+                            "```ansi\n" + AnsiColor.BACKGROUND_RED.wrap("No units have been assigned to any incidents right now. Try again later.") +
+                            "```\n"
+            )
+            ),
 
 
     EMBED("Embed View", assignments -> {
@@ -75,6 +82,7 @@ public enum UnitsResponseType {
         Map<Incident, java.util.List<UnitAssignment>> incidentUnits = assignments.stream()
                 .collect(Collectors.groupingBy(UnitAssignment::getIncident));
 
+        int unitAmounts = 0;
         for (Map.Entry<Incident, List<UnitAssignment>> entry : incidentUnits.entrySet()) {
             Incident incident = entry.getKey();
 
@@ -87,38 +95,53 @@ public enum UnitsResponseType {
             StringJoiner fieldDescription = new StringJoiner("\n");
             final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern(Main.incidents.getFireGenVariables().longTimeFormat());
 
-            for (UnitAssignment assignment : entry.getValue()) {
+            List<UnitAssignment> sortedAssignments = entry.getValue();
+            sortedAssignments.sort(Comparator.comparing(o -> o.getLatestAssignment().getTimestamp()));
+            for (UnitAssignment assignment : sortedAssignments.reversed()) {
                 AssignmentEvent status = assignment.getLatestAssignment();
-                Unit unit = assignment.getUnit();
+                UnitImpl unit = (UnitImpl) assignment.getUnit();
                 Emoji emojiObj = ((AssignmentStatusImpl) status.getStatus()).getEmoji();
                 String emoji = (emojiObj != null ? emojiObj.getFormatted() : BLANK_EMOJI);
                 String timestamp = status.getTimestamp().format(TIME_FORMAT);
 
                 fieldDescription.add(
-                        emoji + " " + unit.getShorthand() + " @ `" + timestamp
+                        emoji + " " + (unit.getEmoji() != null ? unit.getEmoji().getFormatted() + " " : "") + unit.getShorthand() + " @ `" + timestamp + "`"
                 );
+                unitAmounts++;
             }
 
             returned = returned
+                    .setDescription("Returned `" + unitAmounts + "` unit status" + (unitAmounts == 1 ? "" : "es") + " from FireGen as of <t:" + Time.getUnix() + ":R>")
                     .addField(fieldTitle, fieldDescription.toString(), false);
         }
 
         return MessageGenericData.fromEmbed(returned.build());
-    }),
+    },
+            () -> MessageGenericData.fromEmbed(new EmbedBuilder()
+                            .setDescription("Returned `0` unit statuses from FireGen as of <t:" + Time.getUnix() + ":R>.")
+                            .setFooter("No units have been assigned to any incidents right now. Try again later.")
+                    .build())
+            ),
 
-    NOT_SET("<InvalidValue>", (i) -> null);
+    NOT_SET("<InvalidValue>", (i) -> null, () -> MessageGenericData.fromMessage("<NoData>"));
 
 
     @Getter private final String descriptor;
     private final Function<Set<UnitAssignment>, MessageGenericData> function;
+    private final Supplier<MessageGenericData> noDataFunction;
 
-    UnitsResponseType(String descriptor, Function<Set<UnitAssignment>, MessageGenericData> func) {
+    UnitsResponseType(String descriptor, Function<Set<UnitAssignment>, MessageGenericData> data, Supplier<MessageGenericData> noData) {
         this.descriptor = descriptor;
-        this.function = func;
+        this.function = data;
+        this.noDataFunction = noData;
     }
 
-    public MessageGenericData apply(Set<UnitAssignment> assignments) {
+    public MessageGenericData applyData(Set<UnitAssignment> assignments) {
         return this.function.apply(assignments);
+    }
+
+    public MessageGenericData applyNone() {
+        return this.noDataFunction.get();
     }
 
     public UnitsResponseType nextOnList() {
