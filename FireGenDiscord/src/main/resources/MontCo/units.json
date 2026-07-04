@@ -157,6 +157,7 @@
       {"short": "E67", "long": "LMFD ENGINE 67", "format": "Engine 67", "emoji": "<:lmfr:1449926826079158413>"},
       {"short": "E69", "long": "LMFD ENGINE 69", "format": "Engine 69", "emoji": "<:lmfr:1449926826079158413>"},
       {"short": "T68", "long": "LMFD TANKER 68", "format": "Tanker 68", "emoji": "<:lmfr:1449926826079158413>"},
+      {"short": "B61", "long": "LMFD BRUSH 61", "format": "Brush 61", "emoji": "<:lmfr:1449926826079158413>"},
       {"short": "EXR60", "long": "LMFD EXTRICATION 60", "format": "Extrication 60", "emoji": "<:lmfr:1449926826079158413>"}
     ]
   },
