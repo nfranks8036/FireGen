@@ -2,12 +2,10 @@ package net.noahf.firegen.discord.incidents.structure.location;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.discord.incidents.IncidentManager;
-import net.noahf.firegen.discord.utilities.Log;
-import org.jetbrains.annotations.Nullable;
+import net.noahf.firegen.discord.utilities.JsonUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ public class LocationPreset extends IncidentLocationImpl {
     public LocationPreset(IncidentManager manager, String key, JsonObject object) {
         super(new ArrayList<>(List.of(key)));
         try {
-            JsonElement locationElement  = object.get("location");
+            JsonElement locationElement  = JsonUtilities.element(object, "location");
 
             String[] entireAddress;
             if (locationElement != null) {
@@ -29,18 +27,18 @@ public class LocationPreset extends IncidentLocationImpl {
             String numerics = entireAddress[0];
             String street = entireAddress[1];
 
-            JsonElement unitElement = object.get("unit");
+            JsonElement unitElement = JsonUtilities.element(object, "unit", true);
             if (unitElement != null) {
                 street = street + " " + unitElement.getAsString();
             }
 
-            JsonElement venueElement = object.get("venue");
+            JsonElement venueElement = JsonUtilities.element(object, "venue", true);
             LocationVenue venue = null;
             if (venueElement != null) {
                 venue = manager.getVenueBy(venueElement.getAsString());
             }
 
-            JsonElement commonNameElement = object.get("common_name");
+            JsonElement commonNameElement = JsonUtilities.element(object, "common_name", true);
             String commonName = null;
             if (commonNameElement != null) {
                 commonName = commonNameElement.getAsString();

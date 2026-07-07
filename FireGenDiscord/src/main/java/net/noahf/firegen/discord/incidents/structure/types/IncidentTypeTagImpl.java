@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTagQualifierList;
+import net.noahf.firegen.discord.utilities.JsonUtilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -44,17 +45,19 @@ public class IncidentTypeTagImpl implements IncidentTypeTag {
             return;
         }
 
-        this.tagName = this.object.get("name").getAsString();
-        this.priorities = this.object.get("priorities").getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList();
+        this.tagName = JsonUtilities.asStr(this.object, "name");
+        this.priorities = JsonUtilities.element(this.object, "priorities")
+                .getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList();
 
-        if (!this.object.get("qualifiers").isJsonNull()) {
+        JsonElement qualifiersJson = JsonUtilities.element(this.object, "qualifiers", true);
+        if (qualifiersJson != null && !qualifiersJson.isJsonNull()) {
 
-            JsonObject qualifierObj = this.object.get("qualifiers").getAsJsonObject();
+            JsonObject qualifierObj = qualifiersJson.getAsJsonObject();
             this.qualifiers = new IncidentTypeTagQualifierListImpl(
-                    qualifierObj.get("required").getAsBoolean(),
-                    qualifierObj.get("unique").getAsBoolean(),
-                    qualifierObj.get("syntax").getAsString(),
-                    qualifierObj.get("list").getAsJsonArray().asList().stream()
+                    JsonUtilities.element(qualifierObj, "required").getAsBoolean(),
+                    JsonUtilities.element(qualifierObj, "unique").getAsBoolean(),
+                    JsonUtilities.asStr(qualifierObj, "syntax"),
+                    JsonUtilities.element(qualifierObj, "list").getAsJsonArray().asList().stream()
                             .map(JsonElement::getAsString)
                             .toList()
             );

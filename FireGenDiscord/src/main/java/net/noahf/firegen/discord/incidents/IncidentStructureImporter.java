@@ -3,10 +3,8 @@ package net.noahf.firegen.discord.incidents;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.units.*;
@@ -24,25 +22,19 @@ import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static net.noahf.firegen.discord.utilities.JsonUtilities.*;
 
 public class IncidentStructureImporter {
 
     void importIncidentTypes(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.municipality() + "/" + vars.incidentTypesFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
-            JsonObject object = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonObject();
+        JsonUtilities.stream(vars.municipality(), vars.incidentTypesFile(), (e) -> {
+            JsonObject object = e.getAsJsonObject();
+
             List<IncidentTypeTagImpl> tags = new ArrayList<>();
             IncidentTypeTagImpl newTag = null;
             for (JsonElement element : object.getAsJsonArray("tags").asList()) {
@@ -58,8 +50,8 @@ public class IncidentStructureImporter {
 
             for (JsonElement element : object.getAsJsonArray("types").asList()) {
                 JsonObject obj = element.getAsJsonObject();
-                String name = obj.get("name").getAsString();
-                String tagStr = obj.get("tag").getAsString();
+                String name = asStr(obj, "name");
+                String tagStr = asStr(obj, "tag");
                 IncidentTypeTag tag = tags.stream().filter(itt -> itt.tagName.equalsIgnoreCase(tagStr)).findFirst().orElse(null);
                 if (tag == null) {
                     throw new IllegalStateException("Expected type '" + name + "' to have an associated 'tag'");
@@ -85,22 +77,14 @@ public class IncidentStructureImporter {
             }
 
             Log.info("Imported " + manager.incidentTypes.size() + " incident types.");
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
     void importUnits(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.municipality() + "/" + vars.unitsFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
+        JsonUtilities.stream(vars.municipality(), vars.unitsFile(), (e) -> {
+            JsonArray array = e.getAsJsonArray();
 
-            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
             List<JsonElement> agencyElements = array.asList();
             int lastUnitCount = 0;
             for (int i = 0; i < agencyElements.size(); i++) {
@@ -108,29 +92,29 @@ public class IncidentStructureImporter {
 
                 Emoji emoji = Emoji.fromFormatted(agencyObj.get("emoji").getAsString());
                 Agency agency = new AgencyImpl(
-                        agencyObj.get("agency_title").getAsString(),
-                        agencyObj.get("agency_short").getAsString(),
-                        agencyObj.get("agency_format").getAsString(),
-                        agencyObj.get("agency_station").getAsString(),
-                        AgencyType.valueOf(agencyObj.get("type").getAsString()),
+                        asStr(agencyObj, "agency_title"),
+                        asStr(agencyObj, "agency_short"),
+                        asStr(agencyObj, "agency_format"),
+                        asStr(agencyObj, "agency_station"),
+                        AgencyType.valueOf(asStr(agencyObj, "type")),
                         emoji,
                         i,
                         new ArrayList<>()
                 );
 
-                List<JsonElement> unitElements = agencyObj.get("units").getAsJsonArray().asList();
+                List<JsonElement> unitElements = element(agencyObj, "units").getAsJsonArray().asList();
                 for (int j = 0; j < unitElements.size(); j++) {
                     JsonObject unitObj = unitElements.get(j).getAsJsonObject();
 
-                    JsonElement unitEmojiElement = unitObj.get("emoji");
+                    JsonElement unitEmojiElement = JsonUtilities.element(unitObj, "emoji", true);
                     Emoji unitEmoji = unitEmojiElement != null ? Emoji.fromFormatted(unitEmojiElement.getAsString()) : emoji;
-                    String longhand = unitObj.get("long").getAsString();
-                    String shorthand = unitObj.get("short").getAsString();
+                    String longhand = asStr(unitObj, "long");
+                    String shorthand = asStr(unitObj, "short");
 
                     Unit unit = new UnitImpl(
                             shorthand,
                             longhand,
-                            unitObj.get("format").getAsString(),
+                            asStr(unitObj, "format"),
                             unitEmoji,
                             agency,
                             lastUnitCount + j,
@@ -163,90 +147,63 @@ public class IncidentStructureImporter {
             }
 
             Log.info("Imported " + manager.units.size() + " units (" + agencies.size() + " agencies).");
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
     void importVenues(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.municipality() + "/" + vars.venuesFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
-
-            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
+        JsonUtilities.stream(vars.municipality(), vars.venuesFile(), (e) -> {
+            JsonArray array = e.getAsJsonArray();
             for (JsonElement element : array.asList()) {
                 JsonObject object = element.getAsJsonObject();
-                String name = object.get("name").getAsString();
-                String display = object.get("display").getAsString();
+                String name = asStr(object, "name");
+                String display = asStr(object, "display");
 
                 manager.venues.add(new LocationVenueImpl(name, display));
             }
 
             vars.setVenues(manager.venues);
             Log.info("Imported venues " + String.join(", ", manager.venues));
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
     void importMunicipality(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.municipality() + "/" + vars.municipalityFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
-
-            JsonObject main = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonObject();
-            JsonObject state = main.getAsJsonObject("state");
+        JsonUtilities.stream(vars.municipality(), vars.municipalityFile(), (e) -> {
+            JsonObject main = e.getAsJsonObject();
+            JsonObject state = JsonUtilities.element(main, "state", false).getAsJsonObject();
 
             manager.municipality = new SystemMunicipalityImpl(
-                    main.get("municipality").getAsString(),
-                    main.get("short").getAsString(),
-                    main.get("dispatch_name").getAsString(),
+                    asStr(main, "municipality"),
+                    asStr(main, "short"),
+                    asStr(main, "dispatch_name"),
                     new SystemMunicipalityImpl.StateImpl(
-                            state.get("name").getAsString(),
-                            state.get("abbreviation").getAsString()
+                            asStr(state, "name"),
+                            asStr(state, "abbreviation")
                     )
             );
 
             Log.info("Imported municipality " + manager.municipality);
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
     void importAssignmentStatuses(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.municipality() + "/" + vars.assignmentStatusFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
-
-            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
+        JsonUtilities.stream(vars.municipality(), vars.assignmentStatusFile(), (e) -> {
+            JsonArray array = e.getAsJsonArray();
 
             manager.assignmentStatuses.addAll(List.of(AssignmentStatusImpl.REMOVE_UNIT, AssignmentStatusImpl.ADD_UNIT));
             for (int i = 0; i < array.asList().size(); i++) {
                 JsonElement element = array.asList().get(i);
                 JsonObject object = element.getAsJsonObject();
 
-                String name = object.get("name").getAsString();
-                String shortName = object.get("short").getAsString();
-                String emojiStr = object.get("emoji").getAsString();
+                String name = asStr(object, "name");
+                String shortName = asStr(object, "short");
+                String emojiStr = asStr(object, "emoji");
                 Emoji emoji = Emoji.fromFormatted(emojiStr);
-                String ansiStr = object.get("ansi").getAsString();
+                String ansiStr = asStr(object, "ansi");
                 AnsiColor ansi = AnsiColor.valueOf(ansiStr.toUpperCase());
-                JsonElement purposeElement = object.get("purpose");
+                JsonElement purposeElement = JsonUtilities.element(object, "purpose", true);
                 AssignmentPurpose purpose = purposeElement != null ? AssignmentPurpose.valueOf(purposeElement.getAsString()) : null;
 
                 AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, new AnsiColor[]{ansi}, i, purpose);
@@ -254,50 +211,31 @@ public class IncidentStructureImporter {
             }
 
             Log.info("Imported assignment statuses " + String.join(", ", manager.assignmentStatuses));
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
     void importIncidentStatuses(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.incidentStatusFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
-
-            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
-
+        JsonUtilities.stream(null, vars.incidentStatusFile(), (e) -> {
+            JsonArray array = e.getAsJsonArray();
             for (JsonElement element : array.asList()) {
                 JsonObject object = element.getAsJsonObject();
 
-                String name = object.get("name").getAsString();
-                String leftEmoji = object.get("emojiLeft").getAsString();
-                String rightEmoji = object.get("emojiRight").getAsString();
+                String name = asStr(object, "name");
+                String leftEmoji = asStr(object, "emojiLeft");
+                String rightEmoji = asStr(object, "emojiRight");
 
                 manager.incidentStatuses.add(new IncidentStatusEmoji(name, leftEmoji, rightEmoji));
             }
 
             Log.info("Imported incident statuses " + String.join(", ", manager.incidentStatuses));
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
     void importLocationPresets(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.municipality() + "/" + vars.locationPresetsFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
-
-            JsonObject root = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonObject();
+        JsonUtilities.stream(vars.municipality(), vars.locationPresetsFile(), (e) -> {
+            JsonObject root = e.getAsJsonObject();
             for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
                 String key = entry.getKey();
                 JsonObject value = entry.getValue().getAsJsonObject();
@@ -307,28 +245,19 @@ public class IncidentStructureImporter {
             }
 
             Log.info("Imported " + manager.getPresetLocations().size() + " preset locations.");
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
     void importRadioChannels(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
-        String file = vars.municipality() + "/" + vars.radioChannelsFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
-
-            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
+        JsonUtilities.stream(vars.municipality(), vars.radioChannelsFile(), (e) -> {
+            JsonArray array = e.getAsJsonArray();
             for (JsonElement element : array.asList()) {
                 JsonObject object = element.getAsJsonObject();
 
-                String name = object.get("name").getAsString();
-                String alphaTag = object.get("alpha_tag").getAsString();
-                int talkgroupId = object.get("talkgroup_id").getAsInt();
+                String name = asStr(object, "name");
+                String alphaTag = asStr(object, "alpha_tag");
+                int talkgroupId = asInt(object, "talkgroup_id");
 
                 RadioChannel channel = new RadioChannelImpl(name, alphaTag, talkgroupId);
 
@@ -336,9 +265,7 @@ public class IncidentStructureImporter {
             }
 
             Log.info("Imported " + manager.radioChannels.size() + " radio channels.");
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
 }

@@ -1,8 +1,8 @@
 package net.noahf.firegen.discord.utilities;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 
 import java.io.*;
@@ -21,6 +21,26 @@ public class JsonUtilities {
         } catch (Exception exception) {
             throw new RuntimeException("Failed to load JSON file from '" + path + "': " + exception, exception);
         }
+    }
+
+    public static String asStr(JsonObject object, String key) { return element(object, key).getAsString(); }
+    public static int asInt(JsonObject object, String key) { return element(object, key).getAsInt(); }
+
+    public static JsonElement element(JsonObject object, String key) {
+        return JsonUtilities.element(object, key, false);
+    }
+
+    public static JsonElement element(JsonObject object, String key, boolean optional) {
+        if (object == null) {
+            throw new IllegalArgumentException("Expected to find key '" + key + "' in json object but found an empty object.");
+        }
+
+        JsonElement element = object.get(key);
+        if (element == null && !optional) {
+            throw new IllegalArgumentException("Expected to find key '" + key + "' in JsonObject: " + object);
+        }
+
+        return element;
     }
 
     public static InputStream createInputStream(File file, String path) throws FileNotFoundException {
