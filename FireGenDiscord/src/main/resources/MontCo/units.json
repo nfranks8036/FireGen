@@ -50,6 +50,12 @@
     "type": "FIRE",
     "emoji": "<:evfd:1449930471231328477>",
     "units": [
+      {"short": "200", "long": "EVFD 200", "format": "200", "emoji": "<:evfd:1449930471231328477>"},
+      {"short": "201", "long": "EVFD 201", "format": "201", "emoji": "<:evfd:1449930471231328477>"},
+      {"short": "202", "long": "EVFD 202", "format": "202", "emoji": "<:evfd:1449930471231328477>"},
+      {"short": "203", "long": "EVFD 203", "format": "203", "emoji": "<:evfd:1449930471231328477>"},
+      {"short": "204", "long": "EVFD 204", "format": "204", "emoji": "<:evfd:1449930471231328477>"},
+      {"short": "205", "long": "EVFD 205", "format": "205", "emoji": "<:evfd:1449930471231328477>"},
       {"short": "SQ2", "long": "EVFD SQUAD 2", "format": "Squad 2", "emoji": "<:evfd:1449930471231328477>"},
       {"short": "W2", "long": "EVFD WAGON 2", "format": "Wagon 2", "emoji": "<:evfd:1449930471231328477>"},
       {"short": "E2", "long": "EVFD ENGINE 2", "format": "Engine 2", "emoji": "<:evfd:1449930471231328477>"},

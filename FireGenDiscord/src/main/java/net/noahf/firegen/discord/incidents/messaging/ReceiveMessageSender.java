@@ -131,7 +131,7 @@ public class ReceiveMessageSender extends MessageSender {
         if (stringForm.length() >= Message.MAX_CONTENT_LENGTH) {
             stringForm = stringForm.split(String.valueOf(Character.MAX_VALUE))[0];
             embedForm.add(new EmbedBuilder()
-                    .setTitle("Narrative")
+                    .setTitle("Narrative:")
                     .setDescription(DiscordMessages.truncate(String.join("\n", log), MessageEmbed.DESCRIPTION_MAX_LENGTH, "... *unable to show full output!*"))
                     .build());
         }
