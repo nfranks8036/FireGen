@@ -1,9 +1,9 @@
 [
   {
-    "agency_title": "BLACKSBURG FIRE DEPARTMENT",
-    "agency_short": "BFD",
-    "agency_format": "Blacksburg Fire",
-    "agency_station": "BFD Station #1, 200 Progress St NE, Blacksburg, VA\nBFD Station #2, 2700 Prices Fork Rd, Blacksburg, VA\nBFD Station #3, 407 Hubbard St, Blacksburg, VA\n(units named with convention of NRV Station #1)",
+    "title": "BLACKSBURG FIRE DEPARTMENT",
+    "short": "BFD",
+    "format": "Blacksburg Fire",
+    "station": "BFD Station #1, 200 Progress St NE, Blacksburg, VA\nBFD Station #2, 2700 Prices Fork Rd, Blacksburg, VA\nBFD Station #3, 407 Hubbard St, Blacksburg, VA\n(units named with convention of NRV Station #1)",
     "type": "FIRE",
     "emoji": "<:bfd:1449916134714511481>",
     "units": [
@@ -43,10 +43,10 @@
     ]
   },
   {
-    "agency_title": "ELLISTON VOLUNTEER FIRE DEPARTMENT",
-    "agency_short": "EVFD",
-    "agency_format": "Elliston Fire",
-    "agency_station": "Station #2, 5001 Enterprise Dr, Elliston, VA",
+    "title": "ELLISTON VOLUNTEER FIRE DEPARTMENT",
+    "short": "EVFD",
+    "format": "Elliston Fire",
+    "station": "Station #2, 5001 Enterprise Dr, Elliston, VA",
     "type": "FIRE",
     "emoji": "<:evfd:1449930471231328477>",
     "units": [
@@ -61,10 +61,10 @@
     ]
   },
   {
-    "agency_title": "LONGSHOP-MCCOY RESCUE SQUAD",
-    "agency_short": "LMRS",
-    "agency_format": "Longshop-McCoy Rescue",
-    "agency_station": "Station #3, 5770 McCoy Rd, Blacksburg, VA",
+    "title": "LONGSHOP-MCCOY RESCUE SQUAD",
+    "short": "LMRS",
+    "format": "Longshop-McCoy Rescue",
+    "station": "Station #3, 5770 McCoy Rd, Blacksburg, VA",
     "type": "EMS",
     "emoji": "<:lmfr:1449926826079158413>",
     "units": [
@@ -83,10 +83,10 @@
     ]
   },
   {
-    "agency_title": "RINER VOLUNTEER FIRE DEPARTMENT",
-    "agency_short": "RVFD",
-    "agency_format": "Riner Fire",
-    "agency_station": "Station #4, 3595 Riner Rd, Riner, VA",
+    "title": "RINER VOLUNTEER FIRE DEPARTMENT",
+    "short": "RVFD",
+    "format": "Riner Fire",
+    "station": "Station #4, 3595 Riner Rd, Riner, VA",
     "type": "FIRE",
     "emoji": "<:rfd:1449932933665128468>",
     "units": [
@@ -104,10 +104,10 @@
     ]
   },
   {
-    "agency_title": "BLACKSBURG VOLUNTEER RESCUE SQUAD",
-    "agency_short": "BVRS",
-    "agency_format": "Blacksburg Rescue",
-    "agency_station": "Station #5, 1300 Progress St NW, Blacksburg, VA",
+    "title": "BLACKSBURG VOLUNTEER RESCUE SQUAD",
+    "short": "BVRS",
+    "format": "Blacksburg Rescue",
+    "station": "Station #5, 1300 Progress St NW, Blacksburg, VA",
     "type": "EMS",
     "emoji": "<:bvrs:1449916532770476134>",
     "units": [
@@ -141,10 +141,10 @@
     ]
   },
   {
-    "agency_title": "LONGSHOP-MCCOY FIRE DEPARTMENT",
-    "agency_short": "LMFD",
-    "agency_format": "Longshop-McCoy Fire",
-    "agency_station": "Station #6, 5770 McCoy Rd, Blacksburg, VA",
+    "title": "LONGSHOP-MCCOY FIRE DEPARTMENT",
+    "short": "LMFD",
+    "format": "Longshop-McCoy Fire",
+    "station": "Station #6, 5770 McCoy Rd, Blacksburg, VA",
     "type": "FIRE",
     "emoji": "<:lmfr:1449926826079158413>",
     "units": [
@@ -162,10 +162,10 @@
     ]
   },
   {
-    "agency_title": "CHRISTIANSBURG FIRE DEPARTMENT",
-    "agency_short": "CFD",
-    "agency_format": "Christiansburg Fire",
-    "agency_station": "Station #8, 110 Depot St NW, Christiansburg, VA",
+    "title": "CHRISTIANSBURG FIRE DEPARTMENT",
+    "short": "CFD",
+    "format": "Christiansburg Fire",
+    "station": "Station #8, 110 Depot St NW, Christiansburg, VA",
     "type": "FIRE",
     "emoji": "<:cfd:1449926970296107150>",
     "units": [
@@ -191,10 +191,10 @@
     ]
   },
   {
-    "agency_title": "CHRISTIANSBURG RESCUE SQUAD",
-    "agency_short": "CRS",
-    "agency_format": "Christiansburg Rescue",
-    "agency_station": "Station #9, 190 Depot St NW, Christiansburg, VA",
+    "title": "CHRISTIANSBURG RESCUE SQUAD",
+    "short": "CRS",
+    "format": "Christiansburg Rescue",
+    "station": "Station #9, 190 Depot St NW, Christiansburg, VA",
     "type": "EMS",
     "emoji": "<:crs:1449927312861565142>",
     "units": [
@@ -223,10 +223,10 @@
     ]
   },
   {
-    "agency_title": "RINER VOLUNTEER RESCUE SQUAD",
-    "agency_short": "RVRS",
-    "agency_format": "Riner Rescue",
-    "agency_station": "Station #11, 4171 Riner Rd, Riner, VA",
+    "title": "RINER VOLUNTEER RESCUE SQUAD",
+    "short": "RVRS",
+    "format": "Riner Rescue",
+    "station": "Station #11, 4171 Riner Rd, Riner, VA",
     "type": "EMS",
     "emoji": "<:rvrs:1449934079620288558>",
     "units": [
@@ -248,10 +248,10 @@
     ]
   },
   {
-    "agency_title": "MONTGOMERY COUNTY FIRE & EMS",
-    "agency_short": "MCFR",
-    "agency_format": "Montgomery County Fire & EMS",
-    "agency_station": "Runs out of:\nStation #2, 5001 Enterprise Dr, Elliston, VA\nStation #11, 4171 Riner Rd, Riner, VA",
+    "title": "MONTGOMERY COUNTY FIRE & EMS",
+    "short": "MCFR",
+    "format": "Montgomery County Fire & EMS",
+    "station": "Runs out of:\nStation #2, 5001 Enterprise Dr, Elliston, VA\nStation #11, 4171 Riner Rd, Riner, VA",
     "type": "FIRE_EMS",
     "emoji": "<:mcfr:1449929970926358649>",
     "units": [
@@ -271,10 +271,10 @@
     ]
   },
   {
-    "agency_title": "VIRGINIA TECH RESCUE SQUAD",
-    "agency_short": "VTRS",
-    "agency_format": "Virginia Tech Rescue",
-    "agency_station": "Station #15, 357 Barger St, Blacksburg, VA",
+    "title": "VIRGINIA TECH RESCUE SQUAD",
+    "short": "VTRS",
+    "format": "Virginia Tech Rescue",
+    "station": "Station #15, 357 Barger St, Blacksburg, VA",
     "type": "EMS",
     "emoji": "<:vtrs:1449920222940369018>",
     "units": [
@@ -303,10 +303,10 @@
     ]
   },
   {
-    "agency_title": "MONTGOMERY COUNTY SHERIFF'S OFFICE",
-    "agency_short": "MCSO",
-    "agency_format": "Montgomery County Sheriff",
-    "agency_station": "Sheriff's Office, 1 E Main St, Christiansburg, VA",
+    "title": "MONTGOMERY COUNTY SHERIFF'S OFFICE",
+    "short": "MCSO",
+    "format": "Montgomery County Sheriff",
+    "station": "Sheriff's Office, 1 E Main St, Christiansburg, VA",
     "type": "SHERIFF",
     "emoji": "<:mcso:1449929686963458140>",
     "units": [
@@ -314,10 +314,10 @@
     ]
   },
   {
-    "agency_title": "CHRISTIANSBURG POLICE DEPARTMENT",
-    "agency_short": "CPD",
-    "agency_format": "Christiansburg Police",
-    "agency_station": "10 E Main St, Christiansburg, VA",
+    "title": "CHRISTIANSBURG POLICE DEPARTMENT",
+    "short": "CPD",
+    "format": "Christiansburg Police",
+    "station": "10 E Main St, Christiansburg, VA",
     "type": "POLICE",
     "emoji": "<:cpd:1449927471414902826>",
     "units": [
@@ -325,10 +325,10 @@
     ]
   },
   {
-    "agency_title": "BLACKSBURG POLICE DEPARTMENT",
-    "agency_short": "BPD",
-    "agency_format": "Blacksburg Police",
-    "agency_station": "200 Clay St SW, Blacksburg, VA",
+    "title": "BLACKSBURG POLICE DEPARTMENT",
+    "short": "BPD",
+    "format": "Blacksburg Police",
+    "station": "200 Clay St SW, Blacksburg, VA",
     "type": "POLICE",
     "emoji": "<:bpd:1449916806931153110>",
     "units": [
@@ -336,10 +336,10 @@
     ]
   },
   {
-    "agency_title": "VIRGINIA TECH POLICE DEPARTMENT",
-    "agency_short": "VTPD",
-    "agency_format": "Virginia Tech Police",
-    "agency_station": "330 Sterrett Dr, Blacksburg, VA",
+    "title": "VIRGINIA TECH POLICE DEPARTMENT",
+    "short": "VTPD",
+    "format": "Virginia Tech Police",
+    "station": "330 Sterrett Dr, Blacksburg, VA",
     "type": "POLICE",
     "emoji": "<:vtpd:1449922611550093474>",
     "units": [
@@ -347,28 +347,28 @@
     ]
   },
   {
-    "agency_title": "VIRGINIA STATE POLICE",
-    "agency_short": "VSP",
-    "agency_format": "Virginia State Police",
-    "agency_station": "Virginia State Police Division 6 Headquarters, 3775 W Main St, Salem, VA",
+    "title": "VIRGINIA STATE POLICE",
+    "short": "VSP",
+    "format": "Virginia State Police",
+    "station": "Virginia State Police Division 6 Headquarters, 3775 W Main St, Salem, VA",
     "type": "STATE_POLICE",
     "emoji": "<:vsp:1449930105592746125>",
     "units": []
   },
   {
-    "agency_title": "BLACKSBURG TRANSIT",
-    "agency_short": "BT",
-    "agency_format": "Blacksburg Transit",
-    "agency_station": "2800 Commerce St, Blacksburg, VA",
+    "title": "BLACKSBURG TRANSIT",
+    "short": "BT",
+    "format": "Blacksburg Transit",
+    "station": "2800 Commerce St, Blacksburg, VA",
     "type": "TRANSIT",
     "emoji": "<:bt:1449917533976133773>",
     "units": []
   },
   {
-    "agency_title": "CARILION LIFE-GUARD",
-    "agency_short": "LG",
-    "agency_format": "Carilion Life-Guard",
-    "agency_station": "Roanoke / Westlake / Lexington",
+    "title": "CARILION LIFE-GUARD",
+    "short": "LG",
+    "format": "Carilion Life-Guard",
+    "station": "Roanoke / Westlake / Lexington",
     "type": "EMS_BY_AIR",
     "emoji": "<:lifeguard:1510828226287505439>",
     "units": [
@@ -378,37 +378,37 @@
     ]
   },
   {
-    "agency_title": "VIRGINIA TECH SECURITY",
-    "agency_short": "VTSC",
-    "agency_format": "Virginia Tech Security",
-    "agency_station": "Public Safety Building, 330 Sterrett Dr, Blacksburg, VA",
+    "title": "VIRGINIA TECH SECURITY",
+    "short": "VTSC",
+    "format": "Virginia Tech Security",
+    "station": "Public Safety Building, 330 Sterrett Dr, Blacksburg, VA",
     "type": "SECURITY",
     "emoji": "<:vtsc:1449924056127373567>",
     "units": []
   },
   {
-    "agency_title": "ATMOS ENERGY CORPORATION",
-    "agency_short": "ATMOS",
-    "agency_format": "Atmos Energy",
-    "agency_station": "1013 W Main St, Radford, VA",
+    "title": "ATMOS ENERGY CORPORATION",
+    "short": "ATMOS",
+    "format": "Atmos Energy",
+    "station": "1013 W Main St, Radford, VA",
     "type": "UTILITY_COMPANY",
     "emoji": "<:atmos:1519396654254657646>",
     "units": []
   },
   {
-    "agency_title": "APPALACHIAN POWER",
-    "agency_short": "AEP",
-    "agency_format": "Appalachian Power",
-    "agency_station": "2255 Prospect Dr, Christiansburg, VA",
+    "title": "APPALACHIAN POWER",
+    "short": "AEP",
+    "format": "Appalachian Power",
+    "station": "2255 Prospect Dr, Christiansburg, VA",
     "type": "UTILITY_COMPANY",
     "emoji": "<:appalachian_power:1519396930373812224>",
     "units": []
   },
   {
-    "agency_title": "NEW RIVER VALLEY 911 AUTHORITY",
-    "agency_short": "NRV",
-    "agency_format": "New River Valley Communications",
-    "agency_station": "1 E Main St #400, Christiansburg, VA",
+    "title": "NEW RIVER VALLEY 911 AUTHORITY",
+    "short": "NRV",
+    "format": "New River Valley Communications",
+    "station": "1 E Main St #400, Christiansburg, VA",
     "type": "DISPATCH",
     "emoji": "<:nrv:1449915761563799703>",
     "units": []

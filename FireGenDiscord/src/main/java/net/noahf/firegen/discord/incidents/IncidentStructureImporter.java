@@ -32,6 +32,7 @@ public class IncidentStructureImporter {
 
     void importIncidentTypes(IncidentManager manager) {
         FireGenVariables vars = manager.getFireGenVariables();
+        final String NEW_INCIDENT = "NEW_INCIDENT";
         JsonUtilities.stream(vars.municipality(), vars.incidentTypesFile(), (e) -> {
             JsonObject object = e.getAsJsonObject();
 
@@ -40,12 +41,12 @@ public class IncidentStructureImporter {
             for (JsonElement element : object.getAsJsonArray("tags").asList()) {
                 IncidentTypeTagImpl tag = new IncidentTypeTagImpl(element.getAsJsonObject());
                 tags.add(tag);
-                if (tag.tagName.equalsIgnoreCase("NEW_INCIDENT")) {
+                if (tag.tagName.equalsIgnoreCase(NEW_INCIDENT)) {
                     newTag = tag;
                 }
             }
             if (newTag == null) {
-                throw new IllegalStateException("Expected an incident tag with name 'NEW_INCIDENT', found none.");
+                throw new IllegalStateException("Expected an incident tag with name '" + NEW_INCIDENT + "', found none.");
             }
 
             for (JsonElement element : object.getAsJsonArray("types").asList()) {
@@ -57,7 +58,7 @@ public class IncidentStructureImporter {
                     throw new IllegalStateException("Expected type '" + name + "' to have an associated 'tag'");
                 }
                 List<IncidentType> types = new ArrayList<>();
-                if (tagStr.equalsIgnoreCase("NEW_INCIDENT")) {
+                if (tagStr.equalsIgnoreCase(NEW_INCIDENT)) {
                     vars.defaultType(new IncidentTypeImpl(name, tag, 0));
                     types.add(vars.defaultType());
                 } else if (tag.getQualifiers() == null) {
@@ -73,7 +74,7 @@ public class IncidentStructureImporter {
             }
 
             if (vars.defaultType() == null) {
-                throw new IllegalStateException("Expected an incident type to be tagged 'NEW_INCIDENT', found none.");
+                throw new IllegalStateException("Expected an incident type to be tagged '" + NEW_INCIDENT + "', found none.");
             }
 
             Log.info("Imported " + manager.incidentTypes.size() + " incident types.");
@@ -92,10 +93,10 @@ public class IncidentStructureImporter {
 
                 Emoji emoji = Emoji.fromFormatted(agencyObj.get("emoji").getAsString());
                 Agency agency = new AgencyImpl(
-                        asStr(agencyObj, "agency_title"),
-                        asStr(agencyObj, "agency_short"),
-                        asStr(agencyObj, "agency_format"),
-                        asStr(agencyObj, "agency_station"),
+                        asStr(agencyObj, "title"),
+                        asStr(agencyObj, "short"),
+                        asStr(agencyObj, "format"),
+                        asStr(agencyObj, "station"),
                         AgencyType.valueOf(asStr(agencyObj, "type")),
                         emoji,
                         i,
