@@ -229,7 +229,7 @@
       {"short": "M94", "long": "CRS MEDIC 94", "format": "Medic 94", "emoji": "<:crs:1449927312861565142>"},
       {"short": "M95", "long": "CRS MEDIC 95", "format": "Medic 95", "emoji": "<:crs:1449927312861565142>"},
       {"short": "M96", "long": "CRS MEDIC 96", "format": "Medic 96", "emoji": "<:crs:1449927312861565142>"},
-      {"short": "RP97", "long": "CRS RESPONSE 97", "format": "Response 97", "emoji": "<:crs:1449927312861565142>"}
+      {"short": "RP97", "long": "CRS RESPONSE 97", "format": "Response 97", "emoji": "<:crs:1449927312861565142>"},
       {"short": "RP98", "long": "CRS RESPONSE 98", "format": "Response 98", "emoji": "<:crs:1449927312861565142>"}
     ]
   },
