@@ -28,26 +28,18 @@ public class IncidentMessagingService {
         );
     }
 
-    public void send(MessageSender sender) {
-        if (sender.getMessages().isEmpty()) {
-            sender.sendInitial();
-        }
-
-        sender.sendEdited();
-    }
-
     public <T extends MessageSender> void send(Class<T> messageSender) {
         T sender = this.get(messageSender);
         if (sender == null) {
             throw new IllegalArgumentException("Entered class is not a valid/instantiated MessageSender: " + messageSender);
         }
 
-        this.send(sender);
+        sender.requestSend();
     }
 
     public void sendAll() {
         for (MessageSender sender : this.messages) {
-            this.send(sender);
+            sender.requestSend();
         }
     }
 
