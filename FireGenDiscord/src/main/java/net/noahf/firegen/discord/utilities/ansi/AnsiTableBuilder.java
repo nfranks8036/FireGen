@@ -7,6 +7,8 @@ import java.util.*;
 
 public class AnsiTableBuilder {
 
+    public static final int NO_MAXIMUM = -1;
+
     @AllArgsConstructor
     private static class Row {
         String[] cols;
@@ -17,6 +19,7 @@ public class AnsiTableBuilder {
     private List<Row> rows = new ArrayList<>();
     private final Set<Integer> noDuplicateColumns = new HashSet<>();
     private String[] header;
+    private int maximumRows = NO_MAXIMUM;
 
     public AnsiTableBuilder header(String... cols) {
         this.header = cols;
@@ -46,6 +49,14 @@ public class AnsiTableBuilder {
         }
 
         noDuplicateColumns.add(index);
+        return this;
+    }
+
+    public AnsiTableBuilder maximumRows(int maximumRows) {
+        if (maximumRows < -1) {
+            throw new IllegalArgumentException("Maximum rows cannot be below -1, got '" + maximumRows + "'");
+        }
+        this.maximumRows = maximumRows;
         return this;
     }
 
@@ -89,6 +100,10 @@ public class AnsiTableBuilder {
         int index = 0;
         for (Row r : rows) {
             if (index > limit) {
+                break;
+            }
+
+            if (index > maximumRows) {
                 break;
             }
 

@@ -88,7 +88,7 @@ public class ReceiveMessageSender extends MessageSender {
         ImmutablePair<String, List<MessageEmbed>> response = this.getReceivingFormat();
         for (Message message : super.getMessages()) {
             try {
-                message.editMessage(response.getFirstElement())
+                message.editMessage(DiscordMessages.truncate(response.getFirstElement(), Message.MAX_CONTENT_LENGTH, "... <message too long to display>"))
                         .setEmbeds(response.getSecondElement())
                         .queue(null, (t) -> {
                             Log.warn("Message does not exist. Removing from the list (possibly deleted by staff).", t);

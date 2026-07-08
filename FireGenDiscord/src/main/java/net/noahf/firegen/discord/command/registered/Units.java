@@ -11,7 +11,6 @@ import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.utilities.*;
-import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -21,7 +20,9 @@ import java.util.concurrent.TimeUnit;
 public class Units extends Command {
 
     public static final String BLANK_EMOJI = " ".repeat(7);
-    public static final int MAX_UNITS_TABLE = 16;
+
+    public static final int MAX_UNIT_ROWS_TABLE = 12;
+    public static final int MAX_UNIT_ROWS_EMBED = 32;
 
     private static final Map<Long, UnitsResponseType> userIdToViewType = new ConcurrentHashMap<>();
 

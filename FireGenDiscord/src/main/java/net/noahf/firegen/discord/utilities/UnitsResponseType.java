@@ -3,6 +3,7 @@ package net.noahf.firegen.discord.utilities;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
@@ -25,13 +26,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static net.noahf.firegen.discord.command.registered.Units.BLANK_EMOJI;
-import static net.noahf.firegen.discord.command.registered.Units.MAX_UNITS_TABLE;
+import static net.noahf.firegen.discord.command.registered.Units.*;
 
 public enum UnitsResponseType {
     TABLE("Table View", assignments -> {
         AnsiTableBuilder table = new AnsiTableBuilder()
                 .header("time", "unit", "status", "incident type", "incident location")
+                .maximumRows(MAX_UNIT_ROWS_TABLE)
                 .disallowDuplicateOnColumn(1);
         long refreshed = Time.getUnix();
         for (UnitAssignment assignment : assignments) {
@@ -62,7 +63,7 @@ public enum UnitsResponseType {
 
         return MessageGenericData.fromMessage(
                 DiscordMessages.truncate(
-                        "Returned `" + (amount >= MAX_UNITS_TABLE ? MAX_UNITS_TABLE + "`/`" + MAX_UNITS_TABLE : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + refreshed + ":R>." +
+                        "Returned `" + (amount >= MAX_UNIT_ROWS_TABLE ? MAX_UNIT_ROWS_TABLE + "`/`" + MAX_UNIT_ROWS_TABLE : amount) + "` unit status" + (amount == 1 ? "" : "es") + " from FireGen as of <t:" + refreshed + ":R>." +
                                 "\n```ansi\n" + returned.getFirstElement() + "```",
                         Message.MAX_CONTENT_LENGTH, "``` *[unable to show any more content]*"
                 )
@@ -84,6 +85,10 @@ public enum UnitsResponseType {
 
         int unitAmounts = 0;
         for (Map.Entry<Incident, List<UnitAssignment>> entry : incidentUnits.entrySet()) {
+            if (unitAmounts > MAX_UNIT_ROWS_EMBED) {
+                break;
+            }
+
             Incident incident = entry.getKey();
 
             String fieldTitle =
@@ -98,22 +103,34 @@ public enum UnitsResponseType {
             List<UnitAssignment> sortedAssignments = entry.getValue();
             sortedAssignments.sort(Comparator.comparing(o -> o.getLatestAssignment().getTimestamp()));
             for (UnitAssignment assignment : sortedAssignments.reversed()) {
+                if (unitAmounts > MAX_UNIT_ROWS_EMBED) {
+                    break;
+                }
+
+                if (fieldDescription.length() > MessageEmbed.VALUE_MAX_LENGTH) {
+                    break;
+                }
+
                 AssignmentEvent status = assignment.getLatestAssignment();
                 UnitImpl unit = (UnitImpl) assignment.getUnit();
                 Emoji emojiObj = ((AssignmentStatusImpl) status.getStatus()).getEmoji();
                 String emoji = (emojiObj != null ? emojiObj.getFormatted() : BLANK_EMOJI);
                 String timestamp = status.getTimestamp().format(TIME_FORMAT);
 
-                fieldDescription.add(
-                        emoji + " " + (unit.getEmoji() != null ? unit.getEmoji().getFormatted() + " " : "") + unit.getShorthand() + " @ `" + timestamp + "`"
-                );
+                String next = emoji + " " + (unit.getEmoji() != null ? unit.getEmoji().getFormatted() + " " : "") + unit.getShorthand() + " @ `" + timestamp + "`";
+                if (fieldDescription.length() + next.length() > MessageEmbed.VALUE_MAX_LENGTH) {
+                    break;
+                }
+
+                fieldDescription.add(next);
                 unitAmounts++;
             }
 
             returned = returned
-                    .setDescription("Returned `" + unitAmounts + "` unit status" + (unitAmounts == 1 ? "" : "es") + " from FireGen as of <t:" + Time.getUnix() + ":R>")
                     .addField(fieldTitle, fieldDescription.toString(), false);
         }
+
+        returned.setDescription("Returned `" + unitAmounts + "` unit status" + (unitAmounts == 1 ? "" : "es") + " from FireGen as of <t:" + Time.getUnix() + ":R>");
 
         return MessageGenericData.fromEmbed(returned.build());
     },
