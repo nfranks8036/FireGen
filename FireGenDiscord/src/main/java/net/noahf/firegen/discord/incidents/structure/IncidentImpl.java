@@ -110,6 +110,12 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             newType = new IncidentTypeImpl(type, IncidentTypeTagImpl.DEFAULT, 0);
         }
 
+        if (type.startsWith("pub-")) {
+            type = type.substring("pub-".length()).toUpperCase();
+            this.setPublished(IncidentPublishedStatus.PUBLISHED);
+            newType = manager.getTypeFromString(type);
+        }
+
         if (newType == null) {
             throw new IllegalArgumentException("Expected a valid incident type from file, got '" + type + "'");
         }

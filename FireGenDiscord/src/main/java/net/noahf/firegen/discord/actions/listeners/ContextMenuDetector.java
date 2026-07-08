@@ -1,8 +1,10 @@
 package net.noahf.firegen.discord.actions.listeners;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -20,6 +22,7 @@ import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.UnitsResponseType;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +39,6 @@ public class ContextMenuDetector extends ListenerAdapter {
             return;
         }
 
-        User user = event.getUser();
         Message target = event.getTarget();
         if (!target.getAuthor().isBot()
                 || !target.getAuthor().equals(Main.JDA.getSelfUser())
@@ -65,9 +67,9 @@ public class ContextMenuDetector extends ListenerAdapter {
         }
 
         FireGenVariables vars = Main.incidents.getFireGenVariables();
-        String content = this.createContent(incident, vars);
+        MessageEmbed content = this.createContent(incident, vars);
 
-        event.reply(content)
+        event.replyEmbeds(content)
                 .setComponents(
                         ActionRow.of(
                                 Button.primary("firegenuser-" + event.getUser().getIdLong() + "-refreshdetails-" + incident.getId(), "Refresh")
@@ -92,12 +94,18 @@ public class ContextMenuDetector extends ListenerAdapter {
         try {
             long incidentId = Long.parseLong(id.split("-")[3]);
             Incident incident = Main.incidents.getIncidentBy(incidentId);
-            String message = "*Sorry for the inconvenience, but our records cannot match any incident with ID `" + incidentId + "`. Perhaps the incident was removed!*";
+            MessageEmbed message = new EmbedBuilder()
+                    .setTitle("Couldn't find incident!")
+                    .setDescription(
+                            "*Sorry for the inconvenience, but our records cannot match any incident with ID `" + incidentId + "`. Perhaps the incident was removed!*"
+                    )
+                    .setColor(new Color(255, 104, 104))
+                    .build();
             if (incident != null) {
                 message = createContent(incident, Main.incidents.getFireGenVariables());
             }
 
-            event.editMessage(message)
+            event.editMessageEmbeds(message)
                     .setComponents(
                             ActionRow.of(
                                     Button.secondary("firegenuser-" + event.getUser().getIdLong() + "-refreshdetails-" + incidentId, "Refresh (Wait 5s)").asDisabled()
@@ -114,23 +122,33 @@ public class ContextMenuDetector extends ListenerAdapter {
         }
     }
 
-    private String createContent(Incident iIncident, FireGenVariables vars) {
+    private MessageEmbed createContent(Incident iIncident, FireGenVariables vars) {
         IncidentImpl incident = (IncidentImpl) iIncident;
-        return "**Title** " + f(()->incident.getType().getSelectedName(), ">NEW<") +
-                        "\n**Received** " + f(()->incident.getTime().formatDateAndTime(vars, " @ ")) +
-                        "\n**Units** " + f(() -> incident.getUnitAssignments().stream()
-                        .map(UnitAssignment::getUnit)
-                        .map(Unit::getShorthand)
-                        .collect(Collectors.joining(" "))) +
-                        "\n**Location** " + f(()->incident.getLocation().format() + " (type: " + incident.getLocation().getType().name() + ")") +
-                        "\n**Incident Number** " + f(incident::getFormattedId, "<none assigned>") +
-                        "\n**Status** " + f(()->incident.getStatus().name(), "UNKNOWN") +
-                        "\n**Contributors** " +  f(() -> String.valueOf(incident.getContributors().size()), "0") +
-                        "\n**Notes** " + f(() -> incident.getNarrative().stream()
-                        .map(e -> "`" + vars.formatTime(e.getTime(), false) + "` "
-                                + e.getEntry()
-                        )
-                        .collect(Collectors.joining(" ")));
+        String message = "**Title** " + f(()->incident.getType().getSelectedName(), ">NEW<") +
+                "\n**Time** " + f(()->incident.getTime().formatDateAndTime(vars, " @ ")) +
+                "\n**Units** " + f(() -> incident.getUnitAssignments().stream()
+                .map(UnitAssignment::getUnit)
+                .map(Unit::getShorthand)
+                .collect(Collectors.joining(" "))) +
+                "\n**Location** " + f(()->incident.getLocation().format() + (incident.getLocation().isSet() ? " (type: " + incident.getLocation().getType().name() + ")" : "")) +
+                "\n**Incident Number** " + f(incident::getFormattedId, "<none assigned>") +
+                "\n**Status** " + f(()->incident.getStatus().name(), "UNKNOWN") + " (" + f(()->incident.getPublished().name()) + ")"
+                                + " with " + f(()->String.valueOf(incident.getContributors().size()), "0") + " contributor(s)" +
+                "\n**Notes** " + f(() -> incident.getNarrative().stream()
+                .map(e -> "`" + vars.formatTime(e.getTime(), false) + "` "
+                        + e.getEntry()
+                )
+                .collect(Collectors.joining(" ")));
+        Color color = switch (incident.getStatus()) {
+            case ACTIVE -> new Color(50, 255, 50);
+            case CLOSED, CLOSED_TIMED_OUT -> new Color(114, 114, 114);
+            case PENDING -> new Color(94, 175, 255);
+        };
+        return new EmbedBuilder()
+                .setTitle(incident.getType().getSelectedName())
+                .setDescription(message)
+                .setColor(color)
+                .build();
     }
 
     private String f(Supplier<String> returned) {
