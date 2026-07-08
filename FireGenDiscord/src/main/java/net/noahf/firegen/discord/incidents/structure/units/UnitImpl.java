@@ -39,7 +39,7 @@ public class UnitImpl implements Unit {
     @Override
     @NotNull
     public String toString() {
-        return this.shorthand;
+        return (this.shorthand != null ? this.shorthand : "[Unit " + id + "]");
     }
 
     @Override
