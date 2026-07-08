@@ -19,8 +19,8 @@
   },
   {
     "name": "STAGED",
-    "short": "STA",
-    "emoji": "<:STAGED:0>",
+    "short": "STG",
+    "emoji": "<:STAGED:1524543350286581951>",
     "ansi": "BACKGROUND_GREEN"
   },
   {
