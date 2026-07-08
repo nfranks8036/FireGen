@@ -2,7 +2,9 @@ package net.noahf.firegen.discord.command.registered;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
@@ -14,31 +16,28 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
-import net.noahf.firegen.api.incidents.units.Agency;
-import net.noahf.firegen.api.incidents.units.AssignmentStatus;
-import net.noahf.firegen.api.incidents.units.Unit;
-import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.FireGenAction;
 import net.noahf.firegen.discord.actions.registered.*;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
+import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents the command used to create an incident.
@@ -60,12 +59,14 @@ public class CreateIncident extends Command {
 
     public static final char AGENCY_PREFIX = '@';
     public static final char WILDCARD = '*';
+    public static final char CUSTOM = '?';
 
     @AllArgsConstructor
     enum UnitsTargetType {
         UNIT,
         AGENCY,
-        WILDCARD;
+        WILDCARD,
+        CUSTOM;
     }
 
     public CreateIncident() {
@@ -214,11 +215,7 @@ public class CreateIncident extends Command {
             EditUnits action = findAction(EditUnits.class);
 
             // remove whitespace from the agencies string, we don't care if they put a space or not after a comma
-            String unitsString = unitsOption.getAsString().replaceAll("\\s+", "");
-
-            if (unitsString.endsWith(",") || unitsString.endsWith(":")) {
-                unitsString = unitsString.substring(0, unitsString.length() - 1);
-            }
+            String unitsString = asUnitsString(unitsOption);
 
             String[] targetsList = unitsString.split(",");
 
@@ -230,6 +227,7 @@ public class CreateIncident extends Command {
                 UnitsTargetType type = switch (targetString.charAt(0)) {
                     case WILDCARD -> UnitsTargetType.WILDCARD;
                     case AGENCY_PREFIX -> UnitsTargetType.AGENCY;
+                    case CUSTOM -> UnitsTargetType.CUSTOM;
                     default -> UnitsTargetType.UNIT;
                 };
 
@@ -268,6 +266,35 @@ public class CreateIncident extends Command {
                     }
                     case WILDCARD ->
                             inputUnits.addAll(incident.getUnitAssignments().stream().map(UnitAssignment::getUnit).toList());
+                    case CUSTOM -> {
+                        String[] text = targetString.substring(1).split("\\.");
+                        Agency agency = Main.incidents.getAgencyByShorthand(text[2]);
+                        if (agency == null) {
+                            agency = new AgencyImpl(text[2], text[2], text[2], "N/A",
+                                    AgencyType.OTHER, null, Integer.MAX_VALUE,
+                                    new ArrayList<>()
+                            );
+                            Log.warn("User " + event.getUser().getName() + " created a temporary agency: " + agency);
+                        }
+
+                        Emoji emoji;
+                        try {
+                            emoji = ((AgencyImpl)agency).getEmoji();
+                        } catch (Exception exception) {
+                            emoji = null;
+                        }
+                        UnitImpl custom = new UnitImpl(
+                                text[0], text[1].toUpperCase(), text[1],
+                                emoji, agency,
+                                agency.ordinal(), false,
+                                SelectOption.of(text[1].toUpperCase(), text[0])
+                                        .withEmoji(emoji)
+                        );
+                        Main.incidents.getUnits().add(custom);
+                        agency.getUnits().add(custom);
+                        Log.warn("User " + event.getUser().getName() + " created a custom unit: " + custom);
+                        inputUnits.add(custom);
+                    }
                 }
 
                 if (inputUnits.isEmpty()) {
@@ -294,6 +321,20 @@ public class CreateIncident extends Command {
             }
 
             return returned;
+        }
+
+        private static @NotNull String asUnitsString(OptionMapping unitsOption) {
+            String unitsString = unitsOption.getAsString();
+            if (!unitsString.contains(String.valueOf(CUSTOM))) {
+                // we don't want to replace whitespace for CUSTOM units because they can actually be used in formatting
+                // so we only remove whitespace if we know that this string does not contain a custom unit
+                unitsString = unitsString.replaceAll("\\s+", "");
+            }
+
+            if (unitsString.endsWith(",") || unitsString.endsWith(":")) {
+                unitsString = unitsString.substring(0, unitsString.length() - 1);
+            }
+            return unitsString;
         }
 
         static boolean setDateTime(IncidentImpl incident, IReplyCallback event, OptionMapping dateOption, OptionMapping timeOption) {
