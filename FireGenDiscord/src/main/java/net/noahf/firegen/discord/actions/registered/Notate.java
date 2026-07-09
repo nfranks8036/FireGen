@@ -15,10 +15,10 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.bot.DiscordMessages;
 
 import static net.noahf.firegen.discord.actions.registered.AddNarrative.MAX_NARRATIVE_LENGTH;
 import static net.noahf.firegen.discord.actions.registered.AddNarrative.MIN_NARRATIVE_LENGTH;

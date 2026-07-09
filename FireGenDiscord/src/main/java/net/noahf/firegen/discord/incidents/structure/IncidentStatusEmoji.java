@@ -1,6 +1,5 @@
 package net.noahf.firegen.discord.incidents.structure;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;

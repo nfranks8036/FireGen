@@ -1,6 +1,9 @@
 package net.noahf.firegen.discord.database;
 
-import jakarta.data.repository.*;
+import jakarta.data.repository.Delete;
+import jakarta.data.repository.Find;
+import jakarta.data.repository.Repository;
+import jakarta.data.repository.Save;
 import jakarta.transaction.Transactional;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;

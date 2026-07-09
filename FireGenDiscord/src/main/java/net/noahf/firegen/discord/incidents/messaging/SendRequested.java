@@ -1,7 +1,6 @@
 package net.noahf.firegen.discord.incidents.messaging;
 
 import lombok.Getter;
-import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
 public class SendRequested {

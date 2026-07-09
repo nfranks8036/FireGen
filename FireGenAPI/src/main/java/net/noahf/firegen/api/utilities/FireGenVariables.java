@@ -1,11 +1,14 @@
 package net.noahf.firegen.api.utilities;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
-import net.noahf.firegen.api.incidents.types.IncidentType;
-import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.api.incidents.types.IncidentType;
+import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTagQualifierList;
 import org.jetbrains.annotations.NotNull;
 

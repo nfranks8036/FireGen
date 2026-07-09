@@ -5,9 +5,9 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.bot.DiscordMessages;
 
 import java.util.Arrays;
 

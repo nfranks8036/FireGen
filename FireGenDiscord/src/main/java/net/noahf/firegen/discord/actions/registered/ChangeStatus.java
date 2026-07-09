@@ -6,10 +6,10 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.bot.DiscordMessages;
 
 /**
  * Represents the "Close Incident" or "Re-open Incident" buttons in the Status row.

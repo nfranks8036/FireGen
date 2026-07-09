@@ -4,16 +4,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
-import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
 
 import java.awt.*;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.TimeZone;
 
 public class BotInfo extends Command {
 

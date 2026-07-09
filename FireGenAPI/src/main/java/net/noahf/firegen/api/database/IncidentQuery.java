@@ -7,9 +7,9 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
+import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
-import net.noahf.firegen.api.incidents.location.IncidentLocation;
 
 import java.time.LocalDateTime;
 

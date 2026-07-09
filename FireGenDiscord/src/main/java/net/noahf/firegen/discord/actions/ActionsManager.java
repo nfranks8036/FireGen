@@ -6,7 +6,6 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.errors.ActionCommandNotExist;
 import net.noahf.firegen.discord.utilities.Log;
-import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import javax.annotation.Nullable;

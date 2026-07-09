@@ -4,7 +4,6 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 
-import java.util.Comparator;
 import java.util.List;
 
 public interface UnitAssignment extends AutofilledCharSequence, Comparable<UnitAssignment> {

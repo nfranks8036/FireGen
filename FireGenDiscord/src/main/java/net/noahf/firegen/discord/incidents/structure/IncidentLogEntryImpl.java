@@ -1,7 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

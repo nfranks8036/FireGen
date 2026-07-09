@@ -1,15 +1,13 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
-import net.noahf.firegen.api.incidents.Incident;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.*;
-import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import org.jetbrains.annotations.NotNull;

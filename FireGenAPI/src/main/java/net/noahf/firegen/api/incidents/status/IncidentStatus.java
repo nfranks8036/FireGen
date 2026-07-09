@@ -2,7 +2,6 @@ package net.noahf.firegen.api.incidents.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.noahf.firegen.api.incidents.Incident;
 
 @AllArgsConstructor @Getter
 public enum IncidentStatus {

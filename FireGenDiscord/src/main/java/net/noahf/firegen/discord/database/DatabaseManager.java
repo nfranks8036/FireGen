@@ -2,9 +2,11 @@ package net.noahf.firegen.discord.database;
 
 import jakarta.inject.Inject;
 import lombok.Getter;
-import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.discord.database.errors.GenerateSessionFailure;
-import net.noahf.firegen.discord.incidents.structure.*;
+import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
+import net.noahf.firegen.discord.incidents.structure.IncidentTimeImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
