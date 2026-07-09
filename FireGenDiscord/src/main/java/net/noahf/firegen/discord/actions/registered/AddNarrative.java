@@ -20,6 +20,8 @@ import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 
+import java.time.LocalDateTime;
+
 /**
  * Represents the "Add" button next to the "Narrative:" row
  */
@@ -92,6 +94,11 @@ public class AddNarrative implements ButtonAction, ModalAction {
     }
 
     public void onSubmit(Incident incident, IReplyCallback event, String narrative) {
+        if (narrative.startsWith("T")) {
+            // D070926T1826
+            // T1826
+        }
+
         if (narrative.length() < MIN_NARRATIVE_LENGTH) {
             DiscordMessages.error(event, "Your narrative is too short! (" + narrative.length() + " < " + MIN_NARRATIVE_LENGTH + ")");
             return;
