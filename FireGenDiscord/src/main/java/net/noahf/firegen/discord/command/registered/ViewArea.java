@@ -10,7 +10,7 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.IncidentManager;
-import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Time;
 
 public class ViewArea extends Command {

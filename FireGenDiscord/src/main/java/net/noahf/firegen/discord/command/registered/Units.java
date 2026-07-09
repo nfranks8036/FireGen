@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.bot.MessageGenericData;
+import net.noahf.firegen.discord.bot.UnitsResponseType;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.utilities.*;
 import org.jetbrains.annotations.NotNull;
@@ -52,20 +55,15 @@ public class Units extends Command {
         if (user != null) {
             UnitsResponseType requested = userIdToViewType.getOrDefault(user.getIdLong(), UnitsResponseType.NOT_SET);
 
-            if (requested == UnitsResponseType.NOT_SET
-                    && user.getOnlineStatus(ClientType.MOBILE) == OnlineStatus.ONLINE
-            ) {
-                type = UnitsResponseType.EMBED;
+            if (requested == UnitsResponseType.NOT_SET) {
+                if (user.getOnlineStatus(ClientType.MOBILE) == OnlineStatus.ONLINE) {
+                    requested = UnitsResponseType.EMBED;
+                }
+
+                userIdToViewType.put(user.getIdLong(), type);
             }
 
-            type = switch (requested) {
-                case EMBED -> UnitsResponseType.EMBED;
-                case TABLE -> UnitsResponseType.TABLE;
-                default -> {
-                    userIdToViewType.put(user.getIdLong(), type);
-                    yield type;
-                }
-            };
+            type = requested;
         }
 
         if (assignments.isEmpty()) {

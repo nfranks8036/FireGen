@@ -1,6 +1,6 @@
 package net.noahf.firegen.discord.command;
 
-import net.dv8tion.jda.api.entities.ISnowflake;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
@@ -37,7 +37,7 @@ public class CommandManager extends ListenerAdapter {
      * The task of the constructor of the {@link CommandManager} is to find, register, and communicate with the
      * commands in the package. The constructor also registers the command with JDA and subsequently Discord.
      */
-    public CommandManager() {
+    public CommandManager(JDA jda) {
         // find command classes and instantiate
         Set<Class<? extends Command>> classes =
                 new Reflections(COMMANDS_PACKAGE)
@@ -80,7 +80,7 @@ public class CommandManager extends ListenerAdapter {
         }
 
         // register commands with JDA and subsequently Discord
-        Main.JDA.addEventListener(this);
+        jda.addEventListener(this);
         List<CommandData> allCommandData = new ArrayList<>();
         for (Command command : commands) {
             allCommandData.addAll(command.data);
@@ -92,7 +92,7 @@ public class CommandManager extends ListenerAdapter {
                 Commands.context(net.dv8tion.jda.api.interactions.commands.Command.Type.MESSAGE, "Show incident details")
         );
 
-        Main.JDA.updateCommands().addCommands(allCommandData).complete();
+        jda.updateCommands().addCommands(allCommandData).complete();
         Log.info("Successfully registered all commands with JDA, returned with " + this.commands.size() + " commands.");
 
     }

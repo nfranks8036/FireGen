@@ -2,6 +2,8 @@ package net.noahf.firegen.discord.utilities;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class Time {
@@ -22,6 +24,12 @@ public class Time {
             time = time.minus(offset, unit.toChronoUnit());
         }
         return getUnix(time);
+    }
+
+    public static LocalDateTime getLocalDateTime(long unix, String tz) {
+        return LocalDateTime.ofEpochSecond(unix, 0,
+                ZoneOffset.ofTotalSeconds(TimeZone.getTimeZone(tz).getRawOffset() / 1000)
+        );
     }
 
     public static String getTimeDifference(long futureTime, long pastTime, TimeDiffStyle style) {

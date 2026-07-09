@@ -3,8 +3,9 @@ plugins {
     id 'com.github.johnrengelman.shadow' version "8.1.1"
 }
 
-group = 'net.noahf.firegen.discord'
-version = '1.0.0'
+String projectName = 'firegen'
+String group = 'net.noahf.firegen.discord'
+String version = '1.0.0'
 
 application {
     mainClass = "net.noahf.firegen.discord.Main"
@@ -43,6 +44,48 @@ jar {
     enabled = false
     dependsOn(shadowJar)
 }
+
+Provider<Directory> generatedResources = layout.buildDirectory.dir("generated-resources")
+tasks.register('createProperties') {
+    outputs.file(generatedResources.map { it.file("${project.name}-build.properties")})
+
+    doLast {
+        File file = generatedResources.get().file("${project.name}-build.properties").asFile
+        file.parentFile.mkdirs()
+
+        Properties properties = new Properties()
+        properties['name'] = projectName
+        properties['buildFile'] = getBuildFile().getName()
+        properties['currentJavaVersion'] = System.getProperty("java.version")
+        properties['currentJavaVendor'] = System.getProperty("java.vendor")
+        properties['builderOs'] = System.getProperty("os.name")
+        properties['builderArch'] = System.getProperty("os.arch")
+        properties['builderVersion'] = System.getProperty("os.version")
+        properties['buildTimeEpoch'] = new Date().toInstant().toEpochMilli().toString()
+        properties['buildTimezone'] = TimeZone.default.getID()
+        properties['builderLocale'] = Locale.default.toString()
+        properties['builderGradleVersion'] = gradle.gradleVersion
+        properties['builderGroovyVersion'] = GroovySystem.version
+        properties['taskName'] = name
+        properties['group'] = group
+        properties['version'] = version
+        properties['project'] = "FireGen"
+
+        file.withOutputStream {
+            properties.store(it, "FireGen Build Information")
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir generatedResources
+        }
+    }
+}
+
+processResources.dependsOn(createProperties)
 
 compileJava.options.encoding = 'UTF-8'
 

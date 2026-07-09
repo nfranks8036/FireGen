@@ -1,20 +1,11 @@
-package net.noahf.firegen.discord.utilities;
+package net.noahf.firegen.discord.bot;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.dv8tion.jda.api.components.MessageTopLevelComponentUnion;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.utils.AttachedFile;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import net.dv8tion.jda.api.utils.messages.MessageData;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter

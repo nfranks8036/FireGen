@@ -14,14 +14,13 @@ import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static net.noahf.firegen.discord.Main.MUNICIPALITY_FOLDER;
 
 /**
  * Represents the Incident manager, which creates, modifies, and deletes {@link IncidentImpl incidents}, as well as the
@@ -74,9 +73,10 @@ public class IncidentManager {
     SystemMunicipalityImpl municipality;
     //</editor-fold>
 
-    public IncidentManager() {
-        this.fireGenVariables = FireGenVariables.createFromFolder(MUNICIPALITY_FOLDER);
+    public IncidentManager(String municipalityFolder) {
+        this.fireGenVariables = FireGenVariables.createFromFolder(municipalityFolder);
 
+        Log.info("Importing structure data from municipality '" + municipalityFolder + "'");
         IncidentStructureImporter importer = new IncidentStructureImporter();
         importer.importIncidentTypes(this);
         importer.importUnits(this);

@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -16,10 +17,9 @@ import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.messaging.ReceiveMessageSender;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
-import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
-import net.noahf.firegen.discord.utilities.UnitsResponseType;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -40,11 +40,12 @@ public class ContextMenuDetector extends ListenerAdapter {
         }
 
         Message target = event.getTarget();
+        SelfUser self = Main.bot.jda().getSelfUser();
         if (!target.getAuthor().isBot()
-                || !target.getAuthor().equals(Main.JDA.getSelfUser())
+                || !target.getAuthor().equals(self)
         ) {
             DiscordMessages.error(event, "This command only works on messages by " +
-                    Main.JDA.getSelfUser().getAsMention()
+                    self.getAsMention()
             );
             return;
         }

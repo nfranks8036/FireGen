@@ -7,8 +7,7 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.utilities.DiscordMessages;
-import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 
 import java.util.Arrays;
 

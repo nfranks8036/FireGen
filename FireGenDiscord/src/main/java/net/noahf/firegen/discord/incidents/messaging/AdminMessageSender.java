@@ -13,12 +13,13 @@ import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
-import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
 
 import java.awt.*;
@@ -69,13 +70,15 @@ public class AdminMessageSender extends MessageSender {
             return;
         }
 
+        BotManager bot = Main.bot;
+
         // send a starting message to the admin channels, this will be quickly changed by the following edit THOUGH
         // the content will remain
         String contents = "New incident " +
                 super.getIncident().getType().getSelectedName() + " created by " +
                 super.getIncident().getContributors().getFirst();
 
-        List<TextChannel> channels = new ArrayList<>(Main.adminChannels);
+        List<TextChannel> channels = new ArrayList<>(bot.getAdminChannels());
         boolean shouldRemoveNulls = false;
         for (TextChannel channel : channels) {
             try {
@@ -100,10 +103,10 @@ public class AdminMessageSender extends MessageSender {
         }
 
         if (shouldRemoveNulls) {
-            int sizeBefore = Main.adminChannels.size();
-            Main.adminChannels.removeIf(Objects::isNull);
+            int sizeBefore = bot.getAdminChannels().size();
+            bot.getAdminChannels().removeIf(Objects::isNull);
 
-            Log.warn("Removed " + (sizeBefore - Main.adminChannels.size()) + " null (non-existent) admin channels.");
+            Log.warn("Removed " + (sizeBefore - bot.getAdminChannels().size()) + " null (non-existent) admin channels.");
         }
     }
 

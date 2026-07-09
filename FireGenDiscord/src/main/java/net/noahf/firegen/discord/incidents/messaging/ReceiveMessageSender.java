@@ -9,11 +9,12 @@ import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.incidents.structure.*;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
-import net.noahf.firegen.discord.utilities.DiscordMessages;
+import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 
@@ -38,6 +39,8 @@ public class ReceiveMessageSender extends MessageSender {
             return;
         }
 
+        BotManager bot = Main.bot;
+
         IncidentImpl incident = super.getIncident();
         String startingMessage = "New Call- " + incident.getType().getSelectedName();
 
@@ -58,7 +61,7 @@ public class ReceiveMessageSender extends MessageSender {
         startingMessage = startingMessage + "\nWhen- <t:" + incident.getTime().getUnix() + ":t>";
 
         // send a starting message to the subscribed channels, this will be quickly changed by the following edit
-        List<TextChannel> channels = new ArrayList<>(Main.receiveChannels);
+        List<TextChannel> channels = new ArrayList<>(bot.getReceiveChannels());
         boolean shouldRemoveNulls = false;
         for (TextChannel channel : channels) {
             try {
@@ -77,9 +80,9 @@ public class ReceiveMessageSender extends MessageSender {
         }
 
         if (shouldRemoveNulls) {
-            int sizeBefore = Main.receiveChannels.size();
-            Main.receiveChannels.removeIf(Objects::isNull);
-            Log.warn("Removed " + (sizeBefore - Main.receiveChannels.size()) + " null (non-existent) receiver channels.");
+            int sizeBefore = bot.getReceiveChannels().size();
+            bot.getReceiveChannels().removeIf(Objects::isNull);
+            Log.warn("Removed " + (sizeBefore - bot.getReceiveChannels().size()) + " null (non-existent) receiver channels.");
         }
     }
 

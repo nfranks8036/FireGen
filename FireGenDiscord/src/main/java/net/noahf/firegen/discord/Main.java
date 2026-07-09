@@ -17,6 +17,7 @@ import net.noahf.firegen.discord.actions.listeners.ButtonDetector;
 import net.noahf.firegen.discord.actions.listeners.ModalDetector;
 import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
+import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.command.CommandManager;
 import net.noahf.firegen.discord.command.registered.Units;
 import net.noahf.firegen.discord.database.DatabaseManager;
@@ -32,82 +33,33 @@ import java.util.List;
 
 public class Main {
 
-    public static String TOKEN = null;
-    public static String MUNICIPALITY_FOLDER = null;
-
     public static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    public static JDA JDA;
-
+    public static BotManager bot;
     public static DatabaseManager database;
     public static CommandManager commands;
     public static IncidentManager incidents;
     public static ActionsManager actions;
     public static UserManager users;
 
-    public static List<TextChannel> adminChannels = new ArrayList<>();
-    public static List<TextChannel> receiveChannels = new ArrayList<>();
-
     public static final long botStartTime = System.currentTimeMillis();
 
     public static void main(String[] args) throws InterruptedException {
         long start = System.currentTimeMillis();
 
-        try {
-            TOKEN = getExternalInfo("TOKEN");
-            MUNICIPALITY_FOLDER = getExternalInfo("MUNICIPALITY");
-        } catch (Exception exception) {
-            Log.error("Failed to find token from environment: " + exception, exception);
-        }
-
-        Log.info("Checking for required information...");
-        assertPropertyNotNull("TOKEN", TOKEN);
-        assertPropertyNotNull("MUNICIPALITY", MUNICIPALITY_FOLDER);
-
-        Log.info("Building JDA...");
-        Log.info("-".repeat(20) + " [JDA START] " + "-".repeat(20));
-        JDA = JDABuilder.createDefault(TOKEN)
-                .setActivity(Activity.customStatus("Listening to the radio"))
-                .setStatus(OnlineStatus.ONLINE)
-                .disableCache(
-                        CacheFlag.SCHEDULED_EVENTS, CacheFlag.VOICE_STATE
-                )
-                .setEnabledIntents(
-                        GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_EXPRESSIONS
-                )
-                .addEventListeners(
-                        new ButtonDetector(), new ModalDetector(),
-                        new StringSelectDetector(), new Units.UnitsRefreshButtonDetector(),
-                        new ContextMenuDetector()
-                )
-                .build()
-                .awaitReady();
-        loadChannels(JDA);
-        Log.info("-".repeat(20) + " [ JDA END ] " + "-".repeat(20));
-
-        Log.info("Importing structure data from municipality '" + MUNICIPALITY_FOLDER + "'");
+        bot = new BotManager();
         database = new DatabaseManager();
-        incidents = new IncidentManager();
+        incidents = new IncidentManager(bot.getMunicipalityFolder());
         actions = new ActionsManager();
-        commands = new CommandManager();
-        users = new UserManager(JDA, incidents);
+        commands = new CommandManager(bot.jda());
+        users = new UserManager(bot.jda(), incidents);
 //        subscribers = new SubscriberManager();
 
         String status = getStatus(incidents.getMunicipality());
-        JDA.getPresence().setActivity(Activity.customStatus(status));
+        bot.jda().getPresence().setActivity(Activity.customStatus(status));
         Log.info("Set bot status to '" + status + "'");
 
         Log.info("Started in " + (System.currentTimeMillis() - start) + "ms!");
-    }
-
-    private static String getExternalInfo(String key) {
-        return (System.getenv().getOrDefault(key, System.getProperty(key)));
-    }
-
-    private static void assertPropertyNotNull(String objectName, Object object) {
-        if (object == null) {
-            throw new RuntimeException("Cannot find " + objectName + " (" + objectName + " = null). Try setting an environmental variable or property and re-run the program.");
-        }
     }
 
     private static String getStatus(SystemMunicipality municipality) {
@@ -123,25 +75,6 @@ public class Main {
         }
 
         return status;
-    }
-
-    private static void loadChannels(JDA jda) {
-        JsonUtilities.stream(null, "discord.json", (e) -> {
-            JsonObject object = e.getAsJsonObject();
-            receiveChannels = object.get("receiver_channel_ids").getAsJsonArray().asList().stream()
-                    .map(JsonElement::getAsLong)
-                    .map(jda::getTextChannelById)
-                    .toList();
-            adminChannels = object.get("admin_channel_ids").getAsJsonArray().asList().stream()
-                    .map(JsonElement::getAsLong)
-                    .map(jda::getTextChannelById)
-                    .toList();
-
-            receiveChannels = new ArrayList<>(receiveChannels);
-            adminChannels = new ArrayList<>(adminChannels);
-
-            Log.info("Found " + receiveChannels.size() + " receiver channels and " + adminChannels.size() + " admin channels.");
-        });
     }
 
 }
