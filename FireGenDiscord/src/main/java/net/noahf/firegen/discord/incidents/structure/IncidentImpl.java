@@ -145,9 +145,13 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         return fireGenUser;
     }
 
+    public void addLog(LocalDateTime time, Contributor<?> user, IncidentLogEntry.EntryType type, String log) {
+        this.addLog(new IncidentLogEntryImpl(time, user, log, type));
+    }
+
     @Override
     public void addLog(Contributor<?> user, IncidentLogEntry.EntryType type, String log) {
-        this.addLog(new IncidentLogEntryImpl(LocalDateTime.now(), user, log, type));
+        this.addLog(LocalDateTime.now(), user, type, log);
     }
 
     @Override

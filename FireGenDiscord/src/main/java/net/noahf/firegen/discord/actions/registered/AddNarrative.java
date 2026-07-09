@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.actions.registered;
 
+import kotlin.Pair;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
@@ -19,6 +21,13 @@ import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.ImmutablePair;
+import net.noahf.firegen.discord.utilities.Log;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents the "Add" button next to the "Narrative:" row
@@ -91,8 +100,36 @@ public class AddNarrative implements ButtonAction, ModalAction {
         DiscordMessages.noMessage(event, false);
     }
 
+    private final Pattern pattern = Pattern.compile(
+            "^(?:D(?<month>\\d{2})(?<day>\\d{2})(?<year>\\d{2}))?T(?<hour>\\d{2})(?<minute>\\d{2})\\s*"
+    );
+
+    private ImmutablePair<LocalDateTime, Matcher> extractTime(String text) {
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.matches()) {
+            int hour = Integer.parseInt(matcher.group("hour"));
+            int minute = Integer.parseInt(matcher.group("minute"));
+
+            LocalDateTime time = LocalDate.now().atTime(hour, minute);
+            if (matcher.group("month") != null) {
+                int month = Integer.parseInt(matcher.group("month"));
+                int day = Integer.parseInt(matcher.group("day"));
+                int year = Integer.parseInt(matcher.group("year"));
+                time = LocalDate.of(year, month, day).atTime(hour, minute);
+            }
+
+            return ImmutablePair.of(time, matcher);
+        }
+        return ImmutablePair.of(LocalDateTime.now(), matcher);
+    }
+
     public void onSubmit(Incident incident, IReplyCallback event, String narrative) {
-        if (narrative.startsWith("T")) {
+        narrative = narrative.toUpperCase();
+        LocalDateTime time = LocalDateTime.now();
+        if (narrative.startsWith("T") || narrative.startsWith("D")) {
+            ImmutablePair<LocalDateTime, Matcher> pair = this.extractTime(narrative);
+            time = pair.getFirstElement() != null ? pair.getFirstElement() : time;
+            narrative = narrative.substring(pair.getSecondElement().end()).stripLeading();
             // D070926T1826
             // T1826
         }
@@ -108,10 +145,8 @@ public class AddNarrative implements ButtonAction, ModalAction {
         }
 
         Contributor<User> user = ((IncidentImpl)incident).addContributor(event.getUser());
-        incident.addLog(
-                user,
-                IncidentLogEntryImpl.EntryType.NARRATIVE,
-                narrative
+        ((IncidentImpl)incident).addLog(
+                time, user, IncidentLogEntry.EntryType.NARRATIVE, narrative
         );
 
         incident.update();
