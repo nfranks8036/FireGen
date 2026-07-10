@@ -10,6 +10,7 @@ import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 /**
  * Represents the "Close Incident" or "Re-open Incident" buttons in the Status row.
@@ -51,7 +52,7 @@ public class ChangeStatus implements ButtonAction {
         };
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
 
-        DiscordMessages.noMessage(event, false);
+        DiscordMessages.noMessage(event, MessageStatus.NONE);
 
         incident.update();
     }

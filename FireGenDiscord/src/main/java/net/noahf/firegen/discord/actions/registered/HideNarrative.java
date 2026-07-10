@@ -14,6 +14,7 @@ import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -127,7 +128,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
             incident.injectLog(entry);
         }
 
-        DiscordMessages.noMessage(event, false);
+        DiscordMessages.noMessage(event, MessageStatus.NONE);
 
         incident.addContributor(event.getUser());
         incident.update();

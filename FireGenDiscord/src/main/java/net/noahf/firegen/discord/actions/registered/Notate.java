@@ -19,6 +19,7 @@ import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import static net.noahf.firegen.discord.actions.registered.AddNarrative.MAX_NARRATIVE_LENGTH;
 import static net.noahf.firegen.discord.actions.registered.AddNarrative.MIN_NARRATIVE_LENGTH;
@@ -84,19 +85,19 @@ public class Notate implements ButtonAction, ModalAction {
             return;
         }
 
-        this.onSubmit(incident, event, textMapping.getAsString());
-        DiscordMessages.noMessage(event, false);
+        MessageStatus status = this.onSubmit(incident, event, textMapping.getAsString());
+        DiscordMessages.noMessage(event, status);
     }
 
-    public void onSubmit(Incident incident, IReplyCallback event, String note) {
+    public MessageStatus onSubmit(Incident incident, IReplyCallback event, String note) {
         if (note.length() < MIN_NARRATIVE_LENGTH) {
             DiscordMessages.error(event, "Your note is too short! (" + note.length() + " < " + MIN_NARRATIVE_LENGTH + ")");
-            return;
+            return MessageStatus.CONTENT;
         }
 
         if (note.length() > MAX_NARRATIVE_LENGTH) {
             DiscordMessages.error(event, "Your note is too long! (" + note.length() + " > " + MAX_NARRATIVE_LENGTH + ")");
-            return;
+            return MessageStatus.CONTENT;
         }
 
         Contributor<User> user = ((IncidentImpl)incident).addContributor(event.getUser());
@@ -107,6 +108,7 @@ public class Notate implements ButtonAction, ModalAction {
         );
 
         incident.update();
+        return MessageStatus.NONE;
     }
 
     @Override

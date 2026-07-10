@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.callbacks.IMessageEditCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,10 @@ public class DiscordMessages {
         return new Color(
                 color.nextInt(0, 255), color.nextInt(0, 255), color.nextInt(0, 255)
         );
+    }
+
+    public static void error(IReplyCallback event, String message) {
+        DiscordMessages.error(event, message, null);
     }
 
     public static void error(IReplyCallback event, String message, @Nullable Exception cause) {
@@ -42,10 +47,6 @@ public class DiscordMessages {
             // if the interaction has never been acknowledged, we can safely send a reply embed
             event.replyEmbeds(responseBuilder.build()).setEphemeral(true).queue();
         }
-    }
-
-    public static void error(IReplyCallback event, String message) {
-        DiscordMessages.error(event, message, null);
     }
 
     public static void selfDestruct(IReplyCallback event, int selfDestructAfter, String message) {
@@ -74,8 +75,9 @@ public class DiscordMessages {
                 .queueAfter(selfDestructAfter, TimeUnit.SECONDS);
     }
 
-    public static void noMessage(IReplyCallback event, boolean deleteIfExists) {
+    public static void noMessage(IReplyCallback event, MessageStatus status) {
         if (event.isAcknowledged()) {
+            if (status == MessageStatus.CONTENT) return;
             event.getHook().deleteOriginal().queue();
         } else {
             event.reply(" ").setEphemeral(true).complete().deleteOriginal().queue();

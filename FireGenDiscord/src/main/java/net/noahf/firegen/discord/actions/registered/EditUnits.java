@@ -27,6 +27,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -63,8 +64,8 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         if (!ctx.getParameters().isEmpty()) {
-            this.onSubmit(ctx.getIncident(), event, null);
-            DiscordMessages.noMessage(event, false);
+            MessageStatus status = this.onSubmit(ctx.getIncident(), event, null);
+            DiscordMessages.noMessage(event, status);
             return;
         }
 
@@ -173,14 +174,14 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             selectedUnits.put(event.getUser(), input);
         }
 
-        DiscordMessages.noMessage(event, false);
+        DiscordMessages.noMessage(event, MessageStatus.NONE);
     }
 
-    public void onSubmit(Incident incidentValue, IReplyCallback event, @Nullable EditUnits.UnitsChangeInput inputUnits) {
+    public MessageStatus onSubmit(Incident incidentValue, IReplyCallback event, @Nullable EditUnits.UnitsChangeInput inputUnits) {
         UnitsChangeInput input = (inputUnits == null ? selectedUnits.get(event.getUser()) : inputUnits);
         if (input == null) {
             DiscordMessages.error(event, "You are not currently editing incident units.");
-            return;
+            return MessageStatus.CONTENT;
         }
 
         IncidentImpl incident = (IncidentImpl) incidentValue;
@@ -197,7 +198,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                     And the Cookie Monster is sad there are no cookies, and you are sad that the Cookie Monster \
                     is your only friend.*"""
             );
-            return;
+            return MessageStatus.CONTENT;
         }
 
         if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {
@@ -217,6 +218,8 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         );
 
         incident.update();
+
+        return MessageStatus.NONE;
     }
 
 

@@ -14,6 +14,8 @@ import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
+import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
@@ -23,6 +25,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -96,60 +99,47 @@ public class AddNarrative implements ButtonAction, ModalAction {
             return;
         }
 
-        this.onSubmit(incident, event, textMapping.getAsString());
-        DiscordMessages.noMessage(event, false);
+        MessageStatus status = this.onSubmit(incident, event, textMapping.getAsString());
+        DiscordMessages.noMessage(event, status);
     }
 
-    private final Pattern pattern = Pattern.compile(
-            "^(?:D(?<month>\\d{2})(?<day>\\d{2})(?<year>\\d{2}))?T(?<hour>\\d{2})(?<minute>\\d{2})\\s*"
-    );
+    public MessageStatus onSubmit(Incident incident, IReplyCallback event, String narrative) {
+        FireGenVariables vars = Main.incidents.getFireGenVariables();
 
-    private ImmutablePair<LocalDateTime, Matcher> extractTime(String text) {
-        Matcher matcher = pattern.matcher(text);
-        if (matcher.matches()) {
-            int hour = Integer.parseInt(matcher.group("hour"));
-            int minute = Integer.parseInt(matcher.group("minute"));
-
-            LocalDateTime time = LocalDate.now().atTime(hour, minute);
-            if (matcher.group("month") != null) {
-                int month = Integer.parseInt(matcher.group("month"));
-                int day = Integer.parseInt(matcher.group("day"));
-                int year = Integer.parseInt(matcher.group("year"));
-                time = LocalDate.of(year, month, day).atTime(hour, minute);
-            }
-
-            return ImmutablePair.of(time, matcher);
-        }
-        return ImmutablePair.of(LocalDateTime.now(), matcher);
-    }
-
-    public void onSubmit(Incident incident, IReplyCallback event, String narrative) {
         narrative = narrative.toUpperCase();
-        LocalDateTime time = LocalDateTime.now();
-        if (narrative.startsWith("T") || narrative.startsWith("D")) {
-            ImmutablePair<LocalDateTime, Matcher> pair = this.extractTime(narrative);
-            time = pair.getFirstElement() != null ? pair.getFirstElement() : time;
-            narrative = narrative.substring(pair.getSecondElement().end()).stripLeading();
-            // D070926T1826
-            // T1826
-        }
 
         if (narrative.length() < MIN_NARRATIVE_LENGTH) {
             DiscordMessages.error(event, "Your narrative is too short! (" + narrative.length() + " < " + MIN_NARRATIVE_LENGTH + ")");
-            return;
+            return MessageStatus.CONTENT;
         }
 
         if (narrative.length() > MAX_NARRATIVE_LENGTH) {
             DiscordMessages.error(event, "Your narrative is too long! (" + narrative.length() + " > " + MAX_NARRATIVE_LENGTH + ")");
-            return;
+            return MessageStatus.CONTENT;
         }
 
         Contributor<User> user = ((IncidentImpl)incident).addContributor(event.getUser());
-        ((IncidentImpl)incident).addLog(
-                time, user, IncidentLogEntry.EntryType.NARRATIVE, narrative
+        IncidentLogEntryImpl entry = (IncidentLogEntryImpl) IncidentLogEntryImpl.of(
+                user, narrative, IncidentLogEntry.EntryType.NARRATIVE
         );
+        LocalDateTime time = entry.getCustomTimeOrDefault();
+        if (time.isAfter(LocalDateTime.now())) {
+            DiscordMessages.error(event, "The time of the current narrative entry cannot be after the current moment!");
+            return MessageStatus.CONTENT;
+        }
 
+        LocalDateTime incidentTime = incident.getTime().getDateTime();
+        if (time.isBefore(incidentTime)) {
+            DiscordMessages.error(event, "The time of the current narrative entry cannot be before the current incident (" + vars.formatTime(incidentTime, true) + ")"
+                    + "\n*Tip: Change the incident time by setting the 'Date & Time' field.*"
+            );
+            return MessageStatus.CONTENT;
+        }
+
+        incident.addLog(entry);
         incident.update();
+
+        return MessageStatus.NONE;
     }
 
     @Override

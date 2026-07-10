@@ -20,6 +20,7 @@ import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -125,11 +126,11 @@ public class EditDateTime implements ButtonAction, ModalAction {
             date = LocalDate.parse(dateMapping.getAsString(), DateTimeFormatter.ofPattern(dateFormat));
         }
 
-        this.onSubmit(incident, event, vars, date, time);
-        DiscordMessages.noMessage(event, false);
+        MessageStatus status = this.onSubmit(incident, event, vars, date, time);
+        DiscordMessages.noMessage(event, status);
     }
 
-    public void onSubmit(Incident incident, IReplyCallback event, FireGenVariables vars, LocalDate date, LocalTime time) {
+    public MessageStatus onSubmit(Incident incident, IReplyCallback event, FireGenVariables vars, LocalDate date, LocalTime time) {
         incident.getTime().setDate(date, time);
 
         String narrative = "Changed date & time to " +
@@ -139,6 +140,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
         Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
         incident.update();
+        return MessageStatus.NONE;
     }
 
 

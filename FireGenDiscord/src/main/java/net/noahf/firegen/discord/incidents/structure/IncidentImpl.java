@@ -14,6 +14,7 @@ import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.actions.registered.Publish;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -108,12 +109,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             newType = new IncidentTypeImpl(type, IncidentTypeTagImpl.DEFAULT, 0);
         }
 
-        if (type.startsWith("pub-")) {
-            type = type.substring("pub-".length()).toUpperCase();
-            this.setPublished(IncidentPublishedStatus.PUBLISHED);
-            newType = manager.getTypeFromString(type);
-        }
-
         if (newType == null) {
             throw new IllegalArgumentException("Expected a valid incident type from file, got '" + type + "'");
         }
@@ -145,18 +140,19 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         return fireGenUser;
     }
 
-    public void addLog(LocalDateTime time, Contributor<?> user, IncidentLogEntry.EntryType type, String log) {
-        this.addLog(new IncidentLogEntryImpl(time, user, log, type));
+    public IncidentLogEntry addLog(LocalDateTime time, Contributor<?> user, IncidentLogEntry.EntryType type, String log) {
+        return this.addLog(new IncidentLogEntryImpl(time, user, log, type));
     }
 
     @Override
-    public void addLog(Contributor<?> user, IncidentLogEntry.EntryType type, String log) {
-        this.addLog(LocalDateTime.now(), user, type, log);
+    public IncidentLogEntry addLog(Contributor<?> user, IncidentLogEntry.EntryType type, String log) {
+        return this.addLog(LocalDateTime.now(), user, type, log);
     }
 
     @Override
-    public void addLog(IncidentLogEntry entry) {
+    public IncidentLogEntry addLog(IncidentLogEntry entry) {
         this.log.add(entry);
+        return entry;
     }
 
     @Override

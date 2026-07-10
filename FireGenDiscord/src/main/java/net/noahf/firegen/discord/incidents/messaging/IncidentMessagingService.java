@@ -6,10 +6,11 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.ZoneOffset;
+import java.util.*;
 
 public class IncidentMessagingService {
 
@@ -57,12 +58,23 @@ public class IncidentMessagingService {
             return new ArrayList<>();
         }
 
-        List<String> response = new ArrayList<>();
-        for (IncidentLogEntry entry : incident.getLog()) {
-            if (!asAdmin && entry.getType() != IncidentLogEntryImpl.EntryType.NARRATIVE) {
+        List<String> response = new LinkedList<>();
+        List<IncidentLogEntry> log = new ArrayList<>(incident.getLog()
+                .stream()
+
                 // we don't want admin update logs to be included in the narrative for the public necessarily
-                continue;
-            }
+                .filter(n -> asAdmin || n.getType() == IncidentLogEntry.EntryType.NARRATIVE)
+
+                .sorted((o1, o2) -> {
+                    if (asAdmin) {
+                        return o1.getTime().compareTo(o2.getTime());
+                    }
+                    return ((IncidentLogEntryImpl) o1).getCustomTimeOrDefault()
+                            .compareTo(((IncidentLogEntryImpl) o2).getCustomTimeOrDefault());
+                })
+                .toList()
+        );
+        for (IncidentLogEntry entry : log) {
             IncidentLogEntryImpl entryImpl = (IncidentLogEntryImpl) entry;
             response.add(asAdmin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
         }

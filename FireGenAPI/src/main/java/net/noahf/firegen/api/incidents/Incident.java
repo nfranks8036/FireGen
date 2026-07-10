@@ -30,9 +30,9 @@ public interface Incident extends Identifiable {
 
     void setType(IncidentType type);
 
-    void addLog(IncidentLogEntry entry);
+    IncidentLogEntry addLog(IncidentLogEntry entry);
 
-    void addLog(Contributor<?> account, IncidentLogEntry.EntryType type, String narrative);
+    IncidentLogEntry addLog(Contributor<?> account, IncidentLogEntry.EntryType type, String narrative);
 
     void injectLog(IncidentLogEntry entry);
 

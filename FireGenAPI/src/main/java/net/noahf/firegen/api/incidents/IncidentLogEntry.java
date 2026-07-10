@@ -5,7 +5,7 @@ import net.noahf.firegen.api.Identifiable;
 
 import java.time.LocalDateTime;
 
-public interface IncidentLogEntry extends Identifiable {
+public interface IncidentLogEntry extends Identifiable, Comparable<IncidentLogEntry> {
 
     LocalDateTime getTime();
 

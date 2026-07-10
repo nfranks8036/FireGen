@@ -2,13 +2,16 @@ package net.noahf.firegen.discord.actions.registered;
 
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 public class Publish implements ButtonAction {
 
@@ -34,6 +37,11 @@ public class Publish implements ButtonAction {
             return;
         }
 
+        MessageStatus status = this.onSubmit(incident, event);
+        DiscordMessages.noMessage(event, status);
+    }
+
+    public MessageStatus onSubmit(IncidentImpl incident, IReplyCallback event) {
         incident.setPublished(incident.getPublished().opposite());
 
         Contributor<User> contributor = incident.addContributor(event.getUser());
@@ -43,6 +51,6 @@ public class Publish implements ButtonAction {
 
         incident.update();
 
-        DiscordMessages.noMessage(event, false);
+        return MessageStatus.NONE;
     }
 }

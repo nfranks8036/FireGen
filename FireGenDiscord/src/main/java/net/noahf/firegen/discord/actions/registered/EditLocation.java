@@ -29,6 +29,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -149,11 +150,11 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         // ------- [ COMPLETE AND PACKAGE DATA ] -------
         IncidentLocation location = new IncidentLocationImpl(data, type, commonName, venue);
 
-        this.onSubmit(incident, event, type, location);
-        DiscordMessages.noMessage(event, false);
+        MessageStatus status = this.onSubmit(incident, event, type, location);
+        DiscordMessages.noMessage(event, status);
     }
 
-    public void onSubmit(Incident incident, IReplyCallback event, LocationType type, IncidentLocation location) {
+    public MessageStatus onSubmit(Incident incident, IReplyCallback event, LocationType type, IncidentLocation location) {
         incident.setLocation(location);
 
         String narrative = type.getPrefix() + " UPDATED: " + location.format();
@@ -161,6 +162,8 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
         incident.update();
+
+        return MessageStatus.NONE;
     }
 
     /**

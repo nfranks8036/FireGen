@@ -18,11 +18,13 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.util.List;
 
 import static net.noahf.firegen.discord.command.registered.CreateIncident.DATE_CREATE_FORMAT;
 import static net.noahf.firegen.discord.command.registered.CreateIncident.TIME_CREATE_FORMAT;
+import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
 
 public class SetDetails extends Command {
 
@@ -90,27 +92,27 @@ public class SetDetails extends Command {
         }
 
         OptionMapping locationOption = event.getOption("location");
-        if (locationOption != null && !CreateIncident.Helper.setLocation(incident, event, locationOption)) {
+        if (locationOption != null && CreateIncident.Helper.setLocation(incident, event, locationOption) == CONTENT) {
             return;
         }
 
         OptionMapping unitsOption = event.getOption("units");
-        if (unitsOption != null && !CreateIncident.Helper.setUnits(incident, event, unitsOption)) {
+        if (unitsOption != null && CreateIncident.Helper.setUnits(incident, event, unitsOption) == CONTENT) {
             return;
         }
 
         OptionMapping timeOption = event.getOption("time");
         OptionMapping dateOption = event.getOption("date");
-        if ((timeOption != null || dateOption != null) && !CreateIncident.Helper.setDateTime(incident, event, dateOption, timeOption)) {
+        if ((timeOption != null || dateOption != null) && CreateIncident.Helper.setDateTime(incident, event, dateOption, timeOption) == CONTENT) {
             return;
         }
 
         OptionMapping narrativeOption = event.getOption("narrative");
-        if (narrativeOption != null && !CreateIncident.Helper.setInitialNarrative(incident, event, narrativeOption)) {
+        if (narrativeOption != null && CreateIncident.Helper.setInitialNarrative(incident, event, narrativeOption) == CONTENT) {
             return;
         }
 
-        DiscordMessages.noMessage(event, false);
+        DiscordMessages.noMessage(event, MessageStatus.NONE);
     }
 
     @Override

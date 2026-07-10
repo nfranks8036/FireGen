@@ -6,6 +6,7 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,6 +52,6 @@ public class EditMode implements ButtonAction {
                             + "Type `/set-details` to change the incident details in command format."
             );
 
-        } else DiscordMessages.noMessage(event, false);
+        } else DiscordMessages.noMessage(event, MessageStatus.NONE);
     }
 }

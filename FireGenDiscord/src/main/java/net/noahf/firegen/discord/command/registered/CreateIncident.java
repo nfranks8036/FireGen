@@ -29,6 +29,7 @@ import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -39,6 +40,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
 
 /**
  * Represents the command used to create an incident.
@@ -119,8 +122,16 @@ public class CreateIncident extends Command {
 
         // ---------- incident type ----------
         OptionMapping typeOption = event.getOption("type");
+        boolean publish = false;
         if (typeOption != null) {
-            incident.setTypeBySearch(typeOption.getAsString());
+            String typeString = typeOption.getAsString();
+
+            if (typeString.startsWith("pub-")) {
+                typeString = typeString.substring("pub-".length()).toUpperCase();
+                publish = true;
+            }
+
+            incident.setTypeBySearch(typeString);
         }
 
         // ---------- incident contributors // begin list ----------
@@ -129,26 +140,26 @@ public class CreateIncident extends Command {
 
         // ---------- incident location ----------
         OptionMapping locationOption = event.getOption("location");
-        if (locationOption != null && !Helper.setLocation(incident, event, locationOption)) {
+        if (locationOption != null && Helper.setLocation(incident, event, locationOption) == CONTENT) {
             return;
         }
 
         // ---------- incident agencies ----------
         OptionMapping unitsOption = event.getOption("units");
-        if (unitsOption != null && !Helper.setUnits(incident, event, unitsOption)) {
+        if (unitsOption != null && Helper.setUnits(incident, event, unitsOption) == CONTENT) {
             return;
         }
 
         // ---------- incident date and time ----------
         OptionMapping dateOption = event.getOption("date");
         OptionMapping timeOption = event.getOption("time");
-        if ((dateOption != null || timeOption != null) && !Helper.setDateTime(incident, event, dateOption, timeOption)) {
+        if ((dateOption != null || timeOption != null) && Helper.setDateTime(incident, event, dateOption, timeOption) == CONTENT) {
             return;
         }
 
         // ---------- incident initial narrative ----------
         OptionMapping initialNarrativeOption = event.getOption("initial-narrative");
-        if (initialNarrativeOption != null && !Helper.setInitialNarrative(incident, event, initialNarrativeOption)) {
+        if (initialNarrativeOption != null && Helper.setInitialNarrative(incident, event, initialNarrativeOption) == CONTENT) {
             return;
         }
 
@@ -157,6 +168,10 @@ public class CreateIncident extends Command {
         incident.update();
 
         EditMode.editIncidents.put(event.getUser(), incident);
+
+        if (publish) {
+            Main.actions.getAction(Publish.class).onSubmit(incident, event);
+        }
 
         DiscordMessages.selfDestruct(event, 5,
                 "Created new incident with those details. Check an admin channel for more information."
@@ -183,10 +198,10 @@ public class CreateIncident extends Command {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static class Helper {
-        static boolean setLocation(IncidentImpl incident, IReplyCallback event, OptionMapping locationOption) {
+        static MessageStatus setLocation(IncidentImpl incident, IReplyCallback event, OptionMapping locationOption) {
             if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_LOCATION)) {
                 DiscordMessages.error(event, "You don't have permission to change the incident location.");
-                return false;
+                return CONTENT;
             }
 
             EditLocation action = findAction(EditLocation.class);
@@ -196,21 +211,19 @@ public class CreateIncident extends Command {
                 if (!Main.users.hasPermission(event.getUser(), Permission.USE_CUSTOM_LOCATION)) {
                     DiscordMessages.error(event, "You don't have permission to set a custom location, " +
                             "so the location was not set. Please use a preset or the buttons.");
-                    return false;
+                    return CONTENT;
                 }
 
                 location = new IncidentLocationImpl(List.of(locationOption.getAsString()));
             }
 
-            action.onSubmit(incident, event, location.getType(), location);
-
-            return true;
+            return action.onSubmit(incident, event, location.getType(), location);
         }
 
-        static boolean setUnits(IncidentImpl incident, IReplyCallback event, OptionMapping unitsOption) {
+        static MessageStatus setUnits(IncidentImpl incident, IReplyCallback event, OptionMapping unitsOption) {
             if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_UNITS)) {
                 DiscordMessages.error(event, "You don't have permission to change the incident units.");
-                return false;
+                return CONTENT;
             }
 
             EditUnits action = findAction(EditUnits.class);
@@ -220,7 +233,7 @@ public class CreateIncident extends Command {
 
             String[] targetsList = unitsString.split(",");
 
-            boolean returned = true;
+            MessageStatus returned = MessageStatus.NONE;
             Map<AssignmentStatus, EditUnits.UnitsChangeInput> units = new HashMap<>();
             for (String optionItem : targetsList) {
                 String targetString = optionItem;
@@ -247,7 +260,7 @@ public class CreateIncident extends Command {
                         Unit u = Main.incidents.getUnitByShorthand(targetString);
                         if (u == null) {
                             DiscordMessages.error(event, "No unit exist by the name '" + targetString + "'");
-                            returned = false;
+                            returned = CONTENT.compare(returned);
                             continue;
                         }
                         inputUnits.add(u);
@@ -256,7 +269,7 @@ public class CreateIncident extends Command {
                         Agency a = Main.incidents.getAgencyByShorthand(targetString.substring(1));
                         if (a == null) {
                             DiscordMessages.error(event, "No agency exist by the name '" + targetString + "'");
-                            returned = false;
+                            returned = CONTENT.compare(returned);
                             continue;
                         }
                         inputUnits.addAll(incident.getUnitAssignments().stream()
@@ -300,7 +313,7 @@ public class CreateIncident extends Command {
 
                 if (inputUnits.isEmpty()) {
                     DiscordMessages.error(event, "You attempted to add no units to the call with input '" + unitsString + "'. Did you attempt to " + AGENCY_PREFIX + " an Agency that isn't attached to this call?");
-                    returned = false;
+                    returned = CONTENT.compare(returned);
                     continue;
                 }
 
@@ -309,7 +322,7 @@ public class CreateIncident extends Command {
                     s = AssignmentStatusImpl.ADD_UNIT;
                     DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +
                             " defaulting to " + s.getShortName() + " for " + targetString);
-                    returned = false;
+                    returned = CONTENT.compare(returned);
                 }
 
                 EditUnits.UnitsChangeInput input = units.getOrDefault(s, new EditUnits.UnitsChangeInput(new ArrayList<>(), s));
@@ -318,7 +331,7 @@ public class CreateIncident extends Command {
             }
 
             for (Map.Entry<AssignmentStatus, EditUnits.UnitsChangeInput> entry : units.entrySet()) {
-                action.onSubmit(incident, event, entry.getValue());
+                returned = action.onSubmit(incident, event, entry.getValue()).compare(returned);
             }
 
             return returned;
@@ -338,10 +351,10 @@ public class CreateIncident extends Command {
             return unitsString;
         }
 
-        static boolean setDateTime(IncidentImpl incident, IReplyCallback event, OptionMapping dateOption, OptionMapping timeOption) {
+        static MessageStatus setDateTime(IncidentImpl incident, IReplyCallback event, OptionMapping dateOption, OptionMapping timeOption) {
             if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_DATE_TIME)) {
                 DiscordMessages.error(event, "You don't have permission to change the incident date & time.");
-                return false;
+                return CONTENT;
             }
 
             EditDateTime actions = findAction(EditDateTime.class);
@@ -357,14 +370,14 @@ public class CreateIncident extends Command {
                     DiscordMessages.error(event, "Failed to parse your time, expected format '" +
                             TIME_CREATE_FORMAT + "', got '" + timeString + "'", e
                     );
-                    return false;
+                    return CONTENT;
                 }
             }
 
             if (dateOption != null) {
                 if (timeOption == null) {
                     DiscordMessages.error(event, "You must set a time if you also select a date.");
-                    return false;
+                    return CONTENT;
                 }
 
                 String dateString = dateOption.getAsString();
@@ -374,31 +387,29 @@ public class CreateIncident extends Command {
                     DiscordMessages.error(event, "Failed to parse your date, expected format '" +
                             DATE_CREATE_FORMAT + "', got '" + dateString + "'", e
                     );
-                    return false;
+                    return CONTENT;
                 }
             }
 
-            actions.onSubmit(incident, event, Main.incidents.getFireGenVariables(), date, time);
-            return true;
+            return actions.onSubmit(incident, event, Main.incidents.getFireGenVariables(), date, time);
         }
 
-        static boolean setInitialNarrative(IncidentImpl incident, IReplyCallback event, OptionMapping initialNarrative) {
+        static MessageStatus setInitialNarrative(IncidentImpl incident, IReplyCallback event, OptionMapping initialNarrative) {
             if (!Main.users.hasPermission(event.getUser(), Permission.NARRATIVE_ADD)) {
                 DiscordMessages.error(event, "You don't have permission to add to the narrative.");
-                return false;
+                return CONTENT;
             }
 
             if (initialNarrative == null) {
                 DiscordMessages.error(event, "Expected narrative to not be null.");
-                return false;
+                return CONTENT;
             }
 
             AddNarrative action = findAction(AddNarrative.class);
 
             String narrative = initialNarrative.getAsString();
 
-            action.onSubmit(incident, event, narrative);
-            return true;
+            return action.onSubmit(incident, event, narrative);
         }
 
 

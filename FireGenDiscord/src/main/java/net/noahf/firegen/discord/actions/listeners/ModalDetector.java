@@ -24,6 +24,7 @@ public class ModalDetector extends ListenerAdapter {
         try {
             Main.actions.processAction(event, id);
         } catch (Exception exception) {
+            Log.error("An error occurred with submitting a modal.", exception);
             DiscordMessages.error(event, "An error occurred processing your modal submission", exception);
         }
     }

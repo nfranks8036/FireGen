@@ -6,6 +6,7 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.errors.ActionCommandNotExist;
 import net.noahf.firegen.discord.utilities.Log;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import javax.annotation.Nullable;
@@ -83,16 +84,16 @@ public class ActionsManager {
         return null;
     }
 
-    public @Nullable FireGenAction getAction(Class<? extends FireGenAction> clazz) {
+    public @NotNull <T extends FireGenAction> T getAction(Class<T> clazz) {
         for (FireGenAction action : this.actions) {
             if (!clazz.isAssignableFrom(action.getClass())) {
                 continue;
             }
 
-            return action;
+            return clazz.cast(action);
         }
 
-        return null;
+        throw new IllegalArgumentException("Class '" + clazz.getCanonicalName() + "' SOMEHOW does not return to a proper " + FireGenAction.class.getCanonicalName() + ".");
     }
 
     public <T extends GenericInteractionCreateEvent> void processAction(T event, String id) {
