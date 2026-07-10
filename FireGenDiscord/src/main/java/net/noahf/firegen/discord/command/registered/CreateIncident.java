@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.command.registered;
 
+import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.User;
@@ -14,6 +15,9 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
+import net.noahf.firegen.api.incidents.location.LocationField;
+import net.noahf.firegen.api.incidents.location.LocationType;
+import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.discord.Main;
@@ -28,19 +32,22 @@ import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static net.noahf.firegen.discord.command.registered.CreateIncident.Helper.findAction;
 import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
 
 /**
@@ -170,7 +177,7 @@ public class CreateIncident extends Command {
         EditMode.editIncidents.put(event.getUser(), incident);
 
         if (publish) {
-            Main.actions.getAction(Publish.class).onSubmit(incident, event);
+            findAction(Publish.class).onSubmit(incident, event);
         }
 
         DiscordMessages.selfDestruct(event, 5,
@@ -205,12 +212,19 @@ public class CreateIncident extends Command {
             }
 
             EditLocation action = findAction(EditLocation.class);
+            String input = locationOption.getAsString();
 
-            IncidentLocation location = Main.incidents.getPresetByAnyName(locationOption.getAsString());
+            IncidentLocation location;
+            if (input.startsWith("$")) {
+                location = extractLocation(input.substring(1));
+            } else {
+                location = Main.incidents.getPresetByAnyName(input);
+            }
+
             if (location == null) {
                 if (!Main.users.hasPermission(event.getUser(), Permission.USE_CUSTOM_LOCATION)) {
                     DiscordMessages.error(event, "You don't have permission to set a custom location, " +
-                            "so the location was not set. Please use a preset or the buttons.");
+                            "so the location was not set. Please use a preset, the buttons, or the correct custom time.");
                     return CONTENT;
                 }
 
@@ -218,6 +232,43 @@ public class CreateIncident extends Command {
             }
 
             return action.onSubmit(incident, event, location.getType(), location);
+        }
+
+        private static IncidentLocation extractLocation(String text) {
+                String[] typeVsData = text.split(":");
+                if (typeVsData.length != 2) {
+                    throw new IllegalArgumentException(
+                            "Expected a LocationType and location data (such as 'LocationType:data1,data2,...'), "
+                            + "got \"" + text + "\""
+                    );
+                }
+
+                LocationType type = LocationType.valueOf(typeVsData[0].toUpperCase());
+                List<String> dataString = new ArrayList<>(Arrays.stream(typeVsData[1].split(";")).toList());
+
+                List<Integer> remove = new ArrayList<>();
+
+                String common = null;
+                LocationVenue venue = null;
+                for (int i = 0; i < dataString.size(); i++) {
+                    LocationField field = type.getFields()[i];
+                    if (field.getId().equalsIgnoreCase("common-name")) {
+                        remove.add(i);
+                        common = dataString.get(i);
+                    }
+                    if (field.getId().equalsIgnoreCase("venue")) {
+                        remove.add(i);
+                        venue = Main.incidents.getVenueBy(dataString.get(i));
+                    }
+                }
+
+                int j = 0;
+                for (Integer i : remove) {
+                    dataString.remove(i - j);
+                    j++;
+                }
+
+                return new IncidentLocationImpl(dataString, type, common, venue);
         }
 
         static MessageStatus setUnits(IncidentImpl incident, IReplyCallback event, OptionMapping unitsOption) {
@@ -543,13 +594,8 @@ public class CreateIncident extends Command {
             // -------- [ ABOVE THIS LINE CONTAINS SOME LLM-WRITTEN OR MODIFIED CODE ] --------
         }
 
-        @SuppressWarnings("unchecked")
-        private static @NotNull <T extends FireGenAction> T findAction(Class<T> clazz) {
-            T response = (T) Main.actions.getAction(clazz);
-            if (response == null) {
-                throw new IllegalStateException("Expected to find action at class '" + clazz + "', instead got 'null'.");
-            }
-            return response;
+        static @NotNull <T extends FireGenAction> T findAction(Class<T> clazz) {
+            return Main.actions.getAction(clazz);
         }
     }
 }
