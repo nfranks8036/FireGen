@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.requests.restaction.interactions.AutoCompleteCallbackAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.InteractionCallbackAction;
+import net.dv8tion.jda.internal.requests.restaction.interactions.AutoCompleteCallbackActionImpl;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
@@ -173,9 +176,16 @@ public class CommandManager extends ListenerAdapter {
 
         try {
             // execute the autocomplete in the Command class to get the responses the class wants
-            List<String> autocomplete = this
-                    .getCommandName(event.getName())
-                    .autocomplete(event, user, commandString, event.getFocusedOption());
+            Command command = this
+                    .getCommandName(event.getName());
+
+            List<String> autocomplete = new ArrayList<>(
+                    command
+                            .autocomplete(event, user, commandString, event.getFocusedOption())
+                            .stream()
+                            .map(s -> DiscordMessages.truncate(s, net.dv8tion.jda.api.interactions.commands.Command.Choice.MAX_NAME_LENGTH, "..."))
+                            .toList()
+            );
 
             // we can just return nothing if the command returned null or an empty set
             if (autocomplete == null || autocomplete.isEmpty()) {
@@ -183,27 +193,41 @@ public class CommandManager extends ListenerAdapter {
                 return;
             }
 
-            // if the current option value is emptey but the command returned some valid options, then we can show as
+            // if the current option value is empty but the command returned some valid options, then we can show as
             // many as Discord will allow (25 at the time of writing)
             if (optionValue.isEmpty()) {
                 event.replyChoiceStrings(autocomplete.stream().limit(OptionData.MAX_CHOICES).toList()).queue();
                 return;
             }
 
+            if (!command.flags.autoFilterAutocomplete) {
+                event.replyChoiceStrings(autocomplete.stream().limit(OptionData.MAX_CHOICES).toList()
+                ).queue();
+                return;
+            }
+
             // to better filter the data returned by the command if there is text written in the box, we will simply
             // look for options that contain the value the user typed in
             // toLowerCasing each string to effectively make it case-insensitive
-            List<String> returned = new ArrayList<>();
-            for (String a : autocomplete) {
-                if (a.toLowerCase().contains(optionValue.toLowerCase())) {
-                    returned.add(a);
-                }
-            }
-
-            event.replyChoiceStrings(returned.stream().limit(OptionData.MAX_CHOICES).toList()).queue();
+            event.replyChoiceStrings(
+                    autocompleteSearch(optionValue, autocomplete)
+                    .stream()
+                            .limit(OptionData.MAX_CHOICES)
+                            .toList()
+            ).queue();
 
         } catch (Exception exception) {
             Log.error("Autocomplete failed for '" + commandString + "': " + exception, exception);
         }
+    }
+
+    public List<String> autocompleteSearch(String input, List<String> options) {
+        List<String> returned = new ArrayList<>();
+        for (String a : options) {
+            if (a.toLowerCase().contains(input.toLowerCase())) {
+                returned.add(a);
+            }
+        }
+        return returned;
     }
 }

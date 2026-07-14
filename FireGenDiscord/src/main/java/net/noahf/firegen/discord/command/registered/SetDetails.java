@@ -119,7 +119,7 @@ public class SetDetails extends Command {
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         return switch (focused.getName()) {
             case "type" -> Main.incidents.listAllIncidentTypesForAutocomplete();
-            case "location" -> Main.incidents.listAllPresetLocationsForAutocomplete();
+            case "location" -> CreateIncident.Helper.autocompleteLocation(focused);
             case "units" -> CreateIncident.Helper.autocompleteUnits(focused);
             default -> null;
         };

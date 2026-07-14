@@ -191,13 +191,13 @@ public class CreateIncident extends Command {
         return switch (focused.getName()) {
             case "type" ->
                 // send the list of all motor vehicle crashes
-                Main.incidents.listAllIncidentTypesForAutocomplete();
+                Main.commands.autocompleteSearch(focused.getValue(), Main.incidents.listAllIncidentTypesForAutocomplete());
 
             case "location" ->
-                    Main.incidents.listAllPresetLocationsForAutocomplete();
+                    Helper.autocompleteLocation(focused);
 
             case "units" ->
-                Helper.autocompleteUnits(focused);
+                    Main.commands.autocompleteSearch(focused.getValue(), Helper.autocompleteUnits(focused));
 
             default -> null;
         };
@@ -592,6 +592,49 @@ public class CreateIncident extends Command {
                     .limit(25)
                     .toList();
             // -------- [ ABOVE THIS LINE CONTAINS SOME LLM-WRITTEN OR MODIFIED CODE ] --------
+        }
+
+        static List<String> autocompleteLocation(AutoCompleteQuery focused) {
+            String input = focused.getValue().toUpperCase();
+            List<String> returned = new ArrayList<>(Main.incidents.listAllPresetLocationsForAutocomplete());
+
+            if (input.contains(":")) {
+
+                try {
+                    LocationType type = LocationType.valueOf(input.split(":")[0]);
+
+                    input = input.split(":")[1];
+                    String[] parts = input.split(";");
+
+                    if (parts.length - 1 > type.getFields().length) {
+                        return new ArrayList<>(List.of("<ERROR: Too Many Parts>"));
+                    }
+
+                    LocationField current = type.getFields()[parts.length-1];
+                    if (input.endsWith(";"))
+                        current = type.getFields()[parts.length];
+
+                    String beginningString = focused.getValue();
+                    if (beginningString.contains(";")) {
+                        String[] beginning = focused.getValue().split(";");
+                        beginningString = String.join(";", Arrays.copyOfRange(beginning, 0, beginning.length-1));
+                    }
+                    return new ArrayList<>(List.of(
+                             beginningString + ";<" + current.getTitle() + ">"
+                    ));
+                } catch (Exception e) {
+                    Log.warn("Location autocomplete error: " + e, e);
+                    return new ArrayList<>(List.of("<ERROR: " + e + ">"));
+                }
+
+
+            } else returned.addAll(Arrays.stream(LocationType.values())
+                    .map(LocationType::name)
+                    .map(s -> s + ":")
+                    .toList());
+
+
+            return Main.commands.autocompleteSearch(focused.getValue(), returned);
         }
 
         static @NotNull <T extends FireGenAction> T findAction(Class<T> clazz) {
