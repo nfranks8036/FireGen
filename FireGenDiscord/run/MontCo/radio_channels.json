@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Montgomery County Sheriff's Office - Dispatch",
+    "alpha_tag": "MCSO-DISPATCH",
+    "talkgroup_id": 1
+  },
+  {
+    "name": "Blacksburg Police Department - Dispatch",
+    "alpha_tag": "BPD-DISPATCH",
+    "talkgroup_id": 2
+  },
+  {
+    "name": "Christiansburg Police Department - Dispatch",
+    "alpha_tag": "CPD-DISPATCH",
+    "talkgroup_id": 3
+  },
+  {
+    "name": "Virginia Tech Police Department - Dispatch",
+    "alpha_tag": "VTPD-DISPATCH",
+    "talkgroup_id": 4
+  },
+  {
+    "name": "Fire/Rescue Dispatch",
+    "alpha_tag": "FIRE-RESCUE1",
+    "talkgroup_id": 5
+  },
+  {
+    "name": "Fire/Rescue South 3",
+    "alpha_tag": "SOUTH3",
+    "talkgroup_id": 6
+  },
+  {
+    "name": "Blacksburg Volunteer Rescue Squad",
+    "alpha_tag": "BRS1",
+    "talkgroup_id": 7
+  },
+  {
+    "name": "Blacksburg Fire Department",
+    "alpha_tag": "BFD1",
+    "talkgroup_id": 8
+  },
+  {
+    "name": "Virginia Tech Rescue Squad",
+    "alpha_tag": "BRS1",
+    "talkgroup_id": 9
+  },
+  {
+    "name": "Christiansburg Fire Department",
+    "alpha_tag": "CFD1",
+    "talkgroup_id": 10
+  },
+  {
+    "name": "Fire/Rescue South 5",
+    "alpha_tag": "SOUTH5",
+    "talkgroup_id": 11
+  },
+  {
+    "name": "Fire/Rescue South 7",
+    "alpha_tag": "SOUTH7",
+    "talkgroup_id": 12
+  },
+  {
+    "name": "Fire/Rescue South 9",
+    "alpha_tag": "SOUTH9",
+    "talkgroup_id": 13
+  },
+  {
+    "name": "Fire/Rescue South 11",
+    "alpha_tag": "SOUTH11",
+    "talkgroup_id": 14
+  },
+  {
+    "name": "Longshop-McCoy Fire & Rescue",
+    "alpha_tag": "LNGSHP1",
+    "talkgroup_id": 15
+  },
+  {
+    "name": "Blacksburg Transit",
+    "alpha_tag": "BT",
+    "talkgroup_id": 16
+  },
+  {
+    "name": "Montgomery County Sheriff's Office - Courts",
+    "alpha_tag": "MCSO-COURTS",
+    "talkgroup_id": 18
+  },
+  {
+    "name": "Montgomery County Sheriff's Office - Jail",
+    "alpha_tag": "MCSO-JAIL",
+    "talkgroup_id": 19
+  },
+  {
+    "name": "Christiansburg Public Works",
+    "alpha_tag": "CPW1",
+    "talkgroup_id": 21
+  },
+  {
+    "name": "Carilion Clinic Life-Guard",
+    "alpha_tag": "LG-AIR",
+    "talkgroup_id": 24
+  }
+]

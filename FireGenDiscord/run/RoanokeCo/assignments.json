@@ -1,0 +1,44 @@
+[
+  {
+    "name": "DISPATCHED",
+    "short": "DSP",
+    "emoji": "<:DISPATCHED:1499196518475890818>",
+    "ansi": "BLUE"
+  },
+  {
+    "name": "ENROUTE",
+    "short": "ENR",
+    "emoji": "<:ENROUTE:1499197412995239987>",
+    "ansi": "YELLOW"
+  },
+  {
+    "name": "ONSCENE",
+    "short": "ONS",
+    "emoji": "<:ONSCENE:1499197432624578701>",
+    "ansi": "GREEN"
+  },
+  {
+    "name": "LEFT FOR SECONDARY",
+    "short": "LEF",
+    "emoji": "<:LEFT_FOR_SECONDARY:1499197449716240384>",
+    "ansi": "MAGENTA"
+  },
+  {
+    "name": "ARRIVED SECONDARY",
+    "short": "ARR",
+    "emoji": "<:ARRIVED_SECONDARY:1499197466606571571>",
+    "ansi": "RED"
+  },
+  {
+    "name": "CLEAR",
+    "short": "CLR",
+    "emoji": "<:CLEAR:1499197493689188352>",
+    "ansi": "WHITE"
+  },
+  {
+    "name": "ADVISED",
+    "short": "ADV",
+    "emoji": "<:ADVISED:1502511917707694184>",
+    "ansi": "CYAN"
+  }
+]
