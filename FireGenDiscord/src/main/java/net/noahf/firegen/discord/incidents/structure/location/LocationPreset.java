@@ -12,7 +12,7 @@ import java.util.List;
 
 public class LocationPreset extends IncidentLocationImpl {
 
-    public LocationPreset(IncidentManager manager, String key, JsonObject object) {
+    public LocationPreset(String key, JsonObject object) {
         super(new ArrayList<>(List.of(key)));
         try {
             JsonElement locationElement  = JsonUtilities.element(object, "location");
@@ -35,7 +35,7 @@ public class LocationPreset extends IncidentLocationImpl {
             JsonElement venueElement = JsonUtilities.element(object, "venue", true);
             LocationVenue venue = null;
             if (venueElement != null) {
-                venue = manager.getVenueBy(venueElement.getAsString());
+//                venue = manager.getVenueBy(venueElement.getAsString());
             }
 
             JsonElement commonNameElement = JsonUtilities.element(object, "common_name", true);

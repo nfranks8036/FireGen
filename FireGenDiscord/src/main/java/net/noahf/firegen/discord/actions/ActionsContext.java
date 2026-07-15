@@ -3,6 +3,7 @@ package net.noahf.firegen.discord.actions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 
 import java.util.List;
@@ -19,11 +20,10 @@ import java.util.List;
 public class ActionsContext {
 
     /**
-     * Represents the current FireGen initiated of {@link IncidentManager} for quick-reference reasons.
-     * This is also obtainable at {@link net.noahf.firegen.discord.Main#incidents Main.incidents}
+     * Represents the current FireGen initiated of {@link ConfigManager} for quick-reference reasons.
      * @see ActionsContext
      */
-    private IncidentManager manager;
+    private ConfigManager config;
 
     /**
      * Represents the current {@link Incident} that an action is being applied to.

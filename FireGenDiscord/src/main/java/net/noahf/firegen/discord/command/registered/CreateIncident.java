@@ -26,6 +26,8 @@ import net.noahf.firegen.discord.actions.registered.*;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
+import net.noahf.firegen.discord.config.ConfigManager;
+import net.noahf.firegen.discord.config.files.*;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
@@ -191,7 +193,7 @@ public class CreateIncident extends Command {
         return switch (focused.getName()) {
             case "type" ->
                 // send the list of all motor vehicle crashes
-                Main.commands.autocompleteSearch(focused.getValue(), Main.incidents.listAllIncidentTypesForAutocomplete());
+                Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).getAutocompleteIncidentTypes());
 
             case "location" ->
                     Helper.autocompleteLocation(focused);
@@ -218,7 +220,7 @@ public class CreateIncident extends Command {
             if (input.startsWith("$")) {
                 location = extractLocation(input.substring(1));
             } else {
-                location = Main.incidents.getPresetByAnyName(input);
+                location = Main.config.get(ConfigLocationPresets.class).getPresetByAnyName(input);
             }
 
             if (location == null) {
@@ -263,7 +265,7 @@ public class CreateIncident extends Command {
                     }
                     if (field.getId().equalsIgnoreCase("venue")) {
                         remove.add(i);
-                        venue = Main.incidents.getVenueBy(dataString.get(i));
+                        venue = Main.config.get(ConfigVenues.class).getVenueBy(dataString.get(i));
                     }
                 }
 
@@ -282,6 +284,8 @@ public class CreateIncident extends Command {
                 return CONTENT;
             }
 
+            ConfigManager config = Main.config;
+            ConfigUnits configUnits = config.get(ConfigUnits.class);
             EditUnits action = findAction(EditUnits.class);
 
             // remove whitespace from the agencies string, we don't care if they put a space or not after a comma
@@ -313,7 +317,7 @@ public class CreateIncident extends Command {
                 List<Unit> inputUnits = new ArrayList<>();
                 switch (type) {
                     case UNIT -> {
-                        Unit u = Main.incidents.getUnitByShorthand(targetString);
+                        Unit u = configUnits.getUnitByShorthand(targetString);
                         if (u == null) {
                             DiscordMessages.error(event, "No unit exist by the name '" + targetString + "'");
                             returned = CONTENT.compare(returned);
@@ -322,7 +326,7 @@ public class CreateIncident extends Command {
                         inputUnits.add(u);
                     }
                     case AGENCY -> {
-                        Agency a = Main.incidents.getAgencyByShorthand(targetString.substring(1));
+                        Agency a = configUnits.getAgencyByShorthand(targetString.substring(1));
                         if (a == null) {
                             DiscordMessages.error(event, "No agency exist by the name '" + targetString + "'");
                             returned = CONTENT.compare(returned);
@@ -338,7 +342,7 @@ public class CreateIncident extends Command {
                             inputUnits.addAll(incident.getUnitAssignments().stream().map(UnitAssignment::getUnit).toList());
                     case CUSTOM -> {
                         String[] text = targetString.substring(1).split("\\.");
-                        Agency agency = Main.incidents.getAgencyByShorthand(text[2]);
+                        Agency agency = configUnits.getAgencyByShorthand(text[2]);
                         if (agency == null) {
                             agency = new AgencyImpl(text[2], text[2], text[2], "N/A",
                                     AgencyType.OTHER, null, Integer.MAX_VALUE,
@@ -360,7 +364,7 @@ public class CreateIncident extends Command {
                                 SelectOption.of(text[1].toUpperCase(), text[0])
                                         .withEmoji(emoji)
                         );
-                        Main.incidents.getUnits().add(custom);
+                        configUnits.get().add(custom);
                         agency.getUnits().add(custom);
                         Log.warn("User " + event.getUser().getName() + " created a custom unit: " + custom);
                         inputUnits.add(custom);
@@ -373,7 +377,7 @@ public class CreateIncident extends Command {
                     continue;
                 }
 
-                AssignmentStatus s = Main.incidents.getAssignmentStatusByShortName(statusString);
+                AssignmentStatus s = config.get(ConfigAssignmentStatuses.class).getAssignmentStatusByShortName(statusString);
                 if (s == null) {
                     s = AssignmentStatusImpl.ADD_UNIT;
                     DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +
@@ -485,16 +489,17 @@ public class CreateIncident extends Command {
              * agency[:status],agency[:status],agency[:status]
              */
 
+            ConfigUnits configUnits = Main.config.get(ConfigUnits.class);
             String input = focused
                     .getValue()
                     .replaceAll("\\s+", "")
                     .toUpperCase();
 
-            List<String> allTargets = new ArrayList<>(Main.incidents.getUnits().stream()
+            List<String> allTargets = new ArrayList<>(configUnits.get().stream()
                     .map(Unit::getShorthand)
                     .map(String::toUpperCase)
                     .toList());
-            allTargets.addAll(Main.incidents.getAgencies().stream()
+            allTargets.addAll(configUnits.getAgencies().stream()
                     .map(Agency::getShorthand)
                     .map(String::toUpperCase)
                     .map(s -> AGENCY_PREFIX + s)
@@ -508,7 +513,7 @@ public class CreateIncident extends Command {
                         .toList();
             }
 
-            List<String> allStatuses = Main.incidents.getAssignmentStatuses().stream()
+            List<String> allStatuses = Main.config.get(ConfigAssignmentStatuses.class).get().stream()
                     .map(AssignmentStatus::getShortName)
                     .map(String::toUpperCase)
                     .toList();
@@ -601,7 +606,7 @@ public class CreateIncident extends Command {
 
         static List<String> autocompleteLocation(AutoCompleteQuery focused) {
             String input = focused.getValue().toUpperCase();
-            List<String> returned = new ArrayList<>(Main.incidents.listAllPresetLocationsForAutocomplete());
+            List<String> returned = new ArrayList<>(Main.config.get(ConfigLocationPresets.class).listAllPresetLocationsForAutocomplete());
 
             if (input.contains(":")) {
 

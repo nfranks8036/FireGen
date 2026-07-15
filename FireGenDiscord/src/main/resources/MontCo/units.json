@@ -20,6 +20,8 @@
       {"short": "110", "long": "BFD 110", "format": "110", "emoji": "<:bfd:1449916134714511481>"},
       {"short": "111", "long": "BFD 111", "format": "111", "emoji": "<:bfd:1449916134714511481>"},
       {"short": "112", "long": "BFD 112", "format": "112", "emoji": "<:bfd:1449916134714511481>"},
+      {"short": "FM10", "long": "BFD FM 10", "format": "Fire Marshall 10", "emoji": "<:bfd:1449916134714511481>"},
+      {"short": "FM11", "long": "BFD FM 11", "format": "Fire Marshall 11", "emoji": "<:bfd:1449916134714511481>"},
       {"short": "E10", "long": "BFD ENGINE 10", "format": "Engine 10", "emoji": "<:bfd:1449916134714511481>"},
       {"short": "E11", "long": "BFD ENGINE 11", "format": "Engine 11", "emoji": "<:bfd:1449916134714511481>"},
       {"short": "E12", "long": "BFD ENGINE 12", "format": "Engine 12", "emoji": "<:bfd:1449916134714511481>"},
@@ -355,12 +357,27 @@
   {
     "title": "MONTGOMERY COUNTY SHERIFF'S OFFICE",
     "short": "MCSO",
-    "format": "Montgomery County Sheriff",
+    "format": "Montgomery County Sheriff's Office",
     "station": "Sheriff's Office, 1 E Main St, Christiansburg, VA",
     "type": "SHERIFF",
     "emoji": "<:mcso:1449929686963458140>",
     "units": [
-      {"short": "MCSOCR", "long": "MONTGOMERY COUNTY SHERIFF'S OFFICE W/ CO-RESPONDER", "format": "Montgomery County Sheriff (w/ Co-Responder)"}
+      {"short": "MCSOCR", "long": "MONTGOMERY COUNTY SHERIFF'S OFFICE W/ CO-RESPONDER", "format": "Montgomery County Sheriff (w/ Co-Responder)"},
+      {"short": "SO10", "long": "MCSO 10", "format": "MCSO 10"},
+      {"short": "SO12", "long": "MCSO 12", "format": "MCSO 12"},
+      {"short": "SO15", "long": "MCSO 15", "format": "MCSO 15"},
+      {"short": "SO20", "long": "MCSO 20", "format": "MCSO 20"},
+      {"short": "SO28", "long": "MCSO 28", "format": "MCSO 28"},
+      {"short": "SO29", "long": "MCSO 29", "format": "MCSO 29"},
+      {"short": "SO32", "long": "MCSO 32", "format": "MCSO 32"},
+      {"short": "SO35", "long": "MCSO 35", "format": "MCSO 35"},
+      {"short": "SO36", "long": "MCSO 36", "format": "MCSO 36"},
+      {"short": "SO39", "long": "MCSO 39", "format": "MCSO 39"},
+      {"short": "SO45", "long": "MCSO 45", "format": "MCSO 45"},
+      {"short": "SO48", "long": "MCSO 48", "format": "MCSO 48"},
+      {"short": "SO59", "long": "MCSO 59", "format": "MCSO 59"},
+      {"short": "SO61", "long": "MCSO 61", "format": "MCSO 61"},
+      {"short": "SO67", "long": "MCSO 67", "format": "MCSO 67"}
     ]
   },
   {
@@ -382,7 +399,24 @@
     "type": "POLICE",
     "emoji": "<:bpd:1449916806931153110>",
     "units": [
-      {"short": "BPDCR", "long": "BLACKSBURG POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Blacksburg Police (w/ Co-Responder)"}
+      {"short": "BPDCR", "long": "BLACKSBURG POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Blacksburg Police (w/ Co-Responder)"},
+      {"short": "B131", "long": "BPD 131", "format": "BPD 131"},
+      {"short": "B132", "long": "BPD 132", "format": "BPD 132"},
+      {"short": "B195", "long": "BPD 195", "format": "BPD 195"},
+      {"short": "B198", "long": "BPD 198", "format": "BPD 198"},
+      {"short": "B218", "long": "BPD 218", "format": "BPD 218"},
+      {"short": "B235", "long": "BPD 235", "format": "BPD 235"},
+      {"short": "B256", "long": "BPD 256", "format": "BPD 256"},
+      {"short": "B263", "long": "BPD 263", "format": "BPD 263"},
+      {"short": "B273", "long": "BPD 273", "format": "BPD 273"},
+      {"short": "B298", "long": "BPD 298", "format": "BPD 298"},
+      {"short": "B420", "long": "BPD 420", "format": "BPD 420"},
+      {"short": "B432", "long": "BPD 432", "format": "BPD 432"},
+      {"short": "B542", "long": "BPD 542", "format": "BPD 542"},
+      {"short": "B572", "long": "BPD 572", "format": "BPD 572"},
+      {"short": "B683", "long": "BPD 683", "format": "BPD 683"},
+      {"short": "B774", "long": "BPD 774", "format": "BPD 774"},
+      {"short": "B778", "long": "BPD 778", "format": "BPD 778"}
     ]
   },
   {
@@ -393,7 +427,40 @@
     "type": "POLICE",
     "emoji": "<:vtpd:1449922611550093474>",
     "units": [
-      {"short": "VTPDCR", "long": "VIRGINIA TECH POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Virginia Tech Police (w/ Co-Responder)"}
+      {"short": "VTPDCR", "long": "VIRGINIA TECH POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Virginia Tech Police (w/ Co-Responder)"},
+      {"short": "VT50", "long": "VTPD 50", "format": "VTPD 50"},
+      {"short": "VT122", "long": "VTPD 122", "format": "VTPD 122"},
+      {"short": "VT130", "long": "VTPD 130", "format": "VTPD 130"},
+      {"short": "VT131", "long": "VTPD 131", "format": "VTPD 131"},
+      {"short": "VT133", "long": "VTPD 133", "format": "VTPD 133"},
+      {"short": "VT134", "long": "VTPD 134", "format": "VTPD 134"},
+      {"short": "VT135", "long": "VTPD 135", "format": "VTPD 135"},
+      {"short": "VT137", "long": "VTPD 137", "format": "VTPD 137"},
+      {"short": "VT140", "long": "VTPD 140", "format": "VTPD 140"},
+      {"short": "VT143", "long": "VTPD 143", "format": "VTPD 143"},
+      {"short": "VT144", "long": "VTPD 144", "format": "VTPD 144"},
+      {"short": "VT145", "long": "VTPD 145", "format": "VTPD 145"},
+      {"short": "VT146", "long": "VTPD 146", "format": "VTPD 146"},
+      {"short": "VT153", "long": "VTPD 153", "format": "VTPD 153"},
+      {"short": "VT154", "long": "VTPD 154", "format": "VTPD 154"},
+      {"short": "VT155", "long": "VTPD 155", "format": "VTPD 155"},
+      {"short": "VT171", "long": "VTPD 171", "format": "VTPD 171"},
+      {"short": "VT173", "long": "VTPD 173", "format": "VTPD 173"},
+      {"short": "VT187", "long": "VTPD 187", "format": "VTPD 187"},
+      {"short": "VT194", "long": "VTPD 194", "format": "VTPD 194"},
+      {"short": "VT196", "long": "VTPD 196", "format": "VTPD 196"},
+      {"short": "VT825", "long": "VTPD 825", "format": "VTPD 825"}
+    ]
+  },
+  {
+    "title": "MONTGOMERY COUNTY ANIMAL CONTROL",
+    "short": "AC",
+    "format": "Animal Control",
+    "station": "480 Cinnabar Rd, Christiansburg, VA",
+    "type": "ANIMAL_CONTROL",
+    "emoji": "<:montgomery_county:1449935863252258816>",
+    "units": [
+      {"short": "AC80", "long": "AC 80", "format": "Animal Control 80"}
     ]
   },
   {

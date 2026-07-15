@@ -17,6 +17,7 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
+import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
@@ -60,9 +61,10 @@ public class AgencyInfo extends Command {
         }
 
         String agencyString = agencyMapping.getAsString();
-        Agency iAgency = Main.incidents.getAgencyByLonghand(agencyString);
+        ConfigUnits configUnits = Main.config.get(ConfigUnits.class);
+        Agency iAgency = configUnits.getAgencyByLonghand(agencyString);
         if (iAgency == null) {
-            iAgency = Main.incidents.getAgencyByShorthand(agencyString);
+            iAgency = configUnits.getAgencyByShorthand(agencyString);
         }
 
         if (iAgency == null) {
@@ -144,7 +146,7 @@ public class AgencyInfo extends Command {
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         if (focused.getName().equalsIgnoreCase("agency")) {
-            return Main.incidents.getAgencies().stream().map(Agency::getTitle).toList();
+            return Main.config.get(ConfigUnits.class).getAgencies().stream().map(Agency::getTitle).toList();
         }
         return null;
     }

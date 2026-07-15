@@ -15,6 +15,7 @@ import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.config.files.ConfigIncidentStatuses;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -151,7 +152,7 @@ public class AdminMessageSender extends MessageSender {
         IncidentImpl incident = super.getIncident();
 
         List<String> log = super.getService().getNarrativeFormatted(incident, true);
-        IncidentStatusEmoji status = Main.incidents.getEmoji(incident.getStatus());
+        IncidentStatusEmoji status = Main.config.get(ConfigIncidentStatuses.class).getEmoji(incident.getStatus());
         IncidentTypeImpl type = (IncidentTypeImpl) incident.getType();
         long time = incident.getTime().getUnix();
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();

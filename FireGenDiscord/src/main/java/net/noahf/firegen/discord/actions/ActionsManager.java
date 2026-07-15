@@ -118,7 +118,7 @@ public class ActionsManager {
         }
 
         ActionsContext context = new ActionsContext(
-                Main.incidents,
+                Main.config,
                 incident,
                 actionTitle,
                 Arrays.asList(params)

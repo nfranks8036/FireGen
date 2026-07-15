@@ -7,6 +7,8 @@ import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.config.ConfigManager;
+import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -14,7 +16,6 @@ import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
-import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -34,57 +35,15 @@ public class IncidentManager {
      */
     private final @Getter List<net.noahf.firegen.api.incidents.Incident> incidents = new ArrayList<>();
 
-    private final @Getter FireGenVariables fireGenVariables;
-
-    //<editor-fold desc="Imported with IncidentStructureImporter">
-    /**
-     * This is the list of allowed {@link IncidentTypeImpl Incident Types}.
-     * These should include every possible variant, including qualifies.
-     * This is imported from the {@link FireGenVariables#incidentTypesFile()} incident types file}.
-     */
-    @Getter List<IncidentType> incidentTypes = new ArrayList<>();
-
-    /**
-     * This is the list of {@link UnitImpl Agencies} in this system.
-     * This is imported from the {@link FireGenVariables#unitsFile()} agencies file}.
-     */
-    @Getter List<Unit> units = new ArrayList<>();
-
-    @Getter List<Agency> agencies = new ArrayList<>();
-
-    /**
-     * This is the list of allowed {@link LocationVenueImpl Venues}.
-     * This is imported from the {@link FireGenVariables#venuesFile()} venues file}.
-     */
-    @Getter List<LocationVenue> venues = new ArrayList<>();
-
-    @Getter List<AssignmentStatus> assignmentStatuses = new ArrayList<>();
-
-    @Getter List<IncidentStatusEmoji> incidentStatuses = new ArrayList<>();
-
-    @Getter List<LocationPreset> presetLocations = new ArrayList<>();
-
-    @Getter List<RadioChannel> radioChannels = new ArrayList<>();
+    private final @Deprecated @Getter FireGenVariables fireGenVariables;
+    private final @Getter ConfigManager config;
 
     @Getter final Set<UnitAssignment> assignments = new LinkedHashSet<>();
-
-    @Getter
-    SystemMunicipalityImpl municipality;
     //</editor-fold>
 
-    public IncidentManager(String municipalityFolder) {
-        this.fireGenVariables = FireGenVariables.createFromFolder(municipalityFolder);
-
-        Log.info("Importing structure data from municipality '" + municipalityFolder + "'");
-        IncidentStructureImporter importer = new IncidentStructureImporter();
-        importer.importIncidentTypes(this);
-        importer.importUnits(this);
-        importer.importVenues(this);
-        importer.importMunicipality(this);
-        importer.importAssignmentStatuses(this);
-        importer.importIncidentStatuses(this);
-        importer.importLocationPresets(this);
-        importer.importRadioChannels(this);
+    public IncidentManager(ConfigManager config) {
+        this.config = config;
+        this.fireGenVariables = this.config.getFireGenVariables();
     }
 
     /**
@@ -94,56 +53,12 @@ public class IncidentManager {
      * @return the {@link IncidentTypeImpl} associated with that type, or {@code null} if not found.
      */
     public IncidentType getTypeFromString(String type) {
-        for (IncidentType t : this.incidentTypes) {
+        for (IncidentType t : this.config.get(ConfigIncidentTypes.class).get()) {
             if (t.getSelectedName().equalsIgnoreCase(type)) {
                 return t;
             }
         }
         return null;
-    }
-
-    public AssignmentStatus getAssignmentStatusByShortName(String shortName) {
-        for (AssignmentStatus status : this.assignmentStatuses) {
-            if (status.getShortName().equalsIgnoreCase(shortName)) {
-                return status;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Requests the list of all allowed {@link IncidentTypeImpl IncidentTypes} and their qualifiers from the manager.
-     * @return the list of allowed types
-     */
-    public List<IncidentType> listAllIncidentTypes() {
-        return this.incidentTypes;
-    }
-
-    /**
-     * Requests a list of all allowed {@link IncidentTypeImpl IncidentTypes} as {@link String strings} that are
-     * autocomplete-ready.
-     * @return the list of incident types which are autocomplete ready (can be fed into Discord's autocomplete). Please
-     *         note: this <b>DOES NOT</b> limit the amount of results, you will receive the full list!
-     */
-    public List<String> listAllIncidentTypesForAutocomplete() {
-        return this.listAllIncidentTypes().stream().map(IncidentType::getSelectedName).toList();
-    }
-
-    public List<String> listAllPresetLocationsForAutocomplete() {
-        return Stream.concat(
-                        this.presetLocations.stream().map(IncidentLocationImpl::getCommonName).filter(Objects::nonNull),
-                        this.presetLocations.stream().map(lp -> String.join(" ", lp.getData()))
-                )
-                .toList();
-    }
-
-    public @Nullable IncidentLocation getPresetByAnyName(String text) {
-        return this.presetLocations.stream()
-                .filter(lp ->
-                        (lp.getCommonName() != null ? lp.getCommonName() : "").equalsIgnoreCase(text)
-                        || String.join(" ", lp.getData()).equalsIgnoreCase(text)
-                )
-                .findFirst().orElse(null);
     }
 
     /**
@@ -173,82 +88,6 @@ public class IncidentManager {
 
     public int countIncidents() {
         return this.incidents.size();
-    }
-
-    /**
-     * Retrieves an {@link Unit agency} from the manager by the {@link Unit#getShorthand() shorthand name}.
-     * @param shorthand the shorthand for the agency name
-     * @return the associated agency with that shorthand name, or {@code null} if it's not found
-     */
-    public @Nullable Unit getUnitByShorthand(String shorthand) {
-        for (Unit a : this.units) {
-            if (a.getShorthand().equalsIgnoreCase(shorthand)) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    public @Nullable Unit getUnitByLonghand(String longhand) {
-        for (Unit a : this.units) {
-            if (a.getLonghand().equalsIgnoreCase(longhand)) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    public @Nullable Agency getAgencyByShorthand(String shorthand) {
-        for (Agency a : this.agencies) {
-            if (a.getShorthand().equalsIgnoreCase(shorthand)) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    public @Nullable Agency getAgencyByLonghand(String longhand) {
-        for (Agency a : this.agencies) {
-            if (a.getTitle().equalsIgnoreCase(longhand)) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Retrieves a {@link LocationVenueImpl venue} from the manager by the {@link LocationVenueImpl#getName() normal name}.
-     * @param name the name for the venue
-     * @return the associated venue with that name, or {@code null} if it's not found
-     */
-    public @Nullable LocationVenue getVenueBy(String name) {
-        if (name == null) {
-            return null;
-        }
-
-        for (LocationVenue v : this.venues) {
-            if (v.getName().equalsIgnoreCase(name)) {
-                return v;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Retrieves the list of {@link LocationVenueImpl venues} stringified by their name and concatenated with a ", "
-     * @return the string form of the venues.
-     */
-    public String getConcatenatedVenues() {
-        return this.venues.stream().map(LocationVenue::getName).collect(Collectors.joining(", "));
-    }
-
-    public IncidentStatusEmoji getEmoji(IncidentStatus status) {
-        for (IncidentStatusEmoji e : this.incidentStatuses) {
-            if (e.getStatus() == status) {
-                return e;
-            }
-        }
-        return null;
     }
 
 }

@@ -16,6 +16,7 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
+import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.messaging.ReceiveMessageSender;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
@@ -71,12 +72,13 @@ public class UnitInfo extends Command {
 //            return;
 //        }
 
+        ConfigUnits configUnits = Main.config.get(ConfigUnits.class);
         String input = unitMapping.getAsString();
         String unitString = input.replace("-BYP", "");
         boolean bypassRestrictions = input.contains("-BYP");
-        Unit iUnit = Main.incidents.getUnitByLonghand(unitString);
+        Unit iUnit = configUnits.getUnitByLonghand(unitString);
         if (iUnit == null) {
-            iUnit = Main.incidents.getUnitByShorthand(unitString);
+            iUnit = configUnits.getUnitByShorthand(unitString);
         }
 
         if (iUnit == null) {
@@ -162,7 +164,7 @@ public class UnitInfo extends Command {
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         if (focused.getName().equalsIgnoreCase("unit")) {
-            return Main.incidents.getUnits().stream().map(u -> (UnitImpl) u).filter(u -> !u.isPlaceholder()).map(Unit::getLonghand).toList();
+            return Main.config.get(ConfigUnits.class).get().stream().map(u -> (UnitImpl) u).filter(u -> !u.isPlaceholder()).map(Unit::getLonghand).toList();
         }
         return null;
     }

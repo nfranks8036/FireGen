@@ -25,6 +25,7 @@ import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -137,7 +138,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
 
         // ------- [ GET VENUE IF SET ] --------
         ModalMapping venueMapping = event.getValue("venue");
-        LocationVenue venue = ctx.getManager().getVenueBy(venueMapping != null ? venueMapping.getAsString() : null);
+        LocationVenue venue = ctx.getConfig().get(ConfigVenues.class).getVenueBy(venueMapping != null ? venueMapping.getAsString() : null);
 
         // ------- [ GET COMMON NAME IF SET ] --------
         ModalMapping commonNameMapping = event.getValue("common-name");

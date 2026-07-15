@@ -10,6 +10,8 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
+import net.noahf.firegen.discord.config.ConfigManager;
+import net.noahf.firegen.discord.config.files.*;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.utilities.Time;
 
@@ -25,9 +27,12 @@ public class ViewArea extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
+        ConfigManager config = Main.config;
         IncidentManager incidents = Main.incidents;
-        SystemMunicipality municipality = incidents.getMunicipality();
+        SystemMunicipality municipality = config.get(ConfigMunicipality.class).get();
         FireGenVariables vars = incidents.getFireGenVariables();
+        ConfigUnits units = config.get(ConfigUnits.class);
+
         MessageEmbed embed = new EmbedBuilder()
                 .setColor(DiscordMessages.randomColorForEmbed())
                 .setDescription("There are " + incidents.countIncidents() + " incidents that have been reported.")
@@ -35,13 +40,13 @@ public class ViewArea extends Command {
                 .addField("Dispatch Center", municipality.getDispatchName(), true)
                 .addField("Defaults", "Default Incident Type: `" + vars.defaultType() + "`\nDefault Incident Tag: `" + vars.defaultTag().toString() + "`", true)
                 .addField("Registered",
-                        "Units: `" + incidents.getUnits().size() + "` (`" + incidents.getAgencies().size() + "` agencies)\n" +
-                                "Incident Types: `" + incidents.getIncidentTypes().size() + "`\n" +
-                                "Assignment Statuses: `" + incidents.getAssignmentStatuses().size() + "`\n" +
-                                "Locations: `" + incidents.getPresetLocations().size() + "`\n" +
-                                "Radio Channels: `" + incidents.getRadioChannels().size() + "`"
+                        "Units: `" + units.count() + "` (`" + units.getAgencies().size() + "` agencies)\n" +
+                                "Incident Types: `" + config.get(ConfigIncidentTypes.class).get().size() + "`\n" +
+                                "Assignment Statuses: `" + config.get(ConfigAssignmentStatuses.class).count() + "`\n" +
+                                "Locations: `" + config.get(ConfigLocationPresets.class).count() + "`\n" +
+                                "Radio Channels: `" + config.get(ConfigRadioChannels.class).count() + "`"
                         , true)
-                .addField("Venues", String.join(", ", incidents.getVenues()), true)
+                .addField("Venues", String.join(", ", config.get(ConfigVenues.class).get()), true)
                 .addField("Date & Time Formats", "Date: `" + vars.dateFormat() + "`\nTime (Long): `" + vars.longTimeFormat() + "`\nTime (Short): `" + vars.shortTimeFormat() + "`", true)
                 .addField("Identifiers", "`" + IdGenerator.getGeneratedIdsAmount() + "` identifiers generated", true)
                 .addField("State", municipality.getState().getName() + " (" + municipality.getState().getAbbreviation() + ")", true)

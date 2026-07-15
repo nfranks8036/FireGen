@@ -32,6 +32,7 @@ public class BotManager extends Manager<BotManager> {
 
     private String token = null;
     private @Getter String municipalityFolder = null;
+    private @Getter String configPrefix = null;
 
     private @Getter List<TextChannel> adminChannels = new ArrayList<>();
     private @Getter List<TextChannel> receiveChannels = new ArrayList<>();
@@ -59,6 +60,7 @@ public class BotManager extends Manager<BotManager> {
         try {
             token = getExternalInfo("TOKEN");
             municipalityFolder = getExternalInfo("MUNICIPALITY");
+            configPrefix = getExternalInfo("CONFIG_PREFIX");
         } catch (Exception exception) {
             Log.error("Failed to find token from environment: " + exception, exception);
         }
@@ -66,6 +68,8 @@ public class BotManager extends Manager<BotManager> {
         Log.info("Checking for required information...");
         assertPropertyNotNull("TOKEN", token);
         assertPropertyNotNull("MUNICIPALITY", municipalityFolder);
+
+        configPrefix = getOr(configPrefix, "");
 
         Log.info("Building JDA...");
         Log.info("-".repeat(20) + " [JDA START] " + "-".repeat(20));
@@ -85,28 +89,27 @@ public class BotManager extends Manager<BotManager> {
                 )
                 .build()
                 .awaitReady();
-        loadChannels(this.jda);
         Log.info("-".repeat(20) + " [ JDA END ] " + "-".repeat(20));
     }
 
-    private void loadChannels(JDA jda) {
-        JsonUtilities.stream(null, "discord.json", (e) -> {
-            JsonObject object = e.getAsJsonObject();
-            receiveChannels = object.get("receiver_channel_ids").getAsJsonArray().asList().stream()
-                    .map(JsonElement::getAsLong)
-                    .map(jda::getTextChannelById)
-                    .toList();
-            adminChannels = object.get("admin_channel_ids").getAsJsonArray().asList().stream()
-                    .map(JsonElement::getAsLong)
-                    .map(jda::getTextChannelById)
-                    .toList();
-
-            receiveChannels = new ArrayList<>(receiveChannels);
-            adminChannels = new ArrayList<>(adminChannels);
-
-            Log.info("Found " + receiveChannels.size() + " receiver channels and " + adminChannels.size() + " admin channels.");
-        });
-    }
+//    private void loadChannels() {
+//        JsonUtilities.stream(this, null, "discord.json", (e) -> {
+//            JsonObject object = e.getAsJsonObject();
+//            receiveChannels = object.get("receiver_channel_ids").getAsJsonArray().asList().stream()
+//                    .map(JsonElement::getAsLong)
+//                    .map(jda::getTextChannelById)
+//                    .toList();
+//            adminChannels = object.get("admin_channel_ids").getAsJsonArray().asList().stream()
+//                    .map(JsonElement::getAsLong)
+//                    .map(jda::getTextChannelById)
+//                    .toList();
+//
+//            receiveChannels = new ArrayList<>(receiveChannels);
+//            adminChannels = new ArrayList<>(adminChannels);
+//
+//            Log.info("Found " + receiveChannels.size() + " receiver channels and " + adminChannels.size() + " admin channels.");
+//        });
+//    }
 
     private String getExternalInfo(String key) {
         return (System.getenv().getOrDefault(key, System.getProperty(key)));
@@ -116,6 +119,13 @@ public class BotManager extends Manager<BotManager> {
         if (object == null) {
             throw new RuntimeException("Cannot find " + objectName + " (" + objectName + " = null). Try setting an environmental variable or property and re-run the program.");
         }
+    }
+
+    private <T> T getOr(T object, T def) {
+        if (object == null) {
+            return def;
+        }
+        return object;
     }
 
     public JDA jda() {

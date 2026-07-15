@@ -6,6 +6,9 @@ import net.noahf.firegen.api.incidents.SystemMunicipality;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
+import net.noahf.firegen.discord.config.ConfigManager;
+import net.noahf.firegen.discord.config.files.ConfigMunicipality;
+import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 
 import java.awt.*;
@@ -23,8 +26,10 @@ public class Agencies extends Command {
 
     @Override
     public void command(SlashCommandInteractionEvent event) {
-        List<Agency> agencies = new ArrayList<>(Main.incidents.getAgencies());
-        SystemMunicipality local = Main.incidents.getMunicipality();
+        ConfigManager config = Main.config;
+
+        List<Agency> agencies = new ArrayList<>(Main.config.get(ConfigUnits.class).getAgencies());
+        SystemMunicipality local = config.get(ConfigMunicipality.class).get();
         event.replyEmbeds(new EmbedBuilder()
                 .setColor(new Color(128, 252, 222))
                 .setTitle("Agencies (" + agencies.size() + ")")

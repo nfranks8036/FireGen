@@ -4,15 +4,26 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.bot.BotManager;
 
 import java.io.*;
 import java.util.function.Consumer;
 
 public class JsonUtilities {
 
-    public static void stream(String municipality, String fileString, Consumer<JsonElement> streamer) {
-        String path = (municipality != null ? municipality + "/" : "") + fileString;
-        File file = new File(path);
+    public static void stream(BotManager bot, String path, Consumer<JsonElement> streamer) {
+        String configPrefix = "";
+        if (bot != null) {
+            configPrefix = bot.getConfigPrefix();
+        } else {
+            Log.warn("Provided BotManager is null, defaulting to '' as the config path prefix for '" + path + "'!");
+        }
+
+        if (!configPrefix.endsWith("/")) {
+            configPrefix = configPrefix + "/";
+        }
+
+        File file = new File(configPrefix + path);
         try
                 (InputStream input = createInputStream(file, path)) {
 
@@ -21,6 +32,16 @@ public class JsonUtilities {
         } catch (Exception exception) {
             throw new RuntimeException("Failed to load JSON file from '" + path + "': " + exception, exception);
         }
+    }
+
+    public static void stream(BotManager bot, String municipality, String fileString, Consumer<JsonElement> streamer) {
+        String path = (municipality != null ? municipality + "/" : "") + fileString;
+
+        stream(bot.getConfigPrefix(), path, streamer);
+    }
+
+    public static void stream(String municipality, String fileString, Consumer<JsonElement> streamer) {
+        stream(Main.bot, municipality, fileString, streamer);
     }
 
     public static String asStr(JsonObject object, String key) { return element(object, key).getAsString(); }
@@ -43,7 +64,7 @@ public class JsonUtilities {
         return element;
     }
 
-    public static InputStream createInputStream(File file, String path) throws FileNotFoundException {
+    private static InputStream createInputStream(File file, String path) throws FileNotFoundException {
         InputStream returned = null;
         if (!file.exists()) {
             returned = Main.class.getClassLoader().getResourceAsStream(path);
@@ -52,7 +73,7 @@ public class JsonUtilities {
             returned = new FileInputStream(file);
         }
         if (returned == null) {
-            throw new IllegalArgumentException("No configuration file found at '" + file.getAbsolutePath() + "' or internally.");
+            throw new IllegalArgumentException("No configuration file found at '" + file.getAbsolutePath() + "'.");
         }
         return returned;
     }

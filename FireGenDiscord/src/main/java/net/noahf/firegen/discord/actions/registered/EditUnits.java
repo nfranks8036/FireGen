@@ -23,6 +23,9 @@ import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.config.ConfigManager;
+import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
+import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
@@ -85,11 +88,12 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             selectedStatus = new SelectOption[0];
         }
 
+        ConfigManager config = Main.config;
         event.reply("Choose units to update their status.")
                 .setEphemeral(true)
                 .setComponents(
                         ActionRow.of(StringSelectMenu.create(this.callbackId(ctx, "select"))
-                                .addOptions(Main.incidents.getUnits().stream()
+                                .addOptions(config.get(ConfigUnits.class).get().stream()
                                         .map(a -> (UnitImpl) a)
                                         .map((a) -> {
                                             UnitAssignment status = incident.getUnitAssignmentFor(a);
@@ -110,7 +114,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                                 .build()
                         ),
                         ActionRow.of(StringSelectMenu.create(this.callbackId(ctx, "status"))
-                                .addOptions(Main.incidents.getAssignmentStatuses().stream()
+                                .addOptions(config.get(ConfigAssignmentStatuses.class).get().stream()
                                         .map(this::toSelectOption)
                                         .limit(StringSelectMenu.OPTIONS_MAX_AMOUNT)
                                         .toList()
@@ -136,7 +140,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         // FIRST STEP: Select the units
         if (ctx.getParameters().getFirst().equalsIgnoreCase("select")) {
             List<Unit> units = new ArrayList<>();
-            for (Unit unit : Main.incidents.getUnits()) {
+            for (Unit unit : Main.config.get(ConfigUnits.class).get()) {
                 if (!event.getValues().contains(unit.getShorthand())) {
                     continue;
                 }
@@ -156,7 +160,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         // SECOND STEP: Select the status
         if (ctx.getParameters().getFirst().equalsIgnoreCase("status")) {
             String statusStr = event.getSelectedOptions().getFirst().getValue();
-            AssignmentStatus status = Main.incidents.getAssignmentStatuses()
+            AssignmentStatus status = Main.config.get(ConfigAssignmentStatuses.class).get()
                     .stream().filter(as -> as.getShortName().equalsIgnoreCase(statusStr))
                     .findFirst().orElse(null);
             if (status == null) {

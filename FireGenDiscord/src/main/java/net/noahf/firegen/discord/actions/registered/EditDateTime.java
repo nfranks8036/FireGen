@@ -51,7 +51,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
         }
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
-        FireGenVariables vars = ctx.getManager().getFireGenVariables();
+        FireGenVariables vars = ctx.getConfig().getFireGenVariables();
 
         this.ensureIncidentOpen(event, incident);
 
@@ -97,7 +97,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
         event.deferReply().setEphemeral(true).queue();
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
-        FireGenVariables vars = ctx.getManager().getFireGenVariables();
+        FireGenVariables vars = ctx.getConfig().getFireGenVariables();
 
         String timeFormat = vars.longTimeFormat();
         String dateFormat = vars.dateFormat();

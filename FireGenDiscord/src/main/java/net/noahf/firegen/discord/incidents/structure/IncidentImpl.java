@@ -15,6 +15,7 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.Publish;
+import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -192,7 +193,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public boolean containsUnit(Unit unit) {
-        return Main.incidents.getAssignments().stream()
+        return this.getUnitAssignments().stream()
                 .filter(u -> u.getIncident().equals(this))
                 .anyMatch(u -> u.getUnit().equals(unit));
     }
