@@ -244,13 +244,18 @@ public class CreateIncident extends Command {
                 }
 
                 LocationType type = LocationType.valueOf(typeVsData[0].toUpperCase());
-                List<String> dataString = new ArrayList<>(Arrays.stream(typeVsData[1].split(";")).toList());
+                List<String> dataString = new ArrayList<>(Arrays.stream(typeVsData[1].split(";", -1)).toList());
 
                 List<Integer> remove = new ArrayList<>();
 
                 String common = null;
                 LocationVenue venue = null;
                 for (int i = 0; i < dataString.size(); i++) {
+                    if (dataString.get(i).isBlank()) {
+                        remove.add(i);
+                        continue;
+                    }
+
                     LocationField field = type.getFields()[i];
                     if (field.getId().equalsIgnoreCase("common-name")) {
                         remove.add(i);
@@ -601,36 +606,61 @@ public class CreateIncident extends Command {
             if (input.contains(":")) {
 
                 try {
-                    LocationType type = LocationType.valueOf(input.split(":")[0]);
+                    String[] split = input.split(":", 2);
 
-                    input = input.split(":")[1];
-                    String[] parts = input.split(";");
+                    LocationType type = LocationType.valueOf(split[0].toUpperCase().substring(1));
+                    String fieldData = split.length > 1 ? split[1] : "";
 
-                    if (parts.length - 1 > type.getFields().length) {
-                        return new ArrayList<>(List.of("<ERROR: Too Many Parts>"));
+                    LocationField[] fields = type.getFields();
+
+                    String[] enteredFields = fieldData.isEmpty()
+                            ? new String[0]
+                            : fieldData.split(";", -1); // keep trailing empty fields
+
+                    int currentIndex = enteredFields.length - 1;
+
+                    if (currentIndex >= fields.length) {
+                        return List.of("<COMPLETE>");
                     }
 
-                    LocationField current = type.getFields()[parts.length-1];
-                    if (input.endsWith(";"))
-                        current = type.getFields()[parts.length];
+                    StringBuilder suggestion = new StringBuilder();
+                    suggestion.append(type.name()).append(":");
 
-                    String beginningString = focused.getValue();
-                    if (beginningString.contains(";")) {
-                        String[] beginning = focused.getValue().split(";");
-                        beginningString = String.join(";", Arrays.copyOfRange(beginning, 0, beginning.length-1));
+                    // Add all completed fields
+                    for (int i = 0; i < currentIndex; i++) {
+                        if (i > 0) {
+                            suggestion.append(";");
+                        }
+                        suggestion.append(enteredFields[i]);
                     }
-                    return new ArrayList<>(List.of(
-                             beginningString + ";<" + current.getTitle() + ">"
-                    ));
+
+                    // Add separator before current field if needed
+                    if (currentIndex > 0) {
+                        suggestion.append(";");
+                    }
+
+                    currentIndex = Math.max(currentIndex, 0);
+
+                    // Add placeholder for current field
+                    suggestion.append("<")
+                            .append(fields[currentIndex].getTitle())
+                            .append(">");
+
+                    return List.of(suggestion.toString());
+
+                } catch (IllegalArgumentException e) {
+                    return List.of("<INVALID LOCATION TYPE>");
                 } catch (Exception e) {
-                    Log.warn("Location autocomplete error: " + e, e);
-                    return new ArrayList<>(List.of("<ERROR: " + e + ">"));
+                    Log.warn("Error autocompleting location: " + e, e);
+                    return List.of(DiscordMessages.truncate(
+                            "<ERROR: " + e + ">", 100, "...>"
+                    ));
                 }
 
 
             } else returned.addAll(Arrays.stream(LocationType.values())
                     .map(LocationType::name)
-                    .map(s -> s + ":")
+                    .map(s -> "$" + s + ":")
                     .toList());
 
 
