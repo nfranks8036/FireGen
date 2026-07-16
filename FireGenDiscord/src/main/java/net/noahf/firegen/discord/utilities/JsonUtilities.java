@@ -37,7 +37,7 @@ public class JsonUtilities {
     public static void stream(BotManager bot, String municipality, String fileString, Consumer<JsonElement> streamer) {
         String path = (municipality != null ? municipality + "/" : "") + fileString;
 
-        stream(bot.getConfigPrefix(), path, streamer);
+        stream(bot, path, streamer);
     }
 
     public static void stream(String municipality, String fileString, Consumer<JsonElement> streamer) {
@@ -46,6 +46,7 @@ public class JsonUtilities {
 
     public static String asStr(JsonObject object, String key) { return element(object, key).getAsString(); }
     public static int asInt(JsonObject object, String key) { return element(object, key).getAsInt(); }
+    public static long asLong(JsonObject object, String key) { return element(object, key).getAsLong(); }
 
     public static JsonElement element(JsonObject object, String key) {
         return JsonUtilities.element(object, key, false);

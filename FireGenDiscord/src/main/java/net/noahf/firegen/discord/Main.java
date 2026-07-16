@@ -6,7 +6,6 @@ import net.noahf.firegen.discord.actions.ActionsManager;
 import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.command.CommandManager;
 import net.noahf.firegen.discord.config.ConfigManager;
-import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.config.files.ConfigMunicipality;
 import net.noahf.firegen.discord.database.DatabaseManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
@@ -32,13 +31,13 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         long start = System.currentTimeMillis();
 
-        bot = new BotManager();
+        bot = new BotManager().startJda();
         config = new ConfigManager(bot).startImport();
         database = new DatabaseManager();
         incidents = new IncidentManager(config);
         actions = new ActionsManager();
         commands = new CommandManager(bot.jda());
-        users = new UserManager(bot.jda(), incidents);
+        users = new UserManager(bot.jda(), config);
 //        subscribers = new SubscriberManager();
 
         String status = getStatus(config.get(ConfigMunicipality.class).get());

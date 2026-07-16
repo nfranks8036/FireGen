@@ -50,7 +50,8 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
                     AgencyType.valueOf(asStr(agencyObj, "type")),
                     emoji,
                     i,
-                    new ArrayList<>()
+                    new ArrayList<>(),
+                    lastUnitCount
             );
 
             List<JsonElement> unitElements = element(agencyObj, "units").getAsJsonArray().asList();

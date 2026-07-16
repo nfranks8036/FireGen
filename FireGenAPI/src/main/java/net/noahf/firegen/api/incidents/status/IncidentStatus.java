@@ -2,9 +2,12 @@ package net.noahf.firegen.api.incidents.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.noahf.firegen.api.utilities.StringSelectors;
+
+import java.util.List;
 
 @AllArgsConstructor @Getter
-public enum IncidentStatus {
+public enum IncidentStatus implements StringSelectors {
 
     PENDING("PND"),
 
@@ -28,6 +31,11 @@ public enum IncidentStatus {
             case ACTIVE, PENDING -> CLOSED;
             case CLOSED, CLOSED_TIMED_OUT -> PENDING;
         };
+    }
+
+    @Override
+    public List<String> asStringSelectors() {
+        return List.of(name(), isInProgress() ? "isInProgress" : "notInProgress");
     }
 
 }

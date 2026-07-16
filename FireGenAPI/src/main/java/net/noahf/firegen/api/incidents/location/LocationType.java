@@ -1,11 +1,14 @@
 package net.noahf.firegen.api.incidents.location;
 
 import lombok.Getter;
+import net.noahf.firegen.api.utilities.StringSelectors;
+
+import java.util.List;
 
 import static net.noahf.firegen.api.incidents.location.LocationField.*;
 
 @Getter
-public enum LocationType {
+public enum LocationType implements StringSelectors {
 
     ADDRESS(
             "Location",
@@ -159,4 +162,8 @@ public enum LocationType {
         }
     }
 
+    @Override
+    public List<String> asStringSelectors() {
+        return List.of(this.name());
+    }
 }

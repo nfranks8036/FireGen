@@ -2,14 +2,22 @@ package net.noahf.firegen.api.incidents.units;
 
 import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import net.noahf.firegen.api.utilities.StringSelectors;
 
-public interface RadioChannel extends Identifiable, AutofilledCharSequence {
+import java.util.List;
 
-    String name();
+public interface RadioChannel extends Identifiable, AutofilledCharSequence, StringSelectors {
 
-    String alphaTag();
+    String getName();
 
-    int talkgroupId();
+    String getAlphaTag();
 
+    int getTalkgroupId();
+
+
+    @Override
+    default List<String> asStringSelectors() {
+        return List.of(getName(), getAlphaTag(), String.valueOf(getTalkgroupId()));
+    }
 
 }

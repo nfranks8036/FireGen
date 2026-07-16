@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-@Getter @Accessors(fluent = true)
+@Getter
 @Entity
 public class RadioChannelImpl implements RadioChannel {
 
@@ -34,6 +34,6 @@ public class RadioChannelImpl implements RadioChannel {
     @Override
     @NotNull
     public String toString() {
-        return this.alphaTag;
+        return this.alphaTag != null ? this.alphaTag : "TG" + talkgroupId;
     }
 }

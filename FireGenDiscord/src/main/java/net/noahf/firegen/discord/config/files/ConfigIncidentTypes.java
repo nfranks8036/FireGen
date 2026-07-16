@@ -78,6 +78,7 @@ public class ConfigIncidentTypes extends MultiObjectConfiguration<IncidentType> 
      *         note: this <b>DOES NOT</b> limit the amount of results, you will receive the full list!
      */
     public List<String> getAutocompleteIncidentTypes() {
-        return this.get().stream().map(IncidentType::getSelectedName).toList();
+        return this.get().stream().map(IncidentType::getSelectedName)
+                .toList();
     }
 }

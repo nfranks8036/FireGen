@@ -11,6 +11,7 @@ import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.bot.channels.ChannelRole;
 import net.noahf.firegen.discord.config.files.ConfigIncidentStatuses;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
@@ -64,7 +65,7 @@ public class ReceiveMessageSender extends MessageSender {
         startingMessage = startingMessage + "\nWhen- <t:" + incident.getTime().getUnix() + ":t>";
 
         // send a starting message to the subscribed channels, this will be quickly changed by the following edit
-        List<TextChannel> channels = new ArrayList<>(bot.getReceiveChannels());
+        List<TextChannel> channels = new ArrayList<>(bot.getChannelManager().getFor(ChannelRole.RECEIVER, incident));
         boolean shouldRemoveNulls = false;
         for (TextChannel channel : channels) {
             try {
@@ -80,12 +81,6 @@ public class ReceiveMessageSender extends MessageSender {
                 Log.error("RECEIVE - Can't send message to " + (channel != null ? channel.getName() : null) +
                         ": " + exception, exception);
             }
-        }
-
-        if (shouldRemoveNulls) {
-            int sizeBefore = bot.getReceiveChannels().size();
-            bot.getReceiveChannels().removeIf(Objects::isNull);
-            Log.warn("Removed " + (sizeBefore - bot.getReceiveChannels().size()) + " null (non-existent) receiver channels.");
         }
     }
 

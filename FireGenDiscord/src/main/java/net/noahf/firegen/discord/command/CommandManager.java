@@ -9,9 +9,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.requests.restaction.interactions.AutoCompleteCallbackAction;
-import net.dv8tion.jda.api.requests.restaction.interactions.InteractionCallbackAction;
-import net.dv8tion.jda.internal.requests.restaction.interactions.AutoCompleteCallbackActionImpl;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
@@ -188,7 +185,7 @@ public class CommandManager extends ListenerAdapter {
             );
 
             // we can just return nothing if the command returned null or an empty set
-            if (autocomplete == null || autocomplete.isEmpty()) {
+            if (autocomplete.isEmpty()) {
                 event.replyChoiceStrings().queue();
                 return;
             }
@@ -200,7 +197,7 @@ public class CommandManager extends ListenerAdapter {
                 return;
             }
 
-            if (!command.flags.autoFilterAutocomplete) {
+            if (command.flags.disableAutocompleteAutoFilter) {
                 event.replyChoiceStrings(autocomplete.stream().limit(OptionData.MAX_CHOICES).toList()
                 ).queue();
                 return;
@@ -227,6 +224,11 @@ public class CommandManager extends ListenerAdapter {
             if (a.toLowerCase().contains(input.toLowerCase())) {
                 returned.add(a);
             }
+        }
+        if (returned.size() > 25) {
+            int size = returned.size();
+            returned = new ArrayList<>(returned.stream().limit(24).toList());
+            returned.add("... [viewing " + returned.size() + "/" + size + " items] (type more to narrow results)");
         }
         return returned;
     }

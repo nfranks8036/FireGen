@@ -9,7 +9,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
+import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Manager;
 import org.jetbrains.annotations.Nullable;
@@ -25,11 +28,11 @@ public class UserManager extends Manager<UserManager> {
 
     private final List<FireGenUser> users;
 
-    public UserManager(JDA jda, IncidentManager incidents) {
+    public UserManager(JDA jda, ConfigManager config) {
         super(UserManager.class, "Users");
 
         this.users = new ArrayList<>();
-        this.importUsers(jda, incidents);
+        this.importUsers(jda, config);
     }
 
     public void addUser(FireGenUser user) {
@@ -79,19 +82,12 @@ public class UserManager extends Manager<UserManager> {
 
 
 
-    private void importUsers(JDA jda, IncidentManager incidents) {
-        FireGenVariables vars = incidents.getFireGenVariables();
-        String file = vars.usersFile();
-        try
-                (InputStream input = this.getClass().getClassLoader().getResourceAsStream(file))
-        {
-            if (input == null) {
-                throw new IllegalStateException("Expected file '" + file + "' to exist, found none.");
-            }
-
+    private void importUsers(JDA jda, ConfigManager config) {
+        FireGenVariables vars = config.getFireGenVariables();
+        JsonUtilities.stream(Main.bot, null, vars.usersFile(), (e) -> {
             Log.info("Importing and searching for users...");
             long start = System.currentTimeMillis();
-            JsonArray array = JsonParser.parseReader(new InputStreamReader(input)).getAsJsonArray();
+            JsonArray array = e.getAsJsonArray();
             for (JsonElement element : array.asList()) {
                 JsonObject userObject = element.getAsJsonObject();
 
@@ -119,9 +115,7 @@ public class UserManager extends Manager<UserManager> {
             }
 
             Log.info("Imported " + this.users.size() + " users in " + (System.currentTimeMillis() - start) + "ms.");
-        } catch (IOException exception) {
-            throw new IllegalStateException("IOException: " + exception, exception);
-        }
+        });
     }
 
     private Permission[] getPermissionArray(JsonArray array) {

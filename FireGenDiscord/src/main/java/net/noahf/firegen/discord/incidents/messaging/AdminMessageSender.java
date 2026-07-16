@@ -15,6 +15,7 @@ import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.bot.channels.ChannelRole;
 import net.noahf.firegen.discord.config.files.ConfigIncidentStatuses;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
@@ -80,7 +81,7 @@ public class AdminMessageSender extends MessageSender {
                 super.getIncident().getType().getSelectedName() + " created by " +
                 super.getIncident().getContributors().getFirst();
 
-        List<TextChannel> channels = new ArrayList<>(bot.getAdminChannels());
+        List<TextChannel> channels = new ArrayList<>(bot.getChannelManager().getFor(ChannelRole.ADMIN, super.getIncident()));
         boolean shouldRemoveNulls = false;
         for (TextChannel channel : channels) {
             try {
@@ -102,13 +103,6 @@ public class AdminMessageSender extends MessageSender {
                 Log.error("ADMIN - Can't send message to " + (channel != null ? channel.getName() : null)
                         + ": " + exception, exception);
             }
-        }
-
-        if (shouldRemoveNulls) {
-            int sizeBefore = bot.getAdminChannels().size();
-            bot.getAdminChannels().removeIf(Objects::isNull);
-
-            Log.warn("Removed " + (sizeBefore - bot.getAdminChannels().size()) + " null (non-existent) admin channels.");
         }
     }
 

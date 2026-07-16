@@ -1,6 +1,5 @@
 package net.noahf.firegen.discord.command.registered;
 
-import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.User;
@@ -34,20 +33,15 @@ import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static net.noahf.firegen.discord.command.registered.CreateIncident.Helper.findAction;
 import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
@@ -114,6 +108,7 @@ public class CreateIncident extends Command {
                                 )
                                         .setRequiredLength(AddNarrative.MIN_NARRATIVE_LENGTH, AddNarrative.MAX_NARRATIVE_LENGTH)
                         })
+                        .disableAutocompleteAutoFilter(true)
                         .aliases(new String[]{"ci"})
                         .finish()
         );
@@ -341,12 +336,13 @@ public class CreateIncident extends Command {
                     case WILDCARD ->
                             inputUnits.addAll(incident.getUnitAssignments().stream().map(UnitAssignment::getUnit).toList());
                     case CUSTOM -> {
+                        // ?SHORTHAND.LONGHAND.AGENCY
                         String[] text = targetString.substring(1).split("\\.");
                         Agency agency = configUnits.getAgencyByShorthand(text[2]);
                         if (agency == null) {
                             agency = new AgencyImpl(text[2], text[2], text[2], "N/A",
                                     AgencyType.OTHER, null, Integer.MAX_VALUE,
-                                    new ArrayList<>()
+                                    new ArrayList<>(), Integer.MAX_VALUE
                             );
                             Log.warn("User " + event.getUser().getName() + " created a temporary agency: " + agency);
                         }
@@ -360,7 +356,7 @@ public class CreateIncident extends Command {
                         UnitImpl custom = new UnitImpl(
                                 text[0], text[1].toUpperCase(), text[1],
                                 emoji, agency,
-                                agency.ordinal(), false,
+                                ((AgencyImpl)agency).getStartUnitOrdinal(), false,
                                 SelectOption.of(text[1].toUpperCase(), text[0])
                                         .withEmoji(emoji)
                         );

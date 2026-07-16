@@ -1,7 +1,5 @@
 package net.noahf.firegen.discord.bot;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -14,8 +12,8 @@ import net.noahf.firegen.discord.actions.listeners.ButtonDetector;
 import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.actions.listeners.ModalDetector;
 import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
+import net.noahf.firegen.discord.bot.channels.ChannelManager;
 import net.noahf.firegen.discord.command.registered.Units;
-import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Manager;
 
@@ -34,17 +32,18 @@ public class BotManager extends Manager<BotManager> {
     private @Getter String municipalityFolder = null;
     private @Getter String configPrefix = null;
 
-    private @Getter List<TextChannel> adminChannels = new ArrayList<>();
-    private @Getter List<TextChannel> receiveChannels = new ArrayList<>();
+    @Getter
+    ChannelManager channelManager;
 
-    private final JDA jda;
+    private JDA jda;
 
     private @Getter final Map<Object, Object> properties;
 
-    public BotManager() throws InterruptedException {
+    public BotManager() {
         super(BotManager.class, "BotManager");
 
         this.properties = new Properties();
+        this.channelManager = new ChannelManager(this);
         try (InputStream input = this.getClass().getClassLoader()
                 .getResourceAsStream(BUILD_INFO_FILE_NAME)
         ) {
@@ -70,7 +69,9 @@ public class BotManager extends Manager<BotManager> {
         assertPropertyNotNull("MUNICIPALITY", municipalityFolder);
 
         configPrefix = getOr(configPrefix, "");
+    }
 
+    public BotManager startJda() throws InterruptedException {
         Log.info("Building JDA...");
         Log.info("-".repeat(20) + " [JDA START] " + "-".repeat(20));
         this.jda = JDABuilder.createDefault(token)
@@ -89,27 +90,10 @@ public class BotManager extends Manager<BotManager> {
                 )
                 .build()
                 .awaitReady();
+        this.channelManager.startImport();
         Log.info("-".repeat(20) + " [ JDA END ] " + "-".repeat(20));
+        return this;
     }
-
-//    private void loadChannels() {
-//        JsonUtilities.stream(this, null, "discord.json", (e) -> {
-//            JsonObject object = e.getAsJsonObject();
-//            receiveChannels = object.get("receiver_channel_ids").getAsJsonArray().asList().stream()
-//                    .map(JsonElement::getAsLong)
-//                    .map(jda::getTextChannelById)
-//                    .toList();
-//            adminChannels = object.get("admin_channel_ids").getAsJsonArray().asList().stream()
-//                    .map(JsonElement::getAsLong)
-//                    .map(jda::getTextChannelById)
-//                    .toList();
-//
-//            receiveChannels = new ArrayList<>(receiveChannels);
-//            adminChannels = new ArrayList<>(adminChannels);
-//
-//            Log.info("Found " + receiveChannels.size() + " receiver channels and " + adminChannels.size() + " admin channels.");
-//        });
-//    }
 
     private String getExternalInfo(String key) {
         return (System.getenv().getOrDefault(key, System.getProperty(key)));

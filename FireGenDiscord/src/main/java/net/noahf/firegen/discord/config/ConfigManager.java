@@ -47,10 +47,7 @@ public class ConfigManager extends Manager<ConfigManager> {
 
         Log.info("Importing structure data from municipality '" + bot.getMunicipalityFolder() + "'");
         for (Class<? extends SingleObjectConfiguration> clazz : classes) {
-
-            Log.info("Now on " + clazz.getCanonicalName());
             try {
-
                 @Nullable Constructor<?> constructor =
                         Arrays.stream(clazz.getDeclaredConstructors())
                                 // since we don't really know what other constructors exist, we can only confidently

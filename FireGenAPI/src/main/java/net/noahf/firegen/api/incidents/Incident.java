@@ -8,11 +8,12 @@ import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.utilities.StringSelectors;
 
 import java.util.List;
 import java.util.Set;
 
-public interface Incident extends Identifiable {
+public interface Incident extends Identifiable, StringSelectors {
 
     IncidentStatus getStatus();
 
@@ -51,5 +52,11 @@ public interface Incident extends Identifiable {
     void setPublished(IncidentPublishedStatus newStatus);
 
     void update();
+
+
+    @Override
+    default List<String> asStringSelectors() {
+        return List.of(getFormattedId());
+    }
 
 }

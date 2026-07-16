@@ -22,5 +22,6 @@ public class AgencyImpl implements Agency {
     private final transient Emoji emoji;
     private final @Accessors(fluent = true) int ordinal;
     private final List<Unit> units;
+    private final int startUnitOrdinal;
 
 }

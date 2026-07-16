@@ -2,10 +2,12 @@ package net.noahf.firegen.api.incidents;
 
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
+import net.noahf.firegen.api.utilities.StringSelectors;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-public interface IncidentLogEntry extends Identifiable, Comparable<IncidentLogEntry> {
+public interface IncidentLogEntry extends Identifiable, Comparable<IncidentLogEntry>, StringSelectors {
 
     LocalDateTime getTime();
 
@@ -20,6 +22,11 @@ public interface IncidentLogEntry extends Identifiable, Comparable<IncidentLogEn
     default boolean isNarrative() {
         return this.getType() == EntryType.NARRATIVE ||
                 this.getType() == EntryType.HIDDEN;
+    }
+
+    @Override
+    default List<String> asStringSelectors() {
+        return List.of(getEntry(), getType().name());
     }
 
 

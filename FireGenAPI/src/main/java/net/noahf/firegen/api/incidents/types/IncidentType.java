@@ -1,8 +1,11 @@
 package net.noahf.firegen.api.incidents.types;
 
 import net.noahf.firegen.api.Identifiable;
+import net.noahf.firegen.api.utilities.StringSelectors;
 
-public interface IncidentType extends Identifiable {
+import java.util.List;
+
+public interface IncidentType extends Identifiable, StringSelectors {
 
     String getType();
 
@@ -13,7 +16,12 @@ public interface IncidentType extends Identifiable {
     int getQualifierChoice();
 
 
-
     String getSelectedName();
+
+
+    @Override
+    default List<String> asStringSelectors() {
+        return List.of(getSelectedName(), getType());
+    }
 
 }

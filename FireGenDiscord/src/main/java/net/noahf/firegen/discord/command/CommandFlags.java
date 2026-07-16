@@ -39,7 +39,7 @@ public class CommandFlags {
      */
     public final DefaultMemberPermissions permissions;
 
-    public final boolean autoFilterAutocomplete;
+    public final boolean disableAutocompleteAutoFilter;
 
 //    /**
 //     * If the command can only be accessed while maintenance mode is active, {@code true} means the command will only

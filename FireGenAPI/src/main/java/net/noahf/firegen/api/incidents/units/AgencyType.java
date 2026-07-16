@@ -1,6 +1,10 @@
 package net.noahf.firegen.api.incidents.units;
 
-public enum AgencyType {
+import net.noahf.firegen.api.utilities.StringSelectors;
+
+import java.util.List;
+
+public enum AgencyType implements StringSelectors {
 
     FIRE,
 
@@ -40,6 +44,12 @@ public enum AgencyType {
 
     DISPATCH,
 
-    OTHER
+    OTHER;
+
+
+    @Override
+    public List<String> asStringSelectors() {
+        return List.of(name());
+    }
 
 }

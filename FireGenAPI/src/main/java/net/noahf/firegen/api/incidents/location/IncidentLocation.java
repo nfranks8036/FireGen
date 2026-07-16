@@ -1,10 +1,11 @@
 package net.noahf.firegen.api.incidents.location;
 
+import net.noahf.firegen.api.utilities.StringSelectors;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface IncidentLocation {
+public interface IncidentLocation extends StringSelectors {
 
     String DEFAULT_LINE_DELIMITER = ", ";
 
@@ -35,6 +36,11 @@ public interface IncidentLocation {
 
     default String format() {
         return this.format(null, null);
+    }
+
+    @Override
+    default List<String> asStringSelectors() {
+        return List.of(getType().name(), isSet() ? "isSet" : "isNotSet");
     }
 
 }

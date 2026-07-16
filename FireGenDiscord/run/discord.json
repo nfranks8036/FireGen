@@ -1,8 +1,16 @@
-{
-  "receiver_channel_ids": [
-    1473433906681221200, 1436406051112226959
-  ],
-  "admin_channel_ids": [
-    1497787094779822170, 1492362581623439581, 1499611450283393064
-  ]
-}
+[
+  {"channel": 862445591619567657,
+    "if": ["IncidentLocation.LocationVenue=VIRGINIA TECH", "IncidentType.IncidentTypeTag=FIRE|FIRE_QUALIFIERS"],
+    "role": "RECEIVER"
+  },
+  {"channel": 1527168923735429211,
+    "if": ["IncidentLocation.LocationVenue=VIRGINIA TECH", "IncidentType.IncidentTypeTag=FIRE|FIRE_QUALIFIERS"],
+    "role": "RECEIVER"
+  },
+  {"channel": 1473433906681221200, "role": "RECEIVER"},
+  {"channel": 1436406051112226959, "role": "RECEIVER"},
+
+  {"channel": 1497787094779822170, "role": "ADMIN"},
+  {"channel": 1492362581623439581, "role": "ADMIN"},
+  {"channel": 1499611450283393064, "role": "ADMIN"}
+]
