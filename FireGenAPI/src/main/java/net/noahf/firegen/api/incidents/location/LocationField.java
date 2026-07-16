@@ -99,7 +99,8 @@ public class LocationField {
     @Deprecated
     public static void setKnownVenues(List<LocationVenue> venues) {
         if (setFields) {
-            throw new IllegalStateException("Already patched the venue descriptions, setKnownVenues has been disabled.");
+            System.err.println("Already patched the venue descriptions, setKnownVenues has been disabled!");
+            return;
         }
 
         for (LocationType value : LocationType.values()) {

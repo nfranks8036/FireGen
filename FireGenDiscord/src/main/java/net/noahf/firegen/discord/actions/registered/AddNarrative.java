@@ -104,7 +104,7 @@ public class AddNarrative implements ButtonAction, ModalAction {
     }
 
     public MessageStatus onSubmit(Incident incident, IReplyCallback event, String narrative) {
-        FireGenVariables vars = Main.incidents.getFireGenVariables();
+        FireGenVariables vars = Main.config.getFireGenVariables();
 
         narrative = narrative.toUpperCase();
 

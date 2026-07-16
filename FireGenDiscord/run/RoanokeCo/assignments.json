@@ -18,6 +18,12 @@
     "ansi": "GREEN"
   },
   {
+    "name": "STAGED",
+    "short": "STG",
+    "emoji": "<:STAGED:1524543350286581951>",
+    "ansi": "BACKGROUND_GREEN"
+  },
+  {
     "name": "LEFT FOR SECONDARY",
     "short": "LEF",
     "emoji": "<:LEFT_FOR_SECONDARY:1499197449716240384>",
@@ -33,7 +39,8 @@
     "name": "CLEAR",
     "short": "CLR",
     "emoji": "<:CLEAR:1499197493689188352>",
-    "ansi": "WHITE"
+    "ansi": "WHITE",
+    "purpose": "UNIT_AVAILABLE_FOR_CALLS"
   },
   {
     "name": "ADVISED",

@@ -8,12 +8,15 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.listeners.ButtonDetector;
 import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.actions.listeners.ModalDetector;
 import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.bot.channels.ChannelManager;
 import net.noahf.firegen.discord.command.registered.Units;
+import net.noahf.firegen.discord.config.ConfigManager;
+import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Manager;
 
@@ -114,6 +117,13 @@ public class BotManager extends Manager<BotManager> {
 
     public JDA jda() {
         return this.jda;
+    }
+
+    public void changeMunicipality(String newMunicipality) {
+        Log.info("Changing municipality from '" + this.municipalityFolder + "' to '" + newMunicipality + "'...");
+        this.municipalityFolder = newMunicipality;
+        Main.config = new ConfigManager(this).startImport();
+        Main.incidents = new IncidentManager(Main.config);
     }
 
 }

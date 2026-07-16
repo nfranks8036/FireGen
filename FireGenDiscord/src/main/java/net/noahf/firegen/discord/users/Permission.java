@@ -7,6 +7,8 @@ public enum Permission implements AutofilledCharSequence {
 
     ADMIN,
 
+    RELOAD_CONFIG,
+
     CHANGE_CALL_TYPE,
 
     CHANGE_DATE_TIME,

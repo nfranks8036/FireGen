@@ -15,7 +15,9 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.Publish;
+import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
+import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -91,7 +93,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.manager = manager;
         this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
         this.status = null;
-        this.type = manager.getFireGenVariables().defaultType();
+        this.type = Main.config.getFireGenVariables().defaultType();
         this.location = new IncidentLocationImpl(new ArrayList<>());
         this.time = new IncidentTimeImpl(LocalDateTime.now());
         this.published = IncidentPublishedStatus.UNPUBLISHED;
@@ -104,7 +106,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public void setTypeBySearch(String type) {
-        IncidentType newType = manager.getTypeFromString(type);
+        IncidentType newType = Main.config.get(ConfigIncidentTypes.class).getTypeFromString(type);
         if (type.startsWith("custom:")) {
             type = type.substring("custom:".length()).toUpperCase();
             newType = new IncidentTypeImpl(type, IncidentTypeTagImpl.DEFAULT, 0);

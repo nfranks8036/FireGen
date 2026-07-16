@@ -30,7 +30,7 @@ public class ViewArea extends Command {
         ConfigManager config = Main.config;
         IncidentManager incidents = Main.incidents;
         SystemMunicipality municipality = config.get(ConfigMunicipality.class).get();
-        FireGenVariables vars = incidents.getFireGenVariables();
+        FireGenVariables vars = config.getFireGenVariables();
         ConfigUnits units = config.get(ConfigUnits.class);
 
         MessageEmbed embed = new EmbedBuilder()

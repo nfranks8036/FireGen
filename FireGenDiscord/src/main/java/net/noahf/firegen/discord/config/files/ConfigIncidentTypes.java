@@ -81,4 +81,13 @@ public class ConfigIncidentTypes extends MultiObjectConfiguration<IncidentType> 
         return this.get().stream().map(IncidentType::getSelectedName)
                 .toList();
     }
+
+    public IncidentType getTypeFromString(String type) {
+        for (IncidentType t : this.get()) {
+            if (t.getSelectedName().equalsIgnoreCase(type)) {
+                return t;
+            }
+        }
+        return null;
+    }
 }

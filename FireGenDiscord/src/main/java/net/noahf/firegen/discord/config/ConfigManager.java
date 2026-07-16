@@ -37,6 +37,7 @@ public class ConfigManager extends Manager<ConfigManager> {
     @SuppressWarnings("rawtypes")
     public ConfigManager startImport() {
         // find config files classes and instantiate
+        long start = System.currentTimeMillis();
         Set<Class<? extends SingleObjectConfiguration>> classes =
                 new Reflections(CONFIG_FILES_PACKAGE)
                         .getSubTypesOf(SingleObjectConfiguration.class); // we only care about those which extend this class
@@ -62,7 +63,7 @@ public class ConfigManager extends Manager<ConfigManager> {
                 }
 
                 SingleObjectConfiguration<?> newInstance = (SingleObjectConfiguration<?>) constructor.newInstance(fireGenVariables);
-                JsonUtilities.stream(bot, newInstance.getPath(), newInstance::importObject);
+                newInstance.reload();
                 this.configs.add(newInstance);
 
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException error) {
@@ -70,6 +71,8 @@ public class ConfigManager extends Manager<ConfigManager> {
             }
 
         }
+
+        Log.info("Imported " + this.configs.size() + " configuration files in " + (System.currentTimeMillis()-start) + "ms!");
 
         return this;
     }

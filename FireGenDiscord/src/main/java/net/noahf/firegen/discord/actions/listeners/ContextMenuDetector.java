@@ -67,7 +67,7 @@ public class ContextMenuDetector extends ListenerAdapter {
             return;
         }
 
-        FireGenVariables vars = Main.incidents.getFireGenVariables();
+        FireGenVariables vars = Main.config.getFireGenVariables();
         MessageEmbed content = this.createContent(incident, vars);
 
         event.replyEmbeds(content)
@@ -103,7 +103,7 @@ public class ContextMenuDetector extends ListenerAdapter {
                     .setColor(new Color(255, 104, 104))
                     .build();
             if (incident != null) {
-                message = createContent(incident, Main.incidents.getFireGenVariables());
+                message = createContent(incident, Main.config.getFireGenVariables());
             }
 
             event.editMessageEmbeds(message)

@@ -447,7 +447,7 @@ public class CreateIncident extends Command {
                 }
             }
 
-            return actions.onSubmit(incident, event, Main.incidents.getFireGenVariables(), date, time);
+            return actions.onSubmit(incident, event, Main.config.getFireGenVariables(), date, time);
         }
 
         static MessageStatus setInitialNarrative(IncidentImpl incident, IReplyCallback event, OptionMapping initialNarrative) {

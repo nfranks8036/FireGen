@@ -42,6 +42,9 @@ public class FireGenChannel implements AutofilledCharSequence {
                     return false;
                 }
             }
+            Log.info("Conditions are met to send incident #" + incident.getFormattedId() +
+                    " to the channel " + this
+            );
             return true;
         } catch (Exception exception) {
             Log.warn("An error occurred while evaluating conditionals for incident #" + incident.getFormattedId() + " and channel " + this.channelId + ": " + exception, exception);
@@ -53,6 +56,6 @@ public class FireGenChannel implements AutofilledCharSequence {
 
     @Override @NotNull
     public String toString() {
-        return channel.getName() + " [id=" + channel.getId() + "]";
+        return "FireGenChannel{name=#" + channel.getName() + ", id=" + channel.getId() + "}";
     }
 }

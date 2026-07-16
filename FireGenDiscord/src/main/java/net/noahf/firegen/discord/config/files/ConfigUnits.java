@@ -41,7 +41,8 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         for (int i = 0; i < agencyElements.size(); i++) {
             JsonObject agencyObj = agencyElements.get(i).getAsJsonObject();
 
-            Emoji emoji = Emoji.fromFormatted(agencyObj.get("emoji").getAsString());
+            JsonElement element = agencyObj.get("emoji");
+            Emoji emoji = element != null && !element.isJsonNull() ? Emoji.fromFormatted(element.getAsString()) : null;
             Agency agency = new AgencyImpl(
                     asStr(agencyObj, "title"),
                     asStr(agencyObj, "short"),
@@ -79,7 +80,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
                 agency.getUnits().add(unit);
             }
 
-            this.set(agency.getUnits());
+            this.addAll(agency.getUnits());
             this.agencies.add(agency);
 
             lastUnitCount = lastUnitCount + agency.getUnits().size();

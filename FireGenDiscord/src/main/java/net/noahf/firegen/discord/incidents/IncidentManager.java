@@ -35,7 +35,6 @@ public class IncidentManager {
      */
     private final @Getter List<net.noahf.firegen.api.incidents.Incident> incidents = new ArrayList<>();
 
-    private final @Deprecated @Getter FireGenVariables fireGenVariables;
     private final @Getter ConfigManager config;
 
     @Getter final Set<UnitAssignment> assignments = new LinkedHashSet<>();
@@ -43,22 +42,6 @@ public class IncidentManager {
 
     public IncidentManager(ConfigManager config) {
         this.config = config;
-        this.fireGenVariables = this.config.getFireGenVariables();
-    }
-
-    /**
-     * Find a certain {@link IncidentTypeImpl} given a string. This will search the
-     * {@link IncidentTypeImpl#getSelectedName()} IncidentType's complete name}.
-     * @param type the complete name of the incident type to search for.
-     * @return the {@link IncidentTypeImpl} associated with that type, or {@code null} if not found.
-     */
-    public IncidentType getTypeFromString(String type) {
-        for (IncidentType t : this.config.get(ConfigIncidentTypes.class).get()) {
-            if (t.getSelectedName().equalsIgnoreCase(type)) {
-                return t;
-            }
-        }
-        return null;
     }
 
     /**

@@ -404,6 +404,8 @@
     "emoji": "<:bpd:1449916806931153110>",
     "units": [
       {"short": "BPDCR", "long": "BLACKSBURG POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Blacksburg Police (w/ Co-Responder)"},
+      {"short": "B102", "long": "BPD 102", "format": "102"},
+      {"short": "B103", "long": "BPD 103", "format": "103"},
       {"short": "B110", "long": "BPD 110", "format": "110"},
       {"short": "B131", "long": "BPD 131", "format": "131"},
       {"short": "B132", "long": "BPD 132", "format": "132"},

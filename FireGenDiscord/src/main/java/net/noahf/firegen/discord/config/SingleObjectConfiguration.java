@@ -4,6 +4,9 @@ import com.google.gson.JsonElement;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.utilities.JsonUtilities;
+import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,11 @@ public abstract class SingleObjectConfiguration<T> {
 
     public T get() {
         return object;
+    }
+
+    public void reload() {
+        this.object = null;
+        JsonUtilities.stream(Main.bot, this.getPath(), this::importObject);
     }
 
 }

@@ -47,8 +47,8 @@ public enum UnitsResponseType {
             table = table
                     .row(time.toEpochSecond(ZoneOffset.UTC), status.getAnsiColor(),
                             time.format(DateTimeFormatter.ofPattern(
-                                    Main.incidents.getFireGenVariables().dateFormat() + " " +
-                                            Main.incidents.getFireGenVariables().longTimeFormat()
+                                    Main.config.getFireGenVariables().dateFormat() + " " +
+                                            Main.config.getFireGenVariables().longTimeFormat()
                             )),
                             unit.getShorthand(),
                             status.getName(),
@@ -100,7 +100,7 @@ public enum UnitsResponseType {
                             : " "
                     );
             StringJoiner fieldDescription = new StringJoiner("\n");
-            final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern(Main.incidents.getFireGenVariables().longTimeFormat());
+            final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern(Main.config.getFireGenVariables().longTimeFormat());
 
             List<UnitAssignment> sortedAssignments = entry.getValue();
             sortedAssignments.sort(Comparator.comparing(o -> o.getLatestAssignment().getTimestamp()));
