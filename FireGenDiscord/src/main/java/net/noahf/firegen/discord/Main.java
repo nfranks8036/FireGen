@@ -40,26 +40,9 @@ public class Main {
         users = new UserManager(bot.jda(), config);
 //        subscribers = new SubscriberManager();
 
-        String status = getStatus(config.get(ConfigMunicipality.class).get());
-        bot.jda().getPresence().setActivity(Activity.customStatus(status));
-        Log.info("Set bot status to '" + status + "'");
+        bot.setStatus();
 
         Log.info("Started in " + (System.currentTimeMillis() - start) + "ms!");
-    }
-
-    private static String getStatus(SystemMunicipality municipality) {
-        final String PRIMARY_TEXT = "Listening to the radio";
-        String status = PRIMARY_TEXT + " in " + municipality.getName();
-
-        if (status.length() > Activity.MAX_ACTIVITY_NAME_LENGTH) {
-            status = PRIMARY_TEXT + " in " + municipality.getShortName();
-        }
-
-        if (status.length() > Activity.MAX_ACTIVITY_NAME_LENGTH) {
-            return PRIMARY_TEXT;
-        }
-
-        return status;
     }
 
 }

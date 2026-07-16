@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.noahf.firegen.api.incidents.SystemMunicipality;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.listeners.ButtonDetector;
 import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
@@ -16,6 +17,7 @@ import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.bot.channels.ChannelManager;
 import net.noahf.firegen.discord.command.registered.Units;
 import net.noahf.firegen.discord.config.ConfigManager;
+import net.noahf.firegen.discord.config.files.ConfigMunicipality;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Manager;
@@ -124,6 +126,28 @@ public class BotManager extends Manager<BotManager> {
         this.municipalityFolder = newMunicipality;
         Main.config = new ConfigManager(this).startImport();
         Main.incidents = new IncidentManager(Main.config);
+        this.setStatus();
+    }
+
+    public void setStatus() {
+        String status = getStatus(Main.config.get(ConfigMunicipality.class).get());
+        this.jda().getPresence().setActivity(Activity.customStatus(status));
+        Log.info("Set bot status to '" + status + "'");
+    }
+
+    private String getStatus(SystemMunicipality municipality) {
+        final String PRIMARY_TEXT = "Listening to the radio";
+        String status = PRIMARY_TEXT + " in " + municipality.getName();
+
+        if (status.length() > Activity.MAX_ACTIVITY_NAME_LENGTH) {
+            status = PRIMARY_TEXT + " in " + municipality.getShortName();
+        }
+
+        if (status.length() > Activity.MAX_ACTIVITY_NAME_LENGTH) {
+            return PRIMARY_TEXT;
+        }
+
+        return status;
     }
 
 }
