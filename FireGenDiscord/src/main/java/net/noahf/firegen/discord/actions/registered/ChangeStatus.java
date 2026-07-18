@@ -10,7 +10,6 @@ import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.utilities.MessageStatus;
 
 /**
  * Represents the "Close Incident" or "Re-open Incident" buttons in the Status row.
@@ -31,9 +30,9 @@ public class ChangeStatus implements ButtonAction {
      */
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        event.deferReply().setEphemeral(true).queue();
+        event.deferEdit().queue();
 
-        if (!this.checkUserPermission(event.getUser(), Permission.INCIDENT_CLOSE, Permission.INCIDENT_REOPEN)) {
+        if (!this.checkUserPermission(event.getUser(), Permission.INCIDENT_STATUS)) {
             DiscordMessages.error(event, "You don't have permission to change an incident's status.");
             return;
         }
@@ -51,10 +50,9 @@ public class ChangeStatus implements ButtonAction {
             default -> "Incident status changed to " + newStatus.name();
         };
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
-
-        DiscordMessages.noMessage(event, MessageStatus.NONE);
-
         incident.update();
+
+        incident.getMessagingService().notifyPublishChange();
     }
 
 }

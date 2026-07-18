@@ -25,13 +25,9 @@ public enum Permission implements AutofilledCharSequence {
 
     INCIDENT_CREATE,
 
-    INCIDENT_CLOSE,
-
-    INCIDENT_REOPEN,
+    INCIDENT_STATUS,
 
     INCIDENT_PUBLISH,
-
-    INCIDENT_UNPUBLISH,
 
     DEFAULT;
 

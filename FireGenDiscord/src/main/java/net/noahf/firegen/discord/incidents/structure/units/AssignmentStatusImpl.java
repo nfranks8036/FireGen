@@ -15,26 +15,31 @@ import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Entity
 public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.firegen.api.incidents.units.AssignmentStatus {
 
     public static final AssignmentStatus ADD_UNIT = new AssignmentStatusImpl(
-            "ADDED", "ADD", null, new AnsiColor[] {AnsiColor.BACKGROUND_WHITE, AnsiColor.BLACK}, Integer.MIN_VALUE, AssignmentPurpose.UNIT_ATTACHED
+            "ADDED", "ADD", null, new AnsiColor[] {AnsiColor.BACKGROUND_WHITE, AnsiColor.BLACK}, Integer.MIN_VALUE, AssignmentPurpose.UNIT_ATTACHED,
+            new ArrayList<>()
     );
 
     public static final AssignmentStatus REMOVE_UNIT = new AssignmentStatusImpl(
-            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MAX_VALUE, AssignmentPurpose.UNIT_AVAILABLE_FOR_CALLS
+            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MAX_VALUE, AssignmentPurpose.UNIT_AVAILABLE_FOR_CALLS,
+            new ArrayList<>()
     );
 
-    public AssignmentStatusImpl(String name, String shortName, Emoji emoji, AnsiColor[] ansiColor, int ordinal, @Nullable AssignmentPurpose purpose) {
+    public AssignmentStatusImpl(String name, String shortName, Emoji emoji, AnsiColor[] ansiColor, int ordinal, @Nullable AssignmentPurpose purpose, List<String> secondaries) {
         this(name, shortName,
                 (emoji != null ? emoji.getFormatted() : null),
                 Arrays.stream(ansiColor).map(Enum::name).toArray(String[]::new),
                 ordinal,
-                purpose
+                purpose,
+                secondaries
         );
     }
 
@@ -51,6 +56,8 @@ public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.f
 
     private transient Emoji emoji = null;
     private transient AnsiColor[] ansiColor = null;
+
+    private @Getter final List<String> secondaries;
 
     public Emoji getEmoji() {
         if (emoji == null) {

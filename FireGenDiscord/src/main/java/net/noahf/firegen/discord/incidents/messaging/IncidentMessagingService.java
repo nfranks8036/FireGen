@@ -9,7 +9,6 @@ import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.ZoneOffset;
 import java.util.*;
 
 public class IncidentMessagingService {
@@ -27,15 +26,6 @@ public class IncidentMessagingService {
                         new ReceiveMessageSender(this, incident)
                 )
         );
-    }
-
-    public <T extends MessageSender> void send(Class<T> messageSender) {
-        T sender = this.get(messageSender);
-        if (sender == null) {
-            throw new IllegalArgumentException("Entered class is not a valid/instantiated MessageSender: " + messageSender);
-        }
-
-        sender.requestSend();
     }
 
     public void sendAll() {
@@ -59,21 +49,22 @@ public class IncidentMessagingService {
         }
 
         List<String> response = new LinkedList<>();
-        List<IncidentLogEntry> log = new ArrayList<>(incident.getLog()
-                .stream()
+        List<IncidentLogEntry> log = new ArrayList<>();
+        for (IncidentLogEntry entry : incident.getLog()) {
+            if (!asAdmin && entry.getType() != IncidentLogEntry.EntryType.NARRATIVE) {
+                continue;
+            }
+            log.add(entry);
+        }
 
-                // we don't want admin update logs to be included in the narrative for the public necessarily
-                .filter(n -> asAdmin || n.getType() == IncidentLogEntry.EntryType.NARRATIVE)
+        log.sort((o1, o2) -> {
+            if (asAdmin) {
+                return o1.getTime().compareTo(o2.getTime());
+            }
+            return ((IncidentLogEntryImpl) o1).getCustomTimeOrDefault()
+                    .compareTo(((IncidentLogEntryImpl) o2).getCustomTimeOrDefault());
+        });
 
-                .sorted((o1, o2) -> {
-                    if (asAdmin) {
-                        return o1.getTime().compareTo(o2.getTime());
-                    }
-                    return ((IncidentLogEntryImpl) o1).getCustomTimeOrDefault()
-                            .compareTo(((IncidentLogEntryImpl) o2).getCustomTimeOrDefault());
-                })
-                .toList()
-        );
         for (IncidentLogEntry entry : log) {
             IncidentLogEntryImpl entryImpl = (IncidentLogEntryImpl) entry;
             response.add(asAdmin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
@@ -85,6 +76,7 @@ public class IncidentMessagingService {
     public void notifyPublishChange() {
         for (MessageSender sender : this.messages) {
             sender.onPublishEvent(this.incident.getPublished());
+            sender.requestSend(0);
         }
     }
 

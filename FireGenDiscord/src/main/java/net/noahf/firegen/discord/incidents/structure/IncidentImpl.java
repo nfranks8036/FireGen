@@ -14,9 +14,6 @@ import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.actions.registered.Publish;
-import net.noahf.firegen.discord.config.ConfigManager;
-import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
 import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
@@ -128,9 +125,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     @Override
-    public void setPublished(IncidentPublishedStatus newStatus) {
+    public void setPublished(@NotNull IncidentPublishedStatus newStatus) {
         this.published = newStatus;
-        this.getMessagingService().notifyPublishChange();
     }
 
     public boolean isPublished() {

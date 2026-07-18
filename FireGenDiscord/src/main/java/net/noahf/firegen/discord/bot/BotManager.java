@@ -144,7 +144,7 @@ public class BotManager extends Manager<BotManager> {
         }
 
         if (status.length() > Activity.MAX_ACTIVITY_NAME_LENGTH) {
-            return PRIMARY_TEXT;
+            status = PRIMARY_TEXT;
         }
 
         return status;

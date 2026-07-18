@@ -8,6 +8,7 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.util.Arrays;
 
@@ -49,10 +50,12 @@ public interface FireGenAction {
         return Main.users.hasPermission(user, permission, andPermissions);
     }
 
-    default void ensureIncidentOpen(IReplyCallback callback, Incident incident) {
+    default MessageStatus ensureIncidentOpen(IReplyCallback callback, Incident incident) {
         if (!incident.getStatus().isInProgress()) {
             DiscordMessages.error(callback, "This incident is closed and cannot be edited.");
+            return MessageStatus.CONTENT;
         }
+        return MessageStatus.NONE;
     }
 
 }

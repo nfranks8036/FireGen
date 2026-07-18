@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.components.MessageTopLevelComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
@@ -41,7 +43,11 @@ public abstract class MessageSender {
 
 
     public void requestSend() {
-        this.sendRequested = SendRequested.createOrIgnore(sendRequested, MILLISECONDS_TO_SEND_AFTER, () -> {
+        this.requestSend(MILLISECONDS_TO_SEND_AFTER);
+    }
+
+    void requestSend(int delay) {
+        Runnable runnable = () -> {
             try {
                 if (this.messages.isEmpty()) {
                     this.sendInitial();
@@ -51,7 +57,14 @@ public abstract class MessageSender {
                 Log.error("Failed to send messages in message sender", exception);
                 throw exception;
             }
-        });
+        };
+
+        if (delay <= 10) {
+            runnable.run();
+            return;
+        }
+
+        this.sendRequested = SendRequested.createOrIgnore(sendRequested, delay, runnable);
     }
 
 

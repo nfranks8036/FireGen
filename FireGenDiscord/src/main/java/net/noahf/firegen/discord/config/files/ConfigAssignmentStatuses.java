@@ -13,7 +13,10 @@ import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
 
@@ -25,11 +28,26 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
 
     @Override
     public void importObject(JsonElement e) {
-        JsonArray array = e.getAsJsonArray();
+        JsonObject root = e.getAsJsonObject();
 
+        JsonArray tagsArray = root.getAsJsonArray("tags");
+        Map<String, List<String>> tags = new HashMap<>();
+        for (JsonElement element : tagsArray.asList()) {
+            JsonObject object = element.getAsJsonObject();
+
+            String name = object.get("name").getAsString();
+            JsonArray secondariesArray = object.get("secondaries").getAsJsonArray();
+
+            tags.put(name, secondariesArray.asList().stream()
+                    .map(JsonElement::getAsString)
+                    .toList()
+            );
+        }
+
+        JsonArray statuses = root.getAsJsonArray("statuses");
         this.addAll(List.of(AssignmentStatusImpl.REMOVE_UNIT, AssignmentStatusImpl.ADD_UNIT));
-        for (int i = 0; i < array.asList().size(); i++) {
-            JsonElement element = array.asList().get(i);
+        for (int i = 0; i < statuses.asList().size(); i++) {
+            JsonElement element = statuses.asList().get(i);
             JsonObject object = element.getAsJsonObject();
 
             String name = asStr(object, "name");
@@ -41,7 +59,12 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
             JsonElement purposeElement = JsonUtilities.element(object, "purpose", true);
             AssignmentPurpose purpose = purposeElement != null ? AssignmentPurpose.valueOf(purposeElement.getAsString()) : null;
 
-            AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, new AnsiColor[]{ansi}, i, purpose);
+            JsonElement secondaryTagElement = JsonUtilities.element(object, "tag", true);
+            List<String> secondaries = secondaryTagElement != null ?
+                    tags.getOrDefault(secondaryTagElement.getAsString(), new ArrayList<>()) :
+                    new ArrayList<>();
+
+            AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, new AnsiColor[]{ansi}, i, purpose, secondaries);
             this.add(status);
         }
 
