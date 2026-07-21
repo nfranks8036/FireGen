@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.internal.requests.restaction.interactions.AutoCompleteCallbackActionImpl;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
@@ -214,7 +215,7 @@ public class UnitInfo extends Command {
     }
 
     private final List<String> incidents = new ArrayList<>();
-    private long lastUpdated = 0L;
+    private long lastUpdated = Long.MAX_VALUE;
 
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
@@ -230,8 +231,9 @@ public class UnitInfo extends Command {
                                 .map(i ->
                                         i.getFormattedId() + ": " +
                                                 i.getType().getSelectedName() +
-                                                (i.getLocation().isSet() ? i.getLocation().format() : "")
+                                                (i.getLocation().isSet() ? " @ " + i.getLocation().format() : "")
                                 )
+                                .map(s -> DiscordMessages.truncate(s, 100, "..."))
                                 .toList()
                 );
             }

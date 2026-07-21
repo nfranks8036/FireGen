@@ -2,10 +2,12 @@ package net.noahf.firegen.discord.command.registered;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.incidents.SystemMunicipality;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.command.Command;
+import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.config.files.ConfigMunicipality;
 import net.noahf.firegen.discord.config.files.ConfigUnits;

@@ -31,6 +31,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
@@ -42,6 +43,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static net.noahf.firegen.discord.command.registered.CreateIncident.Helper.findAction;
 import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
@@ -308,7 +310,7 @@ public class CreateIncident extends Command {
                     statusString = parts[1];
                 }
 
-                // required syntax of command is the shorthand. e.g., "BFD,BVRS:DSP,SUP5:ENR,BPD,VTPD"
+                // required syntax of command is the shorthand. e.g., "BFD,BVRS:DSP,SUP5:ENR,BPD,VTPD,R51:LEF>RMH"
                 List<Unit> inputUnits = new ArrayList<>();
                 switch (type) {
                     case UNIT -> {
@@ -373,19 +375,34 @@ public class CreateIncident extends Command {
                     continue;
                 }
 
-                AssignmentStatus s = config.get(ConfigAssignmentStatuses.class).getAssignmentStatusByShortName(statusString);
-                if (s == null) {
-                    s = AssignmentStatusImpl.ADD_UNIT;
+                String secondaryString;
+                if (statusString.contains(">")) {
+                    secondaryString = statusString.split(">")[1];
+                    statusString = statusString.split(">")[0];
+                } else secondaryString = null;
+
+                AssignmentStatus status = config.get(ConfigAssignmentStatuses.class).getAssignmentStatusByShortName(statusString);
+                if (status == null) {
+                    status = AssignmentStatusImpl.ADD_UNIT;
                     DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +
-                            " defaulting to " + s.getShortName() + " for " + targetString);
+                            " defaulting to " + status.getShortName() + " for " + targetString);
                     returned = CONTENT.compare(returned);
                 }
 
-                EditUnits.UnitsChangeInput input = units.getOrDefault(s,
-                        new EditUnits.UnitsChangeInput(new ArrayList<>(), s, null)
+                Secondary secondary = null;
+                if (secondaryString != null) {
+                    secondary = status.getSecondaries().stream()
+                            .filter(s -> s.getShortName().equalsIgnoreCase(secondaryString)
+                                    || s.getLongName().equalsIgnoreCase(secondaryString)
+                            )
+                            .findFirst().orElse(new SecondaryImpl(secondaryString, secondaryString, null));
+                }
+
+                EditUnits.UnitsChangeInput input = units.getOrDefault(status,
+                        new EditUnits.UnitsChangeInput(new ArrayList<>(), status, secondary)
                 );
                 input.setUnits(inputUnits);
-                units.put(s, input);
+                units.put(status, input);
             }
 
             for (Map.Entry<AssignmentStatus, EditUnits.UnitsChangeInput> entry : units.entrySet()) {
@@ -511,10 +528,7 @@ public class CreateIncident extends Command {
                         .toList();
             }
 
-            List<String> allStatuses = Main.config.get(ConfigAssignmentStatuses.class).get().stream()
-                    .map(AssignmentStatus::getShortName)
-                    .map(String::toUpperCase)
-                    .toList();
+            List<AssignmentStatus> allStatuses = Main.config.get(ConfigAssignmentStatuses.class).get();
 
             String[] parts = input.split(",");
             List<String> selectedTargets = new ArrayList<>();
@@ -551,16 +565,42 @@ public class CreateIncident extends Command {
             if (currentToken.contains(":")) {
 
                 String target = currentToken.substring(0, currentToken.indexOf(':'));
-                String statusPart = currentToken.substring(currentToken.indexOf(':') + 1);
+//                String statusPart = currentToken.substring(currentToken.indexOf(':') + 1);
 
                 // if unit invalid, no suggestions
                 if (!allTargets.contains(target)) {
                     return List.of();
                 }
 
+                String afterColon = currentToken.substring(currentToken.indexOf(':') + 1);
+                if (afterColon.contains(">")) {
+                    String statusPart = afterColon.substring(0, afterColon.indexOf('>'));
+                    String secondaryPart = afterColon.substring(afterColon.indexOf('>') + 1);
+
+                    AssignmentStatus status = allStatuses.stream()
+                            .filter(s -> s.getShortName().equalsIgnoreCase(statusPart))
+                            .findFirst().orElse(null);
+                    if (status == null) return List.of();
+
+                    return status.getSecondaries().stream()
+                            .map(Secondary::getShortName)
+                            .map(String::toUpperCase)
+                            .filter(s -> s.startsWith(secondaryPart))
+                            .map(s -> prefix + target + ":" + status.getShortName().toUpperCase() + ">" + s + ",")
+                            .toList();
+                }
+
+                String statusPart = currentToken.substring(currentToken.indexOf(':') + 1);
                 return allStatuses.stream()
+                        .flatMap(s -> {
+                            List<String> values = new ArrayList<>(List.of(s.getShortName() + ","));
+                            if (s.getSecondaries() != null && !s.getSecondaries().isEmpty()) {
+                                values.add(s.getShortName() + ">");
+                            }
+                            return Stream.of(values.toArray(String[]::new));
+                        })
                         .filter(s -> s.startsWith(statusPart))
-                        .map(s -> prefix + target + ":" + s + ",")
+                        .map(s -> prefix + target + ":" + s)
                         .limit(25)
                         .toList();
             }

@@ -1,7 +1,6 @@
 {
   "types": [
     {"name": ">NEW<", "tag": "NEW_INCIDENT"},
-    {"name": ">>CHOOSE CALL TYPE<<", "tag": "NEW_INCIDENT"},
 
     {"name": "MVC", "tag": "MOTOR_VEHICLE_CRASH"},
     {"name": "HIT & RUN", "tag": "MOTOR_VEHICLE_CRASH"},

@@ -11,6 +11,7 @@ import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
+import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.BotManager;
@@ -22,6 +23,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Log;
 
@@ -215,11 +217,14 @@ public class AdminMessageSender extends MessageSender {
                 ) + status.getName());
             }
 
+            SecondaryImpl secondary = (SecondaryImpl) assignment.getSecondary();
             respondingUnitsJoiner.add((current == null ? "  " : "") + "  - " +
                     (unit.getEmoji() != null ? unit.getEmoji().getFormatted() + " " : "") +
                     unit.getLonghand().toUpperCase() +
                     (assignment.getSecondary() != null
-                            ? " (*" + assignment.getSecondary().getShortName() + "*)"
+                            ? " (" +
+                              (Objects.requireNonNull(secondary).getEmoji() != null ? secondary.getEmoji().getFormatted() + " " : "") +
+                              "*" + assignment.getSecondary().getShortName() + "*)"
                             : ""
                     )
             );

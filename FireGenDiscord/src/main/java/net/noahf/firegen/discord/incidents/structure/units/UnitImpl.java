@@ -5,10 +5,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.api.incidents.units.Agency;
-import net.noahf.firegen.api.incidents.units.AssignmentEvent;
-import net.noahf.firegen.api.incidents.units.Unit;
-import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,8 +65,11 @@ public class UnitImpl implements Unit {
                     this.formatted;
         }
 
-        if (assignment.getSecondary() != null) {
-            returned = returned + " (*" + assignment.getSecondary().getShortName() + "*)";
+        SecondaryImpl secondary = (SecondaryImpl) assignment.getSecondary();
+        if (secondary != null) {
+            returned = returned + " (" +
+                    (secondary.getEmoji() != null ? secondary.getEmoji().getFormatted() + " " : "")
+                    + "*" + secondary.getShortName() + "*)";
         }
 
         return returned;

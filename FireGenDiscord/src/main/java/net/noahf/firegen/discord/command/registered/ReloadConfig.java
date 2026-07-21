@@ -30,7 +30,6 @@ public class ReloadConfig extends Command {
     public ReloadConfig() {
         super("reload-config", "Reloads the configuration files of FireGen.",
                 CommandFlags.include()
-                        .permissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
                         .options(new OptionData[]{
                                 new OptionData(OptionType.STRING, "file", "Reload specific file.", false, true),
                                 new OptionData(OptionType.STRING, "new-municipality", "Change the municipality to this one. NOTE: Will trigger a full reload!", false, true)
