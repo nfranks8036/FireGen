@@ -6,9 +6,11 @@ import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.StringSelectors;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -40,6 +42,8 @@ public interface Incident extends Identifiable, StringSelectors {
     List<IncidentLogEntry> getLog();
 
     Set<UnitAssignment> getUnitAssignments();
+
+    void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus type, @Nullable Secondary secondary);
 
     void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus type);
 

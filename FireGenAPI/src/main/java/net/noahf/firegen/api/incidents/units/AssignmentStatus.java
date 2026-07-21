@@ -16,6 +16,8 @@ public interface AssignmentStatus extends AutofilledCharSequence, StringSelector
 
     @Nullable AssignmentPurpose getPurpose();
 
+    List<Secondary> getSecondaries();
+
     @Override
     default List<String> asStringSelectors() {
         return List.of(getName(), getShortName(), String.valueOf(ordinal()));

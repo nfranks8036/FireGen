@@ -7,9 +7,13 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.incidents.units.AssignmentEvent;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
@@ -19,12 +23,19 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.messaging.ReceiveMessageSender;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.incidents.structure.units.AssignmentEventImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.utilities.Time;
 
 import java.awt.*;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UnitInfo extends Command {
 
@@ -32,7 +43,8 @@ public class UnitInfo extends Command {
         super("unit-info", "Get information relating to a specific unit.",
                 CommandFlags.include()
                         .options(new OptionData[]{
-                                new OptionData(OptionType.STRING, "unit", "The unit to get the information of.", true, true)
+                                new OptionData(OptionType.STRING, "unit", "The unit to get the information of.", true, true),
+                                new OptionData(OptionType.STRING, "incident", "The specific incident to view details of.", false, true)
                         })
                         .finish()
         );
@@ -51,26 +63,6 @@ public class UnitInfo extends Command {
             DiscordMessages.error(event, "You must specify a specific unit (see: /units).");
             return;
         }
-
-//        String a = unitMapping.getAsString();
-//        Session session = Main.database.getFactory().openSession();
-//        long id = Long.parseLong(a.substring(1).substring(6));
-//        if (a.startsWith("f")) {
-//            IncidentImpl i = session.find(IncidentImpl.class, id);
-//            DiscordMessages.selfDestruct(event, 20, (i != null ? i.toString() : "null"));
-//        } else if (a.startsWith("p")) {
-//            IncidentImpl i = (IncidentImpl) Main.incidents.getIncidentBy(id);
-//            if (i != null)
-//                session.persist(i);
-//            DiscordMessages.selfDestruct(event, 20, "Persisted------" + (i != null ? i.toString() : "null"));
-//        } else {
-//            DiscordMessages.selfDestruct(event, 5, "Invalid command: " + a.charAt(0));
-//        }
-//        session.close();
-//
-//        if (2 > 1) {
-//            return;
-//        }
 
         ConfigUnits configUnits = Main.config.get(ConfigUnits.class);
         String input = unitMapping.getAsString();
@@ -91,6 +83,66 @@ public class UnitInfo extends Command {
             return;
         }
 
+        OptionMapping incidentMapping = event.getOption("incident");
+        if (incidentMapping != null) {
+            this.showUnitIncidentStatus(event, unit, incidentMapping);
+            return;
+        }
+
+        this.showUnitOverallStatus(event, guild, unit);
+    }
+
+    private void showUnitIncidentStatus(IReplyCallback event, UnitImpl unit, OptionMapping incidentMapping) {
+        final Pattern pattern = Pattern.compile("(\\d{4})-(\\d+)");
+        final Matcher matcher = pattern.matcher(incidentMapping.getAsString());
+
+        if (!matcher.find()) {
+            DiscordMessages.error(event, "Unable to find an incident ID in your string. (YYYY-IIIIIII)");
+            return;
+        }
+
+        String entireNumber = matcher.group(0);
+        long incidentNumber = Long.parseLong(matcher.group(2));
+        IncidentImpl incident = (IncidentImpl) Main.incidents.getIncidentBy(incidentNumber);
+        if (incident == null) {
+            DiscordMessages.error(event, "You have entered an incident ID that does not exist: '" + entireNumber + "'");
+            return;
+        }
+
+        UnitAssignmentImpl assignment = (UnitAssignmentImpl) incident.getUnitAssignmentFor(unit);
+        if (assignment == null) {
+            DiscordMessages.error(event, "That unit, " + unit.getShorthand() + ", is not attached to the incident " + incident.getFormattedId());
+            return;
+        }
+
+        AssignmentStatusImpl latest = (AssignmentStatusImpl) assignment.getLatestAssignment().getStatus();
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setColor(new Color(210, 123, 69))
+                .setTitle(unit.getEmoji().getFormatted() + " " + unit.getLonghand())
+                .setDescription(
+                        "**Incident:** `" + incident.getFormattedId() + "` (" + incident.getType().getSelectedName()
+                        + (incident.getLocation().isSet() ? " @ " + incident.getLocation().format() : "") + ")\n" +
+                                "**Unit:** `" + unit.getLonghand() + "` (" + unit.getAgency().getTitle() + ")\n"
+                        + "**Status:** " + latest.getEmoji().getFormatted() + " " + latest.getName()
+                );
+        for (AssignmentEvent a : assignment.getAssignments()) {
+            long unix = Time.getUnix(a.getTimestamp());
+            AssignmentStatusImpl status = (AssignmentStatusImpl) a.getStatus();
+            embed = embed
+                    .addField(
+                            status.getEmoji().getFormatted() + " " + status.getName(),
+                            "Exact: <t:" + unix + ":f>\nAround: <t:" + unix + ":R>"
+                            + (a.getSecondary() != null ? "\nSecondary: `" + a.getSecondary().getShortName() + "`" : "")
+                            ,
+                            true
+                    );
+        }
+
+        event.replyEmbeds(embed.build()).setEphemeral(true).queue();
+    }
+
+    private void showUnitOverallStatus(IReplyCallback event, Guild guild, UnitImpl unit) {
         Set<UnitAssignment> assignments = unit.getAssignments();
 
         List<MessageEmbed> returned = new ArrayList<>();
@@ -161,10 +213,29 @@ public class UnitInfo extends Command {
         event.replyEmbeds(returned).setEphemeral(true).queue();
     }
 
+    private final List<String> incidents = new ArrayList<>();
+    private long lastUpdated = 0L;
+
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         if (focused.getName().equalsIgnoreCase("unit")) {
             return Main.config.get(ConfigUnits.class).get().stream().map(u -> (UnitImpl) u).filter(u -> !u.isPlaceholder()).map(Unit::getLonghand).toList();
+        }
+        if (focused.getName().equalsIgnoreCase("incident")) {
+            if (lastUpdated > System.currentTimeMillis()) {
+                incidents.clear();
+                lastUpdated = System.currentTimeMillis() + (20 * 1000L);
+                incidents.addAll(
+                        Main.incidents.getIncidents().stream()
+                                .map(i ->
+                                        i.getFormattedId() + ": " +
+                                                i.getType().getSelectedName() +
+                                                (i.getLocation().isSet() ? i.getLocation().format() : "")
+                                )
+                                .toList()
+                );
+            }
+            return incidents;
         }
         return null;
     }

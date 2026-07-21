@@ -381,7 +381,9 @@ public class CreateIncident extends Command {
                     returned = CONTENT.compare(returned);
                 }
 
-                EditUnits.UnitsChangeInput input = units.getOrDefault(s, new EditUnits.UnitsChangeInput(new ArrayList<>(), s));
+                EditUnits.UnitsChangeInput input = units.getOrDefault(s,
+                        new EditUnits.UnitsChangeInput(new ArrayList<>(), s, null)
+                );
                 input.setUnits(inputUnits);
                 units.put(s, input);
             }

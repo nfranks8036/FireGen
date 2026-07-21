@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.AssignmentPurpose;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.f
             new ArrayList<>()
     );
 
-    public AssignmentStatusImpl(String name, String shortName, Emoji emoji, AnsiColor[] ansiColor, int ordinal, @Nullable AssignmentPurpose purpose, List<String> secondaries) {
+    public AssignmentStatusImpl(String name, String shortName, Emoji emoji, AnsiColor[] ansiColor, int ordinal, @Nullable AssignmentPurpose purpose, List<Secondary> secondaries) {
         this(name, shortName,
                 (emoji != null ? emoji.getFormatted() : null),
                 Arrays.stream(ansiColor).map(Enum::name).toArray(String[]::new),
@@ -57,7 +58,7 @@ public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.f
     private transient Emoji emoji = null;
     private transient AnsiColor[] ansiColor = null;
 
-    private @Getter final List<String> secondaries;
+    private @Getter final List<Secondary> secondaries;
 
     public Emoji getEmoji() {
         if (emoji == null) {

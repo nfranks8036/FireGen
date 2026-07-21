@@ -119,7 +119,7 @@ public class AgencyInfo extends Command {
                 for (UnitAssignment a : assignments) {
                     UnitImpl unit = (UnitImpl) a.getUnit();
                     units.remove(unit);
-                    String formattedStatus = unit.getFormattedStatus((AssignmentStatusImpl) a.getLatestAssignment().getStatus());
+                    String formattedStatus = unit.getFormattedStatus(a.getLatestAssignment());
                     formatted.add(formattedStatus);
                 }
 

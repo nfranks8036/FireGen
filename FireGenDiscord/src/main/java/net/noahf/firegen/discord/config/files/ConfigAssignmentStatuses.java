@@ -6,9 +6,12 @@ import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.AssignmentPurpose;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
+import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
+import static net.noahf.firegen.discord.utilities.JsonUtilities.element;
 
 public class ConfigAssignmentStatuses extends MultiObjectConfiguration<AssignmentStatus> {
 
@@ -31,15 +35,24 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
         JsonObject root = e.getAsJsonObject();
 
         JsonArray tagsArray = root.getAsJsonArray("tags");
-        Map<String, List<String>> tags = new HashMap<>();
+        Map<String, List<Secondary>> tags = new HashMap<>();
         for (JsonElement element : tagsArray.asList()) {
             JsonObject object = element.getAsJsonObject();
 
-            String name = object.get("name").getAsString();
+            String name = asStr(object, "name");
             JsonArray secondariesArray = object.get("secondaries").getAsJsonArray();
 
             tags.put(name, secondariesArray.asList().stream()
-                    .map(JsonElement::getAsString)
+                    .map(s -> {
+                        JsonObject secondaryObj = s.getAsJsonObject();
+                        JsonElement emojiElement = element(secondaryObj, "emoji", true);
+                        Emoji emoji = emojiElement != null ? Emoji.fromFormatted(emojiElement.getAsString()) : null;
+                        return new SecondaryImpl(
+                                asStr(secondaryObj, "name"), asStr(secondaryObj, "short"),
+                                emoji
+                        );
+                    })
+                    .map(se -> (Secondary) se)
                     .toList()
             );
         }
@@ -56,11 +69,11 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
             Emoji emoji = Emoji.fromFormatted(emojiStr);
             String ansiStr = asStr(object, "ansi");
             AnsiColor ansi = AnsiColor.valueOf(ansiStr.toUpperCase());
-            JsonElement purposeElement = JsonUtilities.element(object, "purpose", true);
+            JsonElement purposeElement = element(object, "purpose", true);
             AssignmentPurpose purpose = purposeElement != null ? AssignmentPurpose.valueOf(purposeElement.getAsString()) : null;
 
-            JsonElement secondaryTagElement = JsonUtilities.element(object, "tag", true);
-            List<String> secondaries = secondaryTagElement != null ?
+            JsonElement secondaryTagElement = element(object, "tag", true);
+            List<Secondary> secondaries = secondaryTagElement != null ?
                     tags.getOrDefault(secondaryTagElement.getAsString(), new ArrayList<>()) :
                     new ArrayList<>();
 

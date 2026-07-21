@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
+import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
@@ -66,12 +67,10 @@ public class ReceiveMessageSender extends MessageSender {
 
         // send a starting message to the subscribed channels, this will be quickly changed by the following edit
         List<TextChannel> channels = new ArrayList<>(bot.getChannelManager().getFor(ChannelRole.RECEIVER, incident));
-        boolean shouldRemoveNulls = false;
         for (TextChannel channel : channels) {
             try {
                 if (channel == null) {
                     Log.warn("RECEIVE - Can't send a message here. This channel does not exist! Marked for removal.");
-                    shouldRemoveNulls = true;
                     continue;
                 }
 
@@ -148,11 +147,11 @@ public class ReceiveMessageSender extends MessageSender {
 
         for (UnitAssignment unitAssignment : incident.getSortedAssignments()) {
             Unit unit = unitAssignment.getUnit();
-            AssignmentStatusImpl status = (AssignmentStatusImpl) unitAssignment.getLatestAssignment().getStatus();
+            AssignmentEvent assignment = unitAssignment.getLatestAssignment();
 
             String returned;
             if (incident.getStatus().isInProgress()) {
-                returned = ((UnitImpl) unit).getFormattedStatus(status);
+                returned = ((UnitImpl) unit).getFormattedStatus(assignment);
             } else {
                 // we are not going to show the statuses when an incident is closed
                 // the idea being that all of them are going to be "CLEAR" anyways

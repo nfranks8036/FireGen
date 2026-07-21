@@ -6,7 +6,7 @@ import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
-import net.noahf.firegen.discord.incidents.structure.location.LocationPresetImpl;
+import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPresetImpl> {
+public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPreset> {
 
     public ConfigLocationPresets(FireGenVariables vars) {
-        super(vars, LocationPresetImpl.class, vars.municipality() + "/" + vars.locationPresetsFile());
+        super(vars, LocationPreset.class, vars.municipality() + "/" + vars.locationPresetsFile());
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPres
             String key = entry.getKey();
             JsonObject value = entry.getValue().getAsJsonObject();
 
-            LocationPresetImpl preset = new LocationPresetImpl(key, value);
+            LocationPreset preset = new LocationPreset(key, value);
             this.add(preset);
         }
 

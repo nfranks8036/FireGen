@@ -217,8 +217,11 @@ public class AdminMessageSender extends MessageSender {
 
             respondingUnitsJoiner.add((current == null ? "  " : "") + "  - " +
                     (unit.getEmoji() != null ? unit.getEmoji().getFormatted() + " " : "") +
-                    unit.getLonghand().toUpperCase()
-                    + " (`" + unit.getShorthand() + "`)"
+                    unit.getLonghand().toUpperCase() +
+                    (assignment.getSecondary() != null
+                            ? " (*" + assignment.getSecondary().getShortName() + "*)"
+                            : ""
+                    )
             );
 
             current = status;

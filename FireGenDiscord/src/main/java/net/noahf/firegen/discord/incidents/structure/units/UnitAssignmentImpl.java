@@ -11,6 +11,7 @@ import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -32,7 +33,7 @@ public class UnitAssignmentImpl implements UnitAssignment {
         this.assignments = new LinkedList<>();
 
         for (AssignmentStatus event : assignments) {
-            this.assign(contributorWhoInitiatedEvent, event);
+            this.assign(contributorWhoInitiatedEvent, event, null);
         }
     }
 
@@ -65,8 +66,8 @@ public class UnitAssignmentImpl implements UnitAssignment {
         return this.assignments.getLast();
     }
 
-    public void assign(Contributor<?> contributor, AssignmentStatus newAssignment) {
-        this.assign(new AssignmentEventImpl(LocalDateTime.now(), newAssignment, contributor));
+    public void assign(Contributor<?> contributor, AssignmentStatus newAssignment, @Nullable Secondary secondary) {
+        this.assign(new AssignmentEventImpl(LocalDateTime.now(), newAssignment, contributor, secondary));
     }
 
     public void assign(AssignmentEvent newEvent) {

@@ -3,6 +3,7 @@ package net.noahf.firegen.api.incidents.units;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -18,6 +19,6 @@ public interface UnitAssignment extends AutofilledCharSequence, Comparable<UnitA
 
     AssignmentEvent getLatestAssignment();
 
-    void assign(Contributor<?> contributor, AssignmentStatus newAssignment);
+    void assign(Contributor<?> contributor, AssignmentStatus newAssignment, @Nullable Secondary secondary);
 
 }

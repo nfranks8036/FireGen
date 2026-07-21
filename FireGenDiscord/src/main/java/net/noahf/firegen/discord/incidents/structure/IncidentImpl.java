@@ -11,6 +11,7 @@ import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
@@ -169,15 +170,20 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     @Override
-    public void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus assignment) {
+    public void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus assignment, @Nullable Secondary secondary) {
         UnitAssignment unitAssignment = this.getUnitAssignmentFor(unit);
         if (unitAssignment == null) {
             unitAssignment = new UnitAssignmentImpl(this, unit, contributor);
             this.unitAssignments.add(unitAssignment);
         }
 
-        unitAssignment.assign(contributor, assignment);
+        unitAssignment.assign(contributor, assignment, secondary);
         this.refreshStatus();
+    }
+
+    @Override
+    public void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus assignment) {
+        this.assignUnit(unit, contributor, assignment, null);
     }
 
     public UnitAssignment getUnitAssignmentFor(Unit unit) {

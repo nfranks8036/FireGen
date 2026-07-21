@@ -14,6 +14,6 @@ public interface AssignmentEvent extends AutofilledCharSequence {
 
     Contributor<?> getContributor();
 
-    @Nullable String getSecondary();
+    @Nullable Secondary getSecondary();
 
 }

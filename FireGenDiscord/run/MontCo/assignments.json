@@ -57,7 +57,16 @@
     {
       "name": "HOSPITALS",
       "secondaries": [
-        "LGHM", "LGHFS", "LGH", "LGHP", "NRVMC", "RMH", "GCH", "UVAMC", "DUH", "WFBMC"
+        {"name": "LewisGale Hospital Montgomery", "short": "LGHM", "emoji": "<:lewisgale:1528848188478591026>"},
+        {"name": "LewisGale Hospital Christiansburg Free-standing", "short": "LGHFS", "emoji": "<:lewisgale:1528848188478591026>"},
+        {"name": "Carilion New River Valley Medical Center", "short": "NRVMC", "emoji": "<:carilion:1528848468922339398>"},
+        {"name": "Carilion Roanoke Memorial Hospital", "short": "RMH", "emoji": "<:carilion:1528848468922339398>"},
+        {"name": "LewisGale Hospital Salem", "short": "LGH", "emoji": "<:lewisgale:1528848188478591026>"},
+        {"name": "LewisGale Hospital Pulaski", "short": "LGHP", "emoji": "<:lewisgale:1528848188478591026>"},
+        {"name": "Carilion Giles Community Hospital", "short": "GCH", "emoji": "<:carilion:1528848468922339398>"},
+        {"name": "UVA Health Medical Center", "short": "UVAMC", "emoji": "<:uvamc:1528848678205522193>"},
+        {"name": "Duke University Hospital", "short": "DUH", "emoji": "<:duh:1528848923635220591>"},
+        {"name": "Atrium Wake Forest Baptist Medical Center", "short": "WFBMC", "emoji": "<:wfbmc:1528849250430095487>"}
       ]
     }
   ]
