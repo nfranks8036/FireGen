@@ -11,10 +11,7 @@ import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.internal.requests.restaction.interactions.AutoCompleteCallbackActionImpl;
-import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
-import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.Main;
@@ -24,15 +21,12 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.messaging.ReceiveMessageSender;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
-import net.noahf.firegen.discord.incidents.structure.units.AssignmentEventImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Time;
 
 import java.awt.*;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -69,9 +63,9 @@ public class UnitInfo extends Command {
         String input = unitMapping.getAsString();
         String unitString = input.replace("-BYP", "");
         boolean bypassRestrictions = input.contains("-BYP");
-        Unit iUnit = configUnits.getUnitByLonghand(unitString);
+        Unit iUnit = configUnits.fromLonghand(unitString);
         if (iUnit == null) {
-            iUnit = configUnits.getUnitByShorthand(unitString);
+            iUnit = configUnits.fromShorthand(unitString);
         }
 
         if (iUnit == null) {

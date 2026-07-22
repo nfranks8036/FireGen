@@ -77,12 +77,12 @@ public class ConfigIncidentTypes extends MultiObjectConfiguration<IncidentType> 
      * @return the list of incident types which are autocomplete ready (can be fed into Discord's autocomplete). Please
      *         note: this <b>DOES NOT</b> limit the amount of results, you will receive the full list!
      */
-    public List<String> getAutocompleteIncidentTypes() {
+    public List<String> asAutocompleteStrings() {
         return this.get().stream().map(IncidentType::getSelectedName)
                 .toList();
     }
 
-    public IncidentType getTypeFromString(String type) {
+    public IncidentType fromString(String type) {
         for (IncidentType t : this.get()) {
             if (t.getSelectedName().equalsIgnoreCase(type)) {
                 return t;

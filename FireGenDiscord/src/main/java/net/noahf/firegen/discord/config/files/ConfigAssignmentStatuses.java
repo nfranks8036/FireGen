@@ -8,11 +8,9 @@ import net.noahf.firegen.api.incidents.units.AssignmentPurpose;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.utilities.FireGenVariables;
-import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
-import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 
@@ -84,7 +82,7 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
         Log.info("Imported assignment statuses " + String.join(", ", this.get()));
     }
 
-    public AssignmentStatus getAssignmentStatusByShortName(String shortName) {
+    public AssignmentStatus fromShortName(String shortName) {
         for (AssignmentStatus status : this.get()) {
             if (status.getShortName().equalsIgnoreCase(shortName)) {
                 return status;

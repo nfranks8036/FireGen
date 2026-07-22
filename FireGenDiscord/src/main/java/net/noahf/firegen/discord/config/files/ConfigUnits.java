@@ -108,7 +108,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         this.agencies = new ArrayList<>();
     }
 
-    public @Nullable Unit getUnitByShorthand(String shorthand) {
+    public @Nullable Unit fromShorthand(String shorthand) {
         for (Unit a : this.get()) {
             if (a.getShorthand().equalsIgnoreCase(shorthand)) {
                 return a;
@@ -117,7 +117,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         return null;
     }
 
-    public @Nullable Unit getUnitByLonghand(String longhand) {
+    public @Nullable Unit fromLonghand(String longhand) {
         for (Unit a : this.get()) {
             if (a.getLonghand().equalsIgnoreCase(longhand)) {
                 return a;
@@ -126,7 +126,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         return null;
     }
 
-    public @Nullable Agency getAgencyByShorthand(String shorthand) {
+    public @Nullable Agency agencyFromShorthand(String shorthand) {
         for (Agency a : this.agencies) {
             if (a.getShorthand().equalsIgnoreCase(shorthand)) {
                 return a;
@@ -135,7 +135,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         return null;
     }
 
-    public @Nullable Agency getAgencyByLonghand(String longhand) {
+    public @Nullable Agency agencyFromLonghand(String longhand) {
         for (Agency a : this.agencies) {
             if (a.getTitle().equalsIgnoreCase(longhand)) {
                 return a;

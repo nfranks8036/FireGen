@@ -18,14 +18,12 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
 import net.noahf.firegen.discord.incidents.structure.IncidentTimeImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
-import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.StringJoiner;
 
 public class ReceiveMessageSender extends MessageSender {
@@ -105,7 +103,7 @@ public class ReceiveMessageSender extends MessageSender {
 
         List<String> log = super.getService().getNarrativeFormatted(incident, false);
 
-        IncidentStatusEmoji status = Main.config.get(ConfigIncidentStatuses.class).getEmoji(incident.getStatus());
+        IncidentStatusEmoji status = Main.config.get(ConfigIncidentStatuses.class).asEmoji(incident.getStatus());
         IncidentTimeImpl time = (IncidentTimeImpl) incident.getTime();
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();
 

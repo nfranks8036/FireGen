@@ -33,7 +33,7 @@ public class ConfigIncidentStatuses extends MultiObjectConfiguration<IncidentSta
         Log.info("Imported incident statuses " + String.join(", ", this.get()));
     }
 
-    public IncidentStatusEmoji getEmoji(IncidentStatus status) {
+    public IncidentStatusEmoji asEmoji(IncidentStatus status) {
         for (IncidentStatusEmoji e : this.get()) {
             if (e.getStatus() == status) {
                 return e;

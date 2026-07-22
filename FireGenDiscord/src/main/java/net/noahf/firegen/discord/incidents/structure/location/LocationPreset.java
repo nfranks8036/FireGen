@@ -4,7 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
-import net.noahf.firegen.discord.incidents.IncidentManager;
+import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class LocationPreset extends IncidentLocationImpl {
             JsonElement venueElement = JsonUtilities.element(object, "venue", true);
             LocationVenue venue = null;
             if (venueElement != null) {
-//                venue = manager.getVenueBy(venueElement.getAsString());
+                venue = Main.config.get(ConfigVenues.class).fromName(venueElement.getAsString());
             }
 
             JsonElement commonNameElement = JsonUtilities.element(object, "common_name", true);

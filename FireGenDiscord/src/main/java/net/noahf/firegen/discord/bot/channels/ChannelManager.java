@@ -71,7 +71,9 @@ public class ChannelManager {
                     FireGenChannel fireGenChannel = new FireGenChannel(bot.jda(), channel, role, conditionals);
                     this.channels.add(fireGenChannel);
                 } catch (DefectiveChannelError error) {
-                    Log.warn(error.toString());
+                    Log.warn(error.toString()
+                            .replace("net.noahf.firegen.discord.bot.channels.", "FireGen#")
+                    );
                 }
             }
         });

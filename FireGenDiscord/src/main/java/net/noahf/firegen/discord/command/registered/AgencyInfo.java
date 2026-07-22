@@ -20,7 +20,6 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
-import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 
 import java.awt.*;
@@ -62,9 +61,9 @@ public class AgencyInfo extends Command {
 
         String agencyString = agencyMapping.getAsString();
         ConfigUnits configUnits = Main.config.get(ConfigUnits.class);
-        Agency iAgency = configUnits.getAgencyByLonghand(agencyString);
+        Agency iAgency = configUnits.agencyFromLonghand(agencyString);
         if (iAgency == null) {
-            iAgency = configUnits.getAgencyByShorthand(agencyString);
+            iAgency = configUnits.agencyFromShorthand(agencyString);
         }
 
         if (iAgency == null) {

@@ -15,7 +15,6 @@ import net.noahf.firegen.discord.actions.registered.EditMode;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.command.CommandManager;
 import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
@@ -121,7 +120,7 @@ public class SetDetails extends Command {
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         return switch (focused.getName()) {
-            case "type" -> Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).getAutocompleteIncidentTypes());
+            case "type" -> Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).asAutocompleteStrings());
             case "location" -> CreateIncident.Helper.autocompleteLocation(focused);
             case "units" -> Main.commands.autocompleteSearch(focused.getValue(), CreateIncident.Helper.autocompleteUnits(focused));
             default -> null;

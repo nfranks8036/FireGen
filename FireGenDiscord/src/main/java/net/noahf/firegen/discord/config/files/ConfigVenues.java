@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
-import net.noahf.firegen.discord.config.SingleObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +40,7 @@ public class ConfigVenues extends MultiObjectConfiguration<LocationVenue> {
      * @param name the name for the venue
      * @return the associated venue with that name, or {@code null} if it's not found
      */
-    public @Nullable LocationVenue getVenueBy(String name) {
+    public @Nullable LocationVenue fromName(String name) {
         if (name == null) {
             return null;
         }
@@ -58,7 +57,7 @@ public class ConfigVenues extends MultiObjectConfiguration<LocationVenue> {
      * Retrieves the list of {@link LocationVenueImpl venues} stringified by their name and concatenated with a ", "
      * @return the string form of the venues.
      */
-    public String getConcatenatedVenues() {
+    public String asUnifiedString() {
         return this.get().stream().map(LocationVenue::getName).collect(Collectors.joining(", "));
     }
 }

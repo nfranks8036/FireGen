@@ -190,7 +190,7 @@ public class CreateIncident extends Command {
         return switch (focused.getName()) {
             case "type" ->
                 // send the list of all motor vehicle crashes
-                Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).getAutocompleteIncidentTypes());
+                Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).asAutocompleteStrings());
 
             case "location" ->
                     Helper.autocompleteLocation(focused);
@@ -217,7 +217,7 @@ public class CreateIncident extends Command {
             if (input.startsWith("$")) {
                 location = extractLocation(input.substring(1));
             } else {
-                location = Main.config.get(ConfigLocationPresets.class).getPresetByAnyName(input);
+                location = Main.config.get(ConfigLocationPresets.class).fromAnyName(input);
             }
 
             if (location == null) {
@@ -262,7 +262,7 @@ public class CreateIncident extends Command {
                     }
                     if (field.getId().equalsIgnoreCase("venue")) {
                         remove.add(i);
-                        venue = Main.config.get(ConfigVenues.class).getVenueBy(dataString.get(i));
+                        venue = Main.config.get(ConfigVenues.class).fromName(dataString.get(i));
                     }
                 }
 
@@ -314,7 +314,7 @@ public class CreateIncident extends Command {
                 List<Unit> inputUnits = new ArrayList<>();
                 switch (type) {
                     case UNIT -> {
-                        Unit u = configUnits.getUnitByShorthand(targetString);
+                        Unit u = configUnits.fromShorthand(targetString);
                         if (u == null) {
                             DiscordMessages.error(event, "No unit exist by the name '" + targetString + "'");
                             returned = CONTENT.compare(returned);
@@ -323,7 +323,7 @@ public class CreateIncident extends Command {
                         inputUnits.add(u);
                     }
                     case AGENCY -> {
-                        Agency a = configUnits.getAgencyByShorthand(targetString.substring(1));
+                        Agency a = configUnits.agencyFromShorthand(targetString.substring(1));
                         if (a == null) {
                             DiscordMessages.error(event, "No agency exist by the name '" + targetString + "'");
                             returned = CONTENT.compare(returned);
@@ -340,7 +340,7 @@ public class CreateIncident extends Command {
                     case CUSTOM -> {
                         // ?SHORTHAND.LONGHAND.AGENCY
                         String[] text = targetString.substring(1).split("\\.");
-                        Agency agency = configUnits.getAgencyByShorthand(text[2]);
+                        Agency agency = configUnits.agencyFromShorthand(text[2]);
                         if (agency == null) {
                             agency = new AgencyImpl(text[2], text[2], text[2], "N/A",
                                     AgencyType.OTHER, null, Integer.MAX_VALUE,
@@ -381,7 +381,7 @@ public class CreateIncident extends Command {
                     statusString = statusString.split(">")[0];
                 } else secondaryString = null;
 
-                AssignmentStatus status = config.get(ConfigAssignmentStatuses.class).getAssignmentStatusByShortName(statusString);
+                AssignmentStatus status = config.get(ConfigAssignmentStatuses.class).fromShortName(statusString);
                 if (status == null) {
                     status = AssignmentStatusImpl.ADD_UNIT;
                     DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +

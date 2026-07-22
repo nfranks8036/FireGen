@@ -104,7 +104,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public void setTypeBySearch(String type) {
-        IncidentType newType = Main.config.get(ConfigIncidentTypes.class).getTypeFromString(type);
+        IncidentType newType = Main.config.get(ConfigIncidentTypes.class).fromString(type);
         if (type.startsWith("custom:")) {
             type = type.substring("custom:".length()).toUpperCase();
             newType = new IncidentTypeImpl(type, IncidentTypeTagImpl.DEFAULT, 0);

@@ -35,7 +35,7 @@ public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPres
         Log.info("Imported " + this.count() + " preset locations.");
     }
 
-    public List<String> listAllPresetLocationsForAutocomplete() {
+    public List<String> asAutocompleteStrings() {
         return Stream.concat(
                         this.get().stream().map(IncidentLocationImpl::getCommonName).filter(Objects::nonNull),
                         this.get().stream().map(lp -> String.join(" ", lp.getData()))
@@ -43,7 +43,7 @@ public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPres
                 .toList();
     }
 
-    public @Nullable IncidentLocation getPresetByAnyName(String text) {
+    public @Nullable IncidentLocation fromAnyName(String text) {
         return this.get().stream()
                 .filter(lp ->
                         (lp.getCommonName() != null ? lp.getCommonName() : "").equalsIgnoreCase(text)

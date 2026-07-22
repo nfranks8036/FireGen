@@ -138,7 +138,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
 
         // ------- [ GET VENUE IF SET ] --------
         ModalMapping venueMapping = event.getValue("venue");
-        LocationVenue venue = ctx.getConfig().get(ConfigVenues.class).getVenueBy(venueMapping != null ? venueMapping.getAsString() : null);
+        LocationVenue venue = ctx.getConfig().get(ConfigVenues.class).fromName(venueMapping != null ? venueMapping.getAsString() : null);
 
         // ------- [ GET COMMON NAME IF SET ] --------
         ModalMapping commonNameMapping = event.getValue("common-name");
