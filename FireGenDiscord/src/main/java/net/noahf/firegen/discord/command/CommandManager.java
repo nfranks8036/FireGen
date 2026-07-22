@@ -44,6 +44,7 @@ public class CommandManager extends ListenerAdapter {
 
         Log.info("Attempting to load and register " + classes.size() + " commands in " + COMMANDS_PACKAGE + "...");
 
+        StringJoiner registered = new StringJoiner(", ");
         for (Class<? extends Command> clazz : classes) {
 
             try {
@@ -69,8 +70,8 @@ public class CommandManager extends ListenerAdapter {
 //                    continue;
 //                }
 
-                Log.info("Registered: /" + newInstance.name + " (class: " + clazz.getCanonicalName() + ")");
                 commands.add(newInstance);
+                registered.add(newInstance.name);
 
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException error) {
                 Log.error("An error occurred while registering commands: " + error, error);
@@ -92,7 +93,7 @@ public class CommandManager extends ListenerAdapter {
         );
 
         jda.updateCommands().addCommands(allCommandData).complete();
-        Log.info("Successfully registered all commands with JDA, returned with " + this.commands.size() + " commands.");
+        Log.info("Registered " + commands.size() + " commands: " + registered.toString());
 
     }
 

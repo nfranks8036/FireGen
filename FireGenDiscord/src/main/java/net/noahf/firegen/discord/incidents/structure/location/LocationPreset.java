@@ -13,7 +13,7 @@ import java.util.List;
 
 public class LocationPreset extends IncidentLocationImpl {
 
-    public LocationPreset(String key, JsonObject object) {
+    public LocationPreset(String key, JsonObject object, ConfigVenues venues) {
         super(new ArrayList<>(List.of(key)));
         try {
             JsonElement locationElement  = JsonUtilities.element(object, "location");
@@ -36,7 +36,7 @@ public class LocationPreset extends IncidentLocationImpl {
             JsonElement venueElement = JsonUtilities.element(object, "venue", true);
             LocationVenue venue = null;
             if (venueElement != null) {
-                venue = Main.config.get(ConfigVenues.class).fromName(venueElement.getAsString());
+                venue = venues.fromName(venueElement.getAsString());
             }
 
             JsonElement commonNameElement = JsonUtilities.element(object, "common_name", true);

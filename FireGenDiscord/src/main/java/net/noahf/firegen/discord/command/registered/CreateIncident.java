@@ -644,7 +644,7 @@ public class CreateIncident extends Command {
 
         static List<String> autocompleteLocation(AutoCompleteQuery focused) {
             String input = focused.getValue().toUpperCase();
-            List<String> returned = new ArrayList<>(Main.config.get(ConfigLocationPresets.class).listAllPresetLocationsForAutocomplete());
+            List<String> returned = new ArrayList<>(Main.config.get(ConfigLocationPresets.class).asAutocompleteStrings());
 
             if (input.contains(":")) {
 

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.config.DependencyRequest;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
@@ -18,7 +19,9 @@ import java.util.stream.Stream;
 public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPreset> {
 
     public ConfigLocationPresets(FireGenVariables vars) {
-        super(vars, LocationPreset.class, vars.municipality() + "/" + vars.locationPresetsFile());
+        super(vars, LocationPreset.class, vars.municipality() + "/" + vars.locationPresetsFile(),
+                new DependencyRequest().dependOn(ConfigVenues.class)
+        );
     }
 
     @Override
@@ -28,7 +31,7 @@ public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPres
             String key = entry.getKey();
             JsonObject value = entry.getValue().getAsJsonObject();
 
-            LocationPreset preset = new LocationPreset(key, value);
+            LocationPreset preset = new LocationPreset(key, value, this.getDependencies().get(ConfigVenues.class));
             this.add(preset);
         }
 

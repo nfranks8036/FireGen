@@ -12,10 +12,7 @@ import org.reflections.Reflections;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -35,6 +32,7 @@ public class ActionsManager {
 
         Log.info("Attempting to load and register " + classes.size() + " actions in " + ACTIONS_PACKAGE + "...");
 
+        StringJoiner registered = new StringJoiner(", ");
         for (Class<? extends FireGenAction> clazz : classes) {
 
             try {
@@ -54,14 +52,16 @@ public class ActionsManager {
 
                 FireGenAction newInstance = (FireGenAction) constructor.newInstance();
 
-                Log.info("Registered action '" + newInstance.getName() + "' (class: " + clazz.getCanonicalName() + ")");
                 actions.add(newInstance);
+                registered.add(newInstance.getName());
 
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException error) {
                 Log.error("An error occurred while registering actions: " + error, error);
             }
 
         }
+
+        Log.info("Registered " + actions.size() + " actions: " + registered.toString());
     }
 
     public @Nullable FireGenAction getAction(String id) {

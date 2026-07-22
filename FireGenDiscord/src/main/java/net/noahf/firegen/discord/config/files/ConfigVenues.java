@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.config.DependencyRequest;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.utilities.Log;
