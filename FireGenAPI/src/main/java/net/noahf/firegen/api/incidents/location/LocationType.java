@@ -14,6 +14,7 @@ public enum LocationType implements StringSelectors {
             "Location",
             "Address",
             "A numeric address. Requires: Street address, including numerics. Allows: Common name, venue.",
+            " ",
             newField("Address Numerics", "The numbers representing the address.", "address-numerics", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(2)
@@ -36,6 +37,7 @@ public enum LocationType implements StringSelectors {
             "Location",
             "Mile-Marker / Landmark",
             "A mile-marker or landmark on a road. Requires: Mile marker/landmark, road name. Allows: Venue.",
+            " @ ",
             newField("Road Name", "The road the call is on. Use 'US-' for US routes and 'I-' for interstates. Add direction of travel.", "milemarker-roadname", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(1)
@@ -57,6 +59,7 @@ public enum LocationType implements StringSelectors {
             "Location",
             "Latitude & Longitude",
             "A latitude and longitude. Requires: Two float values. Allows: Additional information, venue.",
+            ", ",
             newField("Latitude", "The latitude, in *DECIMAL DEGREES*, of the incident.", "latitudelongitude-latitude", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(1)
@@ -83,6 +86,7 @@ public enum LocationType implements StringSelectors {
             "Location",
             "Intersection",
             "An intersection of two roads. Requires: Two or more roads. Allows: Multiple roads.",
+            " / ",
             newField("Intersection: Road #1", "The first road in the intersection.", "intersection-road1", TextType.SHORT)
                     .setRequired(true)
                     .setPlaceholder("Ex: N Main St")
@@ -108,6 +112,7 @@ public enum LocationType implements StringSelectors {
             "Cross-streets",
             "Cross-streets",
             "Two cross-streets for generic locations. Requires: At least one road. Allows: Multiple roads.",
+            ", ",
             newField("Cross-street: Road #1", "The primary road in the cross-streets.", "crossstreets-road1", TextType.SHORT)
                     .setRequired(true)
                     .setPlaceholder("Ex: N Main St")
@@ -133,6 +138,7 @@ public enum LocationType implements StringSelectors {
             "Location",
             "Custom Location",
             "Custom text to describe the location if none of the above fit.",
+            ", ",
             newField("Custom Text", "Enter the custom location type in this box.", "custom-custom", TextType.PARAGRAPH)
                     .setRequired(true)
                     .setMaxLength(200)
@@ -141,13 +147,14 @@ public enum LocationType implements StringSelectors {
             VENUE
     );
 
-    private final String prefix, title, description;
+    private final String prefix, title, description, defaultDataDelimiter;
     private final LocationField[] fields;
 
-    LocationType(String prefix, String title, String description, LocationField... fields) {
+    LocationType(String prefix, String title, String description, String defaultDataDelimiter, LocationField... fields) {
         this.prefix = prefix;
         this.title = title;
         this.description = description;
+        this.defaultDataDelimiter = defaultDataDelimiter;
         this.fields = fields;
     }
 

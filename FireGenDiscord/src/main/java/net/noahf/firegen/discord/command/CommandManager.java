@@ -71,7 +71,7 @@ public class CommandManager extends ListenerAdapter {
 //                }
 
                 commands.add(newInstance);
-                registered.add(newInstance.name);
+                registered.add("/" + newInstance.name);
 
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException error) {
                 Log.error("An error occurred while registering commands: " + error, error);

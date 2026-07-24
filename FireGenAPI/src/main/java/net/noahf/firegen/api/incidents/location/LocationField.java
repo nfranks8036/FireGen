@@ -10,12 +10,23 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a desired {@link IncidentLocation} input field, which is useful for determining what the user UI for the
+ * input of an {@link Incident incident's} location should consist of.
+ */
 @Builder(builderMethodName = "", setterPrefix = "set", toBuilder = true)
 @Getter
 @EqualsAndHashCode
 @ToString
 public class LocationField {
 
+    /**
+     * Requires a specific venue type before this function will be utilized. This is useful for auto-filling UI fields
+     * so that the UI will not interpret data liberally.
+     * @param function the parent function
+     * @param type the required type (the enum name of {@link LocationType})
+     * @return the function with the added requirement of the {@link LocationType}=={@code type}
+     */
     public static Function<Incident, String> requireType(Function<IncidentLocation, String> function, String type) {
         return (i) -> {
             try {
@@ -30,6 +41,13 @@ public class LocationField {
         };
     }
 
+    /**
+     * Creates a new {@link LocationField} based on some presets.
+     * @param title see {@link LocationField#getTitle()}
+     * @param description see {@link LocationField#getDescription()}
+     * @param id see {@link LocationField#getId()}
+     * @param type see {@link LocationField#getType()}
+     */
     public static LocationFieldBuilder newField(String title, String description, String id, TextType type) {
         return new LocationFieldBuilder()
                 // inputted required values
@@ -45,6 +63,9 @@ public class LocationField {
                 .setPlaceholder(null);
     }
 
+    /**
+     * See {@link IncidentLocation#getVenue()} for more information.
+     */
     public static LocationField VENUE = LocationField.newField(
             "Venue",
             "OPTIONAL: {VENUES}",
@@ -59,6 +80,9 @@ public class LocationField {
             })
             .build();
 
+    /**
+     * See {@link IncidentLocation#getCommonName()} for more information.
+     */
     public static final LocationField COMMON_NAME = LocationField.newField(
             "Common Name",
             "OPTIONAL: The name the general public refers to this location as.",
@@ -70,10 +94,7 @@ public class LocationField {
             .setPlaceholder("Ex: Municipal Building")
             .setAutofill((i) -> i.getLocation().getCommonName())
             .build();
-
-
-
-
+    
     private final String title;
     private final String description;
     private final String id;

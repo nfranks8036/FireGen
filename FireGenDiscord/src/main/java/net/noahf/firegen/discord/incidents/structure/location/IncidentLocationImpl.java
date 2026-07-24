@@ -130,24 +130,10 @@ public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSeq
     }
 
     public String getRequiredData(@Nullable String dataDelimiter) {
+        String delimiter = returnUnlessNull(dataDelimiter, this.getType().getDefaultDataDelimiter());
         return switch (this.getType()) {
-            case ADDRESS -> {
-                String delimiter = returnUnlessNull(dataDelimiter, " ");
-                yield data.get(0) + delimiter + data.get(1);
-            }
-            case MILE_MARKER -> {
-                String delimiter = returnUnlessNull(dataDelimiter, " @ ");
-                yield data.get(0) + delimiter + data.get(1);
-            }
-            case INTERSECTION -> {
-                String delimiter = returnUnlessNull(dataDelimiter, " / ");
-                yield String.join(delimiter, data);
-            }
-            case CROSS_STREETS, LATITUDE_LONGITUDE, CUSTOM -> {
-                String delimiter = returnUnlessNull(dataDelimiter, ", ");
-                yield String.join(delimiter, data);
-            }
-            default -> " ";
+            case ADDRESS, MILE_MARKER -> data.get(0) + delimiter + data.get(1);
+            default -> String.join(delimiter, data);
         };
     }
 
