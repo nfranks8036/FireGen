@@ -16,6 +16,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static net.noahf.firegen.api.incidents.location.LocationType.ADDRESS;
+import static net.noahf.firegen.api.incidents.location.LocationType.MILE_MARKER;
+
 /**
  * Represents a location of an {@link IncidentImpl Incident}.
  */
@@ -131,10 +134,10 @@ public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSeq
 
     public String getRequiredData(@Nullable String dataDelimiter) {
         String delimiter = returnUnlessNull(dataDelimiter, this.getType().getDefaultDataDelimiter());
-        return switch (this.getType()) {
-            case ADDRESS, MILE_MARKER -> data.get(0) + delimiter + data.get(1);
-            default -> String.join(delimiter, data);
-        };
+        if (this.getType().equals(ADDRESS) || this.getType().equals(MILE_MARKER)) {
+            return data.get(0) + delimiter + data.get(1);
+        }
+        return String.join(delimiter, data);
     }
 
     private String returnUnlessNull(@Nullable String userInput, String def) {

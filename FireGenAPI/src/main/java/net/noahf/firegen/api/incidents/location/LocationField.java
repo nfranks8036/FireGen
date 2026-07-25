@@ -94,20 +94,60 @@ public class LocationField {
             .setPlaceholder("Ex: Municipal Building")
             .setAutofill((i) -> i.getLocation().getCommonName())
             .build();
-    
+
+    /**
+     * Represents the title for the field, such as "Street Name"
+     */
     private final String title;
+
+    /**
+     * Represents the description of the field, such as "The name of the street the numeric address is on."
+     */
     private final String description;
+
+    /**
+     * Represents the ID that uniquely identifies this field, such as "address-numerics". This ID typically includes
+     * the LocationType in it before the "-" (in this case, "address" is the location type).
+     */
     private final String id;
+
+    /**
+     * Represents the input field type as a {@link TextType}, view that class for more information.
+     */
     private final TextType type;
 
+    /**
+     * Represents if the field is required for the {@link LocationType} to function.
+     */
     private boolean required = true;
+
+    /**
+     * Represents the minimum text length the LocationType expects of the field.
+     */
     private int minLength = -1;
+
+    /**
+     * Represents the maximum text length the LocationType expects of the field.
+     */
     private int maxLength = -1;
+
+    /**
+     * Represents the text that is the 'placeholder', which is usally the grayed-out text that the end-user can
+     * write over.
+     */
     private String placeholder = null;
+
+    /**
+     * Represents what text would already be in the field, typically a value already set in the {@link Incident}
+     */
     private Function<Incident, String> autofill = null;
 
 
-
+    /**
+     * The TextType represents how the text box is formatted for the end-user. Noteably, this has <b>no effect</b>
+     * on the minimum or maximum text length, that detail is set in the {@link LocationField#getMaxLength()} and
+     * {@link LocationField#getMinLength()}.
+     */
     public enum TextType {
         SHORT, PARAGRAPH
     }
@@ -116,6 +156,11 @@ public class LocationField {
 
     private static boolean setFields = false;
 
+    /**
+     * <b>Not for API use.</b>
+     * @deprecated internal method only, do not use, you will almost 100% of the time get a Void return with some text
+     * printed in {@link System#err}.
+     */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     public static void setKnownVenues(List<LocationVenue> venues) {

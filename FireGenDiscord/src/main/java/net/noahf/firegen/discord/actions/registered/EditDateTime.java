@@ -133,7 +133,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
     public MessageStatus onSubmit(Incident incident, IReplyCallback event, FireGenVariables vars, LocalDate date, LocalTime time) {
         incident.getTime().setDate(date, time);
 
-        String narrative = "Changed date & time to " +
+        String narrative = "Changed Date/Time to " +
                 date.format(DateTimeFormatter.ofPattern(vars.dateFormat())) + " @ " +
                 time.format(DateTimeFormatter.ofPattern(vars.longTimeFormat()));
 

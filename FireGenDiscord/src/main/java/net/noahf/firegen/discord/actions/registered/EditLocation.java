@@ -47,7 +47,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      * a {@link StringSelectMenu}
      */
     private static final List<SelectOption> LOCATION_SELECT_OPTIONS =
-            Arrays.stream(LocationType.values())
+            LocationType.values().stream()
                     .map(lt ->
                             SelectOption.of(lt.getTitle(), lt.name())
                                     .withDescription(lt.getDescription())
@@ -158,7 +158,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
     public MessageStatus onSubmit(Incident incident, IReplyCallback event, LocationType type, IncidentLocation location) {
         incident.setLocation(location);
 
-        String narrative = type.getPrefix() + " UPDATED: " + location.format();
+        String narrative = type.getPrefix() + " Updated: " + location.format();
 
         Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);

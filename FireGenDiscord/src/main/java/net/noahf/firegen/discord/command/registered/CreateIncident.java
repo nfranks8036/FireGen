@@ -701,7 +701,7 @@ public class CreateIncident extends Command {
                 }
 
 
-            } else returned.addAll(Arrays.stream(LocationType.values())
+            } else returned.addAll(LocationType.values().stream()
                     .map(LocationType::name)
                     .map(s -> "$" + s + ":")
                     .toList());

@@ -45,8 +45,8 @@ public class ChangeStatus implements ButtonAction {
 
         Contributor<User> user = incident.addContributor(event.getUser());
         String narrative = switch (newStatus) {
-            case PENDING, ACTIVE -> "Incident re-opened";
-            case CLOSED -> "Incident closed";
+            case PENDING, ACTIVE -> "Incident Re-opened";
+            case CLOSED -> "Incident Closed";
             default -> "Incident status changed to " + newStatus.name();
         };
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);

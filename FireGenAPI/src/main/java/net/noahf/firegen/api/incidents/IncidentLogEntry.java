@@ -38,6 +38,13 @@ public interface IncidentLogEntry extends Identifiable, Comparable<IncidentLogEn
         NOTE,
         HIDDEN;
 
+        public boolean isUserInput() {
+            return switch (this) {
+                case NARRATIVE, NOTE -> true;
+                default -> false;
+            };
+        }
+
 //        private static final int MAX_LENGTH = Arrays.stream(EntryType.values())
 //                .mapToInt(e -> e.name().length())
 //                .max()

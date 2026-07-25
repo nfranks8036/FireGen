@@ -65,15 +65,15 @@ public class IncidentTypeTagImpl implements IncidentTypeTag {
     }
 
     @Override
-    public List<String> findTypeOptions(String type) {
+    public List<String> findTypeOptions(String genericIncidentType) {
         List<String> returned = new ArrayList<>();
         if (this.qualifiers == null) {
-            returned.add(type);
+            returned.add(genericIncidentType);
             return returned;
         }
 
         if (!this.qualifiers.isRequired()) {
-            returned.add(type);
+            returned.add(genericIncidentType);
         }
 
         if (!this.qualifiers.isUnique()) {
@@ -89,7 +89,7 @@ public class IncidentTypeTagImpl implements IncidentTypeTag {
                 }
 
                 output.add(this.qualifiers.getSyntax()
-                        .replace("{T}", type)
+                        .replace("{T}", genericIncidentType)
                         .replace("{Q}", String.join(", ", combo))
                 );
             }
@@ -101,7 +101,7 @@ public class IncidentTypeTagImpl implements IncidentTypeTag {
 
         for (String q : this.qualifiers.getQualifiers()) {
             returned.add(this.qualifiers.getSyntax()
-                    .replace("{T}", type)
+                    .replace("{T}", genericIncidentType)
                     .replace("{Q}", q)
             );
         }

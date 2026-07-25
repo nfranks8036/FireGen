@@ -48,7 +48,7 @@ public class FireGenVariables {
             @Override public String getTagName() { return "Not Set"; }
             @Override public List<String> getPriorities() { return List.of("1", "2", "3"); }
             @Override public IncidentTypeTagQualifierList getQualifiers() { return null; }
-            @Override public List<String> findTypeOptions(String name) { return Collections.singletonList(name); }
+            @Override public List<String> findTypeOptions(String genericIncidentType) { return Collections.singletonList(genericIncidentType); }
             @Override @NotNull public String toString() {
                 return this.getTagName().toUpperCase();
             }

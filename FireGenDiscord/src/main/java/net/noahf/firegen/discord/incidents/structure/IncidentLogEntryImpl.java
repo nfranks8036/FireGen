@@ -54,11 +54,13 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
         this.id = IdGenerator.generateNarrativeId(this);
         this.time = time;
         this.user = fireGenUser;
-        this.entry = entry.toUpperCase()
+        this.entry = entry
                 .strip()
                 .replace("\n", "") // don't allow newLine characters
                 .replace("*", "\\*") // remove Discord formatting involving *
                 .replace("_", "\\_"); // remove Discord formatting involving _
+        if (type.isUserInput()) this.entry = this.entry.toUpperCase();
+
         this.type = type;
     }
 
