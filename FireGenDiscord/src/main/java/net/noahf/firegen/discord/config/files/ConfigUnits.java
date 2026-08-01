@@ -19,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
 import static net.noahf.firegen.discord.utilities.JsonUtilities.element;
@@ -63,15 +65,24 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
                 Emoji unitEmoji = unitEmojiElement != null ? Emoji.fromFormatted(unitEmojiElement.getAsString()) : emoji;
                 String longhand = asStr(unitObj, "long");
                 String shorthand = asStr(unitObj, "short");
+                String formatted = asStr(unitObj, "format");
+
+                JsonElement placeholdersElement = JsonUtilities.element(unitObj, "placeholders", true);
+                if (placeholdersElement != null && !placeholdersElement.isJsonNull()) {
+                    Map<String, String> placeholders = placeholdersElement.getAsJsonObject()
+                            .asMap()
+                            .entrySet().stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey, c -> c.getValue().getAsString()));
+                    for (Map.Entry<String, String> s : placeholders.entrySet()) {
+                        longhand = longhand.replace(s.getKey(), s.getValue());
+                        shorthand = shorthand.replace(s.getKey(), s.getValue());
+                        formatted = formatted.replace(s.getKey(), s.getValue());
+                    }
+                }
 
                 Unit unit = new UnitImpl(
-                        shorthand,
-                        longhand,
-                        asStr(unitObj, "format"),
-                        unitEmoji,
-                        agency,
-                        lastUnitCount + j,
-                        false,
+                        shorthand, longhand, formatted, unitEmoji, agency,
+                        lastUnitCount + j, false,
                         SelectOption.of(longhand, shorthand)
                                 .withDescription(null)
                                 .withEmoji(emoji)

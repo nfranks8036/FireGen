@@ -338,11 +338,17 @@ public class CreateIncident extends Command {
                     case WILDCARD ->
                             inputUnits.addAll(incident.getUnitAssignments().stream().map(UnitAssignment::getUnit).toList());
                     case CUSTOM -> {
-                        // ?SHORTHAND.LONGHAND.AGENCY
+                        // ?SHORTHAND.LONGHAND.FORMATTED.AGENCY
                         String[] text = targetString.substring(1).split("\\.");
-                        Agency agency = configUnits.agencyFromShorthand(text[2]);
+
+                        String shorthand = text[0];
+                        String longhand = text[1];
+                        String formatted = text[2];
+                        String agencyText = text[3];
+
+                        Agency agency = configUnits.agencyFromShorthand(agencyText);
                         if (agency == null) {
-                            agency = new AgencyImpl(text[2], text[2], text[2], "N/A",
+                            agency = new AgencyImpl(agencyText, agencyText, agencyText, "N/A",
                                     AgencyType.OTHER, null, Integer.MAX_VALUE,
                                     new ArrayList<>(), Integer.MAX_VALUE
                             );
@@ -356,10 +362,10 @@ public class CreateIncident extends Command {
                             emoji = null;
                         }
                         UnitImpl custom = new UnitImpl(
-                                text[0], text[1].toUpperCase(), text[1],
+                                shorthand, longhand.toUpperCase(), formatted,
                                 emoji, agency,
                                 ((AgencyImpl)agency).getStartUnitOrdinal(), false,
-                                SelectOption.of(text[1].toUpperCase(), text[0])
+                                SelectOption.of(longhand.toUpperCase(), shorthand)
                                         .withEmoji(emoji)
                         );
                         configUnits.get().add(custom);

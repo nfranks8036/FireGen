@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionE
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.noahf.firegen.api.incidents.Incident;
+import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.FireGenVariables;
@@ -127,14 +128,21 @@ public class ContextMenuDetector extends ListenerAdapter {
         IncidentImpl incident = (IncidentImpl) iIncident;
         String message = "**Title** " + f(()->incident.getType().getSelectedName(), ">NEW<") +
                 "\n**Time** " + f(()->incident.getTime().formatDateAndTime(vars, " @ ")) +
+                "\n**Incident Number** " + f(incident::getFormattedId, "<none assigned>") +
+                "\n**Status** " + f(()->incident.getStatus().name(), "UNKNOWN") + " (" + f(()->incident.getPublished().name()) + ")"
+                + " with " + f(()->String.valueOf(incident.getContributors().size()), "0") + " contributor(s)" +
                 "\n**Units** " + f(() -> incident.getUnitAssignments().stream()
+                .sorted()
                 .map(UnitAssignment::getUnit)
                 .map(Unit::getShorthand)
                 .collect(Collectors.joining(" "))) +
-                "\n**Location** " + f(()->incident.getLocation().format() + (incident.getLocation().isSet() ? " (type: " + incident.getLocation().getType().name() + ")" : "")) +
-                "\n**Incident Number** " + f(incident::getFormattedId, "<none assigned>") +
-                "\n**Status** " + f(()->incident.getStatus().name(), "UNKNOWN") + " (" + f(()->incident.getPublished().name()) + ")"
-                                + " with " + f(()->String.valueOf(incident.getContributors().size()), "0") + " contributor(s)" +
+                "\n**Agencies** " + f(()->incident.getUnitAssignments().stream().sorted()
+                .map(UnitAssignment::getUnit)
+                .map(Unit::getAgency)
+                .distinct()
+                .map(Agency::getFormatted)
+                .collect(Collectors.joining(", "))) +
+                "\n**Location** " + f(()->incident.getLocation().format()) +
                 "\n**Notes** " + f(() -> incident.getNarrative().stream()
                 .map(e -> "`" + vars.formatTime(e.getTime(), false) + "` "
                         + e.getEntry()
