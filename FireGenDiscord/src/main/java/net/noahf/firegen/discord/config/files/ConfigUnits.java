@@ -110,7 +110,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
             );
         }
 
-        Log.info("Imported " + this.count() + " units (" + agencies.size() + " agencies).");
+        log("Imported " + this.count() + " units (" + agencies.size() + " agencies).");
     }
 
     @Override

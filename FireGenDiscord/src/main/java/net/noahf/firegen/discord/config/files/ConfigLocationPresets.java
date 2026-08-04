@@ -35,7 +35,7 @@ public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPres
             this.add(preset);
         }
 
-        Log.info("Imported " + this.count() + " preset locations.");
+        log("Imported " + this.count() + " preset locations.");
     }
 
     public List<String> asAutocompleteStrings() {

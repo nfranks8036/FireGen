@@ -79,7 +79,7 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
             this.add(status);
         }
 
-        Log.info("Imported assignment statuses " + String.join(", ", this.get()));
+        log("Imported assignment statuses " + String.join(", ", this.get()));
     }
 
     public AssignmentStatus fromShortName(String shortName) {

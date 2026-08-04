@@ -142,7 +142,7 @@ public class CreateIncident extends Command {
 
         // ---------- incident contributors // begin list ----------
         Contributor<User> contributor = incident.addContributor(event.getUser());
-        incident.addLog(contributor, IncidentLogEntry.EntryType.CREATE, "NEW INCIDENT: " + incident.getType().getSelectedName());
+        incident.addLog(contributor, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
 
         // ---------- incident location ----------
         OptionMapping locationOption = event.getOption("location");
@@ -370,7 +370,7 @@ public class CreateIncident extends Command {
                         );
                         configUnits.get().add(custom);
                         agency.getUnits().add(custom);
-                        Log.warn("User " + event.getUser().getName() + " created a custom unit: " + custom);
+                        Log.warn("User " + event.getUser().getName() + " created a custom unit: " + custom.toStringJava());
                         inputUnits.add(custom);
                     }
                 }

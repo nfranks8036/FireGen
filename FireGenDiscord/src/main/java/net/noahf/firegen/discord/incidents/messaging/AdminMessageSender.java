@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class AdminMessageSender extends MessageSender {
 
@@ -57,7 +58,8 @@ public class AdminMessageSender extends MessageSender {
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
-                        Button.primary(super.getIncident().createInteractionIdString("preview"), "Preview")
+                        Button.primary(super.getIncident().createInteractionIdString("preview"), "Preview"),
+                        Button.primary(super.getIncident().createInteractionIdString("link"), "Links")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-narrative", "Log:").asDisabled(),
@@ -83,12 +85,10 @@ public class AdminMessageSender extends MessageSender {
                 super.getIncident().getContributors().getFirst();
 
         List<TextChannel> channels = new ArrayList<>(bot.getChannelManager().getFor(ChannelRole.ADMIN, super.getIncident()));
-        boolean shouldRemoveNulls = false;
         for (TextChannel channel : channels) {
             try {
                 if (channel == null) {
                     Log.warn("ADMIN - Can't send a message here. This channel does not exist! Marked for removal.");
-                    shouldRemoveNulls = true;
                     continue;
                 }
 
@@ -161,6 +161,8 @@ public class AdminMessageSender extends MessageSender {
                         String.join(" , ", receiver.getMessages().stream().map(msg ->
                         "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()).toList())
                         + "\nContributors (" + incident.getContributors().size() + "): " + String.join(", ", incident.getContributors().stream().map(c -> "<@" + c.getId() + ">").toList())
+                        + (incident.getLinks().isEmpty() ? "" : "\nLinks (" + incident.getLinks().size() + "): " + incident.getLinks().entrySet().stream().map(e -> e.getValue() + " (" + e.getKey() + ")").collect(Collectors.joining(", "))
+                        )
                 )
                 .addField("Call Type",
                         type + "\n\n" +

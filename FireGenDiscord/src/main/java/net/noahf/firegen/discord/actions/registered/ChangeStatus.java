@@ -50,8 +50,8 @@ public class ChangeStatus implements ButtonAction {
             default -> "Incident status changed to " + newStatus.name();
         };
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
-        incident.update();
 
+        incident.update();
         incident.getMessagingService().notifyPublishChange();
     }
 

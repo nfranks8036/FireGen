@@ -68,7 +68,7 @@ public class ConfigIncidentTypes extends MultiObjectConfiguration<IncidentType> 
             throw new IllegalStateException("Expected an incident type to be tagged '" + NEW_INCIDENT + "', found none.");
         }
 
-        Log.info("Imported " + this.count() + " incident types.");
+        log("Imported " + this.count() + " incident types.");
     }
 
     /**

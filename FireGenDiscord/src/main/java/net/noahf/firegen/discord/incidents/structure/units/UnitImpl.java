@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 
 @EqualsAndHashCode(of = "ordinal")
 @RequiredArgsConstructor @NoArgsConstructor(force = true)
@@ -38,6 +39,21 @@ public class UnitImpl implements Unit {
     @NotNull
     public String toString() {
         return (this.shorthand != null ? this.shorthand : "[Unit " + id + "]");
+    }
+
+    public String toStringJava() {
+        return new StringJoiner(", ", UnitImpl.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("shorthand='" + shorthand + "'")
+                .add("longhand='" + longhand + "'")
+                .add("formatted='" + formatted + "'")
+                .add("emoji=" + emoji)
+                .add("agency=" + agency)
+                .add("ordinal=" + ordinal)
+                .add("isPlaceholder=" + isPlaceholder)
+                .add("selectOption=" + selectOption)
+                .add("assignments=" + assignments)
+                .toString();
     }
 
     @Override

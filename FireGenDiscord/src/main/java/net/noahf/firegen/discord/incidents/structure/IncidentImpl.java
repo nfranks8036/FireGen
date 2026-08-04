@@ -28,9 +28,11 @@ import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @Getter @Setter @EqualsAndHashCode(of = {"id"})
@@ -80,6 +82,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @OneToMany(targetEntity = FireGenUser.class, cascade = CascadeType.ALL)
     private List<Contributor<?>> contributors;
 
+    private @Setter(value = AccessLevel.NONE) Map<String, String> links;
+
     private transient @Getter IncidentMessagingService messagingService;
 
     public IncidentImpl() {
@@ -99,6 +103,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.unitAssignments = new HashSet<>();
         this.log = new ArrayList<>();
         this.contributors = new ArrayList<>();
+
+        this.links = new ConcurrentHashMap<>();
 
         this.messagingService = new IncidentMessagingService(this);
     }
@@ -123,6 +129,16 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             return;
         }
         this.contributors.add(contributor);
+    }
+
+    @Override
+    public void addLink(String url, String title) {
+        this.links.put(url, title);
+    }
+
+    @Override
+    public void removeLink(String url) {
+        this.links.remove(url);
     }
 
     @Override

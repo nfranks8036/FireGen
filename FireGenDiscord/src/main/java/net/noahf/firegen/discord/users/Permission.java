@@ -19,6 +19,8 @@ public enum Permission implements AutofilledCharSequence {
 
     CHANGE_UNITS,
 
+    ASSOCIATE_LINKS,
+
     NARRATIVE_ADD,
 
     NARRATIVE_HIDE,

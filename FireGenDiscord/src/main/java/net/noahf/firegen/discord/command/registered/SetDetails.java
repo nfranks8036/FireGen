@@ -86,7 +86,7 @@ public class SetDetails extends Command {
                 return;
             }
 
-            String narrative = "CHANGED INCIDENT TYPE FROM " + oldType.getSelectedName() + " TO " + newType.getSelectedName();
+            String narrative = "Changed Incident Type: " + oldType.getSelectedName() + " --> " + newType.getSelectedName();
 
             Contributor<User> user = incident.addContributor(event.getUser());
             incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);

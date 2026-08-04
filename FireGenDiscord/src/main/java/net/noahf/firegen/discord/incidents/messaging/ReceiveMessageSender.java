@@ -25,6 +25,7 @@ import net.noahf.firegen.discord.utilities.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class ReceiveMessageSender extends MessageSender {
 
@@ -106,14 +107,18 @@ public class ReceiveMessageSender extends MessageSender {
         IncidentStatusEmoji status = Main.config.get(ConfigIncidentStatuses.class).asEmoji(incident.getStatus());
         IncidentTimeImpl time = (IncidentTimeImpl) incident.getTime();
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();
+        String links = incident.getLinks().isEmpty() ? ""
+                : "\n**Links:** " + incident.getLinks().entrySet().stream()
+                                    .map(e -> "[" + e.getValue() + "](<" + e.getKey() + ">)")
+                                    .collect(Collectors.joining(", "));
 
         String stringForm = String.format(
                 """
                         # %s %s
                         [`%s` @ `%s` // <t:%d:R>]
                         
-                        **Responding:** %s
-                        **%s:** %s""" + Character.MAX_VALUE +
+                        **Units:** %s
+                        **%s:** %s""" + links + Character.MAX_VALUE +
                         (!log.isEmpty() ? "\n\n**Narrative:**\n%s" : ""),
                 status.getEmojisFormattedCombined(),
                 incident.getType().getSelectedName(),

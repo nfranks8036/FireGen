@@ -32,6 +32,6 @@ public class ConfigMunicipality extends SingleObjectConfiguration<SystemMunicipa
                 )
         ));
 
-        Log.info("Imported municipality " + this.get());
+        log("Imported municipality " + this.get());
     }
 }

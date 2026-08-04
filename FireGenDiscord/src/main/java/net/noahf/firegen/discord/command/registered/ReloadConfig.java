@@ -108,24 +108,26 @@ public class ReloadConfig extends Command {
         long start = System.currentTimeMillis();
         configuration.reload();
 
-        event.getHook().editOriginal("Reloaded `" + configuration.getPath() + "` in " + (System.currentTimeMillis()-start) + "ms.").queue();
+        event.getHook().editOriginal("Reloaded `" + configuration.getPath() + "` in " + (System.currentTimeMillis()-start) + "ms."
+                + "\n```ini\n" + String.join("\n", configuration.getLastReloadLog()) + "```"
+        ).queue();
     }
 
-    private String reloadManyConfig(IReplyCallback event) {
+    private void reloadManyConfig(IReplyCallback event) {
         long start = System.currentTimeMillis();
         StringJoiner reloaded = new StringJoiner(", ");
+        StringJoiner feedback = new StringJoiner("\n");
         for (SingleObjectConfiguration<?> config : Main.config.getConfigs()) {
             config.reload();
             reloaded.add("`" + config.getPath() + "`");
+            config.getLastReloadLog().forEach(feedback::add);
         }
 
         if (event != null)
             event.getHook().editOriginal(
                 "Reloaded `" + Main.config.getConfigs().size() + "` configuration files in " + (System.currentTimeMillis()-start) + "ms, " +
-                        "including files: " + reloaded
+                        "including files: " + reloaded + "\n```ini\n" + feedback.toString() + "```"
             ).queue();
-
-        return reloaded.toString();
     }
 
 

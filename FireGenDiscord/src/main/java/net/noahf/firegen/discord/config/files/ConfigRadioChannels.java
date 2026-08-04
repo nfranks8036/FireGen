@@ -33,6 +33,6 @@ public class ConfigRadioChannels extends MultiObjectConfiguration<RadioChannel> 
             this.add(channel);
         }
 
-        Log.info("Imported " + this.count() + " radio channels.");
+        log("Imported " + this.count() + " radio channels.");
     }
 }

@@ -41,6 +41,7 @@ public abstract class MultiObjectConfiguration<T> extends SingleObjectConfigurat
 
     @Override
     public void reload() {
+        super.lastReloadLog.clear();
         this.clear();
         JsonUtilities.stream(Main.bot, this.getPath(), this::importObject);
     }

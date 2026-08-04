@@ -158,7 +158,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
     public MessageStatus onSubmit(Incident incident, IReplyCallback event, LocationType type, IncidentLocation location) {
         incident.setLocation(location);
 
-        String narrative = type.getPrefix() + " Updated: " + location.format();
+        String narrative = type.getPrefix() + " Updated: " + location.format().toUpperCase();
 
         Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);

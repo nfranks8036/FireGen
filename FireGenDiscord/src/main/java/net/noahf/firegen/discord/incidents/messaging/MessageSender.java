@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.components.MessageTopLevelComponent;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.utilities.Log;
@@ -22,6 +23,7 @@ public abstract class MessageSender {
 
     private final IncidentMessagingService service;
     private final IncidentImpl incident;
+    private final List<TextChannel> channels;
     private @Getter(value = AccessLevel.PUBLIC) final List<Message> messages;
 
     private @Setter(value = AccessLevel.PROTECTED) List<MessageTopLevelComponent> components;
@@ -31,6 +33,7 @@ public abstract class MessageSender {
         this.service = service;
         this.incident = incident;
 
+        this.channels = new ArrayList<>();
         this.messages = new ArrayList<>();
         this.components = new ArrayList<>();
 
