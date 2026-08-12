@@ -1,5 +1,7 @@
 package net.noahf.firegen.discord.database;
 
+import dev.morphia.Morphia;
+import dev.morphia.mapping.MapperOptions;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import net.noahf.firegen.discord.database.errors.GenerateSessionFailure;
@@ -16,21 +18,10 @@ import net.noahf.firegen.discord.incidents.structure.units.*;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Manager;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
 
 @Getter
 public class DatabaseManager extends Manager<DatabaseManager> {
 
-    private final Configuration config;
-
-    private SessionFactory factory;
-
-    @Inject
     private IncidentDatabase database;
 
     public DatabaseManager() {
@@ -38,7 +29,6 @@ public class DatabaseManager extends Manager<DatabaseManager> {
 
         if (2 > 1) {
             Log.warn("Database disabled. No persistent data will be stored.");
-            this.config = null;
             return;
         }
 
@@ -46,8 +36,7 @@ public class DatabaseManager extends Manager<DatabaseManager> {
         Log.info("Loading the database...");
 
         // config file located at /resources/hibernate.cfg.xml
-        this.config = new Configuration();
-        this.config.configure();
+        Morphia.createDatastore("incidents", MapperOptions.builder().build())
 
         this.setUp();
 

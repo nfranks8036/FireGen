@@ -1,0 +1,9 @@
+{
+  "assignments": "https://raw.githubusercontent.com/nfranks8036/FireGen/refs/heads/main/FireGenDiscord/run/MontCo/assignments.json",
+  "incident_types": "https://raw.githubusercontent.com/nfranks8036/FireGen/refs/heads/main/FireGenDiscord/run/MontCo/incident_types.json",
+  "locations": "https://raw.githubusercontent.com/nfranks8036/FireGen/refs/heads/main/FireGenDiscord/run/MontCo/locations.json",
+  "municipality": "https://raw.githubusercontent.com/nfranks8036/FireGen/refs/heads/main/FireGenDiscord/run/MontCo/municipality.json",
+  "radio_channels": "https://raw.githubusercontent.com/nfranks8036/FireGen/refs/heads/main/FireGenDiscord/run/MontCo/radio_channels.json",
+  "units": "https://raw.githubusercontent.com/nfranks8036/FireGen/refs/heads/main/FireGenDiscord/run/MontCo/units.json",
+  "venues": "https://raw.githubusercontent.com/nfranks8036/FireGen/refs/heads/main/FireGenDiscord/run/MontCo/venues.json"
+}

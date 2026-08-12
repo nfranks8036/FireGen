@@ -28,12 +28,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.44")
 
     // database structuring
-    implementation 'jakarta.data:jakarta.data-api:1.0.1'
-    implementation 'org.hibernate.orm:hibernate-core:7.4.0.Final'
-    implementation 'org.hibernate.orm:hibernate-processor:7.4.0.Final'
-    implementation("jakarta.inject:jakarta.inject-api:2.0.1")
-    implementation 'org.postgresql:postgresql:42.7.11'
-    annotationProcessor 'org.hibernate.orm:hibernate-processor:7.4.0.Final'
+    compileOnly("dev.morphia.morphia:morphia-core:2.5.3")
 }
 
 shadowJar {
