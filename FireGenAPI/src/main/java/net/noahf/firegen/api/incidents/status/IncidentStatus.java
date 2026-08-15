@@ -2,6 +2,7 @@ package net.noahf.firegen.api.incidents.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.api.utilities.StringSelectors;
 
 import java.util.List;
@@ -49,6 +50,7 @@ public enum IncidentStatus implements StringSelectors {
      *         it will return {@code CLOSED}, if {@code CLOSED} or {@code CLOSED_TIMED_OUT} it will return
      *         {@code PENDING})
      */
+    @IgnoreStringSelector
     public IncidentStatus opposite() {
         return switch (this) {
             case ACTIVE, PENDING -> CLOSED;
@@ -58,7 +60,7 @@ public enum IncidentStatus implements StringSelectors {
 
     @Override
     public List<String> asStringSelectors() {
-        return List.of(name(), isInProgress() ? "isInProgress" : "notInProgress");
+        return List.of(name(), isInProgress() ? "statusInProgress" : "statusNotInProgress");
     }
 
 }

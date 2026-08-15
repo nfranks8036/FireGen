@@ -1,6 +1,5 @@
 package net.noahf.firegen.discord.incidents.structure;
 
-import jakarta.persistence.*;
 import lombok.*;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
@@ -28,7 +27,6 @@ import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -36,50 +34,32 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @Getter @Setter @EqualsAndHashCode(of = {"id"})
-@Entity @Table(name = "incidents")
 public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     private final transient @Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
             IncidentManager manager;
 
     @Getter
-    @Id
     private final long id;
 
-    @Enumerated
     private IncidentStatus status;
 
-    @OneToOne(
-            targetEntity = IncidentTypeImpl.class, cascade = CascadeType.ALL
-    )
     @NotNull
     private IncidentType type;
 
-    @OneToMany(
-            targetEntity = UnitAssignmentImpl.class, cascade = CascadeType.ALL
-    )
     private Set<UnitAssignment> unitAssignments;
 
     @NotNull
-    @OneToOne(
-            targetEntity = IncidentLocationImpl.class, cascade = CascadeType.ALL
-    )
     private IncidentLocation location;
 
     @NotNull
-    @OneToOne(
-            targetEntity = IncidentTimeImpl.class, cascade = CascadeType.ALL
-    )
     private IncidentTime time;
 
     @NotNull
-    @Enumerated
     private IncidentPublishedStatus published;
 
-    @OneToMany(targetEntity = IncidentLogEntryImpl.class, cascade = CascadeType.ALL)
     private List<IncidentLogEntry> log;
 
-    @OneToMany(targetEntity = FireGenUser.class, cascade = CascadeType.ALL)
     private List<Contributor<?>> contributors;
 
     private @Setter(value = AccessLevel.NONE) Map<String, String> links;
@@ -139,6 +119,15 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @Override
     public void removeLink(String url) {
         this.links.remove(url);
+    }
+
+    public void editLink(int index, String url, String title) {
+        String originalKey = new ArrayList<>(this.links.keySet()).get(index);
+        this.links.put(url, this.links.remove(originalKey));
+    }
+
+    public void removeLink(int index) {
+        this.links.remove(new ArrayList<>(this.links.keySet()).get(index));
     }
 
     @Override

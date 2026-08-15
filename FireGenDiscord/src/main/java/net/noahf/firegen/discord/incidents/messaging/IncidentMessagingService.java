@@ -43,7 +43,7 @@ public class IncidentMessagingService {
         return null;
     }
 
-    public @NotNull List<String> getNarrativeFormatted(Incident incident, boolean asAdmin) {
+    public @NotNull List<String> getNarrativeFormatted(Incident incident, boolean asAdmin, boolean withUsers) {
         if (incident.getLog() == null || incident.getLog().isEmpty()) {
             return new ArrayList<>();
         }
@@ -67,7 +67,7 @@ public class IncidentMessagingService {
 
         for (IncidentLogEntry entry : log) {
             IncidentLogEntryImpl entryImpl = (IncidentLogEntryImpl) entry;
-            response.add(asAdmin ? entryImpl.formatAdmin() : entryImpl.formatReceiver());
+            response.add(asAdmin ? entryImpl.formatAdmin(withUsers) : entryImpl.formatReceiver());
         }
 
         return response;

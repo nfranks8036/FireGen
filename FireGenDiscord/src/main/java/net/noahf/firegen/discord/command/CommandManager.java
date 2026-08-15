@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
@@ -88,9 +89,13 @@ public class CommandManager extends ListenerAdapter {
 //                    Main.JDA.getGuildById(725503420512862220L).upsertCommand(cd).queue());
         }
 
-        allCommandData.add(
-                Commands.context(net.dv8tion.jda.api.interactions.commands.Command.Type.MESSAGE, "Show incident details")
+        List<String> context = new ArrayList<>(ContextMenuDetector.commands.keySet());
+        allCommandData.addAll(
+                context.stream()
+                        .map(s -> Commands.context(net.dv8tion.jda.api.interactions.commands.Command.Type.MESSAGE, s))
+                        .toList()
         );
+        Log.info("Registered " + context.size() + " context menu commands: " + String.join(", ", context));
 
         jda.updateCommands().addCommands(allCommandData).complete();
         Log.info("Registered " + commands.size() + " commands: " + registered.toString());

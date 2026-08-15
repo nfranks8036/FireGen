@@ -119,7 +119,7 @@ public interface IncidentLocation extends StringSelectors {
 
     @Override
     default List<String> asStringSelectors() {
-        return List.of(getType().name(), isSet() ? "isSet" : "isNotSet");
+        return List.of(isSet() ? "isSet" : "isNotSet");
     }
 
 }

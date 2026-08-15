@@ -35,6 +35,7 @@ public class DiscordMessages {
                 .setFooter("Try again later or with different parameters.");
 
         if (cause != null) {
+            cause.printStackTrace(System.err);
             responseBuilder = responseBuilder
                     .addField("Caused by:", truncate(cause.toString(), 1024-("Caused by:".length()), "..."), false);
         }

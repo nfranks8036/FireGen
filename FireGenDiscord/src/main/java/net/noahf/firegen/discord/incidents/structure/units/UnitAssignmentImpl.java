@@ -1,6 +1,5 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
-import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,6 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +18,6 @@ import java.util.List;
 
 @NoArgsConstructor(force = true)
 @Getter @EqualsAndHashCode(of = {"incident", "unit"})
-@Entity @Table(name = "assignments")
 public class UnitAssignmentImpl implements UnitAssignment {
 
     public UnitAssignmentImpl(Incident incident,
@@ -37,28 +34,14 @@ public class UnitAssignmentImpl implements UnitAssignment {
         }
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(
-            targetEntity = IncidentImpl.class, cascade = CascadeType.ALL
-    )
     private final Incident incident;
 
-    @OneToOne(
-            targetEntity = UnitImpl.class, cascade = CascadeType.ALL
-    )
     private final Unit unit;
 
-    @OneToOne(
-            targetEntity = RadioChannelImpl.class, cascade = CascadeType.ALL
-    )
     private @Setter RadioChannel radioChannel;
 
-    @OneToMany(
-            targetEntity = AssignmentEventImpl.class, cascade = CascadeType.ALL
-    )
     private List<AssignmentEvent> assignments;
 
     @Override

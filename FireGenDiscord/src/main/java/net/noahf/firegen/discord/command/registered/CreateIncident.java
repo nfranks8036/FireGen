@@ -486,11 +486,12 @@ public class CreateIncident extends Command {
                 return CONTENT;
             }
 
-            AddNarrative action = findAction(AddNarrative.class);
-
             String narrative = initialNarrative.getAsString();
-
-            return action.onSubmit(incident, event, narrative);
+            if (!narrative.toUpperCase().startsWith("NOTE:")) {
+                return findAction(AddNarrative.class).onSubmit(incident, event, narrative);
+            } else {
+                return findAction(Notate.class).onSubmit(incident, event, narrative);
+            }
         }
 
 

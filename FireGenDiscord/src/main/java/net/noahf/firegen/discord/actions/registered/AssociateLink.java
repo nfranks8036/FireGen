@@ -1,6 +1,7 @@
 package net.noahf.firegen.discord.actions.registered;
 
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
@@ -29,6 +30,7 @@ import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,30 +62,52 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
             return;
         }
 
-        IncidentImpl incident = (IncidentImpl) ctx.getIncident();
-        List<SelectOption> options = new ArrayList<>();
-        List<String> linkTexts = new ArrayList<>(incident.getLinks().values());
+        if (ctx.getParameters().isEmpty()) {
+            IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+            List<SelectOption> options = new ArrayList<>();
+            List<String> linkTexts = new ArrayList<>(incident.getLinks().values());
 
-        for (int i = 0; i < linkTexts.size(); i++) {
-            String label = DiscordMessages.truncate(linkTexts.get(i), 100, "...");
-            options.add(SelectOption.of(label, "associated-" + i));
-        }
+            for (int i = 0; i < linkTexts.size(); i++) {
+                String label = DiscordMessages.truncate(linkTexts.get(i), 100, "...");
+                options.add(SelectOption.of(label, "associated-" + i).withEmoji(Emoji.fromUnicode("\uD83D\uDD17")));
+            }
 
-        if (options.isEmpty()) {
-            this.showModal(ctx, event, null);
+//        if (options.isEmpty()) {
+//            this.showModal(ctx, event, null);
+//            return;
+//        }
+
+            event.reply("Choose a link to edit OR create a new link.")
+                    .setEphemeral(true)
+                    .setComponents(ActionRow.of(
+                                    StringSelectMenu.create(this.callbackId(ctx))
+                                            .addOption("> CREATE NEW LINK <", "create", Emoji.fromUnicode("➕"))
+                                            .addOptions(options)
+                                            .setMaxValues(1)
+                                            .build()
+                            ),
+                            ActionRow.of(
+                                    Button.success(this.callbackId(ctx, "edit"), "Edit").asDisabled(),
+                                    Button.danger(this.callbackId(ctx, "delete"), "Delete").asDisabled()
+                            )
+                    )
+                    .complete();
             return;
         }
 
-        event.reply("Choose a link to edit OR create a new link.")
-                .setEphemeral(true)
-                .setComponents(ActionRow.of(
-                        StringSelectMenu.create(this.callbackId(ctx))
-                                .addOption("> CREATE NEW LINK <", "create", Emoji.fromUnicode("➕"))
-                                .addOptions(options)
-                                .setMaxValues(1)
-                                .build()
-                ))
-                .complete();
+        int index = Integer.parseInt(ctx.getParameters().getFirst());
+        String action = ctx.getParameters().get(1); // getSecond
+        if (action.equalsIgnoreCase("edit")) {
+            event.getHook().deleteOriginal().queue();
+            this.showModal(ctx, event, index);
+            return;
+        }
+
+        if (action.equalsIgnoreCase("delete")) {
+            IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+            incident.removeLink(index);
+            DiscordMessages.noMessage(event, MessageStatus.NONE);
+        }
     }
 
     @Override
@@ -91,23 +115,42 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         String selected = event.getInteraction().getSelectedOptions().getFirst().getValue();
-        Integer index = null;
-        if (!selected.contains("create")) {
-            try {
-                index = Integer.parseInt(selected.substring("associated-".length()));
-            } catch (NumberFormatException num) {
-                DiscordMessages.error(event, "Attempted to process ID '" + selected + "' which does not" +
-                        " contain the value number syntax expected. 'associated-X'", num);
-                return;
-            }
+        if (selected.contains("create")) {
+            event.getHook().deleteOriginal().queue();
+            this.showModal(ctx, event, null);
+            return;
         }
 
-        this.showModal(ctx, event, index);
+        if (!selected.contains("associated")) {
+            return;
+        }
+
+        String index;
+        try {
+            index = String.valueOf(Integer.parseInt(selected.substring("associated-".length())));
+        } catch (NumberFormatException num) {
+            DiscordMessages.error(event, "Attempted to process ID '" + selected + "' which does not" +
+                    " contain the value number syntax expected. 'associated-X'", num);
+            return;
+        }
+
+        event.editComponents(
+                List.of(
+                        ActionRow.of(event.getComponent().createCopy()
+                                .setDefaultValues(event.getValues().getFirst())
+                                .build()
+                        ),
+                        ActionRow.of(
+                                Button.success(this.callbackId(ctx, index, "edit"), "Edit").asEnabled(),
+                                Button.danger(this.callbackId(ctx, index, "delete"), "Delete").asEnabled()
+                        )
+                )
+        ).queue();
     }
 
     private void showModal(ActionsContext ctx, IModalCallback event, @Nullable Integer index) {
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
-        String linkInput = index != null ? new ArrayList<>(incident.getLinks().keySet()).get((int)index).toString() : null;
+        String linkInput = index != null ? new ArrayList<>(incident.getLinks().keySet()).get((int)index) : null;
         String titleInput = index != null ? new ArrayList<>(incident.getLinks().values()).get(index) : null;
 
         Modal modal = Modal.create(this.callbackId(ctx, index != null ? String.valueOf(index) : "create"),
@@ -158,11 +201,20 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
         ModalMapping textMapping = event.getValue("text");
         if (linkMapping == null || textMapping == null) return;
 
-        MessageStatus status = this.onSubmit(incident, event, linkMapping.getAsString(), textMapping.getAsString());
+        @Nullable Integer index;
+        try {
+            // means the associated link is being EDITED
+            index = Integer.parseInt(ctx.getParameters().getFirst());
+        } catch (NumberFormatException ignored) {
+            // usually means the associated link is being CREATED (i.e., 'create' != a number)
+            index = null;
+        }
+
+        MessageStatus status = this.onSubmit(incident, event, index, linkMapping.getAsString(), textMapping.getAsString());
         DiscordMessages.noMessage(event, status);
     }
 
-    public MessageStatus onSubmit(Incident incidentI, IReplyCallback event, String link, String title) {
+    public MessageStatus onSubmit(Incident incidentI, IReplyCallback event, @Nullable Integer index, String link, String title) {
         IncidentImpl incident = (IncidentImpl) incidentI;
         Contributor<User> user = incident.addContributor(event.getUser());
 
@@ -179,8 +231,14 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
             return MessageStatus.CONTENT;
         }
 
-        incident.addLink(link, title);
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Associated Link '" + url.getHost() + "'");
+        if (index == null) {
+            incident.addLink(link, title);
+            incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Associated Link " + title + " (" + url.getHost() + ")");
+        } else {
+            incident.editLink(index, link, title);
+            incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Edited Link " + title + " (" + url.getHost() + ")");
+        }
+
         incident.update();
 
         return MessageStatus.NONE;

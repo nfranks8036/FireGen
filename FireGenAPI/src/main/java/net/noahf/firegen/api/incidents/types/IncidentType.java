@@ -38,6 +38,12 @@ public interface IncidentType extends Identifiable, StringSelectors {
     int getQualifierChoice();
 
     /**
+     * @return the selected qualifier choice as a string (as defined in {@link IncidentTypeTag}
+     * @see IncidentType#getTag()
+     */
+    String getStringQualifierChoice();
+
+    /**
      * @return the true selected name by the user, this includes qualifiers and priorities.
      */
     String getSelectedName();
@@ -45,7 +51,7 @@ public interface IncidentType extends Identifiable, StringSelectors {
 
     @Override
     default List<String> asStringSelectors() {
-        return List.of(getSelectedName(), getType());
+        return List.of(getSelectedName());
     }
 
 }

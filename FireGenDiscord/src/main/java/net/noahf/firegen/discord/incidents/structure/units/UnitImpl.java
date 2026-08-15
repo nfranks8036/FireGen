@@ -1,11 +1,13 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.api.incidents.units.*;
+import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.AssignmentEvent;
+import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,18 +18,15 @@ import java.util.StringJoiner;
 @EqualsAndHashCode(of = "ordinal")
 @RequiredArgsConstructor @NoArgsConstructor(force = true)
 @Getter
-@Entity @Table(name = "units")
 public class UnitImpl implements Unit {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id = -1L;
 
     private final String shorthand;
     private final String longhand;
     private final @Getter(value = AccessLevel.NONE) String formatted;
     private final transient Emoji emoji;
-    private final @Enumerated Agency agency;
+    private final Agency agency;
     private final @Accessors(fluent = true) int ordinal;
 
     private final boolean isPlaceholder;

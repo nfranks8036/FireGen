@@ -59,7 +59,8 @@ public class AdminMessageSender extends MessageSender {
                 ActionRow.of(
                         Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
                         Button.primary(super.getIncident().createInteractionIdString("preview"), "Preview"),
-                        Button.primary(super.getIncident().createInteractionIdString("link"), "Links")
+                        Button.primary(super.getIncident().createInteractionIdString("link"), "Links"),
+                        Button.primary(super.getIncident().createInteractionIdString("fields"), "Fields")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-narrative", "Log:").asDisabled(),
@@ -146,7 +147,7 @@ public class AdminMessageSender extends MessageSender {
         List<MessageEmbed> returned = new ArrayList<>();
         IncidentImpl incident = super.getIncident();
 
-        List<String> log = super.getService().getNarrativeFormatted(incident, true);
+        List<String> log = super.getService().getNarrativeFormatted(incident, true, true);
         IncidentStatusEmoji status = Main.config.get(ConfigIncidentStatuses.class).asEmoji(incident.getStatus());
         IncidentTypeImpl type = (IncidentTypeImpl) incident.getType();
         long time = incident.getTime().getUnix();
@@ -188,7 +189,7 @@ public class AdminMessageSender extends MessageSender {
                 .setColor(new Color(255, 94, 94))
                 .build());
         returned.add(new EmbedBuilder()
-                .setTitle("Responding Units (" + incident.getUnitAssignments().size() + ")")
+                .setTitle("Attached Units (" + incident.getUnitAssignments().size() + ")")
                 .setDescription(this.getUnitsFormatted())
                 .setColor(new Color(255, 94, 94))
                 .build());
@@ -247,7 +248,7 @@ public class AdminMessageSender extends MessageSender {
         if (type.getQualifierChoice() > qualifiers.size() || type.getQualifierChoice() < 0) {
             return "None (OOB)";
         }
-        return qualifiers.get(type.getQualifierChoice());
+        return type.getStringQualifierChoice();
     }
 
 

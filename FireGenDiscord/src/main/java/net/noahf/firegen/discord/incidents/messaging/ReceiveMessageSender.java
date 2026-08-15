@@ -102,7 +102,7 @@ public class ReceiveMessageSender extends MessageSender {
     public ImmutablePair<String, List<MessageEmbed>> getReceivingFormat() {
         IncidentImpl incident = super.getIncident();
 
-        List<String> log = super.getService().getNarrativeFormatted(incident, false);
+        List<String> log = super.getService().getNarrativeFormatted(incident, false, false);
 
         IncidentStatusEmoji status = Main.config.get(ConfigIncidentStatuses.class).asEmoji(incident.getStatus());
         IncidentTimeImpl time = (IncidentTimeImpl) incident.getTime();

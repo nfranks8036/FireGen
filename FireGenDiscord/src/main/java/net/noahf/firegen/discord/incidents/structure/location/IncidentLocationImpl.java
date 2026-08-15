@@ -1,6 +1,5 @@
 package net.noahf.firegen.discord.incidents.structure.location;
 
-import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +23,6 @@ import static net.noahf.firegen.api.incidents.location.LocationType.MILE_MARKER;
  */
 @NoArgsConstructor(force = true)
 @Getter @Setter
-@Entity
 public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSequence {
 
     /**
@@ -84,21 +82,18 @@ public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSeq
 //                    .build()
 //    );
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id = 0L;
 
     @Setter(value = AccessLevel.PROTECTED)
     private List<String> data;
 
     @Setter(value = AccessLevel.PROTECTED)
-    @Enumerated
     private LocationType type;
 
     @Nullable
     private String commonName;
 
     @Nullable
-    @OneToOne(targetEntity = LocationVenueImpl.class, cascade = CascadeType.ALL)
     private LocationVenue venue;
 
 

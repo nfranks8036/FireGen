@@ -148,7 +148,7 @@
     {"name": "BREATHING PROBLEMS", "tag": "EMS"},
     {"name": "BURNS", "tag": "EMS"},
     {"name": "INHALATION HAZARD / HAZMAT", "tag": "EMS"},
-    {"name": "CARDIAC / RESPIRATORY ARREST", "tag": "EMS"},
+    {"name": "CARDIAC ARREST", "tag": "EMS"},
     {"name": "CHEST PAIN", "tag": "EMS"},
     {"name": "CHOKING", "tag": "EMS"},
     {"name": "SEIZURES", "tag": "EMS"},
@@ -194,6 +194,7 @@
     {"name": "MASS CASUALTY INCIDENT", "tag": "GENERIC"},
     {"name": "ALARM TESTING", "tag": "GENERIC"},
     {"name": "AIRPLANE CRASH", "tag": "GENERIC"},
+    {"name": "EXPLOSION", "tag": "GENERIC"},
 
     {"name": "TRAINING", "tag": "GENERIC"},
 

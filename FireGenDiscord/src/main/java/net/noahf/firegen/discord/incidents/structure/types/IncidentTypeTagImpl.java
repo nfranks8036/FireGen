@@ -2,7 +2,6 @@ package net.noahf.firegen.discord.incidents.structure.types;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Getter
 @NoArgsConstructor(force = true)
 public class IncidentTypeTagImpl implements IncidentTypeTag {
@@ -30,14 +28,12 @@ public class IncidentTypeTagImpl implements IncidentTypeTag {
 
     private @Getter(value = AccessLevel.NONE) transient final JsonObject object;
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     public String tagName;
     public List<String> priorities;
 
-    private @OneToOne(cascade = CascadeType.ALL, targetEntity = IncidentTypeTagQualifierListImpl.class)
-            IncidentTypeTagQualifierList qualifiers;
+    private IncidentTypeTagQualifierList qualifiers;
 
     public IncidentTypeTagImpl(JsonObject object) {
         this.object = object;

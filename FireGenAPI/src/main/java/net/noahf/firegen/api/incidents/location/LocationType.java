@@ -1,6 +1,8 @@
 package net.noahf.firegen.api.incidents.location;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.api.utilities.StringSelectors;
 
 import java.util.ArrayList;
@@ -253,7 +255,8 @@ public class LocationType implements StringSelectors {
     }
 
 
-    private final String prefix, id, title, description, defaultDataDelimiter;
+    private final @Getter(value = AccessLevel.NONE) String description;
+    private final String prefix, id, title, defaultDataDelimiter;
     private final LocationField[] fields;
 
     LocationType(String prefix, String id, String title, String description, String defaultDataDelimiter, LocationField... fields) {
@@ -280,6 +283,11 @@ public class LocationType implements StringSelectors {
         }
     }
 
+    @IgnoreStringSelector
+    public String getDescription() {
+        return this.description;
+    }
+
     @Override
     public List<String> asStringSelectors() {
         return List.of(this.name());
@@ -289,6 +297,7 @@ public class LocationType implements StringSelectors {
      * Retrieve the ID (name) of the current field
      * @return the string name of this field, this is typically what a {@link Enum#name()} field would be.
      */
+    @IgnoreStringSelector
     public String name() {
         return this.getId();
     }

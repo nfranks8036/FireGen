@@ -58,6 +58,7 @@ public class FireGenVariables {
             @Override public IncidentTypeTag getTag() { return FireGenVariables.this.defaultTag; }
             @Override public int getQualifierChoice() { return 0; }
             @Override public int getPriorityChoice() { return 0; }
+            @Override public String getStringQualifierChoice() { return ""; }
             @Override public String getSelectedName() { return this.getType(); }
             @Override public long getId() { return 0; }
         };

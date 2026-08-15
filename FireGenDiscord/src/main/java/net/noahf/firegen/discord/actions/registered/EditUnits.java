@@ -2,8 +2,6 @@ package net.noahf.firegen.discord.actions.registered;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.components.MessageTopLevelComponent;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectOption;
@@ -36,11 +34,9 @@ import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.MessageStatus;
-import org.jboss.jandex.Index;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

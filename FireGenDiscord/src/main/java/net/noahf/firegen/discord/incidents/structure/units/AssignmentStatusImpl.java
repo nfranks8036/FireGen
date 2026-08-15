@@ -1,9 +1,5 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
@@ -21,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Entity
 public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.firegen.api.incidents.units.AssignmentStatus {
 
     public static final AssignmentStatus ADD_UNIT = new AssignmentStatusImpl(
@@ -44,7 +39,7 @@ public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.f
         );
     }
 
-    private @Getter @Id @GeneratedValue(strategy = GenerationType.AUTO) long id;
+    private @Getter long id;
 
     private final @Getter String name;
     private final @Getter String shortName;

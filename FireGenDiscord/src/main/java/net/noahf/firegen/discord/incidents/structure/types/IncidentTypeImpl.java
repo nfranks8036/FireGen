@@ -1,9 +1,5 @@
 package net.noahf.firegen.discord.incidents.structure.types;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.noahf.firegen.api.incidents.types.IncidentType;
@@ -13,14 +9,12 @@ import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-@Entity
 @NoArgsConstructor(force = true)
 public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
 
-    private @Id final long id;
+    private final long id;
     private final @NotNull String type;
-    private @OneToOne(cascade = CascadeType.ALL, targetEntity = IncidentTypeTagImpl.class) final @NotNull
-            IncidentTypeTag tag;
+    private final @NotNull IncidentTypeTag tag;
     private final int qualifierChoice;
 
     public IncidentTypeImpl(@NotNull String type, @NotNull IncidentTypeTag tag, int qualifierChoice) {
@@ -33,6 +27,11 @@ public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
     @Override
     public int getPriorityChoice() {
         return Integer.MIN_VALUE;
+    }
+
+    @Override
+    public String getStringQualifierChoice() {
+        return tag.getQualifiers().getQualifiers().get(this.getQualifierChoice());
     }
 
     @Override

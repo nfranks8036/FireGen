@@ -34,8 +34,10 @@ public class SetDetails extends Command {
                 CommandFlags.include()
                         .options(new OptionData[]{
                                 new OptionData(OptionType.STRING, "units", "The new units for this incident. Note this will only affect inputted agencies.", false, true),
-                                new OptionData(OptionType.STRING, "type", "The new incident type for this incident.", false, true),
+                                new OptionData(OptionType.STRING, "narrative", "Add a new line to the narrative.", false, false)
+                                        .setRequiredLength(AddNarrative.MIN_NARRATIVE_LENGTH, AddNarrative.MAX_NARRATIVE_LENGTH),
                                 new OptionData(OptionType.STRING, "location", "The new present location for this incident.", false, true),
+                                new OptionData(OptionType.STRING, "type", "The new incident type for this incident.", false, true),
                                 new OptionData(OptionType.STRING, "time",
                                         "The new time (" + TIME_CREATE_FORMAT +") of the incident",
                                         false, false
@@ -45,8 +47,6 @@ public class SetDetails extends Command {
                                                 "a 'time' field if this field is set.",
                                         false, false
                                 ),
-                                new OptionData(OptionType.STRING, "narrative", "Add a new line to the narrative.", false, false)
-                                        .setRequiredLength(AddNarrative.MIN_NARRATIVE_LENGTH, AddNarrative.MAX_NARRATIVE_LENGTH)
                         })
                         .aliases(new String[]{"sd"})
                         .disableAutocompleteAutoFilter(true)

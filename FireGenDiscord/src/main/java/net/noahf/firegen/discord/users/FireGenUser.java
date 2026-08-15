@@ -1,9 +1,5 @@
 package net.noahf.firegen.discord.users;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,10 +15,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Getter
 @RequiredArgsConstructor
-@Entity
 public class FireGenUser implements Contributor<User> {
 
-    @Id
     private final long id;
 
     private final String name;
@@ -34,8 +28,6 @@ public class FireGenUser implements Contributor<User> {
     @Accessors(fluent = true)
     private transient final boolean isFromJson;
 
-    @ElementCollection
-    @Enumerated
     private final List<Permission> permissions = new ArrayList<>(List.of(Permission.DEFAULT));
 
     public boolean hasPermission(Permission permission, Permission... andPermission) {

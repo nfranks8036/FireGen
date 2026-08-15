@@ -1,7 +1,5 @@
 package net.noahf.firegen.discord.incidents.structure.location;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +10,8 @@ import org.jetbrains.annotations.NotNull;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Getter
-@Entity
 public class LocationVenueImpl implements LocationVenue {
 
-    @Id
     private final long id = IdGenerator.generateVenueId(this);
 
     private final String name, displayName;

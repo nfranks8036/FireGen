@@ -1,7 +1,5 @@
 package net.noahf.firegen.discord.incidents.structure;
 
-import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +8,6 @@ import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
-import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -21,7 +18,6 @@ import java.util.regex.Pattern;
 
 @NoArgsConstructor(force = true)
 @Getter
-@Entity
 public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     public static IncidentLogEntry of(Contributor<?> user, String entry, EntryType type) {
@@ -30,18 +26,15 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     private static final String NARRATIVE_TIME_FORMAT = "HH:mm";
 
-    @Id
     private final long id;
 
     private final LocalDateTime time;
 
-    @OneToOne(cascade = CascadeType.ALL)
     private final FireGenUser user;
 
     private String entry;
 
     @Setter
-    @Enumerated
     private IncidentLogEntry.EntryType type;
 
     private LocalDateTime customTime;
@@ -69,8 +62,8 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
         return "`" + this.getCustomTimeOrDefault().format(formatter) + "` " + this.entry.replaceFirst("^<[^>]+>\\s+", "");
     }
 
-    public String formatAdmin() {
-        return "`" + this.time.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "` `"+ type.name() + "` <@" + user.getId() + "> " + entry;
+    public String formatAdmin(boolean withUser) {
+        return "`" + this.time.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "` `"+ type.name() + "` " + (withUser ? "<@" + user.getId() + "> " : "") + entry;
     }
 
     @Override

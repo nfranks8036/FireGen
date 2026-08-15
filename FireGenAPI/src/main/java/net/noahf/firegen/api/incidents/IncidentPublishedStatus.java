@@ -1,5 +1,6 @@
 package net.noahf.firegen.api.incidents;
 
+import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.api.utilities.StringSelectors;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public enum IncidentPublishedStatus implements StringSelectors {
 
     UNKNOWN;
 
+    @IgnoreStringSelector
     public IncidentPublishedStatus opposite() {
         return switch(this) {
             case PUBLISHED -> UNPUBLISHED;
