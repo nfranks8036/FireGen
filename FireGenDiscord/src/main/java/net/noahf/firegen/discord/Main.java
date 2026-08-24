@@ -1,12 +1,11 @@
 package net.noahf.firegen.discord;
 
-import net.dv8tion.jda.api.entities.Activity;
-import net.noahf.firegen.api.incidents.SystemMunicipality;
+import com.github.ygimenez.exception.InvalidHandlerException;
+import lombok.Getter;
 import net.noahf.firegen.discord.actions.ActionsManager;
 import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.command.CommandManager;
 import net.noahf.firegen.discord.config.ConfigManager;
-import net.noahf.firegen.discord.config.files.ConfigMunicipality;
 import net.noahf.firegen.discord.database.DatabaseManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.users.UserManager;
@@ -28,7 +27,9 @@ public class Main {
 
     public static final long botStartTime = System.currentTimeMillis();
 
-    public static void main(String[] args) throws InterruptedException {
+    private static @Getter boolean loading = true;
+
+    public static void main(String[] args) throws InterruptedException, InvalidHandlerException {
         long start = System.currentTimeMillis();
 
         bot = new BotManager().startJda();
@@ -41,6 +42,7 @@ public class Main {
 //        subscribers = new SubscriberManager();
 
         bot.setStatus();
+        loading = false;
 
         Log.info("Started in " + (System.currentTimeMillis() - start) + "ms!");
     }

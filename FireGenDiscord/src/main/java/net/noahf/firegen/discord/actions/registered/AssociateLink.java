@@ -72,10 +72,10 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
                 options.add(SelectOption.of(label, "associated-" + i).withEmoji(Emoji.fromUnicode("\uD83D\uDD17")));
             }
 
-//        if (options.isEmpty()) {
-//            this.showModal(ctx, event, null);
-//            return;
-//        }
+            if (options.isEmpty()) {
+                this.showModal(ctx, event, null);
+                return;
+            }
 
             event.reply("Choose a link to edit OR create a new link.")
                     .setEphemeral(true)
@@ -233,10 +233,10 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
 
         if (index == null) {
             incident.addLink(link, title);
-            incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Associated Link " + title + " (" + url.getHost() + ")");
+            incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Associated Link " + title.toUpperCase() + " (" + url.getHost() + ")");
         } else {
             incident.editLink(index, link, title);
-            incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Edited Link " + title + " (" + url.getHost() + ")");
+            incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Edited Link " + title.toUpperCase() + " (" + url.getHost() + ")");
         }
 
         incident.update();

@@ -1,9 +1,6 @@
 package net.noahf.firegen.api.utilities;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
@@ -19,30 +16,40 @@ import java.util.List;
 
 @Getter @Accessors(fluent = true, chain = true)
 @Setter
+@Builder(builderMethodName = "")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 public class FireGenVariables {
 
-    public static FireGenVariables createFromFolder(String municipality) {
-        return new FireGenVariables().resetToDefault(municipality);
+    public static FireGenVariablesBuilder createFromFolder(String municipality) {
+        return new FireGenVariablesBuilder()
+                .municipality(municipality);
     }
 
-    public FireGenVariables resetToDefault(String municipality) {
+    public FireGenVariables resetToDefault(String municipality, boolean includeUserSet) {
         this.municipality = municipality;
 
-        this.incidentTypesFile = "incident_types.json";
-        this.unitsFile = "units.json";
-        this.venuesFile = "venues.json";
-        this.municipalityFile = "municipality.json";
-        this.assignmentStatusFile = "assignments.json";
-        this.incidentStatusFile = "incident_status.json";
-        this.locationPresetsFile = "locations.json";
-        this.radioChannelsFile = "radio_channels.json";
+        if (includeUserSet) {
+            this.incidentStaleMinutes = 60;
 
-        this.usersFile = "users.json";
+            this.incidentTypesFile = "incident_types.json";
+            this.unitsFile = "units.json";
+            this.venuesFile = "venues.json";
+            this.municipalityFile = "municipality.json";
+            this.assignmentStatusFile = "assignments.json";
+            this.incidentStatusFile = "incident_status.json";
+            this.locationPresetsFile = "locations.json";
+            this.radioChannelsFile = "radio_channels.json";
 
-        this.shortTimeFormat = "HH:mm";
-        this.longTimeFormat = "HH:mm:ss";
-        this.dateFormat = "MM/dd/yyyy";
+            this.usersFile = "users.json";
+
+            this.shortTimeFormat = "HH:mm";
+            this.longTimeFormat = "HH:mm:ss";
+            this.dateFormat = "MM/dd/yyyy";
+
+            this.defaults = true;
+        }
 
         this.defaultTag = new IncidentTypeTag() {
             @Override public String getTagName() { return "Not Set"; }
@@ -68,6 +75,8 @@ public class FireGenVariables {
 
     private String municipality;
 
+    private int incidentStaleMinutes;
+
     private String incidentTypesFile;
     private String unitsFile;
     private String venuesFile;
@@ -85,6 +94,9 @@ public class FireGenVariables {
 
     private IncidentTypeTag defaultTag;
     private IncidentType defaultType;
+
+
+    private boolean defaults;
 
     @SuppressWarnings("deprecation")
     public void setVenues(List<LocationVenue> venues) {

@@ -53,6 +53,7 @@ public abstract class MessageSender {
         Runnable runnable = () -> {
             try {
                 if (this.messages.isEmpty()) {
+                    Log.info("Sending initial message: " + this.getClass().getCanonicalName());
                     this.sendInitial();
                 }
                 this.sendEdited();

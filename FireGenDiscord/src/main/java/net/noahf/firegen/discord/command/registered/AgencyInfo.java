@@ -85,7 +85,7 @@ public class AgencyInfo extends Command {
                 .addField("Names",
                         "Short: `" + agency.getShorthand() + "`\n" +
                                 "Long: `" + agency.getTitle() + "`\n" +
-                                "Formatted: " + agency.getFormatted(),
+                                "Formatted: `" + agency.getFormatted() + "`",
                         false
                         )
                 .addField("Station", agency.getStation(), false)

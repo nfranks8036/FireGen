@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.config;
 
+import com.google.gson.JsonObject;
 import lombok.Getter;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.bot.BotManager;
@@ -11,7 +12,10 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static net.noahf.firegen.discord.utilities.JsonUtilities.*;
 
 @Getter
 public class ConfigManager extends Manager<ConfigManager> {
@@ -27,8 +31,42 @@ public class ConfigManager extends Manager<ConfigManager> {
         super(ConfigManager.class, "Config");
 
         this.bot = bot;
-        this.fireGenVariables = FireGenVariables.createFromFolder(bot.getMunicipalityFolder());
+        this.fireGenVariables = this.findVars(bot);
         this.configs = new ArrayList<>();
+    }
+
+    private FireGenVariables findVars(BotManager bot) {
+        String municipality = bot.getMunicipalityFolder();
+        FireGenVariables.FireGenVariablesBuilder builder = FireGenVariables.createFromFolder(municipality);
+        AtomicReference<FireGenVariables> vars = new AtomicReference<>(builder.build().resetToDefault(municipality, true));
+        stream(bot, "settings.json", (e) -> {
+            JsonObject root = e.getAsJsonObject();
+            JsonObject files = root.get("files").getAsJsonObject();
+            builder
+                    .incidentStaleMinutes(asInt(root, "incidents_become_stale_minutes"))
+                    .shortTimeFormat(asStr(root, "short_time"))
+                    .longTimeFormat(asStr(root, "long_time"))
+                    .dateFormat(asStr(root, "date"))
+                    .incidentTypesFile(asStr(files, "incident_types"))
+                    .unitsFile(asStr(files, "units"))
+                    .venuesFile(asStr(files, "venues"))
+                    .municipalityFile(asStr(files, "municipality"))
+                    .assignmentStatusFile(asStr(files, "assignment_statuses"))
+                    .incidentStatusFile(asStr(files, "incident_statuses"))
+                    .locationPresetsFile(asStr(files, "locations_presets"))
+                    .radioChannelsFile(asStr(files, "radio_channels"))
+                    .usersFile(asStr(files, "users"));
+            vars.set(builder.build());
+        });
+        FireGenVariables returned = vars.get();
+        if (returned == null) {
+            throw new IllegalStateException("Atomic did not return a value, got 'null' expected FireGenVariables");
+        }
+        Log.info("Imported settings: " + returned.toString());
+        if (returned.defaults()) {
+            Log.warn("Using defaults for FireGenVars, not user-selected ones from settings.json!");
+        }
+        return returned;
     }
 
     @SuppressWarnings("rawtypes")

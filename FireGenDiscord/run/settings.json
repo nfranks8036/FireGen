@@ -1,0 +1,20 @@
+{
+  "incidents_become_stale_minutes": 90,
+
+  "short_time": "HH:mm",
+  "long_time": "HH:mm:ss",
+  "date": "MM/dd/yyyy",
+
+  "files": {
+    "incident_types": "incident_types.json",
+    "units": "units.json",
+    "venues": "venues.json",
+    "municipality": "municipality.json",
+    "assignment_statuses": "assignments.json",
+    "incident_statuses": "incident_status.json",
+    "locations_presets": "locations.json",
+    "radio_channels": "radio_channels.json",
+
+    "users": "users.json"
+  }
+}

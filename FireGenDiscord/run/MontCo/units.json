@@ -156,6 +156,7 @@
       {"short": "M56", "long": "BVRS MEDIC 56", "format": "Medic 56"},
       {"short": "SQ51", "long": "BVRS SQUAD 51", "format": "Squad 51"},
       {"short": "SQ52", "long": "BVRS SQUAD 52", "format": "Squad 52"},
+      {"short": "U5", "long": "BVRS UTILITY 5", "format": "Utility 5"},
       {"short": "RP51", "long": "BVRS RESPONSE 51", "format": "Response 51"},
       {"short": "RP52", "long": "BVRS RESPONSE 52", "format": "Response 52"},
       {"short": "RP53", "long": "BVRS RESPONSE 53", "format": "Response 53"},
@@ -738,5 +739,24 @@
     "type": "DISPATCH",
     "emoji": "<:nrv:1449915761563799703>",
     "units": []
+  },
+  {
+    "title": "TEST AGENCY",
+    "short": "TESTAGENCY",
+    "format": "Test Agency",
+    "station": "Blacksburg",
+    "type": "OTHER",
+    "emoji": "<:updoot:1146799050046316574>",
+    "units": [
+      {"short": "TEST1", "long": "TEST UNIT 1", "format": "TEST UNIT 1"},
+      {"short": "TEST2", "long": "TEST UNIT 2", "format": "TEST UNIT 2"},
+      {"short": "TEST3", "long": "TEST UNIT 3", "format": "TEST UNIT 3"},
+      {"short": "TEST4", "long": "TEST UNIT 4", "format": "TEST UNIT 4"},
+      {"short": "TEST5", "long": "TEST UNIT 5", "format": "TEST UNIT 5"},
+      {"short": "TEST6", "long": "TEST UNIT 6", "format": "TEST UNIT 6"},
+      {"short": "TEST7", "long": "TEST UNIT 7", "format": "TEST UNIT 7"},
+      {"short": "TEST8", "long": "TEST UNIT 8", "format": "TEST UNIT 8"},
+      {"short": "TEST9", "long": "TEST UNIT 9", "format": "TEST UNIT 9"}
+    ]
   }
 ]

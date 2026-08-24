@@ -19,6 +19,7 @@ import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.api.utilities.StringSelectors;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.incidents.messaging.AdminMessageSender;
 import net.noahf.firegen.discord.incidents.messaging.ReceiveMessageSender;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
@@ -26,8 +27,6 @@ import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -35,9 +34,9 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ContextMenuDetector extends ListenerAdapter {
 
@@ -72,7 +71,12 @@ public class ContextMenuDetector extends ListenerAdapter {
                 (l) ->
                 Main.incidents.getIncidents().stream()
                         .map(i -> (IncidentImpl) i)
-                        .map(i -> new ImmutablePair<>(i, i.getMessagingService().get(ReceiveMessageSender.class)))
+                        .flatMap((i) ->
+                                Stream.concat(
+                                        Stream.of(new ImmutablePair<>(i, i.getMessagingService().get(ReceiveMessageSender.class))),
+                                        Stream.of(new ImmutablePair<>(i, i.getMessagingService().get(AdminMessageSender.class)))
+                                )
+                        )
                         .filter(p -> p.getSecondElement() != null)
                         .filter(p -> p.getSecondElement().getMessages().contains(target))
                         .map(ImmutablePair::getFirstElement)
@@ -225,9 +229,26 @@ public class ContextMenuDetector extends ListenerAdapter {
                     if (selectors.asStringSelectors() == null) {
                         continue;
                     }
-                    results.put((path.isEmpty() ? "" : path + ".") + method.getName(), selectors);
+                    results.put(path(path, method.getName()), selectors);
 
-                } else if (List.class.isAssignableFrom(returnType) && isStringSelectorsList(method)) {
+                } else if (List.class.isAssignableFrom(returnType) && isListOf(method, String.class) && !method.getName().equalsIgnoreCase("asStringSelectors")) {
+                    @SuppressWarnings({"unchecked"})
+                    List<String> strings = (List<String>) method.invoke(object);
+
+                    if (strings != null) {
+                        StringSelectors selector = () -> List.of(
+                                String.join("`, `", strings)
+                        );
+                        if (selector.asStringSelectors().isEmpty()) {
+                            selector = () -> List.of(">> EMPTY LIST <<");
+                        }
+                        if (selector.asStringSelectors().size() == 1 && selector.asStringSelectors().getFirst().isBlank()) {
+                            selector = () -> List.of(" ");
+                        }
+                        results.put(path(path, method.getName()), selector);
+                    }
+
+                } else if (List.class.isAssignableFrom(returnType) && isListOf(method, StringSelectors.class)) {
                     continue;
 //                    @SuppressWarnings("unchecked")
 //                    List<? extends StringSelectors> children =
@@ -257,8 +278,7 @@ public class ContextMenuDetector extends ListenerAdapter {
                     Object child = method.invoke(object);
 
                     if (child != null) {
-                        String childPath =
-                                (path.isEmpty() ? "" : path + ".") + returnType.getSimpleName();
+                        String childPath = path(path, returnType.getSimpleName());
 
                         scan(child, childPath, results, visited);
                     }
@@ -273,22 +293,24 @@ public class ContextMenuDetector extends ListenerAdapter {
         }
     }
 
-    private static boolean isStringSelectorsList(Method method) {
+    private static boolean isListOf(Method method, Class<?> expectedType) {
         Type genericReturnType = method.getGenericReturnType();
         if (!(genericReturnType instanceof ParameterizedType parameterizedType)) {
             return false;
         }
+
         Type[] typeArguments = parameterizedType.getActualTypeArguments();
-        if (typeArguments.length != 1) { return false; }
-        Type elementType = typeArguments[0];
-        if (elementType instanceof Class<?> clazz) {
-            return StringSelectors.class.isAssignableFrom(clazz);
+        if (typeArguments.length != 1) {
+            return false;
         }
-        return false;
+
+        return typeArguments[0].equals(expectedType);
     }
 
     private static MessageEmbed createIncidentDetails(IncidentImpl incident, FireGenVariables vars) {
-        String message = "**Title** " + f(()->incident.getType().getSelectedName(), ">NEW<") +
+        String message =
+                incident.getLocation().format("\n", null).toUpperCase() + "\n" +
+                "\n**Title** " + f(()->incident.getType().getSelectedName(), ">NEW<") +
                 "\n**Time** " + f(()->incident.getTime().formatDateAndTime(vars, " @ ")) +
                 "\n**Incident Number** " + f(incident::getFormattedId, "<none assigned>") +
                 "\n**Status** " + f(()->incident.getStatus().name(), "UNKNOWN") + " (" + f(()->incident.getPublished().name()) + ")"
@@ -333,5 +355,12 @@ public class ContextMenuDetector extends ListenerAdapter {
         } catch (Exception exception) {
             return def;
         }
+    }
+
+    private static String path(String path, String join) {
+        if (join.toLowerCase().startsWith("get")) {
+            join = join.substring(3);
+        }
+        return (path.isEmpty() ? "" : path + ".") + join;
     }
 }

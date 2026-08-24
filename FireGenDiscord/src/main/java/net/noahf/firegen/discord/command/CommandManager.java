@@ -9,8 +9,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.utilities.BotNotLoaded;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
@@ -153,6 +155,11 @@ public class CommandManager extends ListenerAdapter {
 //                return;
 //            }
 
+            if (Main.isLoading()) {
+                DiscordMessages.error(event, "The Discord bot is currently booting up and can't be accessed! Try again in a few moments.");
+                return;
+            }
+
             command = this.getCommandName(event.getName());
             command.command(event);
         } catch (Exception exception) {
@@ -182,9 +189,12 @@ public class CommandManager extends ListenerAdapter {
             Command command = this
                     .getCommandName(event.getName());
 
-            List<String> autocomplete = new ArrayList<>(
-                    command
-                            .autocomplete(event, user, commandString, event.getFocusedOption())
+            List<String> originalAutocompletion = command.autocomplete(event, user, commandString, event.getFocusedOption());
+
+            List<String> autocomplete;
+            if (originalAutocompletion == null) autocomplete = new ArrayList<>();
+            else autocomplete = new ArrayList<>(
+                    originalAutocompletion
                             .stream()
                             .map(s -> DiscordMessages.truncate(s, net.dv8tion.jda.api.interactions.commands.Command.Choice.MAX_NAME_LENGTH, "..."))
                             .toList()

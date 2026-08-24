@@ -5,14 +5,16 @@
     {"name": "MVC", "tag": "MOTOR_VEHICLE_CRASH"},
     {"name": "HIT & RUN", "tag": "MOTOR_VEHICLE_CRASH"},
 
-    {"name": "FIRE ALARM", "tag": "FIRE_QUALIFIERS"},
-    {"name": "CARBON ALARM", "tag": "FIRE_QUALIFIERS"},
-    {"name": "GAS LEAK", "tag": "FIRE_QUALIFIERS"},
-    {"name": "STRUCTURE FIRE", "tag": "FIRE_QUALIFIERS"},
-
-    {"name": "OTHER FIRE - RESIDENTIAL", "tag": "FIRE"},
-    {"name": "OTHER FIRE - COMMERCIAL", "tag": "FIRE"},
-    {"name": "OTHER FIRE - OUTSIDE", "tag": "FIRE"},
+    {"name": "FIRE ALARM", "tag": "FIRE"},
+    {"name": "CARBON MONOXIDE ALARM", "tag": "FIRE"},
+    {"name": "GAS LEAK", "tag": "FIRE"},
+    {"name": "STRUCTURE FIRE", "tag": "FIRE"},
+    {"name": "VEHICLE FIRE", "tag": "FIRE"},
+    {"name": "BRUSH FIRE", "tag": "FIRE"},
+    {"name": "DUMPSTER FIRE", "tag": "FIRE"},
+    {"name": "CHIMNEY FIRE", "tag": "FIRE"},
+    {"name": "ELECTRICAL FIRE", "tag": "FIRE"},
+    {"name": "OTHER FIRE", "tag": "FIRE"},
 
     {"name": "ELECTRICAL HAZARD", "tag": "FIRE"},
     {"name": "ILLEGAL BURN", "tag": "FIRE"},
@@ -23,12 +25,6 @@
     {"name": "SPILL / LEAK", "tag": "FIRE"},
     {"name": "ODOR INVESTIGATION", "tag": "FIRE"},
     {"name": "HAZMAT", "tag": "FIRE"},
-
-    {"name": "VEHICLE FIRE", "tag": "FIRE"},
-    {"name": "BRUSH FIRE", "tag": "FIRE"},
-    {"name": "DUMPSTER FIRE", "tag": "FIRE"},
-    {"name": "CHIMNEY FIRE", "tag": "FIRE"},
-    {"name": "ELECTRICAL FIRE", "tag": "FIRE"},
 
     {"name": "ASSIST FIRE AGENCY", "tag": "FIRE"},
     {"name": "FIRE STANDBY", "tag": "FIRE"},
@@ -221,7 +217,7 @@
         "required": false,
         "unique": true,
         "syntax": "{T} W/ {Q}",
-        "list": ["WEAPON", "INJURIES", "WEAPON, INJURIES"]
+        "list": ["WEAPON", "INJURIES"]
       }
     },
 
@@ -231,7 +227,7 @@
       "qualifiers": {
         "required": true,
         "unique": true,
-        "syntax": "{T}, {Q} RESPONSE",
+        "syntax": "{T}, {Q}",
         "list": ["OMEGA", "ALPHA", "BRAVO", "CHARLIE", "DELTA", "ECHO"]
       }
     },

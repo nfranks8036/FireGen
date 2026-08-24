@@ -1,5 +1,8 @@
 package net.noahf.firegen.discord.bot;
 
+import com.github.ygimenez.exception.InvalidHandlerException;
+import com.github.ygimenez.model.Paginator;
+import com.github.ygimenez.model.PaginatorBuilder;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -15,6 +18,7 @@ import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.actions.listeners.ModalDetector;
 import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.bot.channels.ChannelManager;
+import net.noahf.firegen.discord.command.registered.UnitInfo;
 import net.noahf.firegen.discord.command.registered.Units;
 import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.config.files.ConfigMunicipality;
@@ -76,7 +80,7 @@ public class BotManager extends Manager<BotManager> {
         configPrefix = getOr(configPrefix, "");
     }
 
-    public BotManager startJda() throws InterruptedException {
+    public BotManager startJda() throws InterruptedException, InvalidHandlerException {
         Log.info("Building JDA...");
         Log.info("-".repeat(20) + " [JDA START] " + "-".repeat(20));
         this.jda = JDABuilder.createDefault(token)
@@ -91,12 +95,17 @@ public class BotManager extends Manager<BotManager> {
                 .addEventListeners(
                         new ButtonDetector(), new ModalDetector(),
                         new StringSelectDetector(), new Units.UnitsRefreshButtonDetector(),
-                        new ContextMenuDetector()
+                        new ContextMenuDetector(), new UnitInfo.UnitInfoDetailsListener()
                 )
                 .build()
                 .awaitReady();
         this.channelManager.startImport();
         Log.info("-".repeat(20) + " [ JDA END ] " + "-".repeat(20));
+
+        PaginatorBuilder.createPaginator(jda)
+                .setOnRemove((i) -> {})
+                .setDeleteOnCancel(false)
+                .activate();
         return this;
     }
 

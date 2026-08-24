@@ -1,16 +1,23 @@
 package net.noahf.firegen.discord.command.registered;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.selections.SelectOption;
+import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
@@ -24,13 +31,18 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.users.FireGenUser;
+import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static net.noahf.firegen.discord.users.FireGenUser.createId;
 
 public class UnitInfo extends Command {
 
@@ -80,16 +92,16 @@ public class UnitInfo extends Command {
 
         OptionMapping incidentMapping = event.getOption("incident");
         if (incidentMapping != null) {
-            this.showUnitIncidentStatus(event, unit, incidentMapping);
+            showUnitIncidentStatus(event, unit, incidentMapping.getAsString());
             return;
         }
 
-        this.showUnitOverallStatus(event, guild, unit);
+        showUnitOverallStatus(event, guild, unit);
     }
 
-    private void showUnitIncidentStatus(IReplyCallback event, UnitImpl unit, OptionMapping incidentMapping) {
+    private static void showUnitIncidentStatus(IReplyCallback event, UnitImpl unit, String incidentStr) {
         final Pattern pattern = Pattern.compile("(\\d{4})-(\\d+)");
-        final Matcher matcher = pattern.matcher(incidentMapping.getAsString());
+        final Matcher matcher = pattern.matcher(incidentStr);
 
         if (!matcher.find()) {
             DiscordMessages.error(event, "Unable to find an incident ID in your string. (YYYY-IIIIIII)");
@@ -137,10 +149,11 @@ public class UnitInfo extends Command {
         event.replyEmbeds(embed.build()).setEphemeral(true).queue();
     }
 
-    private void showUnitOverallStatus(IReplyCallback event, Guild guild, UnitImpl unit) {
+    private static void showUnitOverallStatus(IReplyCallback event, Guild guild, UnitImpl unit) {
         Set<UnitAssignment> assignments = unit.getAssignments();
 
         List<MessageEmbed> returned = new ArrayList<>();
+        List<MessageTopLevelComponent> components = new ArrayList<>();
 
         returned.add(
                 new EmbedBuilder()
@@ -161,8 +174,10 @@ public class UnitInfo extends Command {
         if (!assignments.isEmpty()) {
             EmbedBuilder incidentInformation = new EmbedBuilder()
                     .setColor(new Color(90, 90, 255))
-                    .setTitle("Associated Incidents (" + assignments.size() + ")");
+                    .setTitle("Associated Incidents (" + assignments.size() + ")")
+                    .setFooter("Press an incident below to view more information about this unit and that incident.");
 
+            List<SelectOption> options = new ArrayList<>();
             Map<String, String> statuses = new HashMap<>();
             for (UnitAssignment assignment : assignments) {
                 IncidentImpl incident = (IncidentImpl) assignment.getIncident();
@@ -189,6 +204,14 @@ public class UnitInfo extends Command {
                 }
 
                 statuses.put(keyString, valueString);
+
+                options.add(
+                        SelectOption.of(incident.getFormattedId() + ": " + incident.getType().getSelectedName()
+                                + (incident.getLocation().isSet() ? " @ " + incident.getLocation().format() : ""),
+                                createId(event.getUser(), "unitselectinfo", String.valueOf(incident.getId()), String.valueOf(unit.getShorthand()))
+                        )
+                                .withEmoji(status.getEmoji())
+                );
             }
 
             for (Map.Entry<String, String> entry : statuses.entrySet()) {
@@ -197,6 +220,11 @@ public class UnitInfo extends Command {
             }
 
             returned.add(incidentInformation.build());
+            components.add(ActionRow.of(
+                    StringSelectMenu.create(createId(event.getUser(), "unitselectinfo"))
+                            .addOptions(options)
+                            .build()
+            ));
         }
 //
 //        returned.add(new EmbedBuilder()
@@ -205,7 +233,7 @@ public class UnitInfo extends Command {
 //                .build()
 //        );
 
-        event.replyEmbeds(returned).setEphemeral(true).queue();
+        event.replyEmbeds(returned).setComponents(components).setEphemeral(true).queue();
     }
 
     private final List<String> incidents = new ArrayList<>();
@@ -234,5 +262,35 @@ public class UnitInfo extends Command {
             return incidents;
         }
         return null;
+    }
+
+    public static class UnitInfoDetailsListener extends ListenerAdapter {
+        @Override
+        public void onStringSelectInteraction(@NonNull StringSelectInteractionEvent event) {
+            String input = event.getSelectedOptions().getFirst().getValue();
+            try {
+                String command = input.split("-")[2];
+                if (!command.equalsIgnoreCase("unitselectinfo")) {
+                    return;
+                }
+
+                String incidentStr = input.split("-")[3];
+                Incident incident = Main.incidents.getIncidentBy(Long.parseLong(incidentStr));
+                if (incident == null) {
+                    throw new IllegalArgumentException("No incident exists by the ID '" + incidentStr + "'");
+                }
+
+                String unitStr = input.split("-")[4];
+                Unit unit = Main.config.get(ConfigUnits.class).fromShorthand(unitStr);
+                if (unit == null) {
+                    throw new IllegalArgumentException("No unit exists by the shorthand '" + unitStr + "'");
+                }
+
+                showUnitIncidentStatus(event, (UnitImpl) unit, incident.getFormattedId());
+            } catch (Exception exception) {
+                Log.error("Button press error with input: \"" + input + "\"");
+                DiscordMessages.error(event, "An error occurred while processing your Unit Info button press: " + exception, exception);
+            }
+        }
     }
 }

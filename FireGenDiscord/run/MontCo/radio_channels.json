@@ -21,57 +21,57 @@
   },
   {
     "name": "Fire/Rescue Dispatch",
-    "alpha_tag": "FIRE-RESCUE1",
+    "alpha_tag": "FIRE-RESCUE-1",
     "talkgroup_id": 5
   },
   {
     "name": "Fire/Rescue South 3",
-    "alpha_tag": "SOUTH3",
+    "alpha_tag": "SOUTH-3",
     "talkgroup_id": 6
   },
   {
     "name": "Blacksburg Volunteer Rescue Squad",
-    "alpha_tag": "BRS1",
+    "alpha_tag": "BRS-1",
     "talkgroup_id": 7
   },
   {
     "name": "Blacksburg Fire Department",
-    "alpha_tag": "BFD1",
+    "alpha_tag": "BFD-1",
     "talkgroup_id": 8
   },
   {
     "name": "Virginia Tech Rescue Squad",
-    "alpha_tag": "BRS1",
+    "alpha_tag": "VTRS-1",
     "talkgroup_id": 9
   },
   {
     "name": "Christiansburg Fire Department",
-    "alpha_tag": "CFD1",
+    "alpha_tag": "CFD-1",
     "talkgroup_id": 10
   },
   {
     "name": "Fire/Rescue South 5",
-    "alpha_tag": "SOUTH5",
+    "alpha_tag": "SOUTH-5",
     "talkgroup_id": 11
   },
   {
     "name": "Fire/Rescue South 7",
-    "alpha_tag": "SOUTH7",
+    "alpha_tag": "SOUTH-7",
     "talkgroup_id": 12
   },
   {
     "name": "Fire/Rescue South 9",
-    "alpha_tag": "SOUTH9",
+    "alpha_tag": "SOUTH-9",
     "talkgroup_id": 13
   },
   {
     "name": "Fire/Rescue South 11",
-    "alpha_tag": "SOUTH11",
+    "alpha_tag": "SOUTH-11",
     "talkgroup_id": 14
   },
   {
     "name": "Longshop-McCoy Fire & Rescue",
-    "alpha_tag": "LNGSHP1",
+    "alpha_tag": "LNGSHP-1",
     "talkgroup_id": 15
   },
   {
@@ -91,7 +91,7 @@
   },
   {
     "name": "Christiansburg Public Works",
-    "alpha_tag": "CPW1",
+    "alpha_tag": "CPW-1",
     "talkgroup_id": 21
   },
   {

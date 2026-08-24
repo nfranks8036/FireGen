@@ -20,6 +20,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.5.16' // required by JDA
     implementation 'org.reflections:reflections:0.10.2' // used to register commands reflectively
     implementation 'com.google.code.gson:gson:2.13.2' // gson for reading incident types
+    implementation 'com.github.ygimenez:Pagination-Utils:4.3.0'
 
     implementation project(":FireGenAPI")
 

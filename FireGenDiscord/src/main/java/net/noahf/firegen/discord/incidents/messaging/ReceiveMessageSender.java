@@ -1,9 +1,12 @@
 package net.noahf.firegen.discord.incidents.messaging;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
@@ -22,6 +25,8 @@ import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -31,6 +36,11 @@ public class ReceiveMessageSender extends MessageSender {
 
     public ReceiveMessageSender(IncidentMessagingService service, IncidentImpl incident) {
         super(service, incident);
+
+//        super.setComponents(List.of(ActionRow.of(
+//                Button.primary(super.getIncident().createInteractionIdString("details"), "Details"),
+//                Button.primary(super.getIncident().createInteractionIdString("log"), "Full Log")
+//        )));
     }
 
     @Override
@@ -73,7 +83,15 @@ public class ReceiveMessageSender extends MessageSender {
                     continue;
                 }
 
-                Message message = channel.sendMessage(startingMessage).complete();
+                if (super.getMessages().stream().map(m -> m.getChannel().asTextChannel()).toList().contains(channel)) {
+                    Log.warn("RECEIVE - Currently on #" + channel.getName() + " (id " + channel.getId() + " in guild " + channel.getGuild().getId() + ")");
+                    Log.warn("RECEIVE - Can't send a message here. This channel already has a message!");
+                    continue;
+                }
+
+                Message message = channel.sendMessage(startingMessage)
+//                        .setComponents(super.getComponents())
+                        .complete();
                 super.getMessages().add(message);
             } catch (Exception exception) {
                 Log.error("RECEIVE - Can't send message to " + (channel != null ? channel.getName() : null) +
@@ -107,6 +125,8 @@ public class ReceiveMessageSender extends MessageSender {
         IncidentStatusEmoji status = Main.config.get(ConfigIncidentStatuses.class).asEmoji(incident.getStatus());
         IncidentTimeImpl time = (IncidentTimeImpl) incident.getTime();
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();
+        String locationLink =
+                "https://www.google.com/maps/search/" + URLEncoder.encode(location.format(), Charset.defaultCharset());
         String links = incident.getLinks().isEmpty() ? ""
                 : "\n**Links:** " + incident.getLinks().entrySet().stream()
                                     .map(e -> "[" + e.getValue() + "](<" + e.getKey() + ">)")
@@ -127,7 +147,7 @@ public class ReceiveMessageSender extends MessageSender {
                 time.getUnix(),
                 this.getUnitsFormatted(),
                 location.getType().getPrefix(),
-                location.format(),
+                location.format() + (location.isSet() ? " [  ↗  ](<" + locationLink + ">)" : ""),
                 !log.isEmpty() ? String.join("\n", log) : "None"
         );
         List<MessageEmbed> embedForm = new ArrayList<>();
@@ -174,8 +194,13 @@ public class ReceiveMessageSender extends MessageSender {
         }
 
         for (Message message : super.getMessages()) {
-            message.delete().complete();
+            try {
+                message.delete().complete();
+            } catch (ErrorResponseException e) {
+                Log.warn("RECEIVE - Attempted to delete message in " + message.getChannel().getName() + " (id " + message.getChannel().getId() + "), received error instead: " + e);
+            }
         }
+
         super.getMessages().clear();
     }
 }

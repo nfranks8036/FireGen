@@ -30,7 +30,7 @@ import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
 public class SetDetails extends Command {
 
     public SetDetails() {
-        super("set-details", "Sets specific details of an incident. Press 'Edit Type' on an incident to start editing.",
+        super("set-details", "Sets specific details of an incident. Press 'Edit Mode' on an incident to start editing.",
                 CommandFlags.include()
                         .options(new OptionData[]{
                                 new OptionData(OptionType.STRING, "units", "The new units for this incident. Note this will only affect inputted agencies.", false, true),
