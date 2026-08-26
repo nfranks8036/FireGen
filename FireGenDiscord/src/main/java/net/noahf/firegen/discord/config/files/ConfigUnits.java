@@ -14,6 +14,7 @@ import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
+import net.noahf.firegen.discord.utilities.IntList;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,12 +69,18 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
                 String formatted = asStr(unitObj, "format");
 
                 JsonElement placeholdersElement = JsonUtilities.element(unitObj, "placeholders", true);
+                IntList intList = null;
                 if (placeholdersElement != null && !placeholdersElement.isJsonNull()) {
                     Map<String, String> placeholders = placeholdersElement.getAsJsonObject()
                             .asMap()
                             .entrySet().stream()
                             .collect(Collectors.toMap(Map.Entry::getKey, c -> c.getValue().getAsString()));
                     for (Map.Entry<String, String> s : placeholders.entrySet()) {
+                        if (s.getValue().contains("IntList")) {
+                            intList = new IntList(s.getKey(), s.getValue());
+                            continue;
+                        }
+
                         longhand = longhand.replace(s.getKey(), s.getValue());
                         shorthand = shorthand.replace(s.getKey(), s.getValue());
                         formatted = formatted.replace(s.getKey(), s.getValue());
@@ -82,7 +89,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
 
                 Unit unit = new UnitImpl(
                         shorthand, longhand, formatted, unitEmoji, agency,
-                        lastUnitCount + j, false,
+                        lastUnitCount + j, intList, false,
                         SelectOption.of(longhand, shorthand)
                                 .withDescription(null)
                                 .withEmoji(emoji)
@@ -102,7 +109,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
             Agency agency = agencies.get(i);
             this.get().addFirst(
                     new UnitImpl(agency.getShorthand(), agency.getTitle(), agency.getFormatted(),
-                            ((AgencyImpl)agency).getEmoji(), agency, Integer.MIN_VALUE + i, true,
+                            ((AgencyImpl)agency).getEmoji(), agency, Integer.MIN_VALUE + i, null, true,
                             SelectOption.of(agency.getTitle(), agency.getShorthand())
                                     .withDescription(null)
                                     .withEmoji(((AgencyImpl)agency).getEmoji())
@@ -120,11 +127,19 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
     }
 
     public @Nullable Unit fromShorthand(String shorthand) {
+        // check for an exact match (most common way for units to match, so it will loop this first)
         for (Unit a : this.get()) {
             if (a.getShorthand().equalsIgnoreCase(shorthand)) {
                 return a;
             }
         }
+
+        // it's possible the unit is a custom one like this
+        for (Unit a : this.get()) {
+            Unit c = checkAdditional(a, a.getShorthand(), shorthand);
+            if (c != null) return c;
+        }
+
         return null;
     }
 
@@ -134,7 +149,32 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
                 return a;
             }
         }
+
+        for (Unit a : this.get()) {
+            Unit c = checkAdditional(a, a.getLonghand(), longhand);
+            if (c != null) return c;
+        }
+
         return null;
+    }
+
+    private Unit checkAdditional(Unit parent, String format, String input) {
+        if (parent.getAdditional() == null) return null;
+        if (!(parent.getAdditional() instanceof IntList intList)) return null;
+
+        int pos = format.indexOf(intList.getKey());
+        String prefix = format.substring(0, pos);
+        String suffix = format.substring(pos+1);
+        if (!input.startsWith(prefix) && (suffix.isEmpty() || !input.endsWith(suffix))) return null;
+
+        String numberStr = input.substring(prefix.length(), input.length() - suffix.length());
+        int number = Integer.parseInt(numberStr);
+
+        return add(
+                ((AgencyImpl)parent.getAgency()).newUnit(
+                        intList.createUnit(parent, number)
+                )
+        );
     }
 
     public @Nullable Agency agencyFromShorthand(String shorthand) {

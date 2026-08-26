@@ -1,5 +1,8 @@
 package net.noahf.firegen.discord.actions.listeners;
 
+import com.github.ygimenez.method.Pages;
+import com.github.ygimenez.model.InteractPage;
+import com.github.ygimenez.model.Page;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
@@ -10,6 +13,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.Unit;
@@ -17,6 +21,7 @@ import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.utilities.ToStringListStringSelector;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.messaging.AdminMessageSender;
@@ -24,6 +29,7 @@ import net.noahf.firegen.discord.incidents.messaging.ReceiveMessageSender;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
+import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -40,7 +46,7 @@ import java.util.stream.Stream;
 
 public class ContextMenuDetector extends ListenerAdapter {
 
-    public static final Map<String, BiFunction<IncidentImpl, FireGenVariables, MessageEmbed>> commands = new LinkedHashMap<>(
+    public static final Map<String, TriFunction<IReplyCallback, IncidentImpl, FireGenVariables, MessageEmbed>> commands = new LinkedHashMap<>(
             Map.of(
                     "Show incident overview", ContextMenuDetector::createIncidentDetails,
                     "Show incident log", ContextMenuDetector::createIncidentLog,
@@ -91,7 +97,10 @@ public class ContextMenuDetector extends ListenerAdapter {
 
         FireGenVariables vars = Main.config.getFireGenVariables();
 
-        MessageEmbed content = commands.get(event.getName()).apply(incident, vars);
+        MessageEmbed content = commands.get(event.getName()).apply(event, incident, vars);
+        if (content == null) {
+            return;
+        }
 
         List<String> keys = new ArrayList<>(commands.keySet());
         int index = 0;
@@ -136,7 +145,7 @@ public class ContextMenuDetector extends ListenerAdapter {
             int index = Integer.parseInt(id.split("-")[4]);
             if (incident != null) {
                 String key = new ArrayList<>(commands.keySet()).get(index);
-                message = commands.get(key).apply((IncidentImpl) incident, Main.config.getFireGenVariables());
+                message = commands.get(key).apply(event, (IncidentImpl) incident, Main.config.getFireGenVariables());
             }
 
             event.editMessageEmbeds(message)
@@ -156,15 +165,50 @@ public class ContextMenuDetector extends ListenerAdapter {
         }
     }
 
-    private static MessageEmbed createIncidentLog(IncidentImpl incident, FireGenVariables vars) {
-        return new EmbedBuilder()
-                .setTitle("Incident Log (" + incident.getLog().size() + ")")
-                .setDescription(String.join("\n", incident.getMessagingService().getNarrativeFormatted(incident, true, false)))
-                .setColor(new Color(166, 92, 59))
-                .build();
+    public static MessageEmbed createIncidentLog(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
+        return createIncidentLog(event, incident, vars, false);
     }
 
-    public static MessageEmbed createFieldsDisplay(IncidentImpl incident, FireGenVariables vars) {
+    public static MessageEmbed createIncidentLog(IReplyCallback event, IncidentImpl incident, FireGenVariables vars, boolean showUsers) {
+        event.deferReply(true).queue();
+
+        List<String> entries = incident.getMessagingService().getNarrativeFormatted(incident, true, showUsers);
+        Map<String, Integer> pagesStrings = new LinkedHashMap<>();
+        int AMOUNT_PER_PAGE = 20;
+        for (int i = 0; i < Math.ceil((double) entries.size() / AMOUNT_PER_PAGE); i++) {
+            List<String> sublist = entries.subList(i * AMOUNT_PER_PAGE, Math.min((i+1)*AMOUNT_PER_PAGE, entries.size()));
+            pagesStrings.put(String.join("\n", sublist), sublist.size());
+        }
+        List<Page> pages = new ArrayList<>();
+        for (int i = 0; i < pagesStrings.size(); i++) {
+            String pageString = new ArrayList<>(pagesStrings.keySet()).get(i);
+            int amount = pagesStrings.get(pageString);
+            EmbedBuilder embed = new EmbedBuilder()
+                    .setTitle("Incident Log (" + (amount != entries.size() ? "showing " + amount + " / " + entries.size() : amount) + ")")
+                    .setDescription(pageString)
+                    .setColor(new Color(0, 50, 100));
+            if (pagesStrings.size() > 1) {
+                String pageText = "Page " + (i + 1) + " / " + pagesStrings.size();
+                embed = embed
+                        .setAuthor(pageText);
+            }
+            pages.add(InteractPage.of(embed.build()));
+        }
+
+        event.getHook()
+                .editOriginalEmbeds(
+                        (MessageEmbed) pages.getFirst().getContent()
+                )
+                .queue((s) -> {
+                    if (pages.size() > 1) {
+                        Pages.paginate(s, pages, true, true);
+                    }
+                });
+
+        return null;
+    }
+
+    public static MessageEmbed createFieldsDisplay(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
         Map<String, StringSelectors> selectors = new HashMap<>();
         scan(incident, "", selectors, new HashSet<>());
         List<String> string = new ArrayList<>();
@@ -248,31 +292,30 @@ public class ContextMenuDetector extends ListenerAdapter {
                         results.put(path(path, method.getName()), selector);
                     }
 
-                } else if (List.class.isAssignableFrom(returnType) && isListOf(method, StringSelectors.class)) {
-                    continue;
-//                    @SuppressWarnings("unchecked")
-//                    List<? extends StringSelectors> children =
-//                            (List<? extends StringSelectors>) method.invoke(object);
-//                    if (children != null) {
-//
-//                        StringSelectors combinedSelector = () -> children.stream()
-//                                .flatMap(selector -> selector.asStringSelectors().stream())
-//                                .toList();
-//
-//                        results.put(
-//                                path + "." + method.getName(),
-//                                combinedSelector
-//                        );
-//
-//                        for (StringSelectors child : children) {
-//                            scan(
-//                                    child,
-//                                    path + "." + child.getClass().getSimpleName(),
-//                                    results,
-//                                    visited
-//                            );
-//                        }
-//                    }
+                } else if (List.class.isAssignableFrom(returnType) && method.isAnnotationPresent(ToStringListStringSelector.class)) {
+                    @SuppressWarnings("unchecked")
+                    List<Object> children =
+                            (List<Object>) method.invoke(object);
+                    if (children != null) {
+
+                        List<String> asString = new ArrayList<>(children.stream()
+                                .map(Object::toString)
+                                .toList());
+
+                        results.put(
+                                path + "." + method.getName(),
+                                () -> asString
+                        );
+
+                        for (Object child : children) {
+                            scan(
+                                    child,
+                                    path + "." + child.getClass().getSimpleName(),
+                                    results,
+                                    visited
+                            );
+                        }
+                    }
 
                 } else if (StringSelectors.class.isAssignableFrom(returnType)) {
                     Object child = method.invoke(object);
@@ -307,7 +350,7 @@ public class ContextMenuDetector extends ListenerAdapter {
         return typeArguments[0].equals(expectedType);
     }
 
-    private static MessageEmbed createIncidentDetails(IncidentImpl incident, FireGenVariables vars) {
+    private static MessageEmbed createIncidentDetails(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
         String message =
                 incident.getLocation().format("\n", null).toUpperCase() + "\n" +
                 "\n**Title** " + f(()->incident.getType().getSelectedName(), ">NEW<") +

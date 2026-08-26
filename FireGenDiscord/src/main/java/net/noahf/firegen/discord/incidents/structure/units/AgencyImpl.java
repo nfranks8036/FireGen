@@ -25,4 +25,8 @@ public class AgencyImpl implements Agency {
     private final List<Unit> units;
     private final int startUnitOrdinal;
 
+    public Unit newUnit(Unit unit) {
+        this.units.add(unit); return unit;
+    }
+
 }

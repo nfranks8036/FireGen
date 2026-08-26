@@ -1,24 +1,27 @@
 package net.noahf.firegen.discord.actions.registered;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 
-public class ViewFields implements ButtonAction {
+import java.awt.*;
+
+public class ViewLog implements ButtonAction {
 
     @Override
     public String getName() {
-        return "fields";
+        return "logs";
     }
 
     @Override
     public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
-        event.replyEmbeds(ContextMenuDetector.createFieldsDisplay(
-                (IncidentImpl) ctx.getIncident(), Main.config.getFireGenVariables()
-        )).setEphemeral(true).queue();
+        IncidentImpl incident = (IncidentImpl) ctx.getIncident();
+        ContextMenuDetector.createIncidentLog(event, incident, ctx.getConfig().getFireGenVariables(), true);
     }
-
 }

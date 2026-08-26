@@ -27,8 +27,10 @@ public abstract class MultiObjectConfiguration<T> extends SingleObjectConfigurat
         this.set(new ArrayList<>());
     }
 
-    protected void add(T element) {
+    protected T add(T element) {
+        if (element == null) return null;
         this.get().add(element);
+        return element;
     }
 
     protected void addAll(List<T> elements) {

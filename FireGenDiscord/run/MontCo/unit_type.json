@@ -1,0 +1,174 @@
+[
+  {
+    "id": "FIRE_OFFICER",
+    "short": null,
+    "long": null,
+    "format": null,
+    "description": " "
+  },
+  {
+    "id": "FIRE_ENGINE",
+    "short": "E",
+    "long": "ENGINE",
+    "format": "Engine",
+    "description": " "
+  },
+  {
+    "id": "FIRE_TRUCK",
+    "short": "TR",
+    "long": "TRUCK",
+    "format": "Truck",
+    "description": " "
+  },
+  {
+    "id": "FIRE_MARSHALL",
+    "short": "FM",
+    "long": "FM",
+    "format": "Fire Marshall",
+    "description": " "
+  },
+  {
+    "id": "LADDER_TRUCK",
+    "short": "L",
+    "long": "LADDER",
+    "format": "Ladder",
+    "description": " "
+  },
+  {
+    "id": "TOWER_TRUCK",
+    "short": "TO",
+    "long": "TOWER",
+    "format": "Tower",
+    "description": " "
+  },
+  {
+    "id": "TANKER_TRUCK",
+    "short": "T",
+    "long": "TANKER",
+    "format": "Tanker",
+    "description": " "
+  },
+  {
+    "id": "BRUSH_TRUCK",
+    "short": "B",
+    "long": "BRUSH",
+    "format": "Brush",
+    "description": " "
+  },
+  {
+    "id": "ATTACK_TRUCK",
+    "short": "A",
+    "long": "ATTACK",
+    "format": "Attack",
+    "description": " "
+  },
+  {
+    "id": "HAZMAT_TRUCK",
+    "short": "HAZ",
+    "long": "HAZMAT",
+    "format": "Hazmat",
+    "description": " "
+  },
+  {
+    "id": "RESPONSE_CAR",
+    "short": "RP",
+    "long": "RESPONSE",
+    "format": "Response",
+    "description": " "
+  },
+  {
+    "id": "SQUAD_TRUCK",
+    "short": "SQ",
+    "long": "SQUAD",
+    "format": "Squad",
+    "description": " "
+  },
+  {
+    "id": "WAGON_TRUCK",
+    "short": "W",
+    "long": "WAGON",
+    "format": "Wagon",
+    "description": " "
+  },
+  {
+    "id": "UTILITY",
+    "short": "U",
+    "long": "UTILITY",
+    "format": "Utility",
+    "description": " "
+  },
+  {
+    "id": "EMS_SUPERVISOR",
+    "short": "SUP",
+    "long": "SUPERVISOR",
+    "format": "Supervisor",
+    "description": " "
+  },
+  {
+    "id": "BLS_AMBULANCE",
+    "short": "R",
+    "long": "RESCUE",
+    "format": "Rescue",
+    "description": " "
+  },
+  {
+    "id": "ALS_AMBULANCE",
+    "short": "M",
+    "long": "MEDIC",
+    "format": "Medic",
+    "description": " "
+  },
+  {
+    "id": "COMMAND_CAR",
+    "short": "CMD",
+    "long": "COMMAND",
+    "format": "Command",
+    "description": " "
+  },
+  {
+    "id": "UTILITY_TASK_VEHICLE",
+    "short": "UTV",
+    "long": "UTV",
+    "format": "UTV",
+    "description": " "
+  },
+  {
+    "id": "EXTRICATION_VEHICLE",
+    "short": "EXR",
+    "long": "EXTRICATION",
+    "format": "Extrication",
+    "description": " "
+  },
+
+  {
+    "id": "PATROL_CAR",
+    "short": null,
+    "long": null,
+    "format": null,
+    "description": " "
+  },
+
+  {
+    "id": "ANIMAL_CONTROL",
+    "short": "AC",
+    "long": "AC",
+    "format": "Animal Control",
+    "description": " "
+  },
+
+  {
+    "id": "LIFE_GUARD_AIR_AMBULANCE",
+    "short": "LG",
+    "long": "CARILION LIFE-GUARD",
+    "format": "Carilion Life-Guard",
+    "description": " "
+  },
+
+  {
+    "id": "TEST",
+    "short": "TEST",
+    "long": "TEST UNIT",
+    "format": "TEST UNIT",
+    "description": " "
+  }
+]

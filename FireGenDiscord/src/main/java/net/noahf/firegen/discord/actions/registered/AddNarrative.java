@@ -22,6 +22,7 @@ import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
@@ -139,6 +140,9 @@ public class AddNarrative implements ButtonAction, ModalAction {
         incident.addLog(entry);
         incident.update();
 
+        if (narrative.equalsIgnoreCase("DebugFakeLog"))
+            addFakeLog(user, (IncidentImpl) incident);
+
         return MessageStatus.NONE;
     }
 
@@ -146,5 +150,33 @@ public class AddNarrative implements ButtonAction, ModalAction {
     public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
         if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
         if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, e); }
+    }
+
+    public static void addFakeLog(Contributor<User> user, IncidentImpl incident) {
+
+
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Location Updated: US-460 BYP EB @ SMITHFIELD UNDERPASS");
+        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, "Units BFD, BVRS, SUP5, BPD DISPATCHED");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Incident Published");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Location Updated: US-460 BYP EB @ SOUTHGATE, BLACKSBURG, VA");
+        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "EASTBOUND 460 BYPASS, TWO-VEHICLE CRASH, HEAD-ON COLLISION");
+        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "NRV: \"IT SOUNDS REALLY BAD\"");
+        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, "Units VTPD, BPD ENROUTE");
+        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, "Units R51, 106, 500 ENROUTE");
+        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, "Units BPD, BVRS REMOVED");
+        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "IN THE AREA OF THE SMITHFIELD AREA UNDERPASS");
+        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "MULTIPLE CALLERS, ADVISING ONE VEHICLE CROSSED THE MEDIAN AND STRCK THE OTHER VEHICLE HEAD-ON");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit R56 ENROUTE");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit 501 ENROUTE");
+        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "POSSIBLE ENTRAPMENT PER CALLERS ONSCENE");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit SQ51 ENROUTE");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit SUP5 ENROUTE");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit BFD REMOVED");
+        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "SUBJECT TRAPPED UNDER THE STEERING WHEEL IN THE SILVER HONDA");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit E19 ENROUTE");
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit BPD ONSCENE");
+        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "<17:20> DRIVER IN A BLACK SEDAN UNRESPONSIVE, GAS LEAKING FROM VEHICLE");
+
+
     }
 }

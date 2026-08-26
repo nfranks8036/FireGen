@@ -12,6 +12,7 @@ import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.AddNarrative;
 import net.noahf.firegen.discord.actions.registered.EditMode;
+import net.noahf.firegen.discord.actions.registered.Publish;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
@@ -24,6 +25,7 @@ import net.noahf.firegen.discord.utilities.MessageStatus;
 import java.util.List;
 
 import static net.noahf.firegen.discord.command.registered.CreateIncident.DATE_CREATE_FORMAT;
+import static net.noahf.firegen.discord.command.registered.CreateIncident.Helper.findAction;
 import static net.noahf.firegen.discord.command.registered.CreateIncident.TIME_CREATE_FORMAT;
 import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
 
@@ -77,20 +79,32 @@ public class SetDetails extends Command {
                 return;
             }
 
-            IncidentType oldType = incident.getType();
-            incident.setTypeBySearch(typeOption.getAsString());
-            IncidentType newType = incident.getType();
+            boolean publish = false;
+            String typeString = typeOption.getAsString();
 
-            if (oldType.equals(newType)) {
-                DiscordMessages.error(event, "An unknown error occurred, the incident type did not change.");
-                return;
+            if (typeString.startsWith("pub-")) {
+                typeString = typeString.substring("pub-".length()).toUpperCase();
+                publish = true;
             }
 
-            String narrative = "Changed Incident Type: " + oldType.getSelectedName() + " --> " + newType.getSelectedName();
+            IncidentType oldType = incident.getType();
+            incident.setTypeBySearch(typeString);
+            IncidentType newType = incident.getType();
 
             Contributor<User> user = incident.addContributor(event.getUser());
-            incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
+            if (oldType.equals(newType) && !publish) {
+                DiscordMessages.error(event, "An unknown error occurred, the incident type did not change.");
+                return;
+            } else if (!publish) {
+                String narrative = "Changed Incident Type: " + oldType.getSelectedName() + " --> " + newType.getSelectedName();
+                incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
+            }
+
             incident.update();
+
+            if (publish) {
+                findAction(Publish.class).onSubmit(incident, event);
+            }
         }
 
         OptionMapping locationOption = event.getOption("location");

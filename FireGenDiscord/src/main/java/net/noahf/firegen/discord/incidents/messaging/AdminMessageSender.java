@@ -60,7 +60,7 @@ public class AdminMessageSender extends MessageSender {
                         Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
                         Button.primary(super.getIncident().createInteractionIdString("preview"), "Preview"),
                         Button.primary(super.getIncident().createInteractionIdString("link"), "Links"),
-                        Button.primary(super.getIncident().createInteractionIdString("fields"), "Fields")
+                        Button.primary(super.getIncident().createInteractionIdString("logs"), "Show Log")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-narrative", "Log:").asDisabled(),

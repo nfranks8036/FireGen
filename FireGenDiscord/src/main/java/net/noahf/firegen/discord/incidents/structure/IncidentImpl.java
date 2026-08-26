@@ -13,6 +13,7 @@ import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.utilities.ToStringListStringSelector;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.IncidentManager;
@@ -47,6 +48,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @NotNull
     private IncidentType type;
 
+    @Getter(onMethod_ = {@ToStringListStringSelector})
     private Set<UnitAssignment> unitAssignments;
 
     @NotNull
@@ -58,6 +60,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @NotNull
     private IncidentPublishedStatus published;
 
+    @Getter(onMethod_ = {@ToStringListStringSelector})
     private List<IncidentLogEntry> log;
 
     private List<Contributor<?>> contributors;

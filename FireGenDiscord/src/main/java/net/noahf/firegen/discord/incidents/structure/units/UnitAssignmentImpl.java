@@ -7,6 +7,8 @@ import lombok.Setter;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.*;
+import net.noahf.firegen.api.utilities.IgnoreStringSelector;
+import net.noahf.firegen.api.utilities.ToStringListStringSelector;
 import net.noahf.firegen.discord.Main;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,8 +38,10 @@ public class UnitAssignmentImpl implements UnitAssignment {
 
     private Long id;
 
+    @Getter(onMethod_ = {@IgnoreStringSelector})
     private final Incident incident;
 
+    @Getter(onMethod_ = {@IgnoreStringSelector})
     private final Unit unit;
 
     private @Setter RadioChannel radioChannel;
@@ -63,7 +67,10 @@ public class UnitAssignmentImpl implements UnitAssignment {
     @Override
     @NotNull
     public String toString() {
-        return unit.getFormatted() + " (" + this.getLatestAssignment().getStatus().getName() + ")";
+        AssignmentEvent latest = this.getLatestAssignment();
+        return unit.getShorthand() + ":" + latest.getStatus().getName()
+                + (latest.getSecondary() != null ? ">" + latest.getSecondary().toString() : "")
+                ;
     }
 
     @Override

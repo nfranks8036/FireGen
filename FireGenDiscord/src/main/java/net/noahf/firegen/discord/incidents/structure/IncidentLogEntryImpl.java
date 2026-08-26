@@ -6,6 +6,8 @@ import lombok.Setter;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.utilities.IdGenerator;
+import net.noahf.firegen.api.utilities.IgnoreStringSelector;
+import net.noahf.firegen.api.utilities.ToStringListStringSelector;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @NoArgsConstructor(force = true)
-@Getter
+@Getter(onMethod_ = {@IgnoreStringSelector})
 public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     public static IncidentLogEntry of(Contributor<?> user, String entry, EntryType type) {
@@ -57,11 +59,13 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
         this.type = type;
     }
 
+    @IgnoreStringSelector
     public String formatReceiver() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(NARRATIVE_TIME_FORMAT);
         return "`" + this.getCustomTimeOrDefault().format(formatter) + "` " + this.entry.replaceFirst("^<[^>]+>\\s+", "");
     }
 
+    @IgnoreStringSelector
     public String formatAdmin(boolean withUser) {
         return "`" + this.time.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "` `"+ type.name() + "` " + (withUser ? "<@" + user.getId() + "> " : "") + entry;
     }
@@ -119,4 +123,8 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
         return ImmutablePair.of(LocalDateTime.now(), text);
     }
 
+    @Override
+    public String toString() {
+        return formatAdmin(false).replace("`", "");
+    }
 }

@@ -10,6 +10,7 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -28,6 +29,7 @@ public class UnitImpl implements Unit {
     private final transient Emoji emoji;
     private final Agency agency;
     private final @Accessors(fluent = true) int ordinal;
+    private final @Nullable Object additional;
 
     private final boolean isPlaceholder;
     private final transient @Getter SelectOption selectOption;

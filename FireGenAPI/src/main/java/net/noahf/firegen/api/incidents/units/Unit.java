@@ -16,6 +16,8 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
 
     String getFormatted();
 
+    Object getAdditional();
+
     int ordinal();
 
 

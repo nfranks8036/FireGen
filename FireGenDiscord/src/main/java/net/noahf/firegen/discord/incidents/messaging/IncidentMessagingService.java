@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
+import net.noahf.firegen.api.utilities.StringSelectors;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.utilities.Log;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class IncidentMessagingService {
+public class IncidentMessagingService implements StringSelectors {
 
     private final IncidentImpl incident;
 
@@ -80,4 +81,8 @@ public class IncidentMessagingService {
         }
     }
 
+    @Override
+    public List<String> asStringSelectors() {
+        return messages.stream().flatMap(m -> m.getMessages().stream()).map(m -> m.getIdLong() + " @ " + m.getChannel().getName()).toList();
+    }
 }

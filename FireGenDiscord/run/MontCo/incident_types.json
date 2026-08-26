@@ -255,7 +255,7 @@
         "required": true,
         "unique": true,
         "syntax": "{T} W/ {Q}",
-        "list": ["PROPERTY DAMAGE", "INJURIES", "SERIOUS INJURIES", "ENTRAPMENT"]
+        "list": ["PROPERTY DAMAGE", "INJURIES", "SERIOUS INJURIES", "FATALITY"]
       }
     },
 
