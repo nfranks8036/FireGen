@@ -182,7 +182,7 @@ public class UnitInfo extends Command {
                         .setTitle(unit.getLonghand())
                         .addField("Emoji", unit.getEmoji().getFormatted() + " (`:" + unit.getEmoji().getName() + ":`)", true)
                         .addField("Order", "#" + unit.ordinal(), true)
-                        .addField("Unit Type (#)", unit.getType().getId() + (unit.getNumber() != Integer.MIN_VALUE ? " (" + unit.getNumber() + ")" : ""), true)
+                        .addField("Unit Type (#)", unit.getType().getId().replace("_", " ") + (unit.getNumber() != Integer.MIN_VALUE ? " (" + unit.getNumber() + ")" : ""), true)
                         .addField("Names",
                                 "Short: `" + unit.getShorthand() + "`\n" +
                                         "Long: `" + unit.getLonghand() + "`\n" +
