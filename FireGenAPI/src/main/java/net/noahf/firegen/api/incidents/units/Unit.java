@@ -10,6 +10,10 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
 
     Agency getAgency();
 
+    UnitType getType();
+
+    int getNumber();
+
     String getShorthand();
 
     String getLonghand();

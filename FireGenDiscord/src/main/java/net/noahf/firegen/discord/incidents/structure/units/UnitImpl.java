@@ -4,10 +4,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.api.incidents.units.Agency;
-import net.noahf.firegen.api.incidents.units.AssignmentEvent;
-import net.noahf.firegen.api.incidents.units.Unit;
-import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +25,8 @@ public class UnitImpl implements Unit {
     private final @Getter(value = AccessLevel.NONE) String formatted;
     private final transient Emoji emoji;
     private final Agency agency;
+    private final UnitType type;
+    private final int number;
     private final @Accessors(fluent = true) int ordinal;
     private final @Nullable Object additional;
 
@@ -45,6 +44,8 @@ public class UnitImpl implements Unit {
     public String toStringJava() {
         return new StringJoiner(", ", UnitImpl.class.getSimpleName() + "[", "]")
                 .add("id=" + id)
+                .add("type=" + type)
+                .add("number=" + number)
                 .add("shorthand='" + shorthand + "'")
                 .add("longhand='" + longhand + "'")
                 .add("formatted='" + formatted + "'")

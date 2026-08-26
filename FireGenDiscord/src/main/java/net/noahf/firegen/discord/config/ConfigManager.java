@@ -55,7 +55,8 @@ public class ConfigManager extends Manager<ConfigManager> {
                     .incidentStatusFile(asStr(files, "incident_statuses"))
                     .locationPresetsFile(asStr(files, "locations_presets"))
                     .radioChannelsFile(asStr(files, "radio_channels"))
-                    .usersFile(asStr(files, "users"));
+                    .usersFile(asStr(files, "users"))
+                    .unitTypesFile(asStr(files, "unit_types"));
             vars.set(builder.build());
         });
         FireGenVariables returned = vars.get();

@@ -48,6 +48,19 @@ public class JsonUtilities {
     public static int asInt(JsonObject object, String key) { return element(object, key).getAsInt(); }
     public static long asLong(JsonObject object, String key) { return element(object, key).getAsLong(); }
 
+    public static String asStr(JsonObject object, String key, String def) {
+        String returned = asStr(object, key, true);
+        if (returned == null) return def;
+        return returned;
+    }
+
+    public static String asStr(JsonObject object, String key, boolean optional) {
+        JsonElement element = element(object, key, optional);
+        if (element == null || element.isJsonNull()) return null;
+        return element.getAsString();
+    }
+
+
     public static JsonElement element(JsonObject object, String key) {
         return JsonUtilities.element(object, key, false);
     }

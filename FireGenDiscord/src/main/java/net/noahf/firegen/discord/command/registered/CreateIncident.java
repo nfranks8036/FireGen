@@ -29,10 +29,7 @@ import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.config.files.*;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
-import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
-import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
-import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
-import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.incidents.structure.units.*;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
@@ -363,7 +360,7 @@ public class CreateIncident extends Command {
                         }
                         UnitImpl custom = new UnitImpl(
                                 shorthand, longhand.toUpperCase(), formatted,
-                                emoji, agency,
+                                emoji, agency, UnitTypeImpl.CUSTOM, Integer.MIN_VALUE,
                                 ((AgencyImpl)agency).getStartUnitOrdinal(), null, false,
                                 SelectOption.of(longhand.toUpperCase(), shorthand)
                                         .withEmoji(emoji)

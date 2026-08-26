@@ -49,8 +49,10 @@ public class IntList {
         return new UnitImpl(
                 reformat(parent.getShorthand(), integer),
                 reformat(parent.getLonghand(), integer),
-                reformat(parent.getFormatted(), integer),
-                parent.getEmoji(), parent.getAgency(), parent.ordinal(), null, false,
+                reformat(parent.getFormatted().replaceAll("\\s*<a?:.+?:\\d+>\\s*", " "), integer),
+                parent.getEmoji(), parent.getAgency(),
+                iParent.getType(), integer,
+                parent.ordinal(), null, false,
                 SelectOption.of("LabelPlaceholder", String.valueOf(System.currentTimeMillis()))
         );
     }

@@ -9,10 +9,13 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.api.incidents.units.UnitType;
 import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.discord.config.DependencyRequest;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitTypeImpl;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.IntList;
 import net.noahf.firegen.discord.utilities.Log;
@@ -23,21 +26,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
-import static net.noahf.firegen.discord.utilities.JsonUtilities.element;
+import static net.noahf.firegen.discord.utilities.JsonUtilities.*;
 
 public class ConfigUnits extends MultiObjectConfiguration<Unit> {
 
     private @Getter List<Agency> agencies;
 
     public ConfigUnits(FireGenVariables vars) {
-        super(vars, Unit.class, vars.municipality() + "/" + vars.unitsFile());
+        super(vars, Unit.class, vars.municipality() + "/" + vars.unitsFile(),
+                new DependencyRequest().dependOn(ConfigUnitTypes.class)
+        );
         this.agencies = new ArrayList<>();
     }
 
     @Override
     public void importObject(JsonElement e) {
         JsonArray array = e.getAsJsonArray();
+        ConfigUnitTypes types = this.getDependencies().get(ConfigUnitTypes.class);
 
         List<JsonElement> agencyElements = array.asList();
         int lastUnitCount = 0;
@@ -59,44 +64,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
             );
 
             List<JsonElement> unitElements = element(agencyObj, "units").getAsJsonArray().asList();
-            for (int j = 0; j < unitElements.size(); j++) {
-                JsonObject unitObj = unitElements.get(j).getAsJsonObject();
-
-                JsonElement unitEmojiElement = JsonUtilities.element(unitObj, "emoji", true);
-                Emoji unitEmoji = unitEmojiElement != null ? Emoji.fromFormatted(unitEmojiElement.getAsString()) : emoji;
-                String longhand = asStr(unitObj, "long");
-                String shorthand = asStr(unitObj, "short");
-                String formatted = asStr(unitObj, "format");
-
-                JsonElement placeholdersElement = JsonUtilities.element(unitObj, "placeholders", true);
-                IntList intList = null;
-                if (placeholdersElement != null && !placeholdersElement.isJsonNull()) {
-                    Map<String, String> placeholders = placeholdersElement.getAsJsonObject()
-                            .asMap()
-                            .entrySet().stream()
-                            .collect(Collectors.toMap(Map.Entry::getKey, c -> c.getValue().getAsString()));
-                    for (Map.Entry<String, String> s : placeholders.entrySet()) {
-                        if (s.getValue().contains("IntList")) {
-                            intList = new IntList(s.getKey(), s.getValue());
-                            continue;
-                        }
-
-                        longhand = longhand.replace(s.getKey(), s.getValue());
-                        shorthand = shorthand.replace(s.getKey(), s.getValue());
-                        formatted = formatted.replace(s.getKey(), s.getValue());
-                    }
-                }
-
-                Unit unit = new UnitImpl(
-                        shorthand, longhand, formatted, unitEmoji, agency,
-                        lastUnitCount + j, intList, false,
-                        SelectOption.of(longhand, shorthand)
-                                .withDescription(null)
-                                .withEmoji(emoji)
-                );
-
-                agency.getUnits().add(unit);
-            }
+            this.findUnits(unitElements, types, lastUnitCount, agency, emoji);
 
             this.addAll(agency.getUnits());
             this.agencies.add(agency);
@@ -109,7 +77,8 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
             Agency agency = agencies.get(i);
             this.get().addFirst(
                     new UnitImpl(agency.getShorthand(), agency.getTitle(), agency.getFormatted(),
-                            ((AgencyImpl)agency).getEmoji(), agency, Integer.MIN_VALUE + i, null, true,
+                            ((AgencyImpl)agency).getEmoji(), agency, UnitTypeImpl.AGENCY,
+                            Integer.MIN_VALUE, Integer.MIN_VALUE + i, null, true,
                             SelectOption.of(agency.getTitle(), agency.getShorthand())
                                     .withDescription(null)
                                     .withEmoji(((AgencyImpl)agency).getEmoji())
@@ -118,6 +87,66 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         }
 
         log("Imported " + this.count() + " units (" + agencies.size() + " agencies).");
+    }
+
+    private void findUnits(List<JsonElement> unitElements, ConfigUnitTypes types, int lastUnitCount, Agency agency, Emoji emoji) {
+        for (int j = 0; j < unitElements.size(); j++) {
+            JsonObject unitObj = unitElements.get(j).getAsJsonObject();
+
+            JsonElement unitEmojiElement = JsonUtilities.element(unitObj, "emoji", true);
+            Emoji unitEmoji = unitEmojiElement != null ? Emoji.fromFormatted(unitEmojiElement.getAsString()) : emoji;
+
+            String typeStr = asStr(unitObj, "type", true);
+            UnitType type = typeStr != null ?  types.fromId(typeStr) : UnitTypeImpl.CUSTOM;
+            if (type == null) {
+                throw new IllegalArgumentException("Entered 'type' field but type is not valid \"" + typeStr + "\". Valid fields are: " + types.get());
+            }
+
+
+            JsonElement numberElement = element(unitObj, "number", true);
+            int number = Integer.MIN_VALUE;
+            if (numberElement != null) {
+                number = numberElement.getAsInt();
+            }
+
+            String longhand = agency.getShorthand() + " " + (type.getLonghand() != null ? type.asLonghand(number) : String.valueOf(number));
+            String shorthand = type.getShorthand() != null ? type.asShorthand(number) : String.valueOf(number);
+            String formatted = type.getFormatted() != null ? type.asFormatted(number) : longhand;
+
+            longhand = asStr(unitObj, "long", longhand);
+            shorthand = asStr(unitObj, "short", shorthand);
+            formatted = asStr(unitObj, "format", formatted);
+
+            JsonElement placeholdersElement = JsonUtilities.element(unitObj, "placeholders", true);
+            IntList intList = null;
+            if (placeholdersElement != null && !placeholdersElement.isJsonNull()) {
+                Map<String, String> placeholders = placeholdersElement.getAsJsonObject()
+                        .asMap()
+                        .entrySet().stream()
+                        .collect(Collectors.toMap(Map.Entry::getKey, c -> c.getValue().getAsString()));
+                for (Map.Entry<String, String> s : placeholders.entrySet()) {
+                    if (s.getValue().contains("IntList")) {
+                        intList = new IntList(s.getKey(), s.getValue());
+                        continue;
+                    }
+
+                    longhand = longhand.replace(s.getKey(), s.getValue());
+                    shorthand = shorthand.replace(s.getKey(), s.getValue());
+                    formatted = formatted.replace(s.getKey(), s.getValue());
+                }
+            }
+
+            Unit unit = new UnitImpl(
+                    shorthand, longhand, formatted, unitEmoji, agency,
+                    type, number,
+                    lastUnitCount + j, intList, false,
+                    SelectOption.of(longhand, shorthand)
+                            .withDescription(null)
+                            .withEmoji(emoji)
+            );
+
+            agency.getUnits().add(unit);
+        }
     }
 
     @Override
@@ -168,7 +197,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         if (!input.startsWith(prefix) && (suffix.isEmpty() || !input.endsWith(suffix))) return null;
 
         String numberStr = input.substring(prefix.length(), input.length() - suffix.length());
-        int number = Integer.parseInt(numberStr);
+        int number = Integer.parseInt(numberStr.strip());
 
         return add(
                 ((AgencyImpl)parent.getAgency()).newUnit(

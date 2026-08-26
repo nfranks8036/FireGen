@@ -3,6 +3,7 @@ package net.noahf.firegen.discord.command.registered;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.MessageTopLevelComponent;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.entities.Guild;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
@@ -21,10 +23,12 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.incidents.units.UnitType;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
+import net.noahf.firegen.discord.config.files.ConfigUnitTypes;
 import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.messaging.ReceiveMessageSender;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
@@ -155,6 +159,14 @@ public class UnitInfo extends Command {
         List<MessageEmbed> returned = new ArrayList<>();
         List<MessageTopLevelComponent> components = new ArrayList<>();
 
+        if (!unit.getType().getId().startsWith("$")) {
+            components.add(ActionRow.of(
+                    Button.secondary("firegenuser-" + event.getUser().getId() + "-explain-" + unit.getType().getId(),
+                            "What is a " + unit.getType().getId().replace("_", " ") + "?"
+                    )
+            ));
+        }
+
         returned.add(
                 new EmbedBuilder()
                         .setColor(new Color(255, 90, 90))
@@ -162,6 +174,7 @@ public class UnitInfo extends Command {
                         .setTitle(unit.getLonghand())
                         .addField("Emoji", unit.getEmoji().getFormatted() + " (`:" + unit.getEmoji().getName() + ":`)", true)
                         .addField("Order", "#" + unit.ordinal(), true)
+                        .addField("Unit Type (#)", unit.getType().getId() + (unit.getNumber() != Integer.MIN_VALUE ? " (" + unit.getNumber() + ")" : ""), true)
                         .addField("Names",
                                 "Short: `" + unit.getShorthand() + "`\n" +
                                         "Long: `" + unit.getLonghand() + "`\n" +
@@ -233,7 +246,10 @@ public class UnitInfo extends Command {
 //                .build()
 //        );
 
-        event.replyEmbeds(returned).setComponents(components).setEphemeral(true).queue();
+        event.replyEmbeds(returned)
+                .setComponents(components)
+                .setEphemeral(true)
+                .queue();
     }
 
     private final List<String> incidents = new ArrayList<>();
@@ -265,6 +281,41 @@ public class UnitInfo extends Command {
     }
 
     public static class UnitInfoDetailsListener extends ListenerAdapter {
+        @Override
+        public void onButtonInteraction(@NonNull ButtonInteractionEvent event) {
+            String button = event.getComponentId();
+            Log.info(event.getUser().getName() + " (" + event.getUser().getId() + ") pressed button '" + button + "'");
+            try {
+                if (!button.split("-")[2].equalsIgnoreCase("explain")) {
+                    return;
+                }
+
+                String typeStr = button.split("-")[3];
+                UnitType type = Main.config.get(ConfigUnitTypes.class).fromId(typeStr);
+                if (type == null) {
+                    DiscordMessages.error(event, "That UnitType does not exist: " + typeStr);
+                    return;
+                }
+
+                event.replyEmbeds(
+                        new EmbedBuilder()
+                                .setColor(new Color(100, 180, 100))
+                                .setAuthor("Unit Type View")
+                                .setTitle(type.getId().replace("_", " "))
+                                .setDescription(type.getDescription())
+                                .addField("Names",
+                                        "ID: `" + type.getId() + "`\n" +
+                                                "Short: `" + type.getShorthand() + "`\n" +
+                                                "Long: `" + type.getLonghand() + "`\n" +
+                                                "Format: `" + type.getFormatted() + "`", false
+                                )
+                                .build()
+                ).setEphemeral(true).queue();
+            } catch (Exception exception) {
+                DiscordMessages.error(event, "Can't display the UnitType information.", exception);
+            }
+        }
+
         @Override
         public void onStringSelectInteraction(@NonNull StringSelectInteractionEvent event) {
             String input = event.getSelectedOptions().getFirst().getValue();

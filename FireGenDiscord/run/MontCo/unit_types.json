@@ -7,6 +7,13 @@
     "description": " "
   },
   {
+    "id": "EMS_OFFICER",
+    "short": null,
+    "long": null,
+    "format": null,
+    "description": " "
+  },
+  {
     "id": "FIRE_ENGINE",
     "short": "E",
     "long": "ENGINE",
@@ -170,5 +177,13 @@
     "long": "TEST UNIT",
     "format": "TEST UNIT",
     "description": " "
+  },
+
+  {
+    "id": "OTHER",
+    "short": null,
+    "long": null,
+    "format": null,
+    "description": "Unknown or other unit type."
   }
 ]
