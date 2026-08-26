@@ -1,27 +1,27 @@
 [
   {
     "name": "Montgomery County Sheriff's Office - Dispatch",
-    "alpha_tag": "MCSO-DISPATCH",
+    "alpha_tag": "MCSO-DSP",
     "talkgroup_id": 1
   },
   {
     "name": "Blacksburg Police Department - Dispatch",
-    "alpha_tag": "BPD-DISPATCH",
+    "alpha_tag": "BPD-DSP",
     "talkgroup_id": 2
   },
   {
     "name": "Christiansburg Police Department - Dispatch",
-    "alpha_tag": "CPD-DISPATCH",
+    "alpha_tag": "CPD-DSP",
     "talkgroup_id": 3
   },
   {
     "name": "Virginia Tech Police Department - Dispatch",
-    "alpha_tag": "VTPD-DISPATCH",
+    "alpha_tag": "VTPD-DSP",
     "talkgroup_id": 4
   },
   {
     "name": "Fire/Rescue Dispatch",
-    "alpha_tag": "FIRE-RESCUE-1",
+    "alpha_tag": "MCFR-DSP",
     "talkgroup_id": 5
   },
   {

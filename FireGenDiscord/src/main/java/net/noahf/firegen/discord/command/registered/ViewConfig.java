@@ -5,6 +5,7 @@ import com.github.ygimenez.model.InteractPage;
 import com.github.ygimenez.model.Page;
 import com.github.ygimenez.model.Paginator;
 import com.github.ygimenez.model.PaginatorBuilder;
+import javassist.runtime.Desc;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
@@ -18,6 +19,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.AttachedFile;
 import net.dv8tion.jda.api.utils.FileUpload;
+import net.noahf.firegen.api.utilities.Descriptor;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
@@ -75,7 +77,18 @@ public class ViewConfig extends Command {
         int amountPerPage = 0;
         if (configuration instanceof MultiObjectConfiguration<?> multi) {
             amountPerPage = 24;
-            List<String> objects = new ArrayList<>(multi.get().stream().map(Object::toString).toList());
+            List<String> objects = new ArrayList<>(multi.get().stream()
+                    .filter(o -> {
+                        if (!(o instanceof Descriptor d)) return true;
+                        return d.shouldDescribe();
+                    })
+                    .map(o -> {
+                        if (o instanceof Descriptor d) {
+                            return d.describe();
+                        }
+                        return o.toString();
+                    })
+                    .toList());
             for (int i = 0; i < Math.ceil((double) objects.size() / amountPerPage); i++) {
                 List<String> sublist = objects.subList(i * amountPerPage, Math.min((i+1)*amountPerPage, objects.size()));
                 pagesStrings.add(String.join("\n", sublist));

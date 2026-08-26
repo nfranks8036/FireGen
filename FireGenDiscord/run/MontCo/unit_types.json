@@ -4,147 +4,147 @@
     "short": null,
     "long": null,
     "format": null,
-    "description": " "
+    "description": "An officer responsible for overseeing a fire organization who may respond to incidents when needed."
   },
   {
     "id": "EMS_OFFICER",
     "short": null,
     "long": null,
     "format": null,
-    "description": " "
+    "description": "An officer responsible for overseeing an EMS organization who may respond to incidents when needed."
   },
   {
     "id": "FIRE_ENGINE",
     "short": "E",
     "long": "ENGINE",
     "format": "Engine",
-    "description": " "
+    "description": "A fire apparatus primarily equipped to provide fire suppression and carry personnel, water, and hose."
   },
   {
     "id": "FIRE_TRUCK",
     "short": "TR",
     "long": "TRUCK",
     "format": "Truck",
-    "description": " "
+    "description": "A fire apparatus primarily used for forcible entry, ventilation, search, and other fireground support operations."
   },
   {
     "id": "FIRE_MARSHALL",
     "short": "FM",
     "long": "FM",
     "format": "Fire Marshall",
-    "description": " "
+    "description": "A fire official responsible for fire prevention, investigations, inspections, and code enforcement."
   },
   {
     "id": "LADDER_TRUCK",
     "short": "L",
     "long": "LADDER",
     "format": "Ladder",
-    "description": " "
+    "description": "A fire apparatus equipped with an aerial ladder for elevated access, rescue, ventilation, and firefighting operations."
   },
   {
     "id": "TOWER_TRUCK",
     "short": "TO",
     "long": "TOWER",
     "format": "Tower",
-    "description": " "
+    "description": "A fire apparatus equipped with an aerial platform for elevated access, rescue, and firefighting operations."
   },
   {
     "id": "TANKER_TRUCK",
     "short": "T",
     "long": "TANKER",
     "format": "Tanker",
-    "description": " "
+    "description": "A fire apparatus designed to transport and supply large quantities of water to fire scenes."
   },
   {
     "id": "BRUSH_TRUCK",
     "short": "B",
     "long": "BRUSH",
     "format": "Brush",
-    "description": " "
+    "description": "A small, maneuverable fire apparatus designed for fighting fires in wooded, grassy, and other difficult-to-access areas."
   },
   {
     "id": "ATTACK_TRUCK",
     "short": "A",
     "long": "ATTACK",
     "format": "Attack",
-    "description": " "
+    "description": "A fire apparatus intended for rapid deployment of personnel and equipment for aggressive fire suppression."
   },
   {
     "id": "HAZMAT_TRUCK",
     "short": "HAZ",
     "long": "HAZMAT",
     "format": "Hazmat",
-    "description": " "
+    "description": "A specialized apparatus carrying equipment and supplies for responding to hazardous materials incidents."
   },
   {
     "id": "RESPONSE_CAR",
     "short": "RP",
     "long": "RESPONSE",
     "format": "Response",
-    "description": " "
+    "description": "A small emergency response vehicle used to transport personnel and equipment to incidents."
   },
   {
     "id": "SQUAD_TRUCK",
     "short": "SQ",
     "long": "SQUAD",
     "format": "Squad",
-    "description": " "
+    "description": "A heavy-rescue vehicle used by both fire and EMS to transport personnel and specialized rescue equipment."
   },
   {
     "id": "WAGON_TRUCK",
     "short": "W",
     "long": "WAGON",
     "format": "Wagon",
-    "description": " "
+    "description": "A general-purpose fire apparatus used to transport personnel, equipment, and firefighting resources to incidents."
   },
   {
     "id": "UTILITY",
     "short": "U",
     "long": "UTILITY",
     "format": "Utility",
-    "description": " "
+    "description": "A support vehicle used to transport personnel, supplies, and equipment for emergency operations."
   },
   {
     "id": "EMS_SUPERVISOR",
     "short": "SUP",
     "long": "SUPERVISOR",
     "format": "Supervisor",
-    "description": " "
+    "description": "An EMS supervisor who oversees day-to-day EMS operations and responds to incidents requiring supervisory support."
   },
   {
     "id": "BLS_AMBULANCE",
     "short": "R",
     "long": "RESCUE",
     "format": "Rescue",
-    "description": " "
+    "description": "A BLS ambulance staffed and equipped to provide basic life support and patient transport."
   },
   {
     "id": "ALS_AMBULANCE",
     "short": "M",
     "long": "MEDIC",
     "format": "Medic",
-    "description": " "
+    "description": "An ALS ambulance staffed and equipped to provide advanced life support and patient transport."
   },
   {
     "id": "COMMAND_CAR",
     "short": "CMD",
     "long": "COMMAND",
     "format": "Command",
-    "description": " "
+    "description": "A vehicle used by incident commanders to coordinate personnel, resources, and emergency operations."
   },
   {
     "id": "UTILITY_TASK_VEHICLE",
     "short": "UTV",
     "long": "UTV",
     "format": "UTV",
-    "description": " "
+    "description": "A utility terrain vehicle used to transport personnel and equipment over difficult or off-road terrain."
   },
   {
     "id": "EXTRICATION_VEHICLE",
     "short": "EXR",
     "long": "EXTRICATION",
     "format": "Extrication",
-    "description": " "
+    "description": "A specialized vehicle carrying tools and equipment for vehicle extrication and technical rescue operations."
   },
 
   {
@@ -152,15 +152,15 @@
     "short": null,
     "long": null,
     "format": null,
-    "description": " "
+    "description": "A law enforcement vehicle used by patrol officers for routine duties and emergency response."
   },
 
   {
     "id": "ANIMAL_CONTROL",
     "short": "AC",
-    "long": "AC",
+    "long": null,
     "format": "Animal Control",
-    "description": " "
+    "description": "A vehicle used by animal control personnel to respond to animal-related calls and transport animals."
   },
 
   {
@@ -168,7 +168,7 @@
     "short": "LG",
     "long": "CARILION LIFE-GUARD",
     "format": "Carilion Life-Guard",
-    "description": " "
+    "description": "A medical helicopter used to provide rapid air transport and advanced medical care to critically ill or injured patients."
   },
 
   {
@@ -176,7 +176,7 @@
     "short": "TEST",
     "long": "TEST UNIT",
     "format": "TEST UNIT",
-    "description": " "
+    "description": "No description provided."
   },
 
   {

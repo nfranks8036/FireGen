@@ -2,11 +2,12 @@ package net.noahf.firegen.api.incidents.units;
 
 import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import net.noahf.firegen.api.utilities.Descriptor;
 import net.noahf.firegen.api.utilities.StringSelectors;
 
 import java.util.List;
 
-public interface Unit extends Identifiable, AutofilledCharSequence, StringSelectors {
+public interface Unit extends Identifiable, AutofilledCharSequence, StringSelectors, Descriptor {
 
     Agency getAgency();
 
@@ -30,4 +31,13 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
         return List.of(getShorthand(), getLonghand(), getFormatted(), String.valueOf(ordinal()));
     }
 
+    @Override
+    default String describe() {
+        return getLonghand() + " (`" + getShorthand() + "`)";
+    }
+
+    @Override
+    default boolean shouldDescribe() {
+        return ordinal() >= 0;
+    }
 }

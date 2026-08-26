@@ -45,6 +45,8 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.noahf.firegen.discord.users.FireGenUser.createId;
 
@@ -129,6 +131,7 @@ public class UnitInfo extends Command {
         AssignmentStatusImpl latest = (AssignmentStatusImpl) assignment.getLatestAssignment().getStatus();
 
         EmbedBuilder embed = new EmbedBuilder()
+                .setAuthor("Unit Incident Status View")
                 .setColor(new Color(210, 123, 69))
                 .setTitle(unit.getEmoji().getFormatted() + " " + unit.getLonghand())
                 .setDescription(
@@ -159,10 +162,15 @@ public class UnitInfo extends Command {
         List<MessageEmbed> returned = new ArrayList<>();
         List<MessageTopLevelComponent> components = new ArrayList<>();
 
-        if (!unit.getType().getId().startsWith("$")) {
+        String id = unit.getType().getId();
+        if (!id.startsWith("$")) {
+            String article = "a";
+            if (List.of('a','e','i','o','u').contains(id.toLowerCase().charAt(0))) {
+                article = "an";
+            }
             components.add(ActionRow.of(
-                    Button.secondary("firegenuser-" + event.getUser().getId() + "-explain-" + unit.getType().getId(),
-                            "What is a " + unit.getType().getId().replace("_", " ") + "?"
+                    Button.secondary("firegenuser-" + event.getUser().getId() + "-explain-" + id,
+                            "What is " + article + " " + id.replace("_", " ") + " unit?"
                     )
             ));
         }
@@ -219,8 +227,8 @@ public class UnitInfo extends Command {
                 statuses.put(keyString, valueString);
 
                 options.add(
-                        SelectOption.of(incident.getFormattedId() + ": " + incident.getType().getSelectedName()
-                                + (incident.getLocation().isSet() ? " @ " + incident.getLocation().format() : ""),
+                        SelectOption.of(DiscordMessages.truncate(incident.getFormattedId() + ": " + incident.getType().getSelectedName()
+                                                + (incident.getLocation().isSet() ? " @ " + incident.getLocation().format() : ""), SelectOption.LABEL_MAX_LENGTH, "..."),
                                 createId(event.getUser(), "unitselectinfo", String.valueOf(incident.getId()), String.valueOf(unit.getShorthand()))
                         )
                                 .withEmoji(status.getEmoji())
@@ -286,6 +294,10 @@ public class UnitInfo extends Command {
             String button = event.getComponentId();
             Log.info(event.getUser().getName() + " (" + event.getUser().getId() + ") pressed button '" + button + "'");
             try {
+                if (!button.startsWith("firegenuser")) {
+                    return;
+                }
+
                 if (!button.split("-")[2].equalsIgnoreCase("explain")) {
                     return;
                 }
@@ -297,18 +309,20 @@ public class UnitInfo extends Command {
                     return;
                 }
 
+                String names = Stream.of(
+                        "ID: `" + type.getId() + "`",
+                        "Short: `" + type.getShorthand() + "`",
+                        "Long: `" + type.getLonghand() + "`",
+                        "Format: `" + type.getFormatted() + "`"
+                        ).filter(s -> !s.contains("null"))
+                        .collect(Collectors.joining("\n"));
                 event.replyEmbeds(
                         new EmbedBuilder()
                                 .setColor(new Color(100, 180, 100))
                                 .setAuthor("Unit Type View")
                                 .setTitle(type.getId().replace("_", " "))
                                 .setDescription(type.getDescription())
-                                .addField("Names",
-                                        "ID: `" + type.getId() + "`\n" +
-                                                "Short: `" + type.getShorthand() + "`\n" +
-                                                "Long: `" + type.getLonghand() + "`\n" +
-                                                "Format: `" + type.getFormatted() + "`", false
-                                )
+                                .addField("Names", names, false)
                                 .build()
                 ).setEphemeral(true).queue();
             } catch (Exception exception) {

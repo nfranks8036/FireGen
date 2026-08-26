@@ -10,6 +10,7 @@ import net.noahf.firegen.api.incidents.units.Unit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 @Getter
 @RequiredArgsConstructor
@@ -29,4 +30,16 @@ public class AgencyImpl implements Agency {
         this.units.add(unit); return unit;
     }
 
+    @Override
+    public String describe() {
+        return new StringJoiner(", ", Agency.class.getSimpleName() + "[", "]")
+                .add("title='" + title + "'")
+                .add("shorthand='" + shorthand + "'")
+                .add("formatted='" + formatted + "'")
+                .add("station='" + station + "'")
+                .add("type=" + type)
+                .add("emoji=" + emoji)
+                .add("ordinal=" + ordinal)
+                .toString();
+    }
 }

@@ -1,6 +1,8 @@
 package net.noahf.firegen.api.incidents.location;
 
+import net.noahf.firegen.api.utilities.Descriptor;
 import net.noahf.firegen.api.utilities.StringSelectors;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
