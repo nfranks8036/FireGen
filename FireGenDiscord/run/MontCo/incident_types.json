@@ -130,6 +130,7 @@
     {"name": "FOOT PATROL", "tag": "POLICE"},
     {"name": "WARRANT SERVICE", "tag": "POLICE"},
     {"name": "COURT SERVICE", "tag": "POLICE"},
+    {"name": "SPECIAL ASSIGNMENT", "tag": "POLICE"},
 
     {"name": "ASSIST CITIZEN", "tag": "POLICE"},
     {"name": "ASSIST MOTORIST", "tag": "POLICE"},
@@ -147,7 +148,7 @@
     {"name": "CARDIAC ARREST", "tag": "EMS"},
     {"name": "CHEST PAIN", "tag": "EMS"},
     {"name": "CHOKING", "tag": "EMS"},
-    {"name": "SEIZURES", "tag": "EMS"},
+    {"name": "SEIZURES / CONVULSIONS", "tag": "EMS"},
     {"name": "DIABETIC PROBLEMS", "tag": "EMS"},
     {"name": "DROWNING", "tag": "EMS"},
     {"name": "ELECTROCUTION", "tag": "EMS"},
@@ -172,7 +173,6 @@
     {"name": "TRAUMATIC INJURY", "tag": "EMS"},
     {"name": "UNCONSCIOUS / FAINTING", "tag": "EMS"},
     {"name": "UNKNOWN MEDICAL PROBLEM", "tag": "EMS"},
-    {"name": "AUTOMATED CRASH NOTIFICATION", "tag": "EMS"},
     {"name": "INTER-FACILITY MEDICAL TRANSPORT", "tag": "EMS"},
 
     {"name": "ASSIST EMS AGENCY", "tag": "EMS"},
@@ -180,7 +180,8 @@
     {"name": "EMS STANDBY", "tag": "EMS"},
     {"name": "EMS SERVICE CALL", "tag": "EMS"},
 
-    {"name": "CHILD LOCKED IN VEHICLE", "tag": "EMS"},
+    {"name": "AUTOMATED CRASH NOTIFICATION", "tag": "GENERIC"},
+    {"name": "CHILD LOCKED IN VEHICLE", "tag": "GENERIC"},
     {"name": "CIVIL ADVICE", "tag": "GENERIC"},
     {"name": "TECHNICAL RESCUE", "tag": "GENERIC"},
     {"name": "SEARCH AND RESCUE", "tag": "GENERIC"},
@@ -255,7 +256,7 @@
         "required": true,
         "unique": true,
         "syntax": "{T} W/ {Q}",
-        "list": ["PROPERTY DAMAGE", "INJURIES", "SERIOUS INJURIES", "FATALITY"]
+        "list": ["PROPERTY DAMAGE", "INJURIES", "SERIOUS INJURIES"]
       }
     },
 

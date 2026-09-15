@@ -1,97 +1,62 @@
 {
-  "630 WASHINGTON ST": {
-    "location": "630 Washington St SW",
-    "common_name": "Pritchard Hall",
+  "460 WEST CAMPUS DR": {
+    "location": "460 West Campus Dr",
+    "common_name": "Agnew Hall",
     "venue": "VIRGINIA TECH"
   },
-  "260 ALUMNI MALL": {
-    "location": "260 Alumni Mall",
-    "common_name": "Pearson Hall East",
+  "500 PLANTATION RD": {
+    "location": "500 Plantation Rd",
+    "common_name": "Alphin-Stuart Livestock Teaching Arena",
     "venue": "VIRGINIA TECH"
   },
-  "310 ALUMNI MALL": {
-    "location": "310 Alumni Mall",
-    "common_name": "Pearson Hall West",
+  "700 WASHINGTON ST SW": {
+    "location": "700 Washington St SW",
+    "common_name": "Ambler Johnston Hall East",
     "venue": "VIRGINIA TECH"
   },
-  "385 WEST CAMPUS DR": {
-    "location": "385 West Campus Dr",
-    "common_name": "Hillcrest Hall",
+  "720 WASHINGTON ST SW": {
+    "location": "720 Washington St SW",
+    "common_name": "Ambler Johnston Hall West",
     "venue": "VIRGINIA TECH"
   },
-  "410 WASHINGTON ST": {
-    "location": "410 Washington St SW",
-    "common_name": "Miles Hall",
+  "140 OTEY ST NW": {
+    "location": "140 Otey St NW",
+    "common_name": "Architecture Annex",
     "venue": "VIRGINIA TECH"
   },
-  "355 OLD TURNER ST": {
+  "201 DRAPER RD NW": {
+    "location": "201 Draper Rd NW",
+    "common_name": "Armory",
+    "venue": "VIRGINIA TECH"
+  },
+  "355 OLD TURNER ST ART CENTER": {
     "location": "355 Old Turner St",
-    "common_name": "Corps Leadership and Military Science",
+    "common_name": "Art & Design Learning Center",
     "venue": "VIRGINIA TECH"
   },
-  "21 BEAMER WAY": {
-    "location": "21 Beamer Way",
-    "common_name": "Athletic Center",
+  "530 STADIUM RD": {
+    "location": "530 Stadium Rd",
+    "common_name": "Beamer-Lawson Indoor Practice Facility",
     "venue": "VIRGINIA TECH"
   },
-  "201 AG QUAD LN": {
-    "location": "201 Ag Quad Ln",
-    "common_name": "Slusher Hall",
+  "1345 PERRY ST": {
+    "location": "1345 Perry St",
+    "common_name": "Bishop-Favrao Hall",
     "venue": "VIRGINIA TECH"
   },
-  "180 KENT ST": {
-    "location": "180 Kent St",
-    "common_name": "Vawter Hall",
+  "1327 PERRY ST": {
+    "location": "1327 Perry St",
+    "common_name": "Burchard Hall",
     "venue": "VIRGINIA TECH"
   },
-  "530 WASHINGTON ST": {
-    "location": "530 Washington St SW",
-    "common_name": "O'Shaughnessy Hall",
+  "570 BEAMER WAY": {
+    "location": "570 Beamer Way",
+    "common_name": "Burrows-Burleson Tennis Center",
     "venue": "VIRGINIA TECH"
   },
-  "410 DRILLFIELD DR": {
-    "location": "410 Drillfield Dr",
-    "common_name": "Eggleston West",
-    "venue": "VIRGINIA TECH"
-  },
-  "440 DRILLFIELD DR": {
-    "location": "440 Drillfield Dr",
-    "common_name": "Eggleston Main",
-    "venue": "VIRGINIA TECH"
-  },
-  "500 DRILLFIELD DR": {
-    "location": "500 Drillfield Dr",
-    "common_name": "Eggleston East",
-    "venue": "VIRGINIA TECH"
-  },
-  "570 WASHINGTON ST": {
-    "location": "570 Washington St SW",
-    "common_name": "Hoge Hall",
-    "venue": "VIRGINIA TECH"
-  },
-  "200 KENT ST": {
-    "location": "200 Kent St",
-    "common_name": "Newman Hall",
-    "venue": "VIRGINIA TECH"
-  },
-  "175 WEST CAMPUS DR": {
-    "location": "175 West Campus Dr",
-    "common_name": "Litton-Reaves Hall",
-    "venue": "VIRGINIA TECH"
-  },
-  "610 WASHINGTON ST": {
-    "location": "610 Washington St SW",
-    "common_name": "Peddrew-Yates Hall",
-    "venue": "VIRGINIA TECH"
-  },
-  "240 WEST CAMPUS DR": {
-    "location": "240 West Campus Dr",
-    "common_name": "Harper Hall",
-    "venue": "VIRGINIA TECH"
-  },
-  "600 WASHINGTON ST": {
-    "location": "600 Washington St SW",
-    "common_name": "Payne Hall",
+  "800 DRILLFIELD DR": {
+    "location": "800 Drillfield Dr",
+    "common_name": "Burruss Hall",
     "venue": "VIRGINIA TECH"
   },
   "320 DRILLFIELD DR": {
@@ -104,24 +69,349 @@
     "common_name": "Campbell Hall Main",
     "venue": "VIRGINIA TECH"
   },
-  "770 WASHINGTON ST": {
+  "560 DRILLFIELD DR": {
+    "location": "560 Drillfield Dr",
+    "common_name": "Newman Library",
+    "venue": "VIRGINIA TECH"
+  },
+  "675 WASHINGTON ST SW": {
+    "location": "675 Washington St SW",
+    "common_name": "Cassell Coliseum",
+    "venue": "VIRGINIA TECH"
+  },
+  "190 ALUMNI MALL": {
+    "location": "190 Alumni Mall",
+    "common_name": "Center for the Arts",
+    "venue": "VIRGINIA TECH"
+  },
+  "310 WEST CAMPUS DR": {
+    "location": "310 West Campus Dr",
+    "common_name": "Cheatham Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "927 SOUTHGATE DR": {
+    "location": "927 Southgate Dr",
+    "common_name": "Chicken Hill Lot",
+    "venue": "VIRGINIA TECH"
+  },
+  "1455 PERRY ST": {
+    "location": "1455 Perry St",
+    "common_name": "Classroom Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "770 WASHINGTON ST SW": {
     "location": "770 Washington St SW",
     "common_name": "Cochrane Hall",
     "venue": "VIRGINIA TECH"
   },
-  "155 OTEY ST": {
-    "location": "155 Otey St NW",
-    "common_name": "Graduate Life Center",
+  "200 STANGER ST": {
+    "location": "200 Stanger St",
+    "common_name": "College of Liberal Arts & Human Sciences Building",
     "venue": "VIRGINIA TECH"
   },
-  "500 WASHINGTON ST": {
+  "355 OLD TURNER ST CORPS MILITARY BLDG": {
+    "location": "355 Old Turner St",
+    "common_name": "Corps Leadership and Military Science Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "1325 PERRY ST": {
+    "location": "1325 Perry St",
+    "common_name": "Cowgill Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "185 KENT ST": {
+    "location": "185 Kent St",
+    "common_name": "Creativity and Innovation District Residence Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "5250 WHITETHORNE RD": {
+    "location": "5250 Whitethorne Rd",
+    "common_name": "Dairy Science Complex - Kentland Farm",
+    "venue": "VIRGINIA TECH"
+  },
+  "727 PRICES FORK Rd": {
+    "location": "727 Prices Fork Rd",
+    "common_name": "Data and Decision Sciences",
+    "venue": "VIRGINIA TECH"
+  },
+  "1040 DRILLFIELD Dr": {
+    "location": "1040 Drillfield Dr",
+    "common_name": "Davidson Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "926 WEST CAMPUS Dr": {
+    "location": "926 West Campus Dr",
+    "common_name": "Derring Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "285 AG QUAD LN": {
+    "location": "285 Ag Quad Ln",
+    "common_name": "Dietrick Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "DRILLFIELD": {
+    "location": "Drillfield Dr",
+    "common_name": "The Drillfield",
+    "venue": "VIRGINIA TECH"
+  },
+  "598 WARREN ST": {
+    "location": "598 Warren St",
+    "common_name": "Old Growth Forest (Stadium Woods)",
+    "venue": "VIRGINIA TECH"
+  },
+  "1145 PERRY ST": {
+    "location": "1145 Perry St",
+    "common_name": "Durham Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "410 DRILLFIELD DR": {
+    "location": "410 Drillfield Dr",
+    "common_name": "Eggleston Hall West",
+    "venue": "VIRGINIA TECH"
+  },
+  "440 DRILLFIELD DR": {
+    "location": "440 Drillfield Dr",
+    "common_name": "Eggleston Hall Main",
+    "venue": "VIRGINIA TECH"
+  },
+  "500 DRILLFIELD DR": {
+    "location": "500 Drillfield Dr",
+    "common_name": "Eggleston Hall East",
+    "venue": "VIRGINIA TECH"
+  },
+  "340 WEST CAMPUS DR": {
+    "location": "340 West Campus Dr",
+    "common_name": "Engel Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "260 DUCK POND DR": {
+    "location": "260 Duck Pond Dr",
+    "common_name": "English Field",
+    "venue": "VIRGINIA TECH"
+  },
+  "280 STANGER ST": {
+    "location": "280 Stanger St",
+    "common_name": "Femoyer Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "360 DUCK POND DR": {
+    "location": "360 Duck Pond Dr",
+    "common_name": "Food Science and Technology Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "360 WEST CAMPUS DR": {
+    "location": "360 West Campus Dr",
+    "common_name": "Fralin Life Science Institute",
+    "venue": "VIRGINIA TECH"
+  },
+  "711 SOUTHGATE DR": {
+    "location": "711 Southgate Dr",
+    "common_name": "German Club Alumni Foundation",
+    "venue": "VIRGINIA TECH"
+  },
+  "920 WEST CAMPUS DR": {
+    "location": "920 West Campus Dr",
+    "common_name": "Johnston Student Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "635 PRICES FORK RD": {
+    "location": "635 Prices Fork Rd",
+    "common_name": "Goodwin Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "155 OTEY ST NW": {
+    "location": "155 Otey St NW",
+    "common_name": "Graduate Life Center at Donaldson Brown",
+    "venue": "VIRGINIA TECH"
+  },
+  "200 GARDEN LN": {
+    "location": "200 Garden Ln",
+    "common_name": "Hahn Garden Pavilion and Horticulture Garden",
+    "venue": "VIRGINIA TECH"
+  },
+  "900 WEST CAMPUS DR": {
+    "location": "900 West Campus Dr",
+    "common_name": "Hahn Hall North",
+    "venue": "VIRGINIA TECH"
+  },
+  "800 WEST CAMPUS DR": {
+    "location": "800 West Campus Dr",
+    "common_name": "Hahn Hall South",
+    "venue": "VIRGINIA TECH"
+  },
+  "605 WASHINGTON ST SW": {
+    "location": "605 Washington St SW",
+    "common_name": "Hahn Hurst Basketball Practice Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "240 WEST CAMPUS DR": {
+    "location": "240 West Campus Dr",
+    "common_name": "Harper Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "285 DUCK POND DR": {
+    "location": "285 Duck Pond Dr",
+    "common_name": "Harry T. Peters Jr. Large Animal Clinic",
+    "venue": "VIRGINIA TECH"
+  },
+  "675 RESEARCH CENTER DR": {
+    "location": "675 Research Center Dr",
+    "common_name": "Health and Safety Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "195 ALUMNI MALL": {
+    "location": "195 Alumni Mall",
+    "common_name": "Henderson Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "385 WEST CAMPUS DR": {
+    "location": "385 West Campus Dr",
+    "common_name": "Hillcrest Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "570 WASHINGTON ST SW": {
+    "location": "570 Washington St SW",
+    "common_name": "Hoge Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "445 OLD TURNER ST": {
+    "location": "445 Old Turner St",
+    "common_name": "Holden Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "901 PRICES FORK RD": {
+    "location": "901 Prices Fork Rd",
+    "common_name": "The Inn at Virginia Tech",
+    "venue": "VIRGINIA TECH"
+  },
+  "1230 WASHINGTON ST SW": {
+    "location": "1230 Washington St SW",
+    "common_name": "Human and Agricultural Biosciences Building I",
+    "venue": "VIRGINIA TECH"
+  },
+  "250 DRILLFIELD DR": {
+    "location": "250 Drillfield Dr",
+    "common_name": "Hutcheson Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "1075 LIFE SCIENCE CIR": {
+    "location": "1075 Life Science Cir",
+    "common_name": "Institute for Critical Technology and Applied Science (ICTAS II)",
+    "venue": "VIRGINIA TECH"
+  },
+  "21 BEAMER WAY": {
+    "location": "21 Beamer Way",
+    "common_name": "Jamerson Athletic Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "350 BEAMER WAY": {
+    "location": "350 Beamer Way",
+    "common_name": "Johnson-Miller Track Complex",
+    "venue": "VIRGINIA TECH"
+  },
+  "490 OLD TURNER ST": {
+    "location": "490 Old Turner St",
+    "common_name": "Hancock Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "500 WASHINGTON ST SW": {
     "location": "500 Washington St SW",
     "common_name": "Johnson Hall",
     "venue": "VIRGINIA TECH"
   },
-  "590 WASHINGTON ST": {
-    "location": "590 Washington St SW",
-    "common_name": "New Residence Hall East",
+  "325 STANGER ST": {
+    "location": "325 Stanger St",
+    "common_name": "Kelly Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "280 ALUMNI MALL": {
+    "location": "280 Alumni Mall",
+    "common_name": "Lane Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "185 BEAMER WAY STADIUM": {
+    "location": "185 Beamer Way",
+    "common_name": "Lane Stadium",
+    "venue": "VIRGINIA TECH"
+  },
+  "185 BEAMER WAY FIELD": {
+    "location": "185 Beamer Way",
+    "common_name": "Worsham Field",
+    "venue": "VIRGINIA TECH"
+  },
+  "220 AG QUAD LN": {
+    "location": "220 Ag Quad Ln",
+    "common_name": "Latham Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "430 OLD TURNER ST": {
+    "location": "430 Old Turner St",
+    "common_name": "Lavery Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "970 WASHINGTON ST SW": {
+    "location": "970 Washington St SW",
+    "common_name": "Life Sciences I Facility",
+    "venue": "VIRGINIA TECH"
+  },
+  "175 WEST CAMPUS DR": {
+    "location": "175 West Campus Dr",
+    "common_name": "Litton-Reaves Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "220 STANGER ST": {
+    "location": "220 Stanger St",
+    "common_name": "Major Williams Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "741 SOUTHGATE DR 1": {
+    "location": "741 Southgate Dr",
+    "common_name": "Marching Virginians Field",
+    "venue": "VIRGINIA TECH"
+  },
+  "799 SOUTHGATE DR 2": {
+    "location": "799 Southgate Dr",
+    "common_name": "Marching Virginians Field",
+    "venue": "VIRGINIA TECH"
+  },
+  "225 STANGER ST": {
+    "location": "225 Stanger St",
+    "common_name": "McBryde Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "895 WASHINGTON ST SW": {
+    "location": "895 Washington St SW",
+    "common_name": "McComas Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "130 OTEY ST NW": {
+    "location": "130 Otey St NW",
+    "common_name": "Media Annex",
+    "venue": "VIRGINIA TECH"
+  },
+  "101 DRAPER RD NW": {
+    "location": "101 Draper Rd NW",
+    "common_name": "Media Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "25 BEAMER WAY": {
+    "location": "25 Beamer Way",
+    "common_name": "Merryman Athletic Facility",
+    "venue": "VIRGINIA TECH"
+  },
+  "410 WASHINGTON ST SW": {
+    "location": "410 Washington St SW",
+    "common_name": "Miles Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "320 STANGER ST": {
+    "location": "320 Stanger St",
+    "common_name": "Military Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "171 TURNER ST NW": {
+    "location": "171 Turner St NW",
+    "common_name": "Monteith Hall",
     "venue": "VIRGINIA TECH"
   },
   "190 WEST CAMPUS DR": {
@@ -129,14 +419,299 @@
     "common_name": "New Hall West",
     "venue": "VIRGINIA TECH"
   },
-  "700 WASHINGTON ST": {
-    "location": "700 Washington St SW",
-    "common_name": "Ambler Johnston East",
+  "590 WASHINGTON ST SW": {
+    "location": "590 Washington St SW",
+    "common_name": "New Residence Hall East",
     "venue": "VIRGINIA TECH"
   },
-  "720 WASHINGTON ST": {
-    "location": "720 Washington St SW",
-    "common_name": "Ambler Johnston West",
+  "200 KENT ST": {
+    "location": "200 Kent St",
+    "common_name": "Newman Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "495 OLD TURNER ST": {
+    "location": "495 Old Turner St",
+    "common_name": "Norris Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "300 TURNER ST NW": {
+    "location": "300 Turner St NW",
+    "common_name": "North End Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "530 WASHINGTON ST SW": {
+    "location": "530 Washington St SW",
+    "common_name": "O'Shaughnessy Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "310 STANGER ST": {
+    "location": "310 Stanger St",
+    "common_name": "Old Security Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "150 KENT ST": {
+    "location": "150 Kent St",
+    "common_name": "Owens Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "880 WEST CAMPUS DR": {
+    "location": "880 West Campus Dr",
+    "common_name": "Pamplin Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "505 BEAMER WAY": {
+    "location": "505 Beamer Way",
+    "common_name": "Parking Services",
+    "venue": "VIRGINIA TECH"
+  },
+  "750 DRILLFIELD DR": {
+    "location": "750 Drillfield Dr",
+    "common_name": "Patton Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "600 WASHINGTON ST SW": {
+    "location": "600 Washington St SW",
+    "common_name": "Payne Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "260 ALUMNI MALL": {
+    "location": "260 Alumni Mall",
+    "common_name": "Pearson Hall East",
+    "venue": "VIRGINIA TECH"
+  },
+  "310 ALUMNI MALL": {
+    "location": "310 Alumni Mall",
+    "common_name": "Pearson Hall West",
+    "venue": "VIRGINIA TECH"
+  },
+  "610 WASHINGTON ST SW": {
+    "location": "610 Washington St SW",
+    "common_name": "Peddrew-Yates Residence Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "1330 PERRY ST": {
+    "location": "1330 Perry St",
+    "common_name": "Perry Street Parking Deck",
+    "venue": "VIRGINIA TECH"
+  },
+  "170 DRILLFIELD DR": {
+    "location": "170 Drillfield Dr",
+    "common_name": "Price Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "630 WASHINGTON ST SW": {
+    "location": "630 Washington St SW",
+    "common_name": "Pritchard Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "330 STERRETT DR": {
+    "location": "330 Sterrett Dr",
+    "common_name": "Public Safety Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "460 OLD TURNER ST": {
+    "location": "460 Old Turner St",
+    "common_name": "Randolph Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "510 BEAMER WAY": {
+    "location": "510 Beamer Way",
+    "common_name": "Rec Sports Field House",
+    "venue": "VIRGINIA TECH"
+  },
+  "230 BEAMER WAY": {
+    "location": "230 Beamer Way",
+    "common_name": "Rector Field House",
+    "venue": "VIRGINIA TECH"
+  },
+  "265 DUCK POND DR": {
+    "location": "265 Duck Pond Dr",
+    "common_name": "Richard B. Talbot Educational Resources Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "850 WEST CAMPUS DR": {
+    "location": "850 West Campus Dr",
+    "common_name": "Robeson Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "210 DRILLFIELD DR": {
+    "location": "210 Drillfield Dr",
+    "common_name": "Sandy Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "490 WEST CAMPUS DR": {
+    "location": "490 West Campus Dr",
+    "common_name": "Saunders Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "155 AG QUAD LN": {
+    "location": "155 Ag Quad Ln",
+    "common_name": "Seitz Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "181 TURNER ST NW": {
+    "location": "181 Turner St NW",
+    "common_name": "Shanks Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "201 AG QUAD LN": {
+    "location": "201 Ag Quad Ln",
+    "common_name": "Slusher Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "870 WASHINGTON ST SW": {
+    "location": "870 Washington St SW",
+    "common_name": "Smith Career Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "185 AG QUAD LN": {
+    "location": "185 Ag Quad LN",
+    "common_name": "Smyth Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "821 SOUTHGATE DR": {
+    "location": "821 Southgate Dr",
+    "common_name": "Sochinski-McKee Marching Virginians Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "240 BEAMER WAY": {
+    "location": "240 Beamer Way",
+    "common_name": "Virginia Tech Softball Field",
+    "venue": "VIRGINIA TECH"
+  },
+  "705 WEST CAMPUS DR": {
+    "location": "705 West Campus Dr",
+    "common_name": "Solitude",
+    "venue": "VIRGINIA TECH"
+  },
+  "290 COLLEGE AVE": {
+    "location": "290 College Ave",
+    "common_name": "Squires Student Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "1015 LIFE SCIENCE CIR": {
+    "location": "1015 Life Science Cir",
+    "common_name": "Steger Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "230 STERRETT DR": {
+    "location": "230 Sterrett Dr",
+    "common_name": "Sterrett Facility Complex",
+    "venue": "VIRGINIA TECH"
+  },
+  "800 WASHINGTON ST SW": {
+    "location": "800 Washington St SW",
+    "common_name": "Student Services",
+    "venue": "VIRGINIA TECH"
+  },
+  "400 STANGER ST": {
+    "location": "400 Stanger St",
+    "common_name": "Surge Space Building",
+    "venue": "VIRGINIA TECH"
+  },
+  "435 WASHINGTON ST SW 1": {
+    "location": "435 Washington St SW",
+    "common_name": "Tennis Courts",
+    "venue": "VIRGINIA TECH"
+  },
+  "443 WASHINGTON ST SW 2": {
+    "location": "443 Washington St SW",
+    "common_name": "Tennis Courts",
+    "venue": "VIRGINIA TECH"
+  },
+  "225 GROVE LN": {
+    "location": "225 Grove Ln",
+    "common_name": "The Grove",
+    "venue": "VIRGINIA TECH"
+  },
+  "200 COLLEGE AVE": {
+    "location": "200 College Ave",
+    "common_name": "Theatre 101",
+    "venue": "VIRGINIA TECH"
+  },
+  "191 TURNER ST NW": {
+    "location": "191 Turner St NW",
+    "common_name": "Thomas Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "867 WASHINGTON ST SW": {
+    "location": "867 WASHINGTON ST SW",
+    "common_name": "Thompson Field",
+    "venue": "VIRGINIA TECH"
+  },
+  "620 DRILLFIELD DR": {
+    "location": "620 Drillfield Dr",
+    "common_name": "Torgersen Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "115 KENT ST": {
+    "location": "115 Kent St",
+    "common_name": "University Bookstore",
+    "venue": "VIRGINIA TECH"
+  },
+  "180 KENT ST": {
+    "location": "180 Kent St",
+    "common_name": "Vawter Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "811 SOUTHGATE DR": {
+    "location": "811 Southgate Dr",
+    "common_name": "Venture Out Challenge Course",
+    "venue": "VIRGINIA TECH"
+  },
+  "1085 DUCK POND DR": {
+    "location": "1085 Duck Pond Dr",
+    "common_name": "Virginia Tech Golf Course Pro Shop",
+    "venue": "VIRGINIA TECH"
+  },
+  "205 DUCK POND DR": {
+    "location": "205 Duck Pond Dr",
+    "common_name": "Virginia-Maryland Regional College of Veterinary Medicine",
+    "venue": "VIRGINIA TECH"
+  },
+  "925 PRICES FORK RD": {
+    "location": "925 Prices Fork Rd",
+    "common_name": "Visitor and Undergraduate Admissions Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "295 WEST CAMPUS DR": {
+    "location": "295 West Campus Dr",
+    "common_name": "Wallace Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "601 DRILLFIELD DR": {
+    "location": "601 Drillfield Dr",
+    "common_name": "War Memorial Chapel",
+    "venue": "VIRGINIA TECH"
+  },
+  "370 DRILLFIELD DR": {
+    "location": "370 Drillfield Dr",
+    "common_name": "War Memorial Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "240 KENT ST": {
+    "location": "240 Kent St",
+    "common_name": "Whitehurst Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "1185 PERRY ST": {
+    "location": "1185 Perry St",
+    "common_name": "Whittemore Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "295 DUCK POND DR": {
+    "location": "295 Duck Pond Dr",
+    "common_name": "William E. Lavery Animal Health Research Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "890 DRILLFIELD DR": {
+    "location": "890 Drillfield Dr",
+    "common_name": "Williams Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "765 WEST CAMPUS DR": {
+    "location": "765 West Campus Dr",
+    "common_name": "Wright House",
     "venue": "VIRGINIA TECH"
   },
   "2750 OAK LN": {
@@ -223,39 +798,14 @@
     "unit": "SPEH",
     "venue": "VIRGINIA TECH"
   },
-  "185 KENT ST": {
-    "location": "185 Kent St",
-    "common_name": "CID",
-    "venue": "VIRGINIA TECH"
-  },
   "245 DUCK POND DR": {
     "location": "245 Duck Pond Dr",
-    "common_name": "VT Vet Med Phase I",
+    "common_name": "VT Veterinary Medicine Phase I",
     "venue": "VIRGINIA TECH"
   },
-  "285 DUCK POND DR": {
-    "location": "285 Duck Pond Dr",
-    "common_name": "Veterinary Medicine",
-    "venue": "VIRGINIA TECH"
-  },
-  "620 DRILLFIELD DR": {
-    "location": "620 Drillfield Dr",
-    "common_name": "Torgersen Hall",
-    "venue": "VIRGINIA TECH"
-  },
-  "185 BEAMER WAY": {
-    "location": "185 Beamer Way",
-    "common_name": "Lane Stadium",
-    "venue": "VIRGINIA TECH"
-  },
-  "330 STERRETT DR": {
-    "location": "330 Sterrett Dr",
-    "common_name": "Virginia Tech Police Department",
-    "venue": "VIRGINIA TECH"
-  },
-  "285 AG QUAD LN": {
-    "location": "285 Ag Quad Ln",
-    "common_name": "Dietrick Hall",
+  "1385 PERRY ST": {
+    "location": "1385 Perry St",
+    "common_name": "Hitt Hall",
     "venue": "VIRGINIA TECH"
   },
   "727 PRICES FORK RD": {
@@ -263,24 +813,9 @@
     "common_name": "Data & Decision Sciences",
     "venue": "VIRGINIA TECH"
   },
-  "1345 PERRY ST": {
-    "location": "1345 Perry St",
-    "common_name": "Bishop-Favrao Hall",
-    "venue": "VIRGINIA TECH"
-  },
-  "280 STANGER ST": {
-    "location": "280 Stanger St",
-    "common_name": "Upper Quad Hall North",
-    "venue": "VIRGINIA TECH"
-  },
   "895 WASHINGTON ST": {
     "location": "895 Washington St SW",
     "common_name": "McComas Hall",
-    "venue": "VIRGINIA TECH"
-  },
-  "370 DRILLFIELD DR": {
-    "location": "370 Drillfield Dr",
-    "common_name": "War Memorial Hall",
     "venue": "VIRGINIA TECH"
   },
 
@@ -309,11 +844,6 @@
     "common_name": "Hilton Garden Inn Blacksburg",
     "venue": "TOWN OF BLACKSBURG"
   },
-  "200 PROGRESS ST": {
-    "location": "200 Progress St",
-    "common_name": "Blacksburg Fire Department Station #1",
-    "venue": "TOWN OF BLACKSBURG"
-  },
   "3700 S MAIN ST": {
     "location": "3700 South Main St",
     "common_name": "LewisGale Hospital Montgomery",
@@ -322,11 +852,6 @@
   "1601 RESEARCH CENTER DR": {
     "location": "1601 Research Center Dr",
     "common_name": "VT Montgomery Airport",
-    "venue": "TOWN OF BLACKSBURG"
-  },
-  "1300 PROGRESS ST": {
-    "location": "1300 Progress St",
-    "common_name": "Blacksburg Rescue Squad",
     "venue": "TOWN OF BLACKSBURG"
   },
   "200 CLAY ST": {
@@ -414,6 +939,926 @@
     "common_name": "Blacksburg South KinderCare",
     "venue": "TOWN OF BLACKSBURG"
   },
+  "824 NORTH MAIN ST": {
+    "location": "824 North Main St",
+    "common_name": "Papa John's Pizza",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "800 NORTH MAIN ST": {
+    "location": "800 North Main St",
+    "common_name": "Advance Auto Parts",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "712 NORTH MAIN ST FLOWERS": {
+    "location": "712 North Main St",
+    "common_name": "D’Rose Flowers and Gifts",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "712 NORTH MAIN ST FINANCIAL": {
+    "location": "712 North Main St",
+    "common_name": "Edward Jones Financial",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "712 NORTH MAIN ST RESEARCH": {
+    "location": "712 North Main St",
+    "common_name": "Graf Research",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "708 NORTH MAIN ST GROCERY": {
+    "location": "708 North Main St",
+    "common_name": "Eats Natural Grocery",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "708 NORTH MAIN ST CLINIC": {
+    "location": "708 North Main St",
+    "common_name": "Valley Women’s Clinic",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "704 NORTH MAIN ST BJJ": {
+    "location": "704 North Main St",
+    "common_name": "Team Mannon BJJ",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "704 NORTH MAIN ST PUZZLR": {
+    "location": "704 North Main St",
+    "common_name": "Puzzlr",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "704 NORTH MAIN ST CAFE": {
+    "location": "704 North Main St",
+    "common_name": "Halwa Bakery & Cafe",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "704 NORTH MAIN ST NATURALS": {
+    "location": "704 North Main St",
+    "common_name": "New River Naturals",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "704 NORTH MAIN ST ADVISORS": {
+    "location": "704 North Main St",
+    "common_name": "Northpoint Insurance Advisors",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "704 NORTH MAIN ST HUBER": {
+    "location": "704 North Main St",
+    "common_name": "Wagner & Huber",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "704 NORTH MAIN ST COFFEE&TEA": {
+    "location": "704 North Main St",
+    "common_name": "Mill Mountain Coffee & Tea",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "701 PROGRESS ST NE ALTERNATIVES": {
+    "location": "701 Progress St NE",
+    "common_name": "Shelter Alternatives",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "701 PROGRESS ST NE ENERGY": {
+    "location": "701 Progress St NE",
+    "common_name": "Energy Check",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "622 NORTH MAIN ST": {
+    "location": "622 North Main St",
+    "common_name": "622 North",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "620 NORTH MAIN ST BANDANA": {
+    "location": "620 North Main St",
+    "common_name": "Orange Bandana",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "620 NORTH MAIN ST COOKIES": {
+    "location": "620 North Main St",
+    "common_name": "Insomnia Cookies",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "620 NORTH MAIN ST OPTOMETRY": {
+    "location": "620 North Main St",
+    "common_name": "Johnson Curran Optometry",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "620 NORTH MAIN ST CLINIC": {
+    "location": "620 North Main St",
+    "common_name": "Tuck Chiropractic Clinic",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "620 NORTH MAIN ST SALON": {
+    "location": "620 North Main St",
+    "common_name": "Manoca’s Salon",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "620 NORTH MAIN ST SUCCESS": {
+    "location": "620 North Main St",
+    "common_name": "107 Success",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "618 NORTH MAIN ST": {
+    "location": "618 North Main St",
+    "common_name": "Stateson Homes",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "610 NORTH MAIN ST WAFFLE HOUSE": {
+    "location": "610 North Main St",
+    "common_name": "Waffle House",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "610 NORTH MAIN ST PACKAGING": {
+    "location": "610 North Main St",
+    "common_name": "Easy Way Packaging",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "610 NORTH MAIN ST SLAKE": {
+    "location": "610 North Main St",
+    "common_name": "Slake",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "608 NORTH MAIN ST": {
+    "location": "608 North Main St",
+    "common_name": "Taco Bell",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "606 NORTH MAIN ST": {
+    "location": "606 North Main St",
+    "common_name": "Auto Experts",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "600 NORTH MAIN ST": {
+    "location": "600 North Main St",
+    "common_name": "Shell",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "550 NORTH MAIN ST": {
+    "location": "550 North Main St",
+    "common_name": "Blacksburg Baptist Church",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "432 NORTH MAIN ST": {
+    "location": "432 North Main St",
+    "common_name": "PK’s Bar & Grill",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "428 NORTH MAIN ST": {
+    "location": "428 North Main St",
+    "common_name": "Hefun Japanese Restaurant",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "424 NORTH MAIN ST": {
+    "location": "424 North Main St",
+    "common_name": "Morph Body Arts",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "420 NORTH MAIN ST": {
+    "location": "420 North Main St",
+    "common_name": "Herban Legend",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "418 NORTH MAIN ST": {
+    "location": "418 North Main St",
+    "common_name": "The Maroon Door",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "410 NORTH MAIN ST": {
+    "location": "410 North Main St",
+    "common_name": "Executive Cutz",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "408 NORTH MAIN ST": {
+    "location": "408 North Main St",
+    "common_name": "Blacksburg Pipe & Tobacco",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "400 NORTH MAIN ST": {
+    "location": "400 North Main St",
+    "common_name": "Rustic Roots Olive Oils",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "106 FACULTY ST": {
+    "location": "106 Faculty St",
+    "common_name": "Mosaic Pediatric Therapy",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "322 NORTH MAIN ST HOKIE HOUSE": {
+    "location": "322 North Main St",
+    "common_name": "Hokie House",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "322 NORTH MAIN ST CUTS": {
+    "location": "322 North Main St",
+    "common_name": "Top Cuts",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "318 NORTH MAIN ST LEASING": {
+    "location": "318 North Main St",
+    "common_name": "CMG Leasing",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "318 NORTH MAIN ST LAW": {
+    "location": "318 North Main St",
+    "common_name": "Creekmore Law",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "318 NORTH MAIN ST DOWNTOWN": {
+    "location": "318 North Main St",
+    "common_name": "Downtown Blacksburg Inc",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "314 NORTH MAIN ST": {
+    "location": "314 North Main St",
+    "common_name": "Chipotle",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "312 NORTH MAIN ST": {
+    "location": "312 North Main St",
+    "common_name": "Hanbury",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "306 NORTH MAIN ST": {
+    "location": "306 North Main St",
+    "common_name": "Modern Barber Shop",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "304 NORTH MAIN ST": {
+    "location": "304 North Main St",
+    "common_name": "VT Thrift",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "302 NORTH MAIN ST": {
+    "location": "302 North Main St",
+    "common_name": "The Cellar Restaurant",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "220 NORTH MAIN ST": {
+    "location": "220 North Main St",
+    "common_name": "Sharkey’s",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "208 NORTH MAIN ST": {
+    "location": "208 North Main St",
+    "common_name": "310 Rosemont",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "200 NORTH MAIN ST ARCHITECTS": {
+    "location": "200 North Main St",
+    "common_name": "Colley Architects",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "200 NORTH MAIN ST CREDIT UNION": {
+    "location": "200 North Main St",
+    "common_name": "Virginia Credit Union",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "139 JACKSON ST NE": {
+    "location": "139 Jackson St NE",
+    "common_name": "Sweet Appalachia Tattoo",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "120 CHURCH ST NE": {
+    "location": "120 Church St NE",
+    "common_name": "Christ Episcopal Church",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 ROANOKE ST E": {
+    "location": "201 Roanoke St E",
+    "common_name": "Blacksburg Jewish Community",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "111 CHURCH ST SE": {
+    "location": "111 Church St SE",
+    "common_name": "United Methodist Church",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 CHURCH ST SE PARTNERSHIP": {
+    "location": "201 Church St SE",
+    "common_name": "Blacksburg Partnership",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 CHURCH ST SE LAW": {
+    "location": "201 Church St SE",
+    "common_name": "Law Office of Joel Jackson",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 CHURCH ST SE PIERCE": {
+    "location": "201 Church St SE",
+    "common_name": "Rosewood Pierce",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "205 CHURCH ST SE": {
+    "location": "205 Church St SE",
+    "common_name": "WDP & Associates",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "200 WASHINGTON ST SE": {
+    "location": "200 Washington St SE",
+    "common_name": "NRV Family Dentistry",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "303 CHURCH ST SE": {
+    "location": "303 Church St SE",
+    "common_name": "Accounting Associates",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "118 NORTH MAIN ST": {
+    "location": "118 North Main St",
+    "common_name": "USPS",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "116 NORTH MAIN ST": {
+    "location": "116 North Main St",
+    "common_name": "Adornment Body Piercing",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "114 NORTH MAIN ST": {
+    "location": "114 North Main St",
+    "common_name": "Bonnie Charlotte’s Botanicals",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "112 NORTH MAIN ST": {
+    "location": "112 North Main St",
+    "common_name": "Square 5 Public House",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "102 NORTH MAIN ST": {
+    "location": "102 North Main St",
+    "common_name": "Sugar Magnolia",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "105 ROANOKE ST E": {
+    "location": "105 Roanoke St E",
+    "common_name": "QCowork",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "111 ROANOKE ST E WEALTH MANAGEMENT": {
+    "location": "111 Roanoke St E",
+    "common_name": "Davidson Wealth Management",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "111 ROANOKE ST E PSYCHIATRY": {
+    "location": "111 Roanoke St E",
+    "common_name": "Blacksburg Psychiatry",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "119 CHURCH ST NE": {
+    "location": "119 Church St NE",
+    "common_name": "Verity",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "104 JACKSON ST NE": {
+    "location": "104 Jackson St NE",
+    "common_name": "Yeah Siam",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "101 SOUTH MAIN ST": {
+    "location": "101 South Main St",
+    "common_name": "New River Art & Fiber",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "103 SOUTH MAIN ST": {
+    "location": "103 South Main St",
+    "common_name": "Blacksburg Tavern",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "117 SOUTH MAIN ST": {
+    "location": "117 South Main St",
+    "common_name": "Cabo Fish Taco",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "110 ROANOKE ST E": {
+    "location": "110 Roanoke St E",
+    "common_name": "First Church of God",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "205 SOUTH MAIN ST": {
+    "location": "205 South Main St",
+    "common_name": "Main Street Inn",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "207 SOUTH MAIN ST": {
+    "location": "207 South Main St",
+    "common_name": "Mellow Mushroom",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST ATCS": {
+    "location": "301 South Main St",
+    "common_name": "ATCS",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST TWISTED LIQUID": {
+    "location": "301 South Main St",
+    "common_name": "Twisted Liquid",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST SALON": {
+    "location": "301 South Main St",
+    "common_name": "Pink Crush Salon",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST CONSTRUCTION": {
+    "location": "301 South Main St",
+    "common_name": "Peacock Holland Construction",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST FINANCIAL": {
+    "location": "301 South Main St",
+    "common_name": "Olio Financial",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST PASTA": {
+    "location": "301 South Main St",
+    "common_name": "Not Your Mama’s Pasta",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST RADIO": {
+    "location": "301 South Main St",
+    "common_name": "New River Radio",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST DENTISTRY": {
+    "location": "301 South Main St",
+    "common_name": "Cook Family Dentistry",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST JEWELRY": {
+    "location": "301 South Main St",
+    "common_name": "Capone's Jewelry",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "301 SOUTH MAIN ST BARBER": {
+    "location": "301 South Main St",
+    "common_name": "Brownstone Barber Shop",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 SOUTH MAIN ST BOOKS": {
+    "location": "201 South Main St",
+    "common_name": "Blacksburg Books",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 SOUTH MAIN ST CHIROPRACTIC": {
+    "location": "201 South Main St",
+    "common_name": "South Main Chiropractic",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 SOUTH MAIN ST PHYSICAL THERAPY": {
+    "location": "201 South Main St",
+    "common_name": "Rogers Physical Therapy",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 SOUTH MAIN ST SUPPLY": {
+    "location": "201 South Main St",
+    "common_name": "N High Supply",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 SOUTH MAIN ST BOOKWORM": {
+    "location": "201 South Main St",
+    "common_name": "Little Bookworm",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 SOUTH MAIN ST COINS": {
+    "location": "201 South Main St",
+    "common_name": "Blacksburg Coins",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "403 DRAPER RD SW": {
+    "location": "403 Draper Rd SW",
+    "common_name": "Hamro Kitchen",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "400 SOUTH MAIN ST": {
+    "location": "400 South Main St",
+    "common_name": "Blacksburg Motor Company",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "300 SOUTH MAIN ST": {
+    "location": "300 South Main St",
+    "common_name": "Blacksburg Municipal Building",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST BLOOD DONATIONS": {
+    "location": "250 South Main St",
+    "common_name": "ARC Blood Donations",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST PRINTING": {
+    "location": "250 South Main St",
+    "common_name": "Underground Printing",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST SCULPT": {
+    "location": "250 South Main St",
+    "common_name": "Sculpt",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST RKANDK": {
+    "location": "250 South Main St",
+    "common_name": "RK&K",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST DENTAL": {
+    "location": "250 South Main St",
+    "common_name": "Real Life Dental",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST POINTE WEST": {
+    "location": "250 South Main St",
+    "common_name": "Pointe West",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST ORTHOVIRGINIA": {
+    "location": "250 South Main St",
+    "common_name": "OrthoVirginia",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST PAW WASH": {
+    "location": "250 South Main St",
+    "common_name": "NRV Paw Wash",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST PARTNERS": {
+    "location": "250 South Main St",
+    "common_name": "Kingsview Partners",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST KIEF": {
+    "location": "250 South Main St",
+    "common_name": "KIEF",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST JEWELERS": {
+    "location": "250 South Main St",
+    "common_name": "Kent Jewelers",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "250 SOUTH MAIN ST SPIRITS": {
+    "location": "250 South Main St",
+    "common_name": "JH Bards Spirits Co.",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "202 SOUTH MAIN ST GES": {
+    "location": "202 South Main St",
+    "common_name": "GES Inc.",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "202 SOUTH MAIN ST JAPANESE": {
+    "location": "202 South Main St",
+    "common_name": "Moeya Japanese",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "202 SOUTH MAIN ST REAL ESTATE": {
+    "location": "202 South Main St",
+    "common_name": "Trinity Real Estate",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "100 DRAPER RD SW": {
+    "location": "100 Draper Rd SW",
+    "common_name": "7-Eleven",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "118 SOUTH MAIN ST": {
+    "location": "118 South Main St",
+    "common_name": "Rally House",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "100 SOUTH MAIN ST": {
+    "location": "100 South Main St",
+    "common_name": "National Bank Main",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "900 HETHWOOD BLVD": {
+    "location": "900 Hethwood Blvd",
+    "common_name": "National Bank Hethwood",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "901 NORTH MAIN ST": {
+    "location": "901 North Main St",
+    "common_name": "National Bank North Main",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "110 DRAPER RD NW MARZANOS": {
+    "location": "110 Draper Rd NW",
+    "common_name": "Benny Marzano’s",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "110 DRAPER RD NW BOARDWALK": {
+    "location": "110 Draper Rd NW",
+    "common_name": "The Boardwalk",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "108 W ROANOKE ST": {
+    "location": "108 W Roanoke St",
+    "common_name": "Blacksburg Farmers Market",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "106 W ROANOKE ST": {
+    "location": "106 W Roanoke St",
+    "common_name": "High Angle Herbs",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "104 W ROANOKE ST": {
+    "location": "104 W Roanoke St",
+    "common_name": "Ella’s Studio",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "101 NORTH MAIN ST": {
+    "location": "101 North Main St",
+    "common_name": "Steve’s Blacksburg Psychic",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "105 NORTH MAIN ST": {
+    "location": "105 North Main St",
+    "common_name": "Fringe Benefit",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "107 NORTH MAIN ST": {
+    "location": "107 North Main St",
+    "common_name": "Lia’s Hair Styling",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "109 NORTH MAIN ST": {
+    "location": "109 North Main St",
+    "common_name": "Melody Hookah Bar",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "111 NORTH MAIN ST": {
+    "location": "111 North Main St",
+    "common_name": "Champs Sports Bar",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "115 NORTH MAIN ST": {
+    "location": "115 North Main St",
+    "common_name": "Nice Dreams",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "117 NORTH MAIN ST": {
+    "location": "117 North Main St",
+    "common_name": "Live Wire Tattoo",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "119 NORTH MAIN ST": {
+    "location": "119 North Main St",
+    "common_name": "Nick’s Hokie Mart",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "125 NORTH MAIN ST UPS": {
+    "location": "125 North Main St",
+    "common_name": "UPS",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "125 NORTH MAIN ST FIVE FOUR OH SOCIAL": {
+    "location": "125 North Main St",
+    "common_name": "540 Social",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "125 NORTH MAIN ST BOOKHOLDERS": {
+    "location": "125 North Main St",
+    "common_name": "BookHolders",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "153 COLLEGE AVE": {
+    "location": "153 College Ave",
+    "common_name": "Gillie’s",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "212 DRAPER RD NW": {
+    "location": "212 Draper Rd NW",
+    "common_name": "Rivermill Bar & Grill",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "206 DRAPER RD NW": {
+    "location": "206 Draper Rd NW",
+    "common_name": "Bollo’s Cafe & Bakery",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "204 DRAPER RD NW": {
+    "location": "204 Draper Rd NW",
+    "common_name": "The Burg Resto-Bar",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "126 JACKSON ST NW": {
+    "location": "126 Jackson St NW",
+    "common_name": "Viet Pho You",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 NORTH MAIN ST CHICKEN": {
+    "location": "201 North Main St",
+    "common_name": "Ridiculous Chicken",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 NORTH MAIN ST TACO BAR": {
+    "location": "201 North Main St",
+    "common_name": "El Centro Taco Bar",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "207 NORTH MAIN ST": {
+    "location": "207 North Main St",
+    "common_name": "Campus Emporium",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "215 NORTH MAIN ST": {
+    "location": "215 North Main St",
+    "common_name": "D.P. Dough",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "217 NORTH MAIN ST": {
+    "location": "217 North Main St",
+    "common_name": "Hokie Hair",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "221 NORTH MAIN ST": {
+    "location": "221 North Main St",
+    "common_name": "Joe’s Diner",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "223 NORTH MAIN ST": {
+    "location": "223 North Main St",
+    "common_name": "XYZ Art Gallery",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "235 NORTH MAIN ST": {
+    "location": "235 North Main St",
+    "common_name": "The Coop",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "239 NORTH MAIN ST": {
+    "location": "239 North Main St",
+    "common_name": "Namaste",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "109 COLLEGE AVE": {
+    "location": "109 College Ave",
+    "common_name": "Green’s Grill",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "135 COLLEGE AVE": {
+    "location": "135 College Ave",
+    "common_name": "The Lyric Theatre",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "141 COLLEGE AVE": {
+    "location": "141 College Ave",
+    "common_name": "Kabob & More",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "145 COLLEGE AVE": {
+    "location": "145 College Ave",
+    "common_name": "G2’s All American",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "149 COLLEGE AVE": {
+    "location": "149 College Ave",
+    "common_name": "Wild Side Smoke Shop",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "217 COLLEGE AVE TOTS": {
+    "location": "217 College Ave",
+    "common_name": "Top of the Stairs",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "217 COLLEGE AVE BOTS": {
+    "location": "217 College Ave",
+    "common_name": "Bottom of the Stairs",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "217 COLLEGE AVE JIMMY JOHNS": {
+    "location": "217 College Ave",
+    "common_name": "Jimmy John’s",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "211 DRAPER RD NW COFFEEHOLICS": {
+    "location": "211 Draper Rd NW",
+    "common_name": "Coffeeholics",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "211 DRAPER RD NW MILK PARLOR": {
+    "location": "211 Draper Rd NW",
+    "common_name": "Milk Parlor",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "213 DRAPER RD NW": {
+    "location": "213 Draper Rd NW",
+    "common_name": "John’s Cameras and Records",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "201 COLLEGE AVE": {
+    "location": "201 College Ave",
+    "common_name": "Souvlaki",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "203 COLLEGE AVE": {
+    "location": "203 College Ave",
+    "common_name": "Greenhouse Boardshop",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "110 TURNER ST NW": {
+    "location": "110 Turner St NW",
+    "common_name": "McDonald’s",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "601 NORTH MAIN ST": {
+    "location": "601 North Main St",
+    "common_name": "Atlantic Union Bank",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "623 NORTH MAIN ST": {
+    "location": "623 North Main St",
+    "common_name": "El Rodeo’s",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "320 TURNER ST NW": {
+    "location": "320 Turner St NW",
+    "common_name": "Starbucks",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "225 GILBERT ST": {
+    "location": "225 Gilbert St",
+    "common_name": "Hokie Centric",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "223 GILBERT ST": {
+    "location": "223 Gilbert St",
+    "common_name": "Blacksburg Wine Lab",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "215 GILBERT ST": {
+    "location": "215 Gilbert St",
+    "common_name": "VelocityCare by Carilion Clinic",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "460 TURNER ST NW BW3S": {
+    "location": "460 Turner St NW",
+    "common_name": "Buffalo Wild Wings",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "460 TURNER ST NW TOKYO GRILL": {
+    "location": "460 Turner St NW",
+    "common_name": "Tokyo Grill",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "460 TURNER ST NW IREPAIR": {
+    "location": "460 Turner St NW",
+    "common_name": "Valley iRepair",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "460 TURNER ST NW HAIR STUDIO": {
+    "location": "460 Turner St NW",
+    "common_name": "Number 1 Hair Studio",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "460 TURNER ST NW BOWLS": {
+    "location": "460 Turner St NW",
+    "common_name": "Playa Bowls",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "460 TURNER ST NW BAKE SHOP": {
+    "location": "460 Turner St NW",
+    "common_name": "Next Door Bake Shop",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "220 GILBERT ST MOGE TEE": {
+    "location": "220 Gilbert St",
+    "common_name": "Moge Tee",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "220 GILBERT ST JUNZI": {
+    "location": "220 Gilbert St",
+    "common_name": "Junzi Kitchen",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "220 GILBERT ST SUB STATION": {
+    "location": "220 Gilbert St",
+    "common_name": "Sub Station II",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "701 NORTH MAIN ST": {
+    "location": "701 North Main St",
+    "common_name": "Wendy’s",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "210 PRICES FORK RD BOOT CAMP": {
+    "location": "210 Prices Fork Rd",
+    "common_name": "Fit Body Boot Camp",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "210 PRICES FORK RD INTERIORS": {
+    "location": "210 Prices Fork Rd",
+    "common_name": "Interiors Unlimited",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "210 PRICES FORK RD SPICITY": {
+    "location": "210 Prices Fork Rd",
+    "common_name": "Spicity",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "210 PRICES FORK RD PROFESSIONALS": {
+    "location": "210 Prices Fork Rd",
+    "common_name": "Professional Services",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "210 PRICES FORK RD GARDEN": {
+    "location": "210 Prices Fork Rd",
+    "common_name": "India Garden",
+    "venue": "TOWN OF BLACKSBURG"
+  },
   "1900 GRISSOM LN": {
     "location": "1900 Grissom Ln",
 	"common_name": "Nellies Cave Park",
@@ -449,6 +1894,126 @@
     "common_name": "Margaret Beeks Elementary School",
     "venue": "TOWN OF BLACKSBURG"
   },
+  "204 DRAPER RD SW": {
+    "location": "204 Draper Rd SW",
+    "common_name": "Alexander Black House and Cultural Center",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "625 PATRICK HENRY DR": {
+    "location": "625 Patrick Henry Dr",
+    "common_name": "Aquatic Center",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "303 WILSON AVE": {
+    "location": "303 Wilson Ave",
+    "common_name": "Bennett House",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "200 MILLER ST SW": {
+    "location": "200 Miller St SW",
+    "common_name": "Blacksburg Library",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "400 S. MAIN ST": {
+    "location": "400 South Main St",
+    "common_name": "Blacksburg Motor Company Building",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "300 S. MAIN ST": {
+    "location": "300 South Main St",
+    "common_name": "Blacksburg Municipal Building",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "200 CLAY ST SE": {
+    "location": "200 Clay St SE",
+    "common_name": "Blacksburg Police Department",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "2701 MEADOWBROOK DR": {
+    "location": "2701 Meadowbrook Dr",
+    "common_name": "Blacksburg Rotary Mountain Skills Bike Park",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "2800 COMMERCE ST": {
+    "location": "2800 Commerce St",
+    "common_name": "Blacksburg Transit",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1300 PROGRESS ST": {
+    "location": "1300 Progress St",
+    "common_name": "Blacksburg Volunteer Rescue Squad",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1225 BROOK CIR": {
+    "location": "1225 Brook Cir",
+    "common_name": "Brookfield Village Park",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "304 CEDAR HILL DR": {
+    "location": "304 Cedar Hill Dr",
+    "common_name": "Cedar Hill Park",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "725 PATRICK HENRY DR": {
+    "location": "725 Patrick Henry Dr",
+    "common_name": "Community Center",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "510 COUNTRY CLUB DR": {
+    "location": "510 Country Club Dr",
+    "common_name": "Crestview Tot Lot Playground",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1200 DEERFIELD DR": {
+    "location": "1200 Deerfield Dr",
+    "common_name": "Deerfield Trail",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "2100 TOMS CREEK RD": {
+    "location": "2100 Toms Creek Rd",
+    "common_name": "Dog Park",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1087 JENNELLE RD": {
+    "location": "1087 Jennelle Rd",
+    "common_name": "Ellett Valley Recreational Area",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "200 PROGRESS ST NE": {
+    "location": "200 Progress St NE",
+    "common_name": "Blacksburg Fire Station #1",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "2700 PRICES FORK RD": {
+    "location": "2700 Prices Fork Rd",
+    "common_name": "Blacksburg Fire Station #2",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "407 HUBBARD ST": {
+    "location": "407 Hubbard St",
+    "common_name": "Blacksburg Fire Station #3",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1411 NORTH MAIN ST": {
+    "location": "1411 North Main St",
+    "common_name": "Goodwill",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "801 UNIVERSITY CITY BLVD": {
+    "location": "801 University City Blvd",
+    "common_name": "University Mall",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1775 SOUTH MAIN ST": {
+    "location": "1775 South Main St",
+    "common_name": "CVS",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "600 UNIVERSITY CITY BLVD": {
+    "location": "600 University City Blvd",
+    "common_name": "CVS",
+    "venue": "TOWN OF BLACKSBURG"
+  },
 
   "125 SHOPPERS WAY": {
     "location": "125 Shoppers Way",
@@ -468,7 +2033,7 @@
 
   "5277 PRICES FORK RD": {
     "location": "5277 Prices Fork Rd",
-    "common_name": "VPI Sanitation Authority",
+    "common_name": "Blacksburg-VPI Sanitation Authority",
     "venue": "MONTGOMERY COUNTY"
   },
   "4033 PANDAPAS POND RD": {

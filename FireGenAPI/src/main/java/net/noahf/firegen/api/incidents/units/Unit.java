@@ -33,7 +33,7 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
 
     @Override
     default String describe() {
-        return getLonghand() + " (`" + getShorthand() + "`)";
+        return getLonghand() + " (`" + getShorthand() + "`) [`" + getType().getId().replace("_", " ") + "`]";
     }
 
     @Override

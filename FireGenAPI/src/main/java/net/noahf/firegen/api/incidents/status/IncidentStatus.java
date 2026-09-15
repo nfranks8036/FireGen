@@ -24,14 +24,14 @@ public enum IncidentStatus implements StringSelectors {
     ACTIVE("ACT"),
 
     /**
-     * Represents an Incident which is Closed (an incident in the past, has been resolved)
+     * Represents an Incident which is Stale (no changes have been made in *X* time)
      */
-    CLOSED("CLO"),
+    STALE("STA"),
 
     /**
-     * Represents an Incident which is Closed via a Time-out (no changes have been made in *X* amount of time)
+     * Represents an Incident which is Closed (an incident in the past, has been resolved)
      */
-    CLOSED_TIMED_OUT("CTO");
+    CLOSED("CLO");
 
     private final String shortName;
 
@@ -39,10 +39,7 @@ public enum IncidentStatus implements StringSelectors {
      * @return returns {@code true} if the Incident Status is in progress or {@code false} if it is not active
      */
     public boolean isInProgress() {
-        return switch (this) {
-            case PENDING, ACTIVE -> true;
-            case CLOSED, CLOSED_TIMED_OUT -> false;
-        };
+        return this != CLOSED;
     }
 
     /**
@@ -52,10 +49,7 @@ public enum IncidentStatus implements StringSelectors {
      */
     @IgnoreStringSelector
     public IncidentStatus opposite() {
-        return switch (this) {
-            case ACTIVE, PENDING -> CLOSED;
-            case CLOSED, CLOSED_TIMED_OUT -> PENDING;
-        };
+        return this != CLOSED ? CLOSED : PENDING;
     }
 
     @Override

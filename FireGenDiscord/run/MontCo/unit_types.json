@@ -4,21 +4,21 @@
     "short": null,
     "long": null,
     "format": null,
-    "description": "An officer responsible for overseeing a fire organization who may respond to incidents when needed."
+    "description": "An officer responsible for overseeing a fire organization who may respond to incidents when needed. When responding to an incident, these officers are often in charge of the incident by seniority (e.g., unit '100' has seniority over '102')."
   },
   {
     "id": "EMS_OFFICER",
     "short": null,
     "long": null,
     "format": null,
-    "description": "An officer responsible for overseeing an EMS organization who may respond to incidents when needed."
+    "description": "An officer responsible for overseeing an EMS organization who may respond to incidents when needed. When responding to an incident, these officers are often in charge of the incident by seniority (e.g., unit '500' has seniority over '502' or 'Supervisor 5')."
   },
   {
     "id": "FIRE_ENGINE",
     "short": "E",
     "long": "ENGINE",
     "format": "Engine",
-    "description": "A fire apparatus primarily equipped to provide fire suppression and carry personnel, water, and hose."
+    "description": "A fire apparatus primarily equipped to provide fire suppression and carry personnel, water, and hose. This is the most common type of fire unit in the area."
   },
   {
     "id": "FIRE_TRUCK",
@@ -57,7 +57,7 @@
   },
   {
     "id": "BRUSH_TRUCK",
-    "short": "B",
+    "short": "BR",
     "long": "BRUSH",
     "format": "Brush",
     "description": "A small, maneuverable fire apparatus designed for fighting fires in wooded, grassy, and other difficult-to-access areas."
@@ -74,21 +74,21 @@
     "short": "HAZ",
     "long": "HAZMAT",
     "format": "Hazmat",
-    "description": "A specialized apparatus carrying equipment and supplies for responding to hazardous materials incidents."
+    "description": "A specialized apparatus carrying equipment and supplies for responding to hazardous materials incidents, such as spills or leaks of oil, gasoline, or other environmentally unfriendly material."
   },
   {
     "id": "RESPONSE_CAR",
     "short": "RP",
     "long": "RESPONSE",
     "format": "Response",
-    "description": "A small emergency response vehicle used to transport personnel and equipment to incidents."
+    "description": "A small emergency response vehicle used to transport personnel and equipment to incidents, but cannot transport large equipment or patients."
   },
   {
     "id": "SQUAD_TRUCK",
     "short": "SQ",
     "long": "SQUAD",
     "format": "Squad",
-    "description": "A heavy-rescue vehicle used by both fire and EMS to transport personnel and specialized rescue equipment."
+    "description": "A heavy-rescue vehicle used by both fire and EMS to transport personnel and specialized rescue equipment to the scene, often used for extrication, motor vehicle crashes, or larger, more complex incidents."
   },
   {
     "id": "WAGON_TRUCK",
@@ -102,28 +102,28 @@
     "short": "U",
     "long": "UTILITY",
     "format": "Utility",
-    "description": "A support vehicle used to transport personnel, supplies, and equipment for emergency operations."
+    "description": "A support vehicle used to transport personnel, supplies, and equipment for emergency operations, but not large equipment or patients."
   },
   {
     "id": "EMS_SUPERVISOR",
     "short": "SUP",
     "long": "SUPERVISOR",
     "format": "Supervisor",
-    "description": "An EMS supervisor who oversees day-to-day EMS operations and responds to incidents requiring supervisory support."
+    "description": "An EMS supervisor who oversees day-to-day EMS operations and responds to incidents requiring supervisory support. This unit is often in charge of EMS personnel on an incident."
   },
   {
     "id": "BLS_AMBULANCE",
     "short": "R",
     "long": "RESCUE",
     "format": "Rescue",
-    "description": "A BLS ambulance staffed and equipped to provide basic life support and patient transport."
+    "description": "A BLS ambulance is staffed and equipped to provide basic life support. The highest level of care on this ambulance is usually EMT or AEMT. A BLS ambulance can stop immediately life threats and administer a limited set of medications, but they cannot do advanced medical interventions."
   },
   {
     "id": "ALS_AMBULANCE",
     "short": "M",
     "long": "MEDIC",
     "format": "Medic",
-    "description": "An ALS ambulance staffed and equipped to provide advanced life support and patient transport."
+    "description": "An ALS ambulance is staffed and equipped to provide advanced life support. The highest level of care on this ambulance is usually a Paramedic. An ALS ambulance can stop immediately life threats and perform advanced medical interventions, such as intubation, EKGs, advanced medication administration, cardiac pacing, needle decompressions, IV access, and sedation."
   },
   {
     "id": "COMMAND_CAR",
@@ -137,7 +137,7 @@
     "short": "UTV",
     "long": "UTV",
     "format": "UTV",
-    "description": "A utility terrain vehicle used to transport personnel and equipment over difficult or off-road terrain."
+    "description": "A utility terrain vehicle used to transport personnel and equipment over difficult or off-road terrain, often called a 'UTV'. This vehicle excels at traversing places that traditional emergency apparatus cannot."
   },
   {
     "id": "EXTRICATION_VEHICLE",
@@ -152,15 +152,15 @@
     "short": null,
     "long": null,
     "format": null,
-    "description": "A law enforcement vehicle used by patrol officers for routine duties and emergency response."
+    "description": "A law enforcement vehicle used by patrol officers for routine duties and emergency response. This vehicles are general purpose and can respond to most anything, including performing traffic stops, security checks, and neighborhood patrol to high-risk traffic stops, motor vehicle crashes, mass casualty incidents, and more."
   },
 
   {
-    "id": "ANIMAL_CONTROL",
+    "id": "ANIMAL_CONTROL_OFFICER",
     "short": "AC",
     "long": null,
-    "format": "Animal Control",
-    "description": "A vehicle used by animal control personnel to respond to animal-related calls and transport animals."
+    "format": "AC",
+    "description": "An animal control officer, who's primary duties include enforcing animal rights laws and ensuring no animals are being neglected or abused, and to investigate when they are."
   },
 
   {
@@ -168,7 +168,7 @@
     "short": "LG",
     "long": "CARILION LIFE-GUARD",
     "format": "Carilion Life-Guard",
-    "description": "A medical helicopter used to provide rapid air transport and advanced medical care to critically ill or injured patients."
+    "description": "A medical helicopter used to provide rapid air transport and advanced medical care to critically ill or injured patients to a higher level of care."
   },
 
   {

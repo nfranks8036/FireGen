@@ -206,16 +206,16 @@ public class CommandManager extends ListenerAdapter {
                 return;
             }
 
-            // if the current option value is empty but the command returned some valid options, then we can show as
-            // many as Discord will allow (25 at the time of writing)
-            if (optionValue.isEmpty()) {
-                event.replyChoiceStrings(autocomplete.stream().limit(OptionData.MAX_CHOICES).toList()).queue();
-                return;
-            }
-
             if (command.flags.disableAutocompleteAutoFilter) {
                 event.replyChoiceStrings(autocomplete.stream().limit(OptionData.MAX_CHOICES).toList()
                 ).queue();
+                return;
+            }
+
+            // if the current option value is empty but the command returned some valid options, then we can show as
+            // many as Discord will allow (25 at the time of writing)
+            if (optionValue.isEmpty()) {
+                event.replyChoiceStrings(autocompleteSearch(null, autocomplete)).queue();
                 return;
             }
 
@@ -224,9 +224,6 @@ public class CommandManager extends ListenerAdapter {
             // toLowerCasing each string to effectively make it case-insensitive
             event.replyChoiceStrings(
                     autocompleteSearch(optionValue, autocomplete)
-                    .stream()
-                            .limit(OptionData.MAX_CHOICES)
-                            .toList()
             ).queue();
 
         } catch (Exception exception) {
@@ -236,11 +233,13 @@ public class CommandManager extends ListenerAdapter {
 
     public List<String> autocompleteSearch(String input, List<String> options) {
         List<String> returned = new ArrayList<>();
-        for (String a : options) {
-            if (a.toLowerCase().contains(input.toLowerCase())) {
-                returned.add(a);
+        if (input != null && !input.isBlank()) {
+            for (String a : options) {
+                if (a.toLowerCase().contains(input.toLowerCase())) {
+                    returned.add(a);
+                }
             }
-        }
+        } else returned.addAll(options);
         if (returned.size() > 25) {
             int size = returned.size();
             returned = new ArrayList<>(returned.stream().limit(24).toList());

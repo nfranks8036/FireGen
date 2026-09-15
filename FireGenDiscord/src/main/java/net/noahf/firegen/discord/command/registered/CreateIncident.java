@@ -307,6 +307,30 @@ public class CreateIncident extends Command {
                     statusString = parts[1];
                 }
 
+                String secondaryString;
+                if (statusString.contains(">")) {
+                    secondaryString = statusString.split(">")[1];
+                    statusString = statusString.split(">")[0];
+                } else secondaryString = null;
+
+                AssignmentStatus findStatus = config.get(ConfigAssignmentStatuses.class).fromShortName(statusString);
+                if (findStatus == null) {
+                    findStatus = AssignmentStatusImpl.ADD_UNIT;
+                    DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +
+                            " defaulting to " + findStatus.getShortName() + " for " + targetString);
+                    returned = CONTENT.compare(returned);
+                }
+                final AssignmentStatus status = findStatus;
+
+                Secondary secondary = null;
+                if (secondaryString != null) {
+                    secondary = status.getSecondaries().stream()
+                            .filter(s -> s.getShortName().equalsIgnoreCase(secondaryString)
+                                    || s.getLongName().equalsIgnoreCase(secondaryString)
+                            )
+                            .findFirst().orElse(new SecondaryImpl(secondaryString, secondaryString, null));
+                }
+
                 // required syntax of command is the shorthand. e.g., "BFD,BVRS:DSP,SUP5:ENR,BPD,VTPD,R51:LEF>RMH"
                 List<Unit> inputUnits = new ArrayList<>();
                 switch (type) {
@@ -327,13 +351,18 @@ public class CreateIncident extends Command {
                             continue;
                         }
                         inputUnits.addAll(incident.getUnitAssignments().stream()
+                                .filter(u -> !u.getLatestAssignment().getStatus().equals(status))
                                 .map(UnitAssignment::getUnit)
                                 .filter(unit -> unit.getAgency().equals(a))
                                 .toList()
                         );
                     }
                     case WILDCARD ->
-                            inputUnits.addAll(incident.getUnitAssignments().stream().map(UnitAssignment::getUnit).toList());
+                            inputUnits.addAll(incident.getUnitAssignments().stream()
+                                    .filter(u -> !u.getLatestAssignment().getStatus().equals(status))
+                                    .map(UnitAssignment::getUnit)
+                                    .toList()
+                            );
                     case CUSTOM -> {
                         // ?SHORTHAND.LONGHAND.FORMATTED.AGENCY
                         String[] text = targetString.substring(1).split("\\.");
@@ -376,29 +405,6 @@ public class CreateIncident extends Command {
                     DiscordMessages.error(event, "You attempted to add no units to the call with input '" + unitsString + "'. Did you attempt to " + AGENCY_PREFIX + " an Agency that isn't attached to this call?");
                     returned = CONTENT.compare(returned);
                     continue;
-                }
-
-                String secondaryString;
-                if (statusString.contains(">")) {
-                    secondaryString = statusString.split(">")[1];
-                    statusString = statusString.split(">")[0];
-                } else secondaryString = null;
-
-                AssignmentStatus status = config.get(ConfigAssignmentStatuses.class).fromShortName(statusString);
-                if (status == null) {
-                    status = AssignmentStatusImpl.ADD_UNIT;
-                    DiscordMessages.error(event, "No assignment exists with the name '" + statusString + "'," +
-                            " defaulting to " + status.getShortName() + " for " + targetString);
-                    returned = CONTENT.compare(returned);
-                }
-
-                Secondary secondary = null;
-                if (secondaryString != null) {
-                    secondary = status.getSecondaries().stream()
-                            .filter(s -> s.getShortName().equalsIgnoreCase(secondaryString)
-                                    || s.getLongName().equalsIgnoreCase(secondaryString)
-                            )
-                            .findFirst().orElse(new SecondaryImpl(secondaryString, secondaryString, null));
                 }
 
                 EditUnits.UnitsChangeInput input = units.getOrDefault(status,

@@ -3,6 +3,7 @@ package net.noahf.firegen.discord.utilities;
 import lombok.Getter;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 
 import java.util.ArrayList;
@@ -36,29 +37,6 @@ public class IntList {
 
     public boolean isInValue(int integer) {
         return integers.contains(integer);
-    }
-
-    public Unit createUnit(Unit iParent, int integer) {
-        if (!isInValue(integer)) {
-            Log.info("Not in value: " + integer + " and " + this.toString());
-            return null;
-        }
-
-        UnitImpl parent = (UnitImpl) iParent;
-
-        return new UnitImpl(
-                reformat(parent.getShorthand(), integer),
-                reformat(parent.getLonghand(), integer),
-                reformat(parent.getFormatted().replaceAll("\\s*<a?:.+?:\\d+>\\s*", " "), integer),
-                parent.getEmoji(), parent.getAgency(),
-                iParent.getType(), integer,
-                parent.ordinal(), null, false,
-                SelectOption.of("LabelPlaceholder", String.valueOf(System.currentTimeMillis()))
-        );
-    }
-
-    private String reformat(String other, int integer) {
-        return other.replaceFirst(key, String.valueOf(integer));
     }
 
     @Override

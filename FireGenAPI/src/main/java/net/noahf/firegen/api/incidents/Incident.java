@@ -59,6 +59,10 @@ public interface Incident extends Identifiable, StringSelectors {
 
     Map<String, String> getLinks();
 
+    long getUnixNextStale();
+
+    long getUnixNextClosedDueToStale();
+
     IncidentPublishedStatus getPublished();
 
     void setPublished(IncidentPublishedStatus newStatus);

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.Unit;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -27,7 +28,9 @@ public class AgencyImpl implements Agency {
     private final int startUnitOrdinal;
 
     public Unit newUnit(Unit unit) {
-        this.units.add(unit); return unit;
+        this.units.add(unit);
+
+        return unit;
     }
 
     @Override
@@ -41,5 +44,11 @@ public class AgencyImpl implements Agency {
                 .add("emoji=" + emoji)
                 .add("ordinal=" + ordinal)
                 .toString();
+    }
+
+    @Override
+    @NotNull
+    public String toString() {
+        return this.getTitle();
     }
 }

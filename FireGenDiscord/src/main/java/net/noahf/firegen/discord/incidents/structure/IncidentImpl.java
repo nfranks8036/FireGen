@@ -9,12 +9,10 @@ import net.noahf.firegen.api.incidents.IncidentTime;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
-import net.noahf.firegen.api.incidents.units.AssignmentStatus;
-import net.noahf.firegen.api.incidents.units.Secondary;
-import net.noahf.firegen.api.incidents.units.Unit;
-import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.ToStringListStringSelector;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
 import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
@@ -24,18 +22,23 @@ import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
+import net.noahf.firegen.discord.users.SystemUser;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Getter @Setter @EqualsAndHashCode(of = {"id"})
 public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
+
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private final transient @Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
             IncidentManager manager;
@@ -68,6 +71,11 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private @Setter(value = AccessLevel.NONE) Map<String, String> links;
 
     private transient @Getter IncidentMessagingService messagingService;
+
+    private transient ScheduledFuture<?> staleFuture;
+    private transient ScheduledFuture<?> closedFuture;
+    private transient long unixNextStale = Long.MAX_VALUE;
+    private transient long unixNextClosedDueToStale = Long.MAX_VALUE;
 
     public IncidentImpl() {
         this.manager = null;
@@ -236,7 +244,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             return;
         }
 
-        if (unitAssignments.isEmpty()) {
+        if (Time.getUnix() >= this.unixNextStale) {
+            this.status = IncidentStatus.STALE;
+        } else if (unitAssignments.isEmpty()) {
             this.status = IncidentStatus.PENDING;
         } else {
             this.status = IncidentStatus.ACTIVE;
@@ -275,8 +285,19 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
      */
     @Override
     public void update() {
+        this.update(true);
+    }
+
+    private void update(boolean restartStale) {
         if (this.status == null) {
             return;
+        }
+
+        if (restartStale) {
+            if (this.staleFuture != null)
+                this.staleFuture.cancel(false);
+            if (this.closedFuture != null)
+                this.closedFuture.cancel(false);
         }
 
         long ELAPSED_TIME_THRESHOLD = 25; // milliseconds
@@ -290,6 +311,80 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         }
 
         this.refreshStatus();
+
+        if (restartStale) {
+            this.unixNextStale = Main.config.getFireGenVariables().incidentStaleMinutes();
+            this.unixNextClosedDueToStale = Main.config.getFireGenVariables().incidentStaleCloseMinutes();
+
+            this.staleFuture = scheduler.schedule(this::onStale, this.unixNextStale, TimeUnit.MINUTES);
+            this.closedFuture = scheduler.schedule(this::onStaleClose, this.unixNextClosedDueToStale, TimeUnit.MINUTES);
+
+            this.unixNextStale = Time.getUnix() + (this.unixNextStale * 60);
+            this.unixNextClosedDueToStale = Time.getUnix() + (this.unixNextClosedDueToStale * 60);
+
+            if (this.status == IncidentStatus.STALE) {
+                this.refreshStatus();
+                this.addLog(LocalDateTime.now(), SystemUser.get(), IncidentLogEntry.EntryType.UPDATE,
+                        "Incident Active - No Longer Stale"
+                );
+                this.update(false);
+            }
+        }
+    }
+
+    private void onStale() {
+        if (this.getStatus() == IncidentStatus.STALE
+                || this.getStatus() == IncidentStatus.CLOSED
+        ) {
+            Log.warn("Attempted to execute onStale() despite incident already being 'STALE' or 'CLOSE' (currently " + this.getStatus() + ")");
+            return;
+        }
+
+        Log.warn("Incident #" + this.getFormattedId() + " (" + this.getType().getSelectedName()
+                + (this.getLocation().isSet() ? " @ " + this.getLocation().format() : "") + ") " +
+                "has gone stale!"
+        );
+        this.addLog(LocalDateTime.now(), SystemUser.get(), IncidentLogEntry.EntryType.UPDATE,
+                "Incident Stale - " + Main.config.getFireGenVariables().incidentStaleMinutes() + "m Inactivity"
+        );
+
+        this.status = IncidentStatus.STALE;
+        this.update(false);
+    }
+
+    private void onStaleClose() {
+        if (this.getStatus() != IncidentStatus.STALE) {
+            Log.warn("Attempted to executed onStaleClose() despite incident not being 'STALE' (currently " + this.getStatus() + ")");
+            return;
+        }
+
+        Log.warn("Incident #" + this.getFormattedId() + " (" + this.getType().getSelectedName()
+                + (this.getLocation().isSet() ? " @ " + this.getLocation().format() : "") + ") " +
+                "has closed due to its staleness!"
+        );
+
+        AssignmentStatus clear = Main.config.get(ConfigAssignmentStatuses.class).getFirstFor(AssignmentPurpose.UNIT_CLEAR);
+        String recreateEvents = this.getUnitAssignments().stream()
+                .filter(a -> !a.getLatestAssignment().getStatus().equals(clear))
+                .map(a -> {
+            Unit unit = a.getUnit();
+            AssignmentEvent latest = a.getLatestAssignment();
+            Secondary secondary = latest.getSecondary();
+            return unit.getShorthand() + ":" + latest.getStatus().getShortName()
+                    + (secondary != null ? ">" + secondary.getShortName() : "");
+        }).collect(Collectors.joining(","));
+        Log.info("Re-create statuses: " + recreateEvents);
+        this.addLog(LocalDateTime.now(), SystemUser.get(), IncidentLogEntry.EntryType.NOTE,
+                "All Units " + clear.getName().toUpperCase() + " - Recreate Statuses: " + recreateEvents
+        );
+
+        this.getUnitAssignments().forEach(a -> a.assign(SystemUser.get(), clear, null));
+
+        this.addLog(LocalDateTime.now(), SystemUser.get(), IncidentLogEntry.EntryType.UPDATE,
+                "Incident Closed - " + Main.config.getFireGenVariables().incidentStaleCloseMinutes() + "m Inactivity"
+        );
+        this.status = IncidentStatus.CLOSED;
+        this.update(false);
     }
 
 }

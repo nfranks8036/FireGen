@@ -38,7 +38,7 @@ public class ViewArea extends Command {
                 .setDescription("There are " + incidents.countIncidents() + " incidents that have been reported.")
                 .addField("Municipality", municipality.getName() + " (" + municipality.getShortName() + ")", true)
                 .addField("Dispatch Center", municipality.getDispatchName(), true)
-                .addField("Defaults", "Default Incident Type: `" + vars.defaultType() + "`\nDefault Incident Tag: `" + vars.defaultTag().toString() + "`", true)
+                .addField("Stale / Autoclose Mins", vars.incidentStaleMinutes() + "m / " + vars.incidentStaleCloseMinutes() + "m", true)
                 .addField("Registered",
                         "Units: `" + units.count() + "` (`" + units.getAgencies().size() + "` agencies)\n" +
                                 "Incident Types: `" + config.get(ConfigIncidentTypes.class).get().size() + "`\n" +

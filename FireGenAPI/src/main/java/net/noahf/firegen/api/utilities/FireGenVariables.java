@@ -32,6 +32,7 @@ public class FireGenVariables {
 
         if (includeUserSet) {
             this.incidentStaleMinutes = 60;
+            this.incidentStaleCloseMinutes = 300;
 
             this.incidentTypesFile = "incident_types.json";
             this.unitsFile = "units.json";
@@ -77,6 +78,7 @@ public class FireGenVariables {
     private String municipality;
 
     private int incidentStaleMinutes;
+    private int incidentStaleCloseMinutes;
 
     private String incidentTypesFile;
     private String unitsFile;

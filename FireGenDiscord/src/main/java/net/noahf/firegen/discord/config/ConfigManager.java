@@ -43,7 +43,8 @@ public class ConfigManager extends Manager<ConfigManager> {
             JsonObject root = e.getAsJsonObject();
             JsonObject files = root.get("files").getAsJsonObject();
             builder
-                    .incidentStaleMinutes(asInt(root, "incidents_become_stale_minutes"))
+                    .incidentStaleMinutes(asInt(root, "incident_becomes_stale_mins"))
+                    .incidentStaleCloseMinutes(asInt(root, "stale_becomes_closed_mins"))
                     .shortTimeFormat(asStr(root, "short_time"))
                     .longTimeFormat(asStr(root, "long_time"))
                     .dateFormat(asStr(root, "date"))

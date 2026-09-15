@@ -1,5 +1,6 @@
 {
-  "incidents_become_stale_minutes": 90,
+  "incident_becomes_stale_mins": 60,
+  "stale_becomes_closed_mins": 120,
 
   "short_time": "HH:mm",
   "long_time": "HH:mm:ss",

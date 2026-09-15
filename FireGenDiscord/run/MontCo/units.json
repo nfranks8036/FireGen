@@ -63,6 +63,7 @@
       {"type": "FIRE_OFFICER", "number": 207},
       {"type": "FIRE_OFFICER", "number": 208},
       {"type": "FIRE_OFFICER", "number": 209},
+      {"type": "FIRE_ENGINE", "number": 2},
       {"type": "SQUAD_TRUCK", "number": 2},
       {"type": "WAGON_TRUCK", "number": 2},
       {"type": "UTILITY", "number": 2},
@@ -366,7 +367,7 @@
     "emoji": "<:mcso:1449929686963458140>",
     "units": [
       {"short": "MCSOCR", "long": "MONTGOMERY COUNTY SHERIFF'S OFFICE W/ CO-RESPONDER", "format": "Montgomery County Sheriff (w/ Co-Responder)"},
-      {"type": "PATROL_CAR", "short": "SO#", "long": "MCSO #", "format": "MCSO #", "placeholders": {"#": "IntList[10->999]"}}
+      {"type": "PATROL_CAR", "short": "SO#", "long": "MCSO #", "format": "SO#", "placeholders": {"#": "IntList[10->999]"}}
     ]
   },
   {
@@ -378,7 +379,7 @@
     "emoji": "<:cpd:1449927471414902826>",
     "units": [
       {"short": "CPDCR", "long": "CHRISTIANSBURG POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Christiansburg Police (w/ Co-Responder)"},
-      {"type": "PATROL_CAR", "short": "C#", "long": "CPD #", "format": "CPD #", "placeholders": {"#": "IntList[10->999]"}}
+      {"type": "PATROL_CAR", "short": "C#", "long": "CPD #", "format": "C#", "placeholders": {"#": "IntList[10->999]"}}
     ]
   },
   {
@@ -390,7 +391,7 @@
     "emoji": "<:bpd:1449916806931153110>",
     "units": [
       {"short": "BPDCR", "long": "BLACKSBURG POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Blacksburg Police (w/ Co-Responder)"},
-      {"type": "PATROL_CAR", "short": "B#", "long": "BPD #", "format": "BPD #", "placeholders": {"#": "IntList[10->999]"}}
+      {"type": "PATROL_CAR", "short": "B#", "long": "BPD #", "format": "B#", "placeholders": {"#": "IntList[10->999]"}}
     ]
   },
   {
@@ -402,7 +403,7 @@
     "emoji": "<:vtpd:1449922611550093474>",
     "units": [
       {"short": "VTPDCR", "long": "VIRGINIA TECH POLICE DEPARTMENT W/ CO-RESPONDER", "format": "Virginia Tech Police (w/ Co-Responder)"},
-      {"type": "PATROL_CAR", "short": "VT#", "long": "VTPD #", "format": "VTPD #", "placeholders": {"#": "IntList[10->999]"}}
+      {"type": "PATROL_CAR", "short": "V#", "long": "VTPD #", "format": "V#", "placeholders": {"#": "IntList[10->999]"}}
     ]
   },
   {
@@ -413,7 +414,7 @@
     "type": "ANIMAL_CONTROL",
     "emoji": "<:montgomery_county:1449935863252258816>",
     "units": [
-      {"type": "ANIMAL_CONTROL", "number": 80}
+      {"type": "ANIMAL_CONTROL_OFFICER", "number": 80}
     ]
   },
   {
@@ -456,25 +457,6 @@
     "emoji": "<:vtsc:1449924056127373567>",
     "units": []
   },
-
-  {
-    "title": "ATMOS ENERGY CORPORATION",
-    "short": "ATMOS",
-    "format": "Atmos Energy",
-    "station": "1013 W Main St, Radford, VA",
-    "type": "UTILITY_COMPANY",
-    "emoji": "<:atmos:1519396654254657646>",
-    "units": []
-  },
-  {
-    "title": "APPALACHIAN POWER",
-    "short": "AEP",
-    "format": "Appalachian Power",
-    "station": "2255 Prospect Dr, Christiansburg, VA",
-    "type": "UTILITY_COMPANY",
-    "emoji": "<:appalachian_power:1519396930373812224>",
-    "units": []
-  },
   {
     "title": "NEW RIVER VALLEY 911 AUTHORITY",
     "short": "NRV",
@@ -485,12 +467,44 @@
     "units": []
   },
   {
+    "title": "UTILITIES",
+    "short": "UTIL",
+    "format": "General Utilities",
+    "station": "*Varies*",
+    "type": "UTILITY_COMPANY",
+    "emoji": null,
+    "units": [
+      {"short": "AEP", "long": "APPALACHIAN POWER", "format": "Appalachian Power", "emoji": "<:aep:1519396930373812224>"},
+      {"short": "ATMOS", "long": "ATMOS ENERGY", "format": "ATMOS Energy", "emoji": "<:atmos:1519396654254657646>"},
+      {"short": "NRVRWA", "long": "NEW RIVER VALLEY REGIONAL WATER AUTHORITY", "format": "NRV Water"},
+      {"short": "BVPISA", "long": "BLACKSBURG-VPI SANITATION AUTHORITY", "format": "Blacksburg-VPI Sanitation"},
+      {"short": "MCPSA", "long": "MONTGOMERY COUNTY PUBLIC SERVICE AUTHORITY", "format": "Montgomery County Public Services", "emoji": "<:montgomery_county:1449935863252258816>"},
+      {"short": "MCUD", "long": "MONTGOMERY COUNTY UTILITIES DEPARTMENT", "format": "Montgomery County Utilities", "emoji": "<:montgomery_county:1449935863252258816>"},
+      {"short": "VTF", "long": "VIRGINIA TECH FACILITIES", "format": "Virginia Tech Facilities", "emoji": "<:virginia_tech:1449934649731317932>"},
+      {"short": "VTES", "long": "VIRGINIA TECH ELECTRIC SERVICE", "format": "Virginia Tech Electric Service", "emoji": "<:virginia_tech:1449934649731317932>"}
+    ]
+  },
+  {
+    "title": "TOWING",
+    "short": "TOW",
+    "format": "Towing",
+    "station": "*Varies*",
+    "type": "TOWING",
+    "emoji": null,
+    "units": [
+      {"short": "CAT", "long": "CAMPUS AUTOMOTIVE", "format": "CAMPUS AUTOMOTIVE"},
+      {"short": "ACT", "long": "ALL CALL TOWING", "format": "ALL CALL"},
+      {"short": "SAT", "long": "S&A TOWING", "format": "S&A TOWING"},
+      {"short": "ET", "long": "ELITE TOWING", "format": "ELITE TOWING"}
+    ]
+  },
+  {
     "title": "TEST AGENCY",
-    "short": "TESTAGENCY",
+    "short": "TEST",
     "format": "Test Agency",
     "station": "Blacksburg",
     "type": "OTHER",
-    "emoji": "<:updoot:1146799050046316574>",
+    "emoji": null,
     "units": [
       {"type": "TEST", "number": 1},
       {"type": "TEST", "number": 2},

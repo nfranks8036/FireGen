@@ -10,6 +10,11 @@
     "emojiRight": "<:ACTIVERIGHT:1499635078677004298>"
   },
   {
+    "name": "STALE",
+    "emojiLeft": "<:STALELEFT:1542588537390629034>",
+    "emojiRight": "<:STALERIGHT:1542588569023946773>"
+  },
+  {
     "name": "CLOSED",
     "emojiLeft": "<:CLOSEDLEFT:1499635442822418632>",
     "emojiRight": "<:CLOSEDRIGHT:1499635454843031602>"

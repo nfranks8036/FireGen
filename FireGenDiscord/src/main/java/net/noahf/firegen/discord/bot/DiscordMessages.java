@@ -24,10 +24,14 @@ public class DiscordMessages {
     }
 
     public static void error(IReplyCallback event, String message) {
-        DiscordMessages.error(event, message, null);
+        DiscordMessages.error(event, message, null, false);
     }
 
     public static void error(IReplyCallback event, String message, @Nullable Exception cause) {
+        error(event, message, cause, true);
+    }
+
+    public static void error(IReplyCallback event, String message, @Nullable Exception cause, boolean print) {
         EmbedBuilder responseBuilder = new EmbedBuilder()
                 .setColor(new Color(121, 0, 0))
                 .setTitle("An error occurred")
@@ -35,7 +39,7 @@ public class DiscordMessages {
                 .setFooter("Try again later or with different parameters.");
 
         if (cause != null) {
-            cause.printStackTrace(System.err);
+            if (print) cause.printStackTrace(System.err);
             responseBuilder = responseBuilder
                     .addField("Caused by:", truncate(cause.toString(), 1024-("Caused by:".length()), "..."), false);
         }

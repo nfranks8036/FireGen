@@ -32,6 +32,8 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
 
     private @Getter List<Agency> agencies;
 
+    private int maxUnits;
+
     public ConfigUnits(FireGenVariables vars) {
         super(vars, Unit.class, vars.municipality() + "/" + vars.unitsFile(),
                 new DependencyRequest().dependOn(ConfigUnitTypes.class)
@@ -86,6 +88,8 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
             );
         }
 
+        maxUnits = lastUnitCount;
+
         log("Imported " + this.count() + " units (" + agencies.size() + " agencies).");
     }
 
@@ -109,9 +113,10 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
                 number = numberElement.getAsInt();
             }
 
-            String longhand = agency.getShorthand() + " " + (type.getLonghand() != null ? type.asLonghand(number) : String.valueOf(number));
+            String basicFormatted = (type.getLonghand() != null ? type.asLonghand(number) : String.valueOf(number));
+            String longhand = agency.getShorthand() + " " + basicFormatted;
             String shorthand = type.getShorthand() != null ? type.asShorthand(number) : String.valueOf(number);
-            String formatted = type.getFormatted() != null ? type.asFormatted(number) : longhand;
+            String formatted = type.getFormatted() != null ? type.asFormatted(number) : basicFormatted;
 
             longhand = asStr(unitObj, "long", longhand);
             shorthand = asStr(unitObj, "short", shorthand);
@@ -166,7 +171,9 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         // it's possible the unit is a custom one like this
         for (Unit a : this.get()) {
             Unit c = checkAdditional(a, a.getShorthand(), shorthand);
-            if (c != null) return c;
+            if (c != null) {
+                return c;
+            }
         }
 
         return null;
@@ -197,13 +204,41 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
         if (!input.startsWith(prefix) && (suffix.isEmpty() || !input.endsWith(suffix))) return null;
 
         String numberStr = input.substring(prefix.length(), input.length() - suffix.length());
-        int number = Integer.parseInt(numberStr.strip());
+        int number;
+        try {
+            number = Integer.parseInt(numberStr.strip());
+        } catch (NumberFormatException e) {
+            return null;
+        }
 
         return add(
                 ((AgencyImpl)parent.getAgency()).newUnit(
-                        intList.createUnit(parent, number)
+                        createUnit(intList, parent, number)
                 )
         );
+    }
+
+    private Unit createUnit(IntList intList, Unit iParent, int integer) {
+        if (!intList.isInValue(integer)) {
+            Log.info("Not in value: " + integer + " and " + this.toString());
+            return null;
+        }
+
+        UnitImpl parent = (UnitImpl) iParent;
+
+        return new UnitImpl(
+                reformat(intList, parent.getShorthand(), integer),
+                reformat(intList, parent.getLonghand(), integer),
+                reformat(intList, parent.getFormatted().replaceAll("\\s*<a?:.+?:\\d+>\\s*", " "), integer),
+                parent.getEmoji(), parent.getAgency(),
+                iParent.getType(), integer,
+                maxUnits + integer, null, false,
+                SelectOption.of("LabelPlaceholder", String.valueOf(System.currentTimeMillis()))
+        );
+    }
+
+    private String reformat(IntList intList, String other, int integer) {
+        return other.replaceFirst(intList.getKey(), String.valueOf(integer));
     }
 
     public @Nullable Agency agencyFromShorthand(String shorthand) {

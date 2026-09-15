@@ -138,14 +138,14 @@ public class UnitInfo extends Command {
                         "**Incident:** `" + incident.getFormattedId() + "` (" + incident.getType().getSelectedName()
                         + (incident.getLocation().isSet() ? " @ " + incident.getLocation().format() : "") + ")\n" +
                                 "**Unit:** `" + unit.getLonghand() + "` (" + unit.getAgency().getTitle() + ")\n"
-                        + "**Status:** " + latest.getEmoji().getFormatted() + " " + latest.getName()
+                        + "**Status:** " + (latest.getEmoji() != null ? latest.getEmoji().getFormatted() + " " : "") + latest.getName()
                 );
         for (AssignmentEvent a : assignment.getAssignments()) {
             long unix = Time.getUnix(a.getTimestamp());
             AssignmentStatusImpl status = (AssignmentStatusImpl) a.getStatus();
             embed = embed
                     .addField(
-                            status.getEmoji().getFormatted() + " " + status.getName(),
+                            (status.getEmoji() != null ? status.getEmoji().getFormatted() + " " : "") + status.getName(),
                             "Exact: <t:" + unix + ":f>\nAround: <t:" + unix + ":R>"
                             + (a.getSecondary() != null ? "\nSecondary: `" + a.getSecondary().getShortName() + "`" : "")
                             ,
@@ -175,6 +175,10 @@ public class UnitInfo extends Command {
             ));
         }
 
+        String unitType = unit.getType().getId().replace("_", " "  ) + (unit.getNumber() != Integer.MIN_VALUE ? " (" + unit.getNumber() + ")" : "");
+        if (unitType.startsWith("$")) {
+            unitType = unitType.substring(1);
+        }
         returned.add(
                 new EmbedBuilder()
                         .setColor(new Color(255, 90, 90))
@@ -182,7 +186,7 @@ public class UnitInfo extends Command {
                         .setTitle(unit.getLonghand())
                         .addField("Emoji", unit.getEmoji().getFormatted() + " (`:" + unit.getEmoji().getName() + ":`)", true)
                         .addField("Order", "#" + unit.ordinal(), true)
-                        .addField("Unit Type (#)", unit.getType().getId().replace("_", " ") + (unit.getNumber() != Integer.MIN_VALUE ? " (" + unit.getNumber() + ")" : ""), true)
+                        .addField("Unit Type (#)", unitType, true)
                         .addField("Names",
                                 "Short: `" + unit.getShorthand() + "`\n" +
                                         "Long: `" + unit.getLonghand() + "`\n" +
@@ -334,6 +338,10 @@ public class UnitInfo extends Command {
         public void onStringSelectInteraction(@NonNull StringSelectInteractionEvent event) {
             String input = event.getSelectedOptions().getFirst().getValue();
             try {
+                if (!input.startsWith("firegenuser")) {
+                    return;
+                }
+
                 String command = input.split("-")[2];
                 if (!command.equalsIgnoreCase("unitselectinfo")) {
                     return;

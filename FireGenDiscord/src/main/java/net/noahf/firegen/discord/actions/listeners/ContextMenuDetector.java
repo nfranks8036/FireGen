@@ -39,18 +39,18 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ContextMenuDetector extends ListenerAdapter {
 
-    public static final Map<String, TriFunction<IReplyCallback, IncidentImpl, FireGenVariables, MessageEmbed>> commands = new LinkedHashMap<>(
+    public static final Map<String, TriFunction<IReplyCallback, IncidentImpl, FireGenVariables, List<MessageEmbed>>> commands = new LinkedHashMap<>(
             Map.of(
-                    "Show incident overview", ContextMenuDetector::createIncidentDetails,
-                    "Show incident log", ContextMenuDetector::createIncidentLog,
-                    "Show incident fields", ContextMenuDetector::createFieldsDisplay
+                    "Incident overview (detailed)", ContextMenuDetector::createIncidentOverviewLong,
+                    "Incident overview (simple)", ContextMenuDetector::createIncidentDetails,
+                    "Incident log", ContextMenuDetector::createIncidentLog,
+                    "Incident fields", ContextMenuDetector::createFieldsDisplay
             )
     );
 
@@ -62,6 +62,7 @@ public class ContextMenuDetector extends ListenerAdapter {
             return;
         }
 
+        User user = event.getUser();
         Message target = event.getTarget();
         SelfUser self = Main.bot.jda().getSelfUser();
         if (!target.getAuthor().isBot()
@@ -72,6 +73,8 @@ public class ContextMenuDetector extends ListenerAdapter {
             );
             return;
         }
+
+        Log.info(user.getName() + " (" + user.getIdLong() + ") pressed context '" + event.getName() + "' on '" + target.getIdLong() + "' in '" + target.getChannel().getName() + "'");
 
         IncidentImpl incident = cachedIncidents.computeIfAbsent(target.getIdLong(),
                 (l) ->
@@ -97,7 +100,7 @@ public class ContextMenuDetector extends ListenerAdapter {
 
         FireGenVariables vars = Main.config.getFireGenVariables();
 
-        MessageEmbed content = commands.get(event.getName()).apply(event, incident, vars);
+        List<MessageEmbed> content = commands.get(event.getName()).apply(event, incident, vars);
         if (content == null) {
             return;
         }
@@ -135,13 +138,15 @@ public class ContextMenuDetector extends ListenerAdapter {
         try {
             long incidentId = Long.parseLong(id.split("-")[3]);
             Incident incident = Main.incidents.getIncidentBy(incidentId);
-            MessageEmbed message = new EmbedBuilder()
-                    .setTitle("Couldn't find incident!")
-                    .setDescription(
-                            "*Sorry for the inconvenience, but our records cannot match any incident with ID `" + incidentId + "`. Perhaps the incident was removed!*"
-                    )
-                    .setColor(new Color(255, 104, 104))
-                    .build();
+            List<MessageEmbed> message = List.of(
+                    new EmbedBuilder()
+                            .setTitle("Couldn't find incident!")
+                            .setDescription(
+                                    "*Sorry for the inconvenience, but our records cannot match any incident with ID `" + incidentId + "`. Perhaps the incident was removed!*"
+                            )
+                            .setColor(new Color(255, 104, 104))
+                            .build()
+            );
             int index = Integer.parseInt(id.split("-")[4]);
             if (incident != null) {
                 String key = new ArrayList<>(commands.keySet()).get(index);
@@ -165,11 +170,11 @@ public class ContextMenuDetector extends ListenerAdapter {
         }
     }
 
-    public static MessageEmbed createIncidentLog(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
+    public static List<MessageEmbed> createIncidentLog(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
         return createIncidentLog(event, incident, vars, false);
     }
 
-    public static MessageEmbed createIncidentLog(IReplyCallback event, IncidentImpl incident, FireGenVariables vars, boolean showUsers) {
+    public static List<MessageEmbed> createIncidentLog(IReplyCallback event, IncidentImpl incident, FireGenVariables vars, boolean showUsers) {
         event.deferReply(true).queue();
 
         List<String> entries = incident.getMessagingService().getNarrativeFormatted(incident, true, showUsers);
@@ -208,7 +213,7 @@ public class ContextMenuDetector extends ListenerAdapter {
         return null;
     }
 
-    public static MessageEmbed createFieldsDisplay(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
+    public static List<MessageEmbed> createFieldsDisplay(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
         Map<String, StringSelectors> selectors = new HashMap<>();
         scan(incident, "", selectors, new HashSet<>());
         List<String> string = new ArrayList<>();
@@ -216,12 +221,14 @@ public class ContextMenuDetector extends ListenerAdapter {
             string.add((selector.getKey().isEmpty() ? " " : selector.getKey()) + " = `" + String.join("` | `", selector.getValue().asStringSelectors()) + "`");
         }
 
-        return new EmbedBuilder()
-                .setTitle("Incident Fields (" + string.size() + ")")
-                .setDescription(DiscordMessages.truncate(String.join("\n", string),
-                        MessageEmbed.DESCRIPTION_MAX_LENGTH, "..."))
-                .setColor(new Color(59, 92, 166))
-                .build();
+        return List.of(
+                new EmbedBuilder()
+                        .setTitle("Incident Fields (" + string.size() + ")")
+                        .setDescription(DiscordMessages.truncate(String.join("\n", string),
+                                MessageEmbed.DESCRIPTION_MAX_LENGTH, "..."))
+                        .setColor(new Color(59, 92, 166))
+                        .build()
+        );
     }
 
     private static void scan(
@@ -350,7 +357,11 @@ public class ContextMenuDetector extends ListenerAdapter {
         return typeArguments[0].equals(expectedType);
     }
 
-    private static MessageEmbed createIncidentDetails(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
+    private static List<MessageEmbed> createIncidentOverviewLong(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
+        return incident.getMessagingService().get(AdminMessageSender.class).getEmbed(false);
+    }
+
+    private static List<MessageEmbed> createIncidentDetails(IReplyCallback event, IncidentImpl incident, FireGenVariables vars) {
         String message =
                 incident.getLocation().format("\n", null).toUpperCase() + "\n" +
                 "\n**Title** " + f(()->incident.getType().getSelectedName(), ">NEW<") +
@@ -378,14 +389,16 @@ public class ContextMenuDetector extends ListenerAdapter {
                 .collect(Collectors.joining(" ")));
         Color color = switch (incident.getStatus()) {
             case ACTIVE -> new Color(50, 255, 50);
-            case CLOSED, CLOSED_TIMED_OUT -> new Color(114, 114, 114);
+            case STALE -> new Color(39, 56, 39);
+            case CLOSED -> new Color(114, 114, 114);
             case PENDING -> new Color(94, 175, 255);
         };
-        return new EmbedBuilder()
+        return List.of(new EmbedBuilder()
                 .setTitle(incident.getType().getSelectedName())
                 .setDescription(message)
                 .setColor(color)
-                .build();
+                .build()
+        );
     }
 
     private static String f(Supplier<String> returned) {

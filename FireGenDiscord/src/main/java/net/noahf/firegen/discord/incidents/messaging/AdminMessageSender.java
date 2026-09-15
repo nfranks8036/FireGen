@@ -60,7 +60,7 @@ public class AdminMessageSender extends MessageSender {
                         Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
                         Button.primary(super.getIncident().createInteractionIdString("preview"), "Preview"),
                         Button.primary(super.getIncident().createInteractionIdString("link"), "Links"),
-                        Button.primary(super.getIncident().createInteractionIdString("logs"), "Show Log")
+                        Button.primary(super.getIncident().createInteractionIdString("logs"), "Log")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-narrative", "Log:").asDisabled(),
@@ -117,7 +117,7 @@ public class AdminMessageSender extends MessageSender {
         IncidentImpl incident = super.getIncident();
 
         // edit the admin messages with an updated admin panel
-        List<MessageEmbed> adminMsg = this.getAdminEmbed();
+        List<MessageEmbed> adminMsg = this.getEmbed(true);
         List<MessageTopLevelComponent> buttons = super.getComponents();
         if (!incident.getStatus().isInProgress()) {
             buttons = new ArrayList<>(List.of(ActionRow.of(
@@ -143,26 +143,31 @@ public class AdminMessageSender extends MessageSender {
         }
     }
 
-    public List<MessageEmbed> getAdminEmbed() {
+    public List<MessageEmbed> getEmbed(boolean forAdmin) {
         List<MessageEmbed> returned = new ArrayList<>();
         IncidentImpl incident = super.getIncident();
 
-        List<String> log = super.getService().getNarrativeFormatted(incident, true, true);
+        List<String> log = super.getService().getNarrativeFormatted(incident, true, forAdmin);
         IncidentStatusEmoji status = Main.config.get(ConfigIncidentStatuses.class).asEmoji(incident.getStatus());
         IncidentTypeImpl type = (IncidentTypeImpl) incident.getType();
         long time = incident.getTime().getUnix();
+        long stale = incident.getUnixNextStale();
+        long autoclose = incident.getUnixNextClosedDueToStale();
         IncidentLocationImpl location = (IncidentLocationImpl) incident.getLocation();
         ReceiveMessageSender receiver = super.getService().get(ReceiveMessageSender.class);
+        Color color = forAdmin ?
+                new Color(255, 94, 94) :
+                new Color(255, 209, 94);
 
         returned.add(new EmbedBuilder()
-                .setTitle("ADMIN OVERVIEW")
+                .setTitle(forAdmin ? "ADMIN OVERVIEW" : "INCIDENT OVERVIEW")
                 .setDescription("Incident `" + incident.getFormattedId() + "`"
                         + "\nStatus: " + status.getEmojisFormattedCombined()
-                        + "\nMessages (" + receiver.getMessages().size() + "): " +
-                        String.join(" , ", receiver.getMessages().stream().map(msg ->
-                        "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()).toList())
-                        + "\nContributors (" + incident.getContributors().size() + "): " + String.join(", ", incident.getContributors().stream().map(c -> "<@" + c.getId() + ">").toList())
-                        + (incident.getLinks().isEmpty() ? "" : "\nLinks (" + incident.getLinks().size() + "): " + incident.getLinks().entrySet().stream().map(e -> e.getValue() + " (" + e.getKey() + ")").collect(Collectors.joining(", "))
+                        + (forAdmin ? "\nMessages (" + receiver.getMessages().size() + "): " +
+                                String.join(" , ", receiver.getMessages().stream().map(msg ->
+                                                                                       "https://discord.com/channels/" + msg.getGuild().getId() + "/" + msg.getChannel().getId() + "/" + msg.getId()).toList())
+                                    + "\nContributors (" + incident.getContributors().size() + "): " + String.join(", ", incident.getContributors().stream().map(c -> "<@" + c.getId() + ">").toList()) : "") +
+                        (incident.getLinks().isEmpty() ? "" : "\nLinks (" + incident.getLinks().size() + "): " + incident.getLinks().entrySet().stream().map(e -> e.getValue() + " (" + e.getKey() + ")").collect(Collectors.joining(", "))
                         )
                 )
                 .addField("Call Type",
@@ -176,7 +181,9 @@ public class AdminMessageSender extends MessageSender {
                         "Date: <t:" + time + ":d>\n" +
                                 "Time: <t:" + time + ":T>\n" +
                                 "Relative: <t:" + time + ":R>\n" +
-                                "Unix: `" + time + "`", true
+                                "Stale: <t:" + stale + ":R>\n" +
+                                "Auto-close: <t:" + autoclose + ":R>"
+                        , true
                 )
                 .addField("Location",
                         "Type: `" + location.getType().name() + "`\n" +
@@ -186,19 +193,19 @@ public class AdminMessageSender extends MessageSender {
                                 "Formatted: `" + location + "`",
                         true
                 )
-                .setColor(new Color(255, 94, 94))
+                .setColor(color)
                 .build());
         returned.add(new EmbedBuilder()
                 .setTitle("Attached Units (" + incident.getUnitAssignments().size() + ")")
                 .setDescription(this.getUnitsFormatted())
-                .setColor(new Color(255, 94, 94))
+                .setColor(color)
                 .build());
 
         String logText = String.join("\n", log);
         returned.add(new EmbedBuilder()
                 .setTitle("Incident Log (" + log.size() + ")")
                 .setDescription(!log.isEmpty() ? DiscordMessages.truncate(logText, MessageEmbed.DESCRIPTION_MAX_LENGTH, "... *unable to show full output*!") : "None")
-                .setColor(new Color(255, 94, 94))
+                .setColor(color)
                 .build());
         return returned;
     }

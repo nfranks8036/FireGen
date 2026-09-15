@@ -8,19 +8,15 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class IncidentStatusEmoji implements AutofilledCharSequence {
 
-    protected IncidentStatusEmoji() {
-        // required for JPA Hibernate
-    }
-
     public IncidentStatusEmoji(String name, String leftEmoji, String rightEmoji) {
         this.status = IncidentStatus.valueOf(name);
         this.leftEmoji = leftEmoji;
         this.rightEmoji = rightEmoji;
     }
 
-    private IncidentStatus status;
-    private String leftEmoji;
-    private String rightEmoji;
+    private final IncidentStatus status;
+    private final String leftEmoji;
+    private final String rightEmoji;
 
     public String getEmojisFormattedCombined() {
         return this.leftEmoji + this.rightEmoji;

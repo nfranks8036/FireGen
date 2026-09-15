@@ -108,7 +108,7 @@ public class ReceiveMessageSender extends MessageSender {
                 message.editMessage(DiscordMessages.truncate(response.getFirstElement(), Message.MAX_CONTENT_LENGTH, "... <message too long to display>"))
                         .setEmbeds(response.getSecondElement())
                         .queue(null, (t) -> {
-                            Log.warn("Message does not exist. Removing from the list (possibly deleted by staff).", t);
+                            Log.warn("Message does not exist. Removing from the list (possibly deleted by staff): " + t.toString());
                             super.getMessages().remove(message);
                         });
             } catch (Exception exception) {
@@ -132,24 +132,18 @@ public class ReceiveMessageSender extends MessageSender {
                                     .map(e -> "[" + e.getValue() + "](<" + e.getKey() + ">)")
                                     .collect(Collectors.joining(", "));
 
-        String stringForm = String.format(
-                """
-                        # %s %s
-                        [`%s` @ `%s` // <t:%d:R>]
-                        
-                        **Units:** %s
-                        **%s:** %s""" + links + Character.MAX_VALUE +
-                        (!log.isEmpty() ? "\n\n**Narrative:**\n%s" : ""),
-                status.getEmojisFormattedCombined(),
-                incident.getType().getSelectedName(),
-                time.formatDate(Main.config.getFireGenVariables()),
-                time.formatTimeShort(Main.config.getFireGenVariables()),
-                time.getUnix(),
-                this.getUnitsFormatted(),
-                location.getType().getPrefix(),
-                location.format() + (location.isSet() ? " [  ↗  ](<" + locationLink + ">)" : ""),
-                !log.isEmpty() ? String.join("\n", log) : "None"
-        );
+        String stringForm =
+                "# " + status.getEmojisFormattedCombined() + " " + incident.getType().getSelectedName() + "\n" +
+                        "[`" + time.formatDate(Main.config.getFireGenVariables()) + "` @ `" +
+                            time.formatTimeShort(Main.config.getFireGenVariables()) + "` // " +
+                        "<t:" + time.getUnix() + ":R>]\n\n" +
+
+                        "**Units:** " + this.getUnitsFormatted() + "\n" +
+                        "**" + location.getType().getPrefix() + ":** " + location.format() +
+                        (location.isSet() ? " [  ↗  ](<" + locationLink + ">)" : "") +
+
+                        (!log.isEmpty() ? "\n\n**Narrative:**\n" + String.join("\n", log) : "");
+
         List<MessageEmbed> embedForm = new ArrayList<>();
         if (stringForm.length() >= Message.MAX_CONTENT_LENGTH) {
             stringForm = stringForm.split(String.valueOf(Character.MAX_VALUE))[0];

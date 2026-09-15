@@ -10,15 +10,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 
-@EqualsAndHashCode(of = "ordinal")
 @RequiredArgsConstructor @NoArgsConstructor(force = true)
 @Getter
 public class UnitImpl implements Unit {
 
-    private Long id = -1L;
+    private final Long id = -1L;
 
     private final String shorthand;
     private final String longhand;
@@ -64,6 +64,18 @@ public class UnitImpl implements Unit {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UnitImpl unit = (UnitImpl) o;
+        return getNumber() == unit.getNumber() && ordinal == unit.ordinal && isPlaceholder() == unit.isPlaceholder() && Objects.equals(getShorthand(), unit.getShorthand()) && Objects.equals(getLonghand(), unit.getLonghand()) && Objects.equals(getFormatted(), unit.getFormatted()) && Objects.equals(getAgency(), unit.getAgency()) && Objects.equals(getType(), unit.getType()) && Objects.equals(getAdditional(), unit.getAdditional());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getShorthand(), getLonghand(), getFormatted(), getAgency(), getType(), getNumber(), ordinal, getAdditional(), isPlaceholder());
+    }
+
+    @Override
     public String getFormatted() {
         return (this.emoji != null ? emoji.getFormatted() + " " : "") +
                 this.formatted;
@@ -80,7 +92,7 @@ public class UnitImpl implements Unit {
         if (status != null && status.getEmoji() != null && !status.equals(AssignmentStatusImpl.ADD_UNIT)) {
             returned = (this.emoji != null ? emoji.getFormatted() + " " : "") +
                     status.getEmoji().getFormatted() + " " +
-                    this.formatted;
+                    (this.formatted != null ? this.formatted.strip() : "(?)");
         }
 
         SecondaryImpl secondary = (SecondaryImpl) assignment.getSecondary();

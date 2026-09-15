@@ -25,7 +25,7 @@ public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.f
     );
 
     public static final AssignmentStatus REMOVE_UNIT = new AssignmentStatusImpl(
-            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MAX_VALUE, AssignmentPurpose.UNIT_AVAILABLE_FOR_CALLS,
+            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MAX_VALUE, AssignmentPurpose.UNIT_REMOVED,
             new ArrayList<>()
     );
 

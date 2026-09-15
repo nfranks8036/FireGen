@@ -90,4 +90,13 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
         }
         return null;
     }
+
+    public AssignmentStatus getFirstFor(AssignmentPurpose purpose) {
+        for (AssignmentStatus status : this.get()) {
+            if (status.getPurpose() == purpose) {
+                return status;
+            }
+        }
+        throw new IllegalStateException("No assignment statuses were imported with the purpose of '" + purpose.name() + "'");
+    }
 }

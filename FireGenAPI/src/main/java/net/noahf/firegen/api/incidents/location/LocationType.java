@@ -157,7 +157,7 @@ public class LocationType implements StringSelectors {
             "CROSS_STREETS",
             "Cross-streets",
             "Two cross-streets for generic locations. Requires: At least one road. Allows: Multiple roads.",
-            ", ",
+            " & ",
             newField("Cross-street: Road #1", "The primary road in the cross-streets.", "crossstreets-road1", TextType.SHORT)
                     .setRequired(true)
                     .setPlaceholder("Ex: N Main St")

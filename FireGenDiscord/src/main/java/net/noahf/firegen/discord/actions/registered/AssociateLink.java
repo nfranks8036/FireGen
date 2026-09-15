@@ -29,6 +29,7 @@ import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
@@ -106,7 +107,11 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
         if (action.equalsIgnoreCase("delete")) {
             IncidentImpl incident = (IncidentImpl) ctx.getIncident();
             incident.removeLink(index);
-            DiscordMessages.noMessage(event, MessageStatus.NONE);
+            event.getHook().deleteOriginal().queue();
+
+            Contributor<?> contributor = incident.addContributor(event.getUser());
+            incident.addLog(contributor, IncidentLogEntry.EntryType.UPDATE, "Removed Link " + ctx.getParameters().getFirst());
+            incident.update();
         }
     }
 

@@ -10,6 +10,8 @@ import net.noahf.firegen.discord.utilities.JsonUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class LocationPreset extends IncidentLocationImpl {
 
@@ -45,9 +47,15 @@ public class LocationPreset extends IncidentLocationImpl {
                 commonName = commonNameElement.getAsString();
             }
 
-            this.setData(List.of(numerics, street));
-            this.setType(LocationType.ADDRESS);
-            this.setCommonName(commonName);
+            if (!numerics.isEmpty()) {
+                this.setType(LocationType.ADDRESS);
+                this.setData(List.of(numerics, street));
+                this.setCommonName(commonName);
+            } else {
+                this.setType(LocationType.MILE_MARKER);
+                this.setData(Stream.of(commonName, street).filter(Objects::nonNull).toList());
+            }
+
             this.setVenue(venue);
         } catch (Exception exception) {
             throw new IllegalStateException(
@@ -65,9 +73,14 @@ public class LocationPreset extends IncidentLocationImpl {
         int i = address.indexOf(' ');
         if (i == -1) return new String[]{"", address};
 
-        return new String[] {
-                address.substring(0, i),
-                address.substring(i + 1).trim()
-        };
+        String first = address.substring(0, i);
+        String second = address.substring(i + 1).trim();
+        try {
+            Integer.parseInt(first);
+        } catch (NumberFormatException ignored) {
+            return new String[]{"", address};
+        }
+
+        return new String[] {first, second};
     }
 }
