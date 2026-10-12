@@ -90,6 +90,15 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
         return null;
     }
 
+    public AssignmentStatus fromName(String name, AssignmentStatus def) {
+        for (AssignmentStatus status : this.get()) {
+            if (status.getName().equalsIgnoreCase(name)) {
+                return status;
+            }
+        }
+        return def;
+    }
+
     public AssignmentStatus getFirstFor(AssignmentPurpose purpose) {
         for (AssignmentStatus status : this.get()) {
             if (status.getPurpose() == purpose) {

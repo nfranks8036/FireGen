@@ -181,6 +181,10 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
     }
 
     public @Nullable Unit fromLonghand(String longhand) {
+        return fromLonghand(longhand, null);
+    }
+
+    public Unit fromLonghand(String longhand, Unit def) {
         for (Unit a : this.get()) {
             if (a.getLonghand().equalsIgnoreCase(longhand)) {
                 return a;
@@ -192,7 +196,7 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
             if (c != null) return c;
         }
 
-        return null;
+        return def;
     }
 
     private Unit checkAdditional(Unit parent, String format, String input) {

@@ -89,20 +89,24 @@ public class UnitImpl implements Unit {
     }
 
     public String getFormattedStatus(AssignmentEvent assignment) {
+        return getFormattedStatus(assignment.getStatus(), assignment.getSecondary());
+    }
+
+    public String getFormattedStatus(AssignmentStatus status, @Nullable Secondary secondary) {
         String returned = this.getFormatted();
 
-        AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.getStatus();
-        if (status != null && status.getEmoji() != null && !status.equals(AssignmentStatusImpl.ADD_UNIT)) {
+        AssignmentStatusImpl statusImpl = (AssignmentStatusImpl) status;
+        if (statusImpl != null && statusImpl.getEmoji() != null && !statusImpl.equals(AssignmentStatusImpl.ADD_UNIT)) {
             returned = (this.emoji != null ? emoji.getFormatted() + " " : "") +
-                    status.getEmoji().getFormatted() + " " +
+                    statusImpl.getEmoji().getFormatted() + " " +
                     (this.formatted != null ? this.formatted.strip() : "(?)");
         }
 
-        SecondaryImpl secondary = (SecondaryImpl) assignment.getSecondary();
-        if (secondary != null) {
+        SecondaryImpl secondaryImpl = (SecondaryImpl) secondary;
+        if (secondaryImpl != null) {
             returned = returned + " (" +
-                    (secondary.getEmoji() != null ? secondary.getEmoji().getFormatted() + " " : "")
-                    + "*" + secondary.getShortName() + "*)";
+                    (secondaryImpl.getEmoji() != null ? secondaryImpl.getEmoji().getFormatted() + " " : "")
+                    + "*" + secondaryImpl.getShortName() + "*)";
         }
 
         return returned;

@@ -344,10 +344,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             return;
         }
 
-        Log.warn("Incident #" + this.getFormattedId() + " (" + this.getType().getSelectedName()
-                + (this.getLocation().isSet() ? " @ " + this.getLocation().format() : "") + ") " +
-                "has gone stale!"
-        );
+        Log.warn("Incident " + this.toString() + " has gone stale!");
         this.addLog(LocalDateTime.now(), SystemUser.get(), IncidentLogEntry.EntryType.UPDATE,
                 "Incident Stale - " + Main.config.getFireGenVariables().incidentStaleMinutes() + "m Inactivity"
         );
@@ -362,10 +359,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             return;
         }
 
-        Log.warn("Incident #" + this.getFormattedId() + " (" + this.getType().getSelectedName()
-                + (this.getLocation().isSet() ? " @ " + this.getLocation().format() : "") + ") " +
-                "has closed due to its staleness!"
-        );
+        Log.warn("Incident " + this.toString() + " has closed due to its staleness!");
 
         AssignmentStatus clear = Main.config.get(ConfigAssignmentStatuses.class).getFirstFor(AssignmentPurpose.UNIT_CLEAR);
         String recreateEvents = this.getUnitAssignments().stream()
@@ -391,4 +385,10 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.update(false);
     }
 
+
+    @Override
+    public String toString() {
+        return "#" + this.getFormattedId() + " (" + this.getType().getSelectedName()
+                + (this.getLocation().isSet() ? " @ " + this.getLocation().format() : "") + ") ";
+    }
 }
