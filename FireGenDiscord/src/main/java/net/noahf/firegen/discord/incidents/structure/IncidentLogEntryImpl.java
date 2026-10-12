@@ -7,7 +7,6 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import net.noahf.firegen.api.utilities.IgnoreStringSelector;
-import net.noahf.firegen.api.utilities.ToStringListStringSelector;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import org.jetbrains.annotations.NotNull;

@@ -7,11 +7,9 @@ import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
-import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

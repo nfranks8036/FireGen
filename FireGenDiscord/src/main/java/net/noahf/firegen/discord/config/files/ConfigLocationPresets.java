@@ -8,7 +8,6 @@ import net.noahf.firegen.discord.config.DependencyRequest;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.location.LocationPreset;
-import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

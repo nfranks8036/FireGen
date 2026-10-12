@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.bot.DiscordMessages;
-import net.noahf.firegen.discord.utilities.BotNotLoaded;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;

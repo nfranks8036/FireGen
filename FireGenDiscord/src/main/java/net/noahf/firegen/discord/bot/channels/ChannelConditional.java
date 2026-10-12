@@ -1,18 +1,14 @@
 package net.noahf.firegen.discord.bot.channels;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.utilities.StringSelectors;
-import net.noahf.firegen.discord.utilities.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Getter @RequiredArgsConstructor
 public class ChannelConditional {

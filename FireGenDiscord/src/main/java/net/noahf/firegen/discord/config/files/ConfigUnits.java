@@ -16,8 +16,8 @@ import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.units.AgencyImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitTypeImpl;
-import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.IntList;
+import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static net.noahf.firegen.discord.utilities.JsonUtilities.*;
+import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
+import static net.noahf.firegen.discord.utilities.JsonUtilities.element;
 
 public class ConfigUnits extends MultiObjectConfiguration<Unit> {
 

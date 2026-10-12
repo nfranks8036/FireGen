@@ -7,7 +7,6 @@ import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
-import net.noahf.firegen.discord.utilities.Log;
 
 import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
 

@@ -11,7 +11,6 @@ import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
-import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 
 import java.util.ArrayList;

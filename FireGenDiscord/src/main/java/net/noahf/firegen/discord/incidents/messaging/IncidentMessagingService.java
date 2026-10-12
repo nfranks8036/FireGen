@@ -7,10 +7,11 @@ import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.utilities.StringSelectors;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
-import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class IncidentMessagingService implements StringSelectors {
 

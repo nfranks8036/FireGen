@@ -1,11 +1,9 @@
 package net.noahf.firegen.discord.config;
 
 import lombok.Getter;
-import net.noahf.firegen.api.utilities.Descriptor;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
-import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.ArrayList;
 import java.util.List;

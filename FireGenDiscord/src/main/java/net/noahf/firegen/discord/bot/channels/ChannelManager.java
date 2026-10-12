@@ -8,13 +8,13 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.utilities.StringSelectors;
 import net.noahf.firegen.discord.bot.BotManager;
-import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
-import net.noahf.firegen.discord.incidents.structure.IncidentStatusEmoji;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;
 import org.reflections.Reflections;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ChannelManager {
 

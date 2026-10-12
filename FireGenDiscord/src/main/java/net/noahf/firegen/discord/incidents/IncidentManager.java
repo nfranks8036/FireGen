@@ -1,7 +1,7 @@
 package net.noahf.firegen.discord.incidents;
 
 import lombok.Getter;
-import net.noahf.firegen.api.incidents.units.*;
+import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -9,7 +9,10 @@ import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Represents the Incident manager, which creates, modifies, and deletes {@link IncidentImpl incidents}, as well as the

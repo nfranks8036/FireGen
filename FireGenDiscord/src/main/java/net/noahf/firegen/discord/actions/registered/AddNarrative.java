@@ -1,6 +1,5 @@
 package net.noahf.firegen.discord.actions.registered;
 
-import kotlin.Pair;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
@@ -22,16 +21,10 @@ import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
-import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.utilities.ImmutablePair;
-import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Represents the "Add" button next to the "Narrative:" row

@@ -1,15 +1,9 @@
 package net.noahf.firegen.discord.utilities;
 
 import lombok.Getter;
-import net.dv8tion.jda.api.components.selections.SelectOption;
-import net.noahf.firegen.api.incidents.units.Unit;
-import net.noahf.firegen.discord.config.files.ConfigUnits;
-import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.IntStream;
 
 @Getter

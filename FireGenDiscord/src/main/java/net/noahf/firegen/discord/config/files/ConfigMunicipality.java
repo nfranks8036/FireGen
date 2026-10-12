@@ -7,7 +7,6 @@ import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.config.SingleObjectConfiguration;
 import net.noahf.firegen.discord.incidents.SystemMunicipalityImpl;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
-import net.noahf.firegen.discord.utilities.Log;
 
 import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
 

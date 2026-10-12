@@ -6,8 +6,6 @@ import net.noahf.firegen.api.incidents.units.UnitType;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.StringJoiner;
-
 @Getter
 @AllArgsConstructor
 public class UnitTypeImpl implements UnitType {

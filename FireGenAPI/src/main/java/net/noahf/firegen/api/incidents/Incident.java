@@ -12,7 +12,6 @@ import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.api.utilities.StringSelectors;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

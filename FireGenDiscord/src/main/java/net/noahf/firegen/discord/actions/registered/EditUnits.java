@@ -35,9 +35,7 @@ import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import net.noahf.firegen.discord.utilities.PreventUnitAssignment;
-import net.noahf.firegen.discord.utilities.TimeOutput;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.event.Level;
 
 import java.util.ArrayList;
 import java.util.List;

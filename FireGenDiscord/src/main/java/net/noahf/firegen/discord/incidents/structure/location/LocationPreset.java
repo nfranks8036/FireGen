@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
-import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 

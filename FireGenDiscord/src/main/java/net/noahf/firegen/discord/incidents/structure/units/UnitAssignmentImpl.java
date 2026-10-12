@@ -8,7 +8,6 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.IgnoreStringSelector;
-import net.noahf.firegen.api.utilities.ToStringListStringSelector;
 import net.noahf.firegen.discord.Main;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

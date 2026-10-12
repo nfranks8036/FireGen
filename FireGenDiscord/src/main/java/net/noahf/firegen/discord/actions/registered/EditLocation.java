@@ -34,7 +34,6 @@ import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

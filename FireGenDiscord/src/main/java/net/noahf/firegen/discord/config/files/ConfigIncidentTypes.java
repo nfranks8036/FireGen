@@ -8,7 +8,6 @@ import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
-import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.ArrayList;
 import java.util.List;

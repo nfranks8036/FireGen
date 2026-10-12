@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
