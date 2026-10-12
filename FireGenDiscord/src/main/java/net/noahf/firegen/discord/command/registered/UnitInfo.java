@@ -296,7 +296,7 @@ public class UnitInfo extends Command {
         @Override
         public void onButtonInteraction(@NonNull ButtonInteractionEvent event) {
             String button = event.getComponentId();
-            Log.info(event.getUser().getName() + " (" + event.getUser().getId() + ") pressed button '" + button + "'");
+            Log.user(event.getUser().getName() + " pressed button '" + button + "'");
             try {
                 if (!button.startsWith("firegenuser")) {
                     return;

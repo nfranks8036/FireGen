@@ -25,4 +25,8 @@ public class ImmutablePair<A, B> {
     private @Getter A firstElement;
     private @Getter B secondElement;
 
+    @Override
+    public String toString() {
+        return "{" + firstElement.toString() + " // " + secondElement.toString() + "}";
+    }
 }

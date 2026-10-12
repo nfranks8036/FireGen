@@ -8,6 +8,7 @@ import net.noahf.firegen.discord.command.CommandManager;
 import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.database.DatabaseManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
+import net.noahf.firegen.discord.tags.TagsManager;
 import net.noahf.firegen.discord.users.UserManager;
 import net.noahf.firegen.discord.utilities.Log;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class Main {
     public static CommandManager commands;
     public static IncidentManager incidents;
     public static ActionsManager actions;
+    public static TagsManager tags;
     public static UserManager users;
 
     public static final long botStartTime = System.currentTimeMillis();
@@ -38,6 +40,7 @@ public class Main {
         incidents = new IncidentManager(config);
         actions = new ActionsManager();
         commands = new CommandManager(bot.jda());
+        tags = new TagsManager();
         users = new UserManager(bot.jda(), config);
 //        subscribers = new SubscriberManager();
 

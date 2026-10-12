@@ -31,6 +31,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
+import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +41,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents the "Associate Link" button next to the "Narrative:" row
@@ -106,12 +108,22 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
 
         if (action.equalsIgnoreCase("delete")) {
             IncidentImpl incident = (IncidentImpl) ctx.getIncident();
-            incident.removeLink(index);
+            ImmutablePair<String, String> removed = incident.removeLink(index);
             event.getHook().deleteOriginal().queue();
 
+            URL url;
+            try {
+                url = parseUrl(removed.getFirstElement());
+            } catch (Exception exception) {
+                url = null;
+            }
+
             Contributor<?> contributor = incident.addContributor(event.getUser());
-            incident.addLog(contributor, IncidentLogEntry.EntryType.UPDATE, "Removed Link " + ctx.getParameters().getFirst());
+            incident.addLog(contributor, IncidentLogEntry.EntryType.UPDATE, "Removed Link " + removed.getSecondElement().toUpperCase() +
+                            (url != null ? " (" + url.getHost() + ")" : "")
+                    );
             incident.update();
+            Log.user(event.getUser().getName() + " removed link: " + removed.toString());
         }
     }
 
@@ -236,12 +248,16 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
             return MessageStatus.CONTENT;
         }
 
+        ImmutablePair<String, String> newLink = ImmutablePair.of(link, title);
         if (index == null) {
             incident.addLink(link, title);
             incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Associated Link " + title.toUpperCase() + " (" + url.getHost() + ")");
+            Log.user(event.getUser().getName() + " associated link: " + newLink.toString());
         } else {
-            incident.editLink(index, link, title);
+            ImmutablePair<String, String> original =
+                    incident.editLink(index, link, title);
             incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Edited Link " + title.toUpperCase() + " (" + url.getHost() + ")");
+            Log.user(event.getUser().getName() + " edited link: " + original.toString() + " -> " + newLink.toString());
         }
 
         incident.update();

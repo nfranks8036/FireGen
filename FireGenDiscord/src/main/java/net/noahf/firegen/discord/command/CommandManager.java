@@ -146,7 +146,7 @@ public class CommandManager extends ListenerAdapter {
         String commandString = event.getCommandString();
         Command command;
 
-        Log.info(user.getName() + " (" + user.getIdLong() + "): " + getCommand(event));
+        Log.user(user.getName() + ": " + getCommand(event));
         try {
 
 //            if (Main.maintenance && !Main.allowedDuringMaintenance.contains(user.getIdLong())) {

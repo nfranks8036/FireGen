@@ -34,11 +34,15 @@ import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.MessageStatus;
+import net.noahf.firegen.discord.utilities.PreventUnitAssignment;
+import net.noahf.firegen.discord.utilities.TimeOutput;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.event.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -62,6 +66,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         if (selectedStatus == null) {
             selectedOption = new SelectOption[0];
         }
+        UnitsChangeInput unitsInput = selectedUnits.get(ctx.getUser());
 
         List<ActionRow> rows = new ArrayList<>(List.of(
                 ActionRow.of(StringSelectMenu.create(this.callbackId(ctx, "select"))
@@ -77,6 +82,12 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                                     );
                                 })
                                 .limit(StringSelectMenu.OPTIONS_MAX_AMOUNT)
+                                .toList()
+                        )
+                        .setDefaultOptions((unitsInput != null ? unitsInput.getUnits() : new ArrayList<>())
+                                .stream()
+                                .map(u -> (UnitImpl)u)
+                                .map(UnitImpl::getSelectOption)
                                 .toList()
                         )
                         .setRequired(true)
@@ -143,7 +154,9 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
 
         if (!ctx.getParameters().isEmpty()) {
             MessageStatus status = this.onSubmit(ctx.getIncident(), event, null);
-            DiscordMessages.noMessage(event, status);
+            if (status == MessageStatus.NONE) {
+                event.deferEdit().queue();
+            }
             return;
         }
 
@@ -244,7 +257,9 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             selectedUnits.put(event.getUser(), input);
         }
 
-        DiscordMessages.noMessage(event, message);
+        if (message == MessageStatus.NONE) {
+            event.deferEdit().queue();
+        }
     }
 
     public MessageStatus onSubmit(Incident incidentValue, IReplyCallback event, @Nullable EditUnits.UnitsChangeInput inputUnits) {
@@ -264,14 +279,29 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             return MessageStatus.CONTENT;
         }
 
-        if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {
+        MessageStatus message = MessageStatus.NONE;
 
-            units.forEach(incident::removeUnit);
+        List<Unit> unmodifiedList = new ArrayList<>(units);
+        for (Unit unit : unmodifiedList) {
+            if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {
+                incident.removeUnit(unit);
+                continue;
+            }
 
-        } else {
+            if (unit.getAdditional() != null && unit.getAdditional() instanceof PreventUnitAssignment) {
+                message = message.compare(MessageStatus.CONTENT);
+                units.remove(unit);
+                DiscordMessages.error(event, "The unit '" + unit.toString() + "' contains additional context " +
+                        "that means it cannot be added to the incident in its current form."
+                );
+                continue;
+            }
 
-            units.forEach(u -> incident.assignUnit(u, user, status, input.secondary));
+            incident.assignUnit(unit, user, status, input.secondary);
+        }
 
+        if (units.isEmpty()) {
+            return message;
         }
 
         incident.addLog(user, IncidentLogEntry.EntryType.UNIT,
@@ -283,7 +313,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
 
         incident.update();
 
-        return MessageStatus.NONE;
+        return message;
     }
 
 
@@ -313,6 +343,15 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                 this.units = new ArrayList<>();
             }
             this.units.addAll(units);
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", UnitsChangeInput.class.getSimpleName() + "[", "]")
+                    .add("units=" + units)
+                    .add("newStatus=" + newStatus)
+                    .add("secondary=" + secondary)
+                    .toString();
         }
     }
 

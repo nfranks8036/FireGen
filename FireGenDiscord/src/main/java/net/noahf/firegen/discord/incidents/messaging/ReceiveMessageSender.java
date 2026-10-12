@@ -140,7 +140,7 @@ public class ReceiveMessageSender extends MessageSender {
 
                         "**Units:** " + this.getUnitsFormatted() + "\n" +
                         "**" + location.getType().getPrefix() + ":** " + location.format() +
-                        (location.isSet() ? " [  ↗  ](<" + locationLink + ">)" : "") +
+                        (location.isSet() ? " [  ↗  ](<" + locationLink + ">)" : "") + links +
 
                         (!log.isEmpty() ? "\n\n**Narrative:**\n" + String.join("\n", log) : "");
 

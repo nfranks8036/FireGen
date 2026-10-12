@@ -90,7 +90,7 @@ public class Units extends Command {
                 return;
             }
 
-            Log.info(user.getName() + " (" + user.getIdLong() + ") pressed button '" + id + "'");
+            Log.user(user.getName() + " pressed button '" + id + "'");
             UnitsResponseType currentView = userIdToViewType.getOrDefault(user.getIdLong(), UnitsResponseType.TABLE);
             if (id.endsWith("changetype")) {
                 currentView = currentView.nextOnList();

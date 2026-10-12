@@ -2,6 +2,8 @@ package net.noahf.firegen.discord.actions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.dv8tion.jda.api.entities.User;
+import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
@@ -18,6 +20,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class ActionsContext {
+
+    private User user;
 
     /**
      * Represents the current FireGen initiated of {@link ConfigManager} for quick-reference reasons.

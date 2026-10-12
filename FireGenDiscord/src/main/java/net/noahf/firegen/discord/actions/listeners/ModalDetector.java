@@ -20,7 +20,7 @@ public class ModalDetector extends ListenerAdapter {
             return;
         }
 
-        Log.info(user.getName() + " (" + user.getIdLong() + ") interacted with modal '" + id + "'");
+        Log.user(user.getName() + " interacted with modal '" + id + "'");
 
         try {
             Main.actions.processAction(event, id);

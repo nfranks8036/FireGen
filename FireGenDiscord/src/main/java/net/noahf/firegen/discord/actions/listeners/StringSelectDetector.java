@@ -20,7 +20,7 @@ public class StringSelectDetector extends ListenerAdapter {
             return;
         }
 
-        Log.info(user.getName() + " (" + user.getIdLong() + ") interacted with string selector '" + id + "'");
+        Log.user(user.getName() + " interacted with string selector '" + id + "'");
 
         try {
             Main.actions.processAction(event, id);

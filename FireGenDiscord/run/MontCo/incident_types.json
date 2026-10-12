@@ -146,6 +146,7 @@
     {"name": "BURNS", "tag": "EMS"},
     {"name": "INHALATION HAZARD / HAZMAT", "tag": "EMS"},
     {"name": "CARDIAC ARREST", "tag": "EMS"},
+    {"name": "RESPIRATORY ARREST", "tag": "EMS"},
     {"name": "CHEST PAIN", "tag": "EMS"},
     {"name": "CHOKING", "tag": "EMS"},
     {"name": "SEIZURES / CONVULSIONS", "tag": "EMS"},

@@ -133,6 +133,13 @@
     "description": "A vehicle used by incident commanders to coordinate personnel, resources, and emergency operations."
   },
   {
+    "id": "EMS_MEDICAL_DIRECTOR",
+    "short": "OMD",
+    "long": "OMD",
+    "format": "OMD",
+    "description": "A response car used by the operational medical director. The operational medical director is the emergency physician who provides medical oversight and guidance for all EMS providers in an agency. They establish agency-specific protocols, provide on-line medical direction, and can respond to calls to provide ALS-Physician level of care."
+  },
+  {
     "id": "UTILITY_TASK_VEHICLE",
     "short": "UTV",
     "long": "UTV",
@@ -161,6 +168,28 @@
     "long": null,
     "format": "AC",
     "description": "An animal control officer, who's primary duties include enforcing animal rights laws and ensuring no animals are being neglected or abused, and to investigate when they are."
+  },
+
+  {
+    "id": "TRANSIT_BUS",
+    "short": null,
+    "long": null,
+    "format": null,
+    "description": "A passenger bus used for public transportation, typically operating along established routes or scheduled departures to transport passengers between designated areas."
+  },
+  {
+    "id": "TRANSIT_ADMIN",
+    "short": null,
+    "long": null,
+    "format": null,
+    "description": "No description provided."
+  },
+  {
+    "id": "TRANSIT_SUPERVISOR",
+    "short": "OPS",
+    "long": "OPS",
+    "format": "Ops",
+    "description": "No description provided."
   },
 
   {

@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  */
 public class AddNarrative implements ButtonAction, ModalAction {
 
-    public static final int MIN_NARRATIVE_LENGTH = 5;
+    public static final int MIN_NARRATIVE_LENGTH = 4;
     public static final int MAX_NARRATIVE_LENGTH = 512;
 
     /**
@@ -130,7 +130,8 @@ public class AddNarrative implements ButtonAction, ModalAction {
         }
 
         LocalDateTime incidentTime = incident.getTime().getDateTime();
-        if (time.isBefore(incidentTime)) {
+        // withSecond(1) and withSecond(0) so that if an incident is at 22:39:30 that a time of 22:39:00 works
+        if (time.withSecond(1).isBefore(incidentTime.withSecond(0))) {
             DiscordMessages.error(event, "The time of the current narrative entry cannot be before the current incident (" + vars.formatTime(incidentTime, true) + ")"
                     + "\n*Tip: Change the incident time by setting the 'Date & Time' field.*"
             );

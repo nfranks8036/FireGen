@@ -125,6 +125,7 @@ public class ActionsManager {
         }
 
         ActionsContext context = new ActionsContext(
+                event.getUser(),
                 Main.config,
                 incident,
                 actionTitle,

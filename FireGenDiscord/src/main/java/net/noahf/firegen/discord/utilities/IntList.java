@@ -13,7 +13,7 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 @Getter
-public class IntList {
+public class IntList implements PreventUnitAssignment {
 
     private final String key;
     private final List<Integer> integers;

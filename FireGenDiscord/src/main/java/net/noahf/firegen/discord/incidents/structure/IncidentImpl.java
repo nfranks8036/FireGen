@@ -1,13 +1,18 @@
 package net.noahf.firegen.discord.incidents.structure;
 
 import lombok.*;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.IncidentTime;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
+import net.noahf.firegen.api.incidents.tags.IncidentTag;
+import net.noahf.firegen.api.incidents.tags.IncidentTagExecution;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.ToStringListStringSelector;
@@ -15,14 +20,17 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
 import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.IncidentManager;
+import net.noahf.firegen.discord.incidents.messaging.AdminMessageSender;
 import net.noahf.firegen.discord.incidents.messaging.IncidentMessagingService;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.tags.registered.PingRole;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.SystemUser;
+import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.NotNull;
@@ -63,10 +71,13 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @NotNull
     private IncidentPublishedStatus published;
 
-    @Getter(onMethod_ = {@ToStringListStringSelector})
+    @Getter
     private List<IncidentLogEntry> log;
 
     private List<Contributor<?>> contributors;
+
+    @Getter
+    private List<IncidentTag> tags;
 
     private @Setter(value = AccessLevel.NONE) Map<String, String> links;
 
@@ -94,6 +105,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.unitAssignments = new HashSet<>();
         this.log = new ArrayList<>();
         this.contributors = new ArrayList<>();
+        this.tags = new ArrayList<>();
 
         this.links = new ConcurrentHashMap<>();
 
@@ -123,6 +135,30 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     @Override
+    public boolean containsTag(IncidentTag tag) {
+        return this.tags.contains(tag);
+    }
+
+    public boolean containsTag(long hashCode) {
+        for (IncidentTag tag : this.tags) {
+            if (tag.hashCode() == hashCode) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void addTag(IncidentTag tag) {
+        this.tags.add(tag);
+    }
+
+    @Override
+    public void removeTag(IncidentTag tag) {
+        this.tags.remove(tag);
+    }
+
+    @Override
     public void addLink(String url, String title) {
         this.links.put(url, title);
     }
@@ -132,13 +168,16 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.links.remove(url);
     }
 
-    public void editLink(int index, String url, String title) {
+    public ImmutablePair<String, String> editLink(int index, String url, String title) {
         String originalKey = new ArrayList<>(this.links.keySet()).get(index);
-        this.links.put(url, this.links.remove(originalKey));
+        String originalTitle = this.links.remove(originalKey);
+        this.links.put(url, title);
+        return ImmutablePair.of(originalKey, originalTitle);
     }
 
-    public void removeLink(int index) {
-        this.links.remove(new ArrayList<>(this.links.keySet()).get(index));
+    public ImmutablePair<String, String> removeLink(int index) {
+        String key = new ArrayList<>(this.links.keySet()).get(index);
+        return ImmutablePair.of(key, this.links.remove(key));
     }
 
     @Override
@@ -311,6 +350,8 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         }
 
         this.refreshStatus();
+
+        Log.info("Tags: " + this.tags.toString());
 
         if (restartStale) {
             this.unixNextStale = Main.config.getFireGenVariables().incidentStaleMinutes();

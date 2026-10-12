@@ -20,7 +20,7 @@ public class ButtonDetector extends ListenerAdapter {
             return;
         }
 
-        Log.info(user.getName() + " (" + user.getIdLong() + ") pressed button '" + id + "'");
+        Log.user(user.getName() + " pressed button '" + id + "'");
 
         try {
             Main.actions.processAction(event, id);

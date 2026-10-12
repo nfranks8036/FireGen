@@ -17,6 +17,8 @@ public enum Permission implements AutofilledCharSequence {
 
     USE_CUSTOM_LOCATION,
 
+    CHANGE_TAGS,
+
     CHANGE_UNITS,
 
     ASSOCIATE_LINKS,

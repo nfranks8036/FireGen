@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
@@ -54,7 +55,8 @@ public class AdminMessageSender extends MessageSender {
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
                         Button.primary(super.getIncident().createInteractionIdString("location"), "Location"),
-                        Button.primary(super.getIncident().createInteractionIdString("units"), "Units")
+                        Button.primary(super.getIncident().createInteractionIdString("units"), "Units"),
+                        Button.primary(super.getIncident().createInteractionIdString("tags"), "Tags")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),
@@ -98,7 +100,9 @@ public class AdminMessageSender extends MessageSender {
                         .complete();
 
                 message.createThreadChannel("Incident " +
-                        super.getIncident().getFormattedId() + " Discussion").complete();
+                        super.getIncident().getFormattedId() + " Discussion")
+                        .setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_HOUR)
+                        .complete();
 
                 super.getMessages().add(message);
             } catch (Exception exception) {

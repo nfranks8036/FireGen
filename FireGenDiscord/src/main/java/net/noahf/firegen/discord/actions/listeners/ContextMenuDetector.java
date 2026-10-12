@@ -74,7 +74,7 @@ public class ContextMenuDetector extends ListenerAdapter {
             return;
         }
 
-        Log.info(user.getName() + " (" + user.getIdLong() + ") pressed context '" + event.getName() + "' on '" + target.getIdLong() + "' in '" + target.getChannel().getName() + "'");
+        Log.user(user.getName() + " pressed context '" + event.getName() + "' on '" + target.getIdLong() + "' in '" + target.getChannel().getName() + "'");
 
         IncidentImpl incident = cachedIncidents.computeIfAbsent(target.getIdLong(),
                 (l) ->
@@ -133,7 +133,7 @@ public class ContextMenuDetector extends ListenerAdapter {
             return;
         }
 
-        Log.info(user.getName() + " (" + user.getIdLong() + ") pressed button '" + id + "'");
+        Log.user(user.getName() + " pressed button '" + id + "'");
 
         try {
             long incidentId = Long.parseLong(id.split("-")[3]);

@@ -4,6 +4,10 @@ import static net.noahf.firegen.discord.Main.LOGGER;
 
 public class Log {
 
+    public static void user(String message) {
+        info("User Action: " + message);
+    }
+
     public static void info(String message) {
         LOGGER.info(message);
     }
