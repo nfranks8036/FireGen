@@ -18,6 +18,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FireGenUser implements Contributor<User> {
 
+    public static String createId(String command, String... additionalParameters) {
+        String[] commands = Arrays.copyOf(additionalParameters, additionalParameters.length + 1);
+        for (int i = commands.length - 1; i >= 1; i--) {
+            commands[i] = commands[i - 1];
+        }
+        commands[0] = command;
+
+        return String.format("firegenuser-generic-%s", String.join("-", commands));
+    }
+
     public static String createId(User user, String command, String... additionalParameters) {
         if (additionalParameters == null || additionalParameters.length == 0) {
             return createInteractionIdString(user, command);

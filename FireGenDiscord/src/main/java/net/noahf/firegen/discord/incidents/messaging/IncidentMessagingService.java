@@ -5,6 +5,7 @@ import lombok.Getter;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,7 @@ public class IncidentMessagingService implements StringSelectors {
         for (MessageSender sender : this.messages) {
             sender.requestSend();
         }
+        Main.bot.refreshIncidentBoard();
     }
 
     public <T extends MessageSender> T get(Class<T> messageSender) {

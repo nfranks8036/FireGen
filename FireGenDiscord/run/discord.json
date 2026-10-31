@@ -14,5 +14,5 @@
   {"channel": 1492362581623439581, "role": "ADMIN"},
   {"channel": 1499611450283393064, "role": "ADMIN"},
 
-  {"channel": 1566100719965175948, "role": "INFO_BOARD"}
+  {"channel": 1566100719965175948, "role": "INCIDENT_BOARD"}
 ]

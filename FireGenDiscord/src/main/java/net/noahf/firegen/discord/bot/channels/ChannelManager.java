@@ -39,7 +39,7 @@ public class ChannelManager {
                     continue;
                 }
 
-                if (!channel.evaluateConditionals(incident)) {
+                if (incident != null && !channel.evaluateConditionals(incident)) {
                     continue;
                 }
 

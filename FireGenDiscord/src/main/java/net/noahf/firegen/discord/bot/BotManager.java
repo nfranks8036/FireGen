@@ -16,6 +16,7 @@ import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.actions.listeners.ModalDetector;
 import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.bot.channels.ChannelManager;
+import net.noahf.firegen.discord.bot.channels.IncidentBoard;
 import net.noahf.firegen.discord.command.registered.UnitInfo;
 import net.noahf.firegen.discord.command.registered.Units;
 import net.noahf.firegen.discord.config.ConfigManager;
@@ -36,6 +37,7 @@ public class BotManager extends Manager<BotManager> {
     private String token = null;
     private @Getter String municipalityFolder = null;
     private @Getter String configPrefix = null;
+    private IncidentBoard incidentBoard;
 
     @Getter
     ChannelManager channelManager;
@@ -96,6 +98,7 @@ public class BotManager extends Manager<BotManager> {
                 .build()
                 .awaitReady();
         this.channelManager.startImport();
+        this.incidentBoard = new IncidentBoard(this.channelManager);
         Log.info("-".repeat(20) + " [ JDA END ] " + "-".repeat(20));
 
         PaginatorBuilder.createPaginator(jda)
@@ -138,6 +141,19 @@ public class BotManager extends Manager<BotManager> {
         String status = getStatus(Main.config.get(ConfigMunicipality.class).get());
         this.jda().getPresence().setActivity(Activity.customStatus(status));
         Log.info("Set bot status to '" + status + "'");
+    }
+
+    public void refreshIncidentBoard() {
+        try {
+            this.incidentBoard.sendEdited();
+        } catch (Exception exception) {
+            if (exception instanceof IllegalStateException &&
+                    exception.getMessage().contains("Expected messages to exist")) {
+                Log.warn("Incident Board message does not exist. ");
+                return;
+            }
+            Log.error("Failed to reload Incident Board: " + exception, exception);
+        }
     }
 
     private String getStatus(SystemMunicipality municipality) {

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
+import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
@@ -138,7 +139,7 @@ public class ReceiveMessageSender extends MessageSender {
 
                         "**Units:** " + this.getUnitsFormatted() + "\n" +
                         "**" + location.getType().getPrefix() + ":** " + location.format() +
-                        (location.isSet() ? " [  ↗  ](<" + locationLink + ">)" : "") + links +
+                        (location.isSet() && location.getType() != LocationType.CUSTOM ? " [  ↗  ](<" + locationLink + ">)" : "") + links +
 
                         (!log.isEmpty() ? "\n\n**Narrative:**\n" + String.join("\n", log) : "");
 
