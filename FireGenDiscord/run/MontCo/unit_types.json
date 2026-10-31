@@ -147,6 +147,13 @@
     "description": "A utility terrain vehicle used to transport personnel and equipment over difficult or off-road terrain, often called a 'UTV'. This vehicle excels at traversing places that traditional emergency apparatus cannot."
   },
   {
+    "id": "BIKE_TEAM",
+    "short": "BIKE",
+    "long": "BIKE",
+    "format": "Bike Team",
+    "description": "A bicycle-based response unit used to transport personnel and medical equipment through areas that may be difficult to access by traditional emergency vehicles, often used for crowd events, festivals, home games, and other incidents. These teams typically move a lot slower then traditional emergency vehicles."
+  },
+  {
     "id": "EXTRICATION_VEHICLE",
     "short": "EXR",
     "long": "EXTRICATION",

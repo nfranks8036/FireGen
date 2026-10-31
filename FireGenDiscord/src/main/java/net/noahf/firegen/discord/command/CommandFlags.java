@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 @Builder(
         access = AccessLevel.PUBLIC,
@@ -38,6 +39,8 @@ public class CommandFlags {
      * The {@link DefaultMemberPermissions default permissions} required to execute the command, which is fed to Discord
      */
     public final DefaultMemberPermissions permissions;
+
+    public final SubcommandData[] subcommandData;
 
     public final boolean disableAutocompleteAutoFilter;
 

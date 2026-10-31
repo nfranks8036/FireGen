@@ -64,6 +64,7 @@ public class CommandManager extends ListenerAdapter {
                 }
 
                 Command newInstance = (Command) constructor.newInstance();
+                newInstance.addCommandData();
 //                if (newInstance.flags.requireMaintenance && !Main.maintenance) {
 //                    // if maintenance is off but the command calls for maintenance mode, we can just ignore it and not register it
 //                    // this is especially since maintenance mode cannot be toggled on in runtime, the program must be

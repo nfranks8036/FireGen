@@ -227,7 +227,7 @@
       "name": "EMS",
       "priorities": ["EMS 1"],
       "qualifiers": {
-        "required": true,
+        "required": false,
         "unique": true,
         "syntax": "{T}, {Q}",
         "list": ["OMEGA", "ALPHA", "BRAVO", "CHARLIE", "DELTA", "ECHO"]

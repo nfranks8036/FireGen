@@ -11,7 +11,9 @@ import net.noahf.firegen.discord.utilities.JsonUtilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor(force = true)

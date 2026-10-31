@@ -46,7 +46,9 @@ public abstract class Command {
         this.description = description;
         this.flags = flags;
         this.data = new ArrayList<>();
+    }
 
+    void addCommandData() {
         this.addCommand(name);
         if (this.flags.aliases != null) {
             for (String alias : this.flags.aliases) {
@@ -71,6 +73,10 @@ public abstract class Command {
 
         if (this.flags.permissions != null) {
             data = data.setDefaultPermissions(this.flags.permissions);
+        }
+
+        if (this.flags.subcommandData != null && Arrays.stream(this.flags.subcommandData).noneMatch(Objects::isNull)) {
+            data = data.addSubcommands(this.flags.subcommandData);
         }
 
         this.data.add(data);

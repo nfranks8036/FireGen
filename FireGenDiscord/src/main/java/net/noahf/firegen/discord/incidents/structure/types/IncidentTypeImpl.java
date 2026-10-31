@@ -6,7 +6,10 @@ import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.api.utilities.IdGenerator;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(force = true)
@@ -31,13 +34,25 @@ public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
 
     @Override
     public String getStringQualifierChoice() {
-        return tag.getQualifiers().getQualifiers().get(this.getQualifierChoice());
+        if (qualifierChoice == -1) {
+            return "None";
+        }
+        int select = this.getQualifierChoice();
+        if (this.tag.getQualifiers() != null && !this.tag.getQualifiers().isRequired()) {
+            select--;
+        }
+        return tag.getQualifiers().getQualifiers().get(select);
     }
 
     @Override
     public String getSelectedName() {
         try {
-            return tag.findTypeOptions(this.type).get(this.qualifierChoice);
+            List<String> options = tag.findTypeOptions(this.type);
+            int select = this.qualifierChoice;
+            if (select == -1) {
+                return getType();
+            }
+            return options.get(select);
         } catch (NullPointerException nullPointerException) {
             return null;
         }

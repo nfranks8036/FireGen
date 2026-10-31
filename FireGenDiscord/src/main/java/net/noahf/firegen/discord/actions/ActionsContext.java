@@ -10,7 +10,6 @@ import java.util.List;
 
 /**
  * Represents a context in which a {@link FireGenAction} occurs in.
- * @see ActionsContext#getManager()
  * @see ActionsContext#getIncident()
  * @see ActionsContext#getCommand()
  * @see ActionsContext#getParameters()

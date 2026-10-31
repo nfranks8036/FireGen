@@ -28,6 +28,7 @@ public class LocationType implements StringSelectors {
             "Location",
             "ADDRESS",
             "Address",
+            "addr",
             "A numeric address. Requires: Street address, including numerics. Allows: Common name, venue.",
             " ",
             newField("Address Numerics", "The numbers representing the address.", "address-numerics", TextType.SHORT)
@@ -58,6 +59,7 @@ public class LocationType implements StringSelectors {
             "Location",
             "MILE_MARKER",
             "Mile-Marker / Landmark",
+            "marker",
             "A mile-marker or landmark on a road. Requires: Mile marker/landmark, road name. Allows: Venue.",
             " @ ",
             newField("Road Name", "The road the call is on. Use 'US-' for US routes and 'I-' for interstates. Add direction of travel.", "milemarker-roadname", TextType.SHORT)
@@ -89,6 +91,7 @@ public class LocationType implements StringSelectors {
             "Location",
             "LATITUDE_LONGITUDE",
             "Latitude & Longitude",
+            "latlong",
             "A latitude and longitude. Requires: Two float values. Allows: Additional information, venue.",
             ", ",
             newField("Latitude", "The latitude, in *DECIMAL DEGREES*, of the incident.", "latitudelongitude-latitude", TextType.SHORT)
@@ -123,6 +126,7 @@ public class LocationType implements StringSelectors {
             "Location",
             "INTERSECTION",
             "Intersection",
+            "intersection",
             "An intersection of two roads. Requires: Two or more roads. Allows: Multiple roads.",
             " / ",
             newField("Intersection: Road #1", "The first road in the intersection.", "intersection-road1", TextType.SHORT)
@@ -156,6 +160,7 @@ public class LocationType implements StringSelectors {
             "Cross-streets",
             "CROSS_STREETS",
             "Cross-streets",
+            "cross",
             "Two cross-streets for generic locations. Requires: At least one road. Allows: Multiple roads.",
             " & ",
             newField("Cross-street: Road #1", "The primary road in the cross-streets.", "crossstreets-road1", TextType.SHORT)
@@ -187,6 +192,7 @@ public class LocationType implements StringSelectors {
             "Location",
             "CUSTOM",
             "Custom Location",
+            "custom",
             "Custom text to describe the location if none of the above fit.",
             ", ",
             newField("Custom Text", "Enter the custom location type in this box.", "custom-custom", TextType.PARAGRAPH)
@@ -256,13 +262,14 @@ public class LocationType implements StringSelectors {
 
 
     private final @Getter(value = AccessLevel.NONE) String description;
-    private final String prefix, id, title, defaultDataDelimiter;
+    private final String prefix, id, title, shortName, defaultDataDelimiter;
     private final LocationField[] fields;
 
-    LocationType(String prefix, String id, String title, String description, String defaultDataDelimiter, LocationField... fields) {
+    LocationType(String prefix, String id, String title, String shortName, String description, String defaultDataDelimiter, LocationField... fields) {
         this.prefix = prefix;
         this.id = id;
         this.title = title;
+        this.shortName = shortName;
         this.description = description;
         this.defaultDataDelimiter = defaultDataDelimiter;
         this.fields = fields;

@@ -55,7 +55,8 @@ public class ConfigIncidentTypes extends MultiObjectConfiguration<IncidentType> 
                 types.add(new IncidentTypeImpl(name, tag, 0));
             } else {
                 List<String> stringTags = tag.findTypeOptions(name);
-                for (int i = 0; i < stringTags.size(); i++) {
+                int start = tag.getQualifiers().isRequired() ? 0 : -1;
+                for (int i = start; i < stringTags.size(); i++) {
                     types.add(new IncidentTypeImpl(name, tag, i));
                 }
             }

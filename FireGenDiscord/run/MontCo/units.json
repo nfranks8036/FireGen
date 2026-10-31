@@ -7,6 +7,13 @@
     "type": "FIRE",
     "emoji": "<:bfd:1449916134714511481>",
     "units": [
+      {"short": "BFD1", "long": "BLACKSBURG FIRE (1ST TEAM)", "format": "Blacksburg Fire (1st Team)"},
+      {"short": "BFD2", "long": "BLACKSBURG FIRE (2ND TEAM)", "format": "Blacksburg Fire (2nd Team)"},
+      {"short": "BFD3", "long": "BLACKSBURG FIRE (3RD TEAM)", "format": "Blacksburg Fire (3rd Team)"},
+      {"short": "BFD4", "long": "BLACKSBURG FIRE (4TH TEAM)", "format": "Blacksburg Fire (4th Team)"},
+      {"short": "BFD5", "long": "BLACKSBURG FIRE (5TH TEAM)", "format": "Blacksburg Fire (5th Team)"},
+      {"short": "BFD6", "long": "BLACKSBURG FIRE (6TH TEAM)", "format": "Blacksburg Fire (6th Team)"},
+
       {"type": "FIRE_OFFICER", "number": 100},
       {"type": "FIRE_OFFICER", "number": 101},
       {"type": "FIRE_OFFICER", "number": 102},
@@ -43,6 +50,12 @@
       {"type": "RESPONSE_CAR", "number": 13},
       {"type": "ATTACK_TRUCK", "number": 11},
       {"type": "HAZMAT_TRUCK", "number": 11},
+      {"type": "HAZMAT_TRUCK", "number": 12},
+      {"type": "HAZMAT_TRUCK", "number": 13},
+      {"type": "UTILITY", "number": 11},
+      {"type": "UTILITY", "number": 12},
+      {"type": "UTILITY", "number": 13},
+      {"type": "UTILITY", "number": 14, "comments": "ACTUAL HAZMAT VEH"},
       {"type": "UTILITY_TASK_VEHICLE", "number": 11},
       {"type": "UTILITY_TASK_VEHICLE", "number": 12},
       {"type": "UTILITY_TASK_VEHICLE", "number": 13}
@@ -56,6 +69,10 @@
     "type": "FIRE",
     "emoji": "<:evfd:1449930471231328477>",
     "units": [
+      {"short": "EVFD1", "long": "ELLISTON FIRE (1ST TEAM)", "format": "Elliston Fire (1st Team)"},
+      {"short": "EVFD2", "long": "ELLISTON FIRE (2ND TEAM)", "format": "Elliston Fire (2nd Team)"},
+      {"short": "EVFD3", "long": "ELLISTON FIRE (3RD TEAM)", "format": "Elliston Fire (3rd Team)"},
+
       {"type": "FIRE_OFFICER", "number": 200},
       {"type": "FIRE_OFFICER", "number": 201},
       {"type": "FIRE_OFFICER", "number": 202},
@@ -84,6 +101,10 @@
     "type": "EMS",
     "emoji": "<:lmfr:1449926826079158413>",
     "units": [
+      {"short": "LMRS1", "long": "LONGSHOP-MCCOY RESCUE (1ST TEAM)", "format": "Longshop-McCoy Rescue (1st Team)"},
+      {"short": "LMRS2", "long": "LONGSHOP-MCCOY RESCUE (2ND TEAM)", "format": "Longshop-McCoy Rescue (2nd Team)"},
+      {"short": "LMRS3", "long": "LONGSHOP-MCCOY RESCUE (3RD TEAM)", "format": "Longshop-McCoy Rescue (3rd Team)"},
+
       {"type": "EMS_OFFICER", "number": 300},
       {"type": "EMS_OFFICER", "number": 301},
       {"type": "EMS_OFFICER", "number": 302},
@@ -111,6 +132,10 @@
     "type": "FIRE",
     "emoji": "<:rfd:1449932933665128468>",
     "units": [
+      {"short": "RVFD1", "long": "RINER FIRE (1ST TEAM)", "format": "Riner Fire (1st Team)"},
+      {"short": "RVFD2", "long": "RINER FIRE (2ND TEAM)", "format": "Riner Fire (2nd Team)"},
+      {"short": "RVFD3", "long": "RINER FIRE (3RD TEAM)", "format": "Riner Fire (3rd Team)"},
+
       {"type": "FIRE_OFFICER", "number": 400},
       {"type": "FIRE_OFFICER", "number": 401},
       {"type": "FIRE_OFFICER", "number": 402},
@@ -136,6 +161,13 @@
     "type": "EMS",
     "emoji": "<:bvrs:1449916532770476134>",
     "units": [
+      {"short": "BVRS1", "long": "BLACKSBURG RESCUE (1ST TEAM)", "format": "Blacksburg Rescue (1st Team)"},
+      {"short": "BVRS2", "long": "BLACKSBURG RESCUE (2ND TEAM)", "format": "Blacksburg Rescue (2nd Team)"},
+      {"short": "BVRS3", "long": "BLACKSBURG RESCUE (3RD TEAM)", "format": "Blacksburg Rescue (3rd Team)"},
+      {"short": "BRVS4", "long": "BLACKSBURG RESCUE (4TH TEAM)", "format": "Blacksburg Rescue (4th Team)"},
+      {"short": "BVRS5", "long": "BLACKSBURG RESCUE (5TH TEAM)", "format": "Blacksburg Rescue (5th Team)"},
+      {"short": "BVRS6", "long": "BLACKSBURG RESCUE (6TH TEAM)", "format": "Blacksburg Rescue (6th Team)"},
+
       {"type": "EMS_OFFICER", "number": 500},
       {"type": "EMS_OFFICER", "number": 501},
       {"type": "EMS_OFFICER", "number": 502},
@@ -166,6 +198,9 @@
       {"type": "RESPONSE_CAR", "number": 51},
       {"type": "RESPONSE_CAR", "number": 52},
       {"type": "RESPONSE_CAR", "number": 53},
+      {"type": "RESPONSE_CAR", "number": 54},
+      {"type": "RESPONSE_CAR", "number": 55},
+      {"type": "RESPONSE_CAR", "number": 56},
       {"type": "COMMAND_CAR", "number": 54},
       {"type": "UTILITY_TASK_VEHICLE", "number": 51},
       {"type": "UTILITY_TASK_VEHICLE", "number": 52}
@@ -179,6 +214,10 @@
     "type": "FIRE",
     "emoji": "<:lmfr:1449926826079158413>",
     "units": [
+      {"short": "LMFD1", "long": "LONGSHOP-MCCOY FIRE (1ST TEAM)", "format": "Longshop-McCoy Fire (1st Team)"},
+      {"short": "LMFD2", "long": "LONGSHOP-MCCOY FIRE (2ND TEAM)", "format": "Longshop-McCoy Fire (2nd Team)"},
+      {"short": "LMFD3", "long": "LONGSHOP-MCCOY FIRE (3RD TEAM)", "format": "Longshop-McCoy Fire (3rd Team)"},
+
       {"type": "FIRE_OFFICER", "number": 600},
       {"type": "FIRE_OFFICER", "number": 601},
       {"type": "FIRE_OFFICER", "number": 602},
@@ -205,6 +244,10 @@
     "type": "FIRE",
     "emoji": "<:cfd:1449926970296107150>",
     "units": [
+      {"short": "CFD1", "long": "CHRISTIANSBURG FIRE (1ST TEAM)", "format": "Christiansburg Fire (1st Team)"},
+      {"short": "CFD2", "long": "CHRISTIANSBURG FIRE (2ND TEAM)", "format": "Christiansburg Fire (2nd Team)"},
+      {"short": "CFD3", "long": "CHRISTIANSBURG FIRE (3RD TEAM)", "format": "Christiansburg Fire (3rd Team)"},
+
       {"type": "FIRE_OFFICER", "number": 800},
       {"type": "FIRE_OFFICER", "number": 801},
       {"type": "FIRE_OFFICER", "number": 802},
@@ -241,6 +284,13 @@
     "type": "EMS",
     "emoji": "<:crs:1449927312861565142>",
     "units": [
+      {"short": "CRS1", "long": "CHRISTIANSBURG RESCUE (1ST TEAM)", "format": "Christiansburg Rescue (1st Team)"},
+      {"short": "CRS2", "long": "CHRISTIANSBURG RESCUE (2ND TEAM)", "format": "Christiansburg Rescue (2nd Team)"},
+      {"short": "CRS3", "long": "CHRISTIANSBURG RESCUE (3RD TEAM)", "format": "Christiansburg Rescue (3rd Team)"},
+      {"short": "CRS4", "long": "CHRISTIANSBURG RESCUE (4TH TEAM)", "format": "Christiansburg Rescue (4th Team)"},
+      {"short": "CRS5", "long": "CHRISTIANSBURG RESCUE (5TH TEAM)", "format": "Christiansburg Rescue (5th Team)"},
+      {"short": "CRS6", "long": "CHRISTIANSBURG RESCUE (6TH TEAM)", "format": "Christiansburg Rescue (6th Team)"},
+
       {"type": "EMS_OFFICER", "number": 900},
       {"type": "EMS_OFFICER", "number": 901},
       {"type": "EMS_OFFICER", "number": 902},
@@ -279,6 +329,10 @@
     "type": "EMS",
     "emoji": "<:rvrs:1449934079620288558>",
     "units": [
+      {"short": "RVRS1", "long": "RINER RESCUE (1ST TEAM)", "format": "Riner Rescue (1st Team)"},
+      {"short": "RVRS2", "long": "RINER RESCUE (2ND TEAM)", "format": "Riner Rescue (2nd Team)"},
+      {"short": "RVRS3", "long": "RINER RESCUE (3RD TEAM)", "format": "Riner Rescue (3rd Team)"},
+
       {"type": "EMS_OFFICER", "number": 1100},
       {"type": "EMS_OFFICER", "number": 1101},
       {"type": "EMS_OFFICER", "number": 1102},
@@ -337,6 +391,13 @@
     "type": "EMS",
     "emoji": "<:vtrs:1449920222940369018>",
     "units": [
+      {"short": "VTRS1", "long": "VIRGINIA TECH RESCUE (1ST TEAM)", "format": "Virginia Tech Rescue (1st Team)"},
+      {"short": "VTRS3", "long": "VIRGINIA TECH RESCUE (3RD TEAM)", "format": "Virginia Tech Rescue (2nd Team)"},
+      {"short": "VTRS2", "long": "VIRGINIA TECH RESCUE (2ND TEAM)", "format": "Virginia Tech Rescue (3rd Team)"},
+      {"short": "VTRS4", "long": "VIRGINIA TECH RESCUE (4TH TEAM)", "format": "Virginia Tech Rescue (4th Team)"},
+      {"short": "VTRS5", "long": "VIRGINIA TECH RESCUE (5TH TEAM)", "format": "Virginia Tech Rescue (5th Team)"},
+      {"short": "VTRS6", "long": "VIRGINIA TECH RESCUE (6TH TEAM)", "format": "Virginia Tech Rescue (6th Team)"},
+
       {"type": "EMS_OFFICER", "number": 1500},
       {"type": "EMS_OFFICER", "number": 1501},
       {"type": "EMS_OFFICER", "number": 1502},
@@ -365,7 +426,8 @@
       {"type": "RESPONSE_CAR", "number": 151},
       {"type": "RESPONSE_CAR", "number": 152},
       {"type": "RESPONSE_CAR", "number": 156},
-      {"type": "UTILITY_TASK_VEHICLE", "number": 151}
+      {"type": "UTILITY_TASK_VEHICLE", "number": 151},
+      {"type": "BIKE_TEAM", "number": 15}
     ]
   },
   {
@@ -654,6 +716,11 @@
     "emoji": null,
     "units": [
       {"short": "VTFW", "long": "FIREWATCH AT VIRGINIA TECH", "format": "Firewatch at Virginia Tech", "emoji": "<:firewatch:1556108994609815552>"},
+      {"short": "HOLD1", "long": "PLACEHOLDER UNIT 1", "format": "Placeholder 1", "emoji": "<:firewatch:1556108994609815552>"},
+      {"short": "HOLD2", "long": "PLACEHOLDER UNIT 2", "format": "Placeholder 2", "emoji": "<:firewatch:1556108994609815552>"},
+      {"short": "HOLD3", "long": "PLACEHOLDER UNIT 3", "format": "Placeholder 3", "emoji": "<:firewatch:1556108994609815552>"},
+      {"short": "HOLD4", "long": "PLACEHOLDER UNIT 4", "format": "Placeholder 4", "emoji": "<:firewatch:1556108994609815552>"},
+      {"short": "HOLD5", "long": "PLACEHOLDER UNIT 5", "format": "Placeholder 5", "emoji": "<:firewatch:1556108994609815552>"},
       {"type": "TEST", "number": 1},
       {"type": "TEST", "number": 2},
       {"type": "TEST", "number": 3},

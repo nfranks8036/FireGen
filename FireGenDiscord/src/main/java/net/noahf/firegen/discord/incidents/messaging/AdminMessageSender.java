@@ -251,15 +251,20 @@ public class AdminMessageSender extends MessageSender {
     }
 
     private String getQualifierChoice(IncidentType type) {
-        IncidentTypeTag tag = type.getTag();
-        if (tag.getQualifiers() == null) {
-            return "None";
+        try {
+            IncidentTypeTag tag = type.getTag();
+            if (tag.getQualifiers() == null) {
+                return "None";
+            }
+            List<String> qualifiers = tag.getQualifiers().getQualifiers();
+            if (type.getQualifierChoice() > qualifiers.size() || type.getQualifierChoice() < 0) {
+                return "None (OOB)";
+            }
+            return type.getStringQualifierChoice();
+        } catch (Exception exception) {
+            Log.error("Qualifier choice error for " + type, exception);
+            return "None (ERR)";
         }
-        List<String> qualifiers = tag.getQualifiers().getQualifiers();
-        if (type.getQualifierChoice() > qualifiers.size() || type.getQualifierChoice() < 0) {
-            return "None (OOB)";
-        }
-        return type.getStringQualifierChoice();
     }
 
 
