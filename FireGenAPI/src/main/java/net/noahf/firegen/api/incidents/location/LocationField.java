@@ -68,7 +68,7 @@ public class LocationField {
      */
     public static LocationField VENUE = LocationField.newField(
             "Venue",
-            "OPTIONAL: {VENUES}",
+            "OPTIONAL: The general area that provides additional location information and completes an address.",
             "venue",
             TextType.SHORT
     )

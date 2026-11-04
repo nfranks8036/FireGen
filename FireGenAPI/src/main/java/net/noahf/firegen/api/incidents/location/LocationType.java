@@ -31,14 +31,14 @@ public class LocationType implements StringSelectors {
             "addr",
             "A numeric address. Requires: Street address, including numerics. Allows: Common name, venue.",
             " ",
-            newField("Address Numerics", "The numbers representing the address.", "address-numerics", TextType.SHORT)
+            newField("Address Numerics", "The numbers representing the address.", "addr-numerics", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(2)
                     .setMaxLength(8)
                     .setPlaceholder("Ex: 2800")
                     .setAutofill(requireType((l) -> l.getData().getFirst(), "ADDRESS"))
                     .build(),
-            newField("Street Name", "The name of the street the numeric address is on.", "address-street", TextType.SHORT)
+            newField("Street Name", "The name of the street the numeric address is on.", "addr-street", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(2)
                     .setMaxLength(100)
@@ -62,14 +62,14 @@ public class LocationType implements StringSelectors {
             "marker",
             "A mile-marker or landmark on a road. Requires: Mile marker/landmark, road name. Allows: Venue.",
             " @ ",
-            newField("Road Name", "The road the call is on. Use 'US-' for US routes and 'I-' for interstates. Add direction of travel.", "milemarker-roadname", TextType.SHORT)
+            newField("Road Name", "The road the call is on. Use 'US-' for US routes and 'I-' for interstates. Add direction of travel.", "marker-roadname", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(1)
                     .setMaxLength(20)
                     .setPlaceholder("Ex: I-81 NB")
                     .setAutofill(requireType((l) -> l.getData().getFirst(), "MILE_MARKER"))
                     .build(),
-            newField("Mile-Marker / Landmark", "The mile-marker or landmark. Add 'MM' before a mile-marker.", "milemarker-landmark", TextType.SHORT)
+            newField("Mile-Marker / Landmark", "The mile-marker or landmark. Add 'MM' before a mile-marker.", "marker-landmark", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(1)
                     .setMaxLength(40)
@@ -94,21 +94,21 @@ public class LocationType implements StringSelectors {
             "latlong",
             "A latitude and longitude. Requires: Two float values. Allows: Additional information, venue.",
             ", ",
-            newField("Latitude", "The latitude, in *DECIMAL DEGREES*, of the incident.", "latitudelongitude-latitude", TextType.SHORT)
+            newField("Latitude", "The latitude, in *DECIMAL DEGREES*, of the incident.", "latlong-latitude", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(1)
                     .setMaxLength(10)
                     .setPlaceholder("Ex: 37.197523")
                     .setAutofill(requireType((l) -> l.getData().getFirst(), "LATITUDE_LONGITUDE"))
                     .build(),
-            newField("Longitude", "The longitude, in *DECIMAL DEGREES*, of the incident.", "latitudelongitude-longitude", TextType.SHORT)
+            newField("Longitude", "The longitude, in *DECIMAL DEGREES*, of the incident.", "latlong-longitude", TextType.SHORT)
                     .setRequired(true)
                     .setMinLength(1)
                     .setMaxLength(10)
                     .setPlaceholder("Ex: -80.395021")
                     .setAutofill(requireType((l) -> l.getData().get(1), "LATITUDE_LONGITUDE"))
                     .build(),
-            newField("Additional Information", "OPTIONAL: More information on what is at this location.", "latitudelongitude-additional", TextType.PARAGRAPH)
+            newField("Additional Information", "OPTIONAL: More information on what is at this location.", "latlong-additional", TextType.PARAGRAPH)
                     .setRequired(false)
                     .setPlaceholder("Ex: Parking Lot of Blacksburg Transit")
                     .setAutofill(requireType((l) -> l.getData().get(2), "LATITUDE_LONGITUDE"))
@@ -163,19 +163,19 @@ public class LocationType implements StringSelectors {
             "cross",
             "Two cross-streets for generic locations. Requires: At least one road. Allows: Multiple roads.",
             " & ",
-            newField("Cross-street: Road #1", "The primary road in the cross-streets.", "crossstreets-road1", TextType.SHORT)
+            newField("Cross-street: Road #1", "The primary road in the cross-streets.", "cross-road1", TextType.SHORT)
                     .setRequired(true)
                     .setPlaceholder("Ex: N Main St")
                     .setMaxLength(20)
                     .setAutofill(requireType((l) -> l.getData().getFirst(), "CROSS_STREETS"))
                     .build(),
-            newField("Cross-street: Road #2", "OPTIONAL: The secondary road in the cross-streets.", "crossstreets-road2", TextType.SHORT)
+            newField("Cross-street: Road #2", "OPTIONAL: The secondary road in the cross-streets.", "cross-road2", TextType.SHORT)
                     .setRequired(false)
                     .setPlaceholder("Ex: Progress St")
                     .setMaxLength(20)
                     .setAutofill(requireType((l) -> l.getData().get(1), "CROSS_STREETS"))
                     .build(),
-            newField("Cross-street: Road #3", "OPTIONAL: The tertiary road in the cross-streets.", "crossstreets-road3", TextType.SHORT)
+            newField("Cross-street: Road #3", "OPTIONAL: The tertiary road in the cross-streets.", "cross-road3", TextType.SHORT)
                     .setRequired(false)
                     .setPlaceholder("Ex: McDonald St")
                     .setMaxLength(20)

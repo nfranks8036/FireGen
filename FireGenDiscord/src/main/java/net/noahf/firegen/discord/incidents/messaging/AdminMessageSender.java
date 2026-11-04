@@ -55,8 +55,7 @@ public class AdminMessageSender extends MessageSender {
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
                         Button.primary(super.getIncident().createInteractionIdString("location"), "Location"),
-                        Button.primary(super.getIncident().createInteractionIdString("units"), "Units"),
-                        Button.primary(super.getIncident().createInteractionIdString("tags"), "Tags")
+                        Button.primary(super.getIncident().createInteractionIdString("units"), "Units")
                 ),
                 ActionRow.of(
                         Button.secondary("firegen-disabled-misc", "Misc:").asDisabled(),

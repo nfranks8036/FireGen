@@ -12,6 +12,11 @@
     "display": "Christiansburg, VA"
   },
   {
+    "name": "MONTGOMERY COUNTY",
+    "display": "Montgomery County, VA"
+  },
+
+  {
     "name": "RINER",
     "display": "Riner, VA"
   },
@@ -30,9 +35,5 @@
   {
     "name": "PRICES FORK",
     "display": "Blacksburg, VA"
-  },
-  {
-    "name": "MONTGOMERY COUNTY",
-    "display": "Montgomery County, VA"
   }
 ]

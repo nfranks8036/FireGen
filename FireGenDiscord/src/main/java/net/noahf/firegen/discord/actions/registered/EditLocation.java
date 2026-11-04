@@ -20,6 +20,7 @@ import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
@@ -35,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents the "Location" button in the "Edit:" second row.
@@ -207,6 +209,13 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         Label[] labels = new Label[fields.length];
         for (int i = 0; i < fields.length; i++) {
             labels[i] = this.convertToLabel(fields[i], incident);
+
+            if (fields[i].getId().equalsIgnoreCase("venue")) {
+                String venues = "OPTIONAL: " + Main.config.get(ConfigVenues.class).get().stream().map(LocationVenue::getName).collect(Collectors.joining(", "));
+                venues = DiscordMessages.truncate(venues, 100, "...");
+                labels[i] = labels[i].withDescription(venues);
+            }
+
         }
         return labels;
     }
