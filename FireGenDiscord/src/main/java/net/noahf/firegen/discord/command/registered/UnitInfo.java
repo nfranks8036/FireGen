@@ -20,10 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.incidents.Incident;
-import net.noahf.firegen.api.incidents.units.AssignmentEvent;
-import net.noahf.firegen.api.incidents.units.Unit;
-import net.noahf.firegen.api.incidents.units.UnitAssignment;
-import net.noahf.firegen.api.incidents.units.UnitType;
+import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
@@ -37,9 +34,11 @@ import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
+import org.apache.commons.lang3.Range;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
+import java.awt.font.NumericShaper;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -139,7 +138,7 @@ public class UnitInfo extends Command {
                                 "**Unit:** `" + unit.getLonghand() + "` (" + unit.getAgency().getTitle() + ")\n"
                         + "**Status:** " + (latest.getEmoji() != null ? latest.getEmoji().getFormatted() + " " : "") + latest.getName()
                 );
-        for (AssignmentEvent a : assignment.getAssignments()) {
+        for (AssignmentEvent a : assignment.getAssignments().stream().sorted().toList()) {
             long unix = Time.getUnix(a.getTimestamp());
             AssignmentStatusImpl status = (AssignmentStatusImpl) a.getStatus();
             embed = embed
@@ -203,9 +202,16 @@ public class UnitInfo extends Command {
 
             List<SelectOption> options = new ArrayList<>();
             Map<String, String> statuses = new HashMap<>();
-            for (UnitAssignment assignment : assignments) {
+            Map<AssignmentStatus, Integer> lengthThusFar = new HashMap<>();
+            final int MAX_LENGTH = MessageEmbed.VALUE_MAX_LENGTH;
+
+            for (UnitAssignment assignment : assignments.stream().sorted().toList()) {
                 IncidentImpl incident = (IncidentImpl) assignment.getIncident();
                 AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.getLatestAssignment().getStatus();
+
+                if (Range.of(MAX_LENGTH-100, MAX_LENGTH+100).contains(lengthThusFar.getOrDefault(status, 0))) {
+                    break;
+                }
 
                 ReceiveMessageSender sender = incident.getMessagingService().get(ReceiveMessageSender.class);
                 String link = "*No incident link*";
@@ -228,6 +234,9 @@ public class UnitInfo extends Command {
                 }
 
                 statuses.put(keyString, valueString);
+
+                int valueLength = valueString.length();
+                lengthThusFar.merge(status, valueLength, Integer::sum);
 
                 options.add(
                         SelectOption.of(DiscordMessages.truncate(incident.getFormattedId() + ": " + incident.getType().getSelectedName()

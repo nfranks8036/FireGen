@@ -98,6 +98,7 @@
     {"name": "PROPERTY DAMAGE", "tag": "POLICE"},
     {"name": "RESIDENTIAL BURGLAR ALARM", "tag": "POLICE"},
     {"name": "COMMERCIAL BURGLAR ALARM", "tag": "POLICE"},
+    {"name": "BUSINESS ALARM", "tag": "POLICE"},
     {"name": "HARASSMENT", "tag": "POLICE"},
     {"name": "THREATS", "tag": "POLICE"},
     {"name": "LOST PET", "tag": "POLICE"},

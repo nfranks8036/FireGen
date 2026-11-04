@@ -67,10 +67,11 @@ public class AssignUnit extends Command {
 
         OptionMapping statusMapping = event.getOption("status");
         AssignmentStatus status = AssignmentStatusImpl.ADD_UNIT;
+        String statusStr = (statusMapping != null ? statusMapping.getAsString() : status.getName());
         if (statusMapping != null) {
             ConfigAssignmentStatuses config = Main.config.get(ConfigAssignmentStatuses.class);
             status = config.fromName(
-                    statusMapping.getAsString(), config.fromShortName(statusMapping.getAsString())
+                    statusStr, config.fromShortName(statusStr)
             );
         }
 
@@ -82,6 +83,18 @@ public class AssignUnit extends Command {
                             || s.getLongName().equalsIgnoreCase(secondaryStr)
                     )
                     .findFirst().orElse(secondary);
+        }
+
+        if (unit == null) {
+            DiscordMessages.error(event, "Invalid unit: *" + unitStr + "*\n" +
+                    "View a list of units at `/view-config file:" + Main.config.get(ConfigUnits.class).getPath() + "`");
+            return;
+        }
+
+        if (status == null) {
+            DiscordMessages.error(event, "Invalid unit status: *" + statusStr + "*\n" +
+                    "View a list of unit statuses at `/view-config file:" + Main.config.get(ConfigAssignmentStatuses.class).getPath() + "`");
+            return;
         }
 
         EditUnits editUnits = Main.actions.getAction(EditUnits.class);
