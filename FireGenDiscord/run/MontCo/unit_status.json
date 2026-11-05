@@ -1,0 +1,25 @@
+{
+  "statuses": [
+    {
+      "name": "AVAILABLE FOR CALLS",
+      "short": "AVC",
+      "emoji": "<:AVAILABLE FOR CALLS:1499196518475890818>",
+      "ansi": "WHITE"
+    },
+
+    {
+      "name": "OUT OF SERVICE",
+      "short": "OOS",
+      "emoji": "<:OUT_OF_SERVICE:1499196518475890818>",
+      "ansi": "BACKGROUND_WHITE"
+    },
+
+
+    {
+      "name": "SPECIAL ASSIGNMENT",
+      "short": "SPE",
+      "emoji": "<:SPECIAL_ASSIGNMENT:1499196518475890818>",
+      "ansi": "BRIGHT_BLUE"
+    }
+  ]
+}

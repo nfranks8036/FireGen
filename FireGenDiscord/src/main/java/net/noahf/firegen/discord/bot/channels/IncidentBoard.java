@@ -10,6 +10,7 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.IncidentManager;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -111,6 +112,11 @@ public class IncidentBoard {
             );
 
             fields.add(field);
+        }
+        if (fields.isEmpty()) {
+            fields.add(new MessageEmbed.Field(
+                    "No Active Incidents", "*Returned from FireGen as of <t:" + Time.getUnix() + ":T>*", true
+            ));
         }
         return fields;
     }

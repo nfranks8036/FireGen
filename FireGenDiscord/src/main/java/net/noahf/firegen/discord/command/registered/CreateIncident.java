@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
+import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationType;
@@ -173,7 +174,7 @@ public class CreateIncident extends Command {
         EditMode.editIncidents.put(event.getUser(), incident);
 
         if (publish) {
-            findAction(Publish.class).onSubmit(incident, event);
+            findAction(Publish.class).onSubmit(incident, event, null);
         }
 
         DiscordMessages.selfDestruct(event, 5,
@@ -495,6 +496,40 @@ public class CreateIncident extends Command {
             } else {
                 return findAction(Notate.class).onSubmit(incident, event, narrative);
             }
+        }
+
+        static MessageStatus setPublished(IncidentImpl incident, IReplyCallback event, OptionMapping publishedOption) {
+            if (!Main.users.hasPermission(event.getUser(), Permission.INCIDENT_PUBLISH)) {
+                DiscordMessages.error(event, "You don't have permission to publish this incident.");
+                return CONTENT;
+            }
+            String publishedStr = publishedOption.getAsString().toLowerCase();
+
+            boolean published = Boolean.parseBoolean(publishedStr);
+            if (!List.of("true", "false").contains(publishedStr)) {
+                DiscordMessages.error(event, "Expected 'true' or 'false' for published status, found neither.");
+                return CONTENT;
+            }
+
+            IncidentPublishedStatus status = published ? IncidentPublishedStatus.PUBLISHED : IncidentPublishedStatus.UNPUBLISHED;
+            return findAction(Publish.class).onSubmit(incident, event, status);
+        }
+
+        static MessageStatus setStatus(IncidentImpl incident, IReplyCallback event, OptionMapping statusOption) {
+            if (!Main.users.hasPermission(event.getUser(), Permission.INCIDENT_STATUS)) {
+                DiscordMessages.error(event, "You don't have permission to change the status of this incident.");
+                return CONTENT;
+            }
+
+            IncidentStatus status;
+            try {
+                status = IncidentStatus.valueOf(statusOption.getAsString());
+            } catch (IllegalArgumentException e) {
+                DiscordMessages.error(event, "That status does not exist: " + statusOption.getAsString());
+                return CONTENT;
+            }
+
+            return findAction(ChangeStatus.class).onSubmit(incident, event, status);
         }
 
 

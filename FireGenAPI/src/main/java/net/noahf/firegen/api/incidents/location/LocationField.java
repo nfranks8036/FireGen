@@ -152,35 +152,4 @@ public class LocationField {
         SHORT, PARAGRAPH
     }
 
-
-
-    private static boolean setFields = false;
-
-    /**
-     * <b>Not for API use.</b>
-     * @deprecated internal method only, do not use, you will almost 100% of the time get a Void return with some text
-     * printed in {@link System#err}.
-     */
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated
-    public static void setKnownVenues(List<LocationVenue> venues) {
-        if (setFields) {
-            System.err.println("Already patched the venue descriptions, setKnownVenues has been disabled!");
-            return;
-        }
-
-        for (LocationType value : LocationType.values()) {
-            LocationField.VENUE = LocationField.VENUE.toBuilder()
-                    .setDescription(VENUE.getDescription().replace(
-                            "{VENUES}",
-                            venues.stream().map(LocationVenue::getName)
-                                    .collect(Collectors.joining(", "))
-                    ))
-                    .build();
-            value.patchVenue(LocationField.VENUE);
-        }
-
-        setFields = true;
-    }
-
 }

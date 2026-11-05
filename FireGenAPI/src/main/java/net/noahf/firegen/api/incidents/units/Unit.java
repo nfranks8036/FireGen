@@ -6,6 +6,7 @@ import net.noahf.firegen.api.utilities.Descriptor;
 import net.noahf.firegen.api.utilities.StringSelectors;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Unit extends Identifiable, AutofilledCharSequence, StringSelectors, Descriptor {
 
@@ -22,6 +23,8 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
     String getFormatted();
 
     Object getAdditional();
+
+    Set<UnitAssignment> getAssignments();
 
     int ordinal();
 

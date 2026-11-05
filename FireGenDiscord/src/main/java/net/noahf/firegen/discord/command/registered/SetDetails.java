@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.AddNarrative;
@@ -22,6 +24,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static net.noahf.firegen.discord.command.registered.CreateIncident.DATE_CREATE_FORMAT;
@@ -49,6 +52,9 @@ public class SetDetails extends Command {
                                                 "a 'time' field if this field is set.",
                                         false, false
                                 ),
+                                new OptionData(OptionType.STRING, "published", "The published status of the incident. [true or false]", false, true),
+                                new OptionData(OptionType.STRING, "status", "The status of the incident, whether it's active, closed, or pending.", false, true),
+
                         })
                         .aliases(new String[]{"sd"})
                         .disableAutocompleteAutoFilter(true)
@@ -103,7 +109,7 @@ public class SetDetails extends Command {
             incident.update();
 
             if (publish) {
-                findAction(Publish.class).onSubmit(incident, event);
+                findAction(Publish.class).onSubmit(incident, event, null);
             }
         }
 
@@ -128,6 +134,16 @@ public class SetDetails extends Command {
             return;
         }
 
+        OptionMapping statusOption = event.getOption("status");
+        if (statusOption != null && CreateIncident.Helper.setStatus(incident, event, statusOption) == CONTENT) {
+            return;
+        }
+
+        OptionMapping publishedOption = event.getOption("published");
+        if (publishedOption != null && CreateIncident.Helper.setPublished(incident, event, publishedOption) == CONTENT) {
+            return;
+        }
+
         DiscordMessages.noMessage(event, MessageStatus.NONE);
     }
 
@@ -137,6 +153,8 @@ public class SetDetails extends Command {
             case "type" -> Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).asAutocompleteStrings());
             case "location" -> CreateIncident.Helper.autocompleteLocation(focused);
             case "units" -> Main.commands.autocompleteSearch(focused.getValue(), CreateIncident.Helper.autocompleteUnits(focused));
+            case "published" -> List.of("True", "False");
+            case "status" -> Arrays.stream(IncidentStatus.values()).map(IncidentStatus::name).toList();
             default -> null;
         };
     }

@@ -30,7 +30,6 @@ public class ConfigVenues extends MultiObjectConfiguration<LocationVenue> {
             this.add(new LocationVenueImpl(name, display));
         }
 
-        this.getVars().setVenues(this.get());
         log("Imported venues " + String.join(", ", this.get()));
     }
 
