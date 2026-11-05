@@ -98,6 +98,7 @@ public class AgencyInfo extends Command {
                     .setTitle("Units (" + agency.getUnits().size() + ")");
 
             List<IncidentImpl> activeIncidents = Main.incidents.getIncidents().stream()
+                    .filter(i -> i.getStatus() != null)
                     .filter(i -> i.getStatus().isInProgress())
                     .map(i -> (IncidentImpl) i)
                     .toList();

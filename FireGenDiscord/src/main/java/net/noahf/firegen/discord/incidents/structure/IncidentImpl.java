@@ -47,6 +47,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @Getter
     private final long id;
 
+    @NotNull
     private IncidentStatus status;
 
     @NotNull
@@ -86,7 +87,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     public IncidentImpl(IncidentManager manager) {
         this.manager = manager;
         this.id = new Random(System.currentTimeMillis()).nextLong(1000000, 9999999);
-        this.status = null;
+        this.status = IncidentStatus.PENDING;
         this.type = Main.config.getFireGenVariables().defaultType();
         this.location = new IncidentLocationImpl(new ArrayList<>());
         this.time = new IncidentTimeImpl(LocalDateTime.now());
@@ -244,7 +245,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public void refreshStatus() {
-        if (this.status != null && !this.status.isInProgress()) {
+        if (!this.status.isInProgress()) {
             return;
         }
 
@@ -293,9 +294,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     private void update(boolean restartStale) {
-        if (this.status == null) {
-            return;
-        }
 
         if (restartStale) {
             if (this.staleFuture != null)

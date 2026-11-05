@@ -32,6 +32,10 @@ dependencies {
     compileOnly("dev.morphia.morphia:morphia-core:2.5.3")
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ["-Werror"]
+}
+
 shadowJar {
     setArchiveFileName("FireGen.jar")
 }
