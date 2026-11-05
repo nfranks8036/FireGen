@@ -1,22 +1,23 @@
 package net.noahf.firegen.discord.users;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.utilities.Descriptor;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("UnusedReturnValue")
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Getter
-@RequiredArgsConstructor
-public class FireGenUser implements Contributor<User> {
+@AllArgsConstructor
+public class FireGenUser implements Contributor<User>, Descriptor {
 
     public static String createId(String command, String... additionalParameters) {
         String[] commands = Arrays.copyOf(additionalParameters, additionalParameters.length + 1);
@@ -54,11 +55,11 @@ public class FireGenUser implements Contributor<User> {
 
     private final long id;
 
-    private final String name;
+    private String name;
 
-    private final String displayName;
+    private String displayName;
 
-    private transient final User userObject;
+    private transient User userObject;
 
     @Accessors(fluent = true)
     private transient final boolean isFromJson;
@@ -91,6 +92,32 @@ public class FireGenUser implements Contributor<User> {
         }
     }
 
+    public boolean importIfNot(User user) {
+        if (this.userObject != null) {
+            return false;
+        }
+
+        this.userObject = user;
+        this.name = user.getName();
+        this.displayName = user.getEffectiveName();
+
+
+        Log.info("Imported User: " + this.describe());
+        return true;
+    }
+
+    public boolean importIfNot(JDA jda) {
+        if (this.userObject != null) {
+            return false;
+        }
+
+        User user = jda.retrieveUserById(this.id).complete();
+        if (user == null) {
+            throw new IllegalArgumentException("That user does not exist per Discord: " + this.id);
+        }
+        return this.importIfNot(user);
+    }
+
     @Override
     @NotNull
     public String toString() {
@@ -98,4 +125,8 @@ public class FireGenUser implements Contributor<User> {
         return this.name;
     }
 
+    @Override
+    public String describe() {
+        return this.getName() + " [ID: " + this.getId() + ", display: " + this.getDisplayName() + ", permission count: " + this.getPermissions().size() + "]";
+    }
 }

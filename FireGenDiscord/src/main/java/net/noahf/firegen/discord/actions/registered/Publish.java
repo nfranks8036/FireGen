@@ -5,12 +5,14 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
+import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
+import org.jetbrains.annotations.Nullable;
 
 public class Publish implements ButtonAction {
 
@@ -35,11 +37,12 @@ public class Publish implements ButtonAction {
             return;
         }
 
-        this.onSubmit(incident, event);
+        this.onSubmit(incident, event, null);
     }
 
-    public void onSubmit(IncidentImpl incident, IReplyCallback event) {
-        incident.setPublished(incident.getPublished().opposite());
+    public MessageStatus onSubmit(IncidentImpl incident, IReplyCallback event, @Nullable IncidentPublishedStatus option) {
+        IncidentPublishedStatus finalOption = option != null ? option : incident.getPublished().opposite();
+        incident.setPublished(finalOption);
 
         Contributor<User> contributor = incident.addContributor(event.getUser());
         String name = incident.getPublished().name();
@@ -49,5 +52,7 @@ public class Publish implements ButtonAction {
 
         incident.update();
         incident.getMessagingService().notifyPublishChange();
+
+        return MessageStatus.NONE;
     }
 }

@@ -102,11 +102,6 @@ public class FireGenVariables {
 
     private boolean defaults;
 
-    @SuppressWarnings("deprecation")
-    public void setVenues(List<LocationVenue> venues) {
-        LocationField.setKnownVenues(venues);
-    }
-
     public String formatTime(LocalDateTime time, boolean withDate) {
         return (withDate ? time.format(DateTimeFormatter.ofPattern(this.dateFormat())) + " ": "")
                 + time.format(DateTimeFormatter.ofPattern(this.longTimeFormat()));

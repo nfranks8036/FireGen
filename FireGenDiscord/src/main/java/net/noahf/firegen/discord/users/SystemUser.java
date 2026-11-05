@@ -6,7 +6,7 @@ public class SystemUser extends FireGenUser {
 
     private SystemUser() {
         super(
-                0, "(SYSTEM)", "System", null, false
+                0, "", "System", null, false
         );
     }
 

@@ -44,6 +44,7 @@ public class UserManager extends Manager<UserManager> {
     public @Nullable FireGenUser getById(long id) {
         for (FireGenUser user : this.users) {
             if (user.getId() == id) {
+                user.importIfNot(Main.bot.jda());
                 return user;
             }
         }
@@ -86,23 +87,12 @@ public class UserManager extends Manager<UserManager> {
             for (JsonElement element : array.asList()) {
                 JsonObject userObject = element.getAsJsonObject();
 
+                String name = userObject.get("internal_name").getAsString();
                 long id = userObject.get("id").getAsLong();
                 Permission[] permissions = this.getPermissionArray(userObject.get("permissions").getAsJsonArray());
                 User discordUser = jda.getUserById(id);
 
-                if (discordUser == null) {
-                    discordUser = jda.retrieveUserById(id).complete();
-                }
-
-                if (discordUser == null) {
-                    throw new IllegalArgumentException("Expected to find Discord account associated with '" + id + "'" +
-                            ", but could not find one!"
-                    );
-                }
-
-                FireGenUser user = new FireGenUser(
-                        id, discordUser.getName(), discordUser.getEffectiveName(), discordUser, true
-                );
+                FireGenUser user = new FireGenUser(id, name, name, discordUser, true);
                 user.togglePermissions(permissions);
                 user.togglePermissions(Permission.DEFAULT);
 
