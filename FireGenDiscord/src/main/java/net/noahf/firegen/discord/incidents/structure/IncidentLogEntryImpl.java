@@ -66,7 +66,7 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     @IgnoreStringSelector
     public String formatAdmin(boolean withUser) {
-        return "`" + this.time.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "` `"+ type.name() + "` " + (withUser ? (user.getId() != 0 ? "<@" + user.getId() + ">" : "**" + user.getName() + "**") + " " : "") + entry;
+        return "`" + this.time.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "` `"+ type.name() + "` " + (withUser ? (user.getId() != 0 ? "<@" + user.getId() + "> " : "") : "") + entry;
     }
 
     @Override

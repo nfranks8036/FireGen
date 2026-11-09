@@ -26,9 +26,8 @@ import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AssignUnit extends Command {
@@ -41,6 +40,7 @@ public class AssignUnit extends Command {
                         new OptionData(OptionType.STRING, "secondary", "OPTIONAL: The secondary information about a unit.", false, true),
                 })
                 .aliases(new String[]{"au"})
+                .disableAutocompleteAutoFilter(true)
                 .finish());
     }
 
@@ -63,16 +63,30 @@ public class AssignUnit extends Command {
 
         String unitStr = event.getOption("unit", () -> "?", OptionMapping::getAsString);
         ConfigUnits configUnits = Main.config.get(ConfigUnits.class);
-        UnitImpl unit = (UnitImpl) configUnits.fromLonghand(unitStr, configUnits.fromShorthand(unitStr));
+        List<Unit> units = new ArrayList<>();
+        for (String us : unitStr.contains(",") ? unitStr.split(",") : new String[]{unitStr}) {
+            Unit unit = configUnits.fromLonghand(us, configUnits.fromShorthand(us));
+            if (unit == null) {
+                DiscordMessages.error(event,
+                        "Invalid unit: *" + us + "*\n" +
+                                "View a list of units at `/view-config file:" + Main.config.get(ConfigUnits.class).getPath() + "`"
+                        );
+                return;
+            }
+            units.add(unit);
+        }
 
         OptionMapping statusMapping = event.getOption("status");
-        AssignmentStatus status = AssignmentStatusImpl.ADD_UNIT;
-        String statusStr = (statusMapping != null ? statusMapping.getAsString() : status.getName());
+        AssignmentStatus defaultStatus = AssignmentStatusImpl.ADD_UNIT;
+        AssignmentStatus status;
+        String statusStr = (statusMapping != null ? statusMapping.getAsString() : defaultStatus.getName());
         if (statusMapping != null) {
             ConfigAssignmentStatuses config = Main.config.get(ConfigAssignmentStatuses.class);
             status = config.fromName(
                     statusStr, config.fromShortName(statusStr)
             );
+        } else {
+            status = defaultStatus;
         }
 
         String secondaryStr = event.getOption("secondary", () -> null, OptionMapping::getAsString);
@@ -85,8 +99,8 @@ public class AssignUnit extends Command {
                     .findFirst().orElse(secondary);
         }
 
-        if (unit == null) {
-            DiscordMessages.error(event, "Invalid unit: *" + unitStr + "*\n" +
+        if (units.isEmpty()) {
+            DiscordMessages.error(event, "No units were provided, this command requires at least one unit!\n" +
                     "View a list of units at `/view-config file:" + Main.config.get(ConfigUnits.class).getPath() + "`");
             return;
         }
@@ -99,12 +113,13 @@ public class AssignUnit extends Command {
 
         EditUnits editUnits = Main.actions.getAction(EditUnits.class);
         MessageStatus s = editUnits.onSubmit(incident, event, new EditUnits.UnitsChangeInput(
-                List.of(unit), status, secondary
+                units, status, secondary
         ));
         if (s == MessageStatus.CONTENT) return;
 
         DiscordMessages.selfDestruct(event, 5,
-                unit.getFormattedStatus(status, null) + ": " + status.getName() +
+                units.stream().map(u -> (UnitImpl)u).map(u -> u.getFormattedStatus(status, null)).collect(Collectors.joining(", ")) +
+                        ": " + status.getName() +
                         (secondary != null ? " (" + secondary.getShortName() + ")" : "")
                         + "\n-# " + incident.toString()
                 );
@@ -114,17 +129,30 @@ public class AssignUnit extends Command {
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         return switch (focused.getName()) {
             case "unit" -> {
-                List<Unit> units = Main.config.get(ConfigUnits.class).get();
+                String arg = focused.getValue();
+                int indexOf = arg.lastIndexOf(',');
+                String prior = indexOf != -1 ? arg.substring(0, indexOf) : "";
+                String after = indexOf != -1 ? arg.substring(indexOf + 1) : "";
 
-                yield Stream.concat(
-                        units.stream().map(Unit::getLonghand),
-                        units.stream().map(Unit::getShorthand)
-                ).toList();
+                List<Unit> units = Main.config.get(ConfigUnits.class).get();
+                List<String> returned = Stream.concat(
+                                units.stream().map(Unit::getLonghand),
+                                units.stream().map(Unit::getShorthand)
+                        )
+                        .toList();
+
+                returned = Main.commands.autocompleteSearch(indexOf != -1 ? after : arg, returned);
+
+                yield returned.stream().map(s ->
+                        (indexOf != -1 ?  prior + "," : "")
+                        + s).toList();
             }
             case "status" -> {
                 List<AssignmentStatus> statuses = Main.config.get(ConfigAssignmentStatuses.class).get();
 
-                yield statuses.stream().map(AssignmentStatus::getName).toList();
+                yield Main.commands.autocompleteSearch(focused.getValue(),
+                        statuses.stream().map(AssignmentStatus::getName).toList()
+                );
             }
             case "secondary" -> {
                 ConfigAssignmentStatuses configStatus = Main.config.get(ConfigAssignmentStatuses.class);
@@ -139,7 +167,9 @@ public class AssignUnit extends Command {
                     yield null;
                 }
 
-                yield status.getSecondaries().stream().map(Secondary::getLongName).toList();
+                yield Main.commands.autocompleteSearch(focused.getValue(),
+                        status.getSecondaries().stream().map(Secondary::getLongName).toList()
+                );
             }
             default -> null;
         };

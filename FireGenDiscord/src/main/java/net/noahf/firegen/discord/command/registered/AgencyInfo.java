@@ -71,6 +71,11 @@ public class AgencyInfo extends Command {
             return;
         }
 
+
+        event.replyEmbeds(agencyView(iAgency)).setEphemeral(true).queue();
+    }
+
+    public static List<MessageEmbed> agencyView(Agency iAgency) {
         AgencyImpl agency = (AgencyImpl) iAgency;
 
         List<MessageEmbed> returned = new ArrayList<>();
@@ -87,7 +92,7 @@ public class AgencyInfo extends Command {
                                 "Long: `" + agency.getTitle() + "`\n" +
                                 "Formatted: `" + agency.getFormatted() + "`",
                         false
-                        )
+                )
                 .addField("Station", agency.getStation(), false)
                 .build());
 
@@ -139,7 +144,7 @@ public class AgencyInfo extends Command {
             returned.add(embed.build());
         }
 
-        event.replyEmbeds(returned).setEphemeral(true).queue();
+        return returned;
     }
 
     @Override

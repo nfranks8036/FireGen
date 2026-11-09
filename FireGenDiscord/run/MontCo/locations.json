@@ -489,9 +489,9 @@
     "common_name": "Peddrew-Yates Residence Hall",
     "venue": "VIRGINIA TECH"
   },
-  "1330 PERRY ST": {
+  "1330 PERRY ST GARAGE": {
     "location": "1330 Perry St",
-    "common_name": "Perry Street Parking Deck",
+    "common_name": "Perry Street Parking Garage",
     "venue": "VIRGINIA TECH"
   },
   "170 DRILLFIELD DR": {
@@ -642,6 +642,21 @@
   "620 DRILLFIELD DR": {
     "location": "620 Drillfield Dr",
     "common_name": "Torgersen Hall",
+    "venue": "VIRGINIA TECH"
+  },
+  "1324 PERRY ST TRANSIT CENTER": {
+    "location": "1324 Perry St",
+    "common_name": "Transit Center",
+    "venue": "VIRGINIA TECH"
+  },
+  "1324 PERRY ST ORANGE": {
+    "location": "1324 Perry St",
+    "common_name": "Transit Center, Orange Loop",
+    "venue": "VIRGINIA TECH"
+  },
+  "1324 PERRY ST MAROON": {
+    "location": "1324 Perry St",
+    "common_name": "Transit Center, Maroon Loop",
     "venue": "VIRGINIA TECH"
   },
   "115 KENT ST": {

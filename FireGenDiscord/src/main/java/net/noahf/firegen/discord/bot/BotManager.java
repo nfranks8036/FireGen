@@ -17,6 +17,7 @@ import net.noahf.firegen.discord.actions.listeners.ModalDetector;
 import net.noahf.firegen.discord.actions.listeners.StringSelectDetector;
 import net.noahf.firegen.discord.bot.channels.ChannelManager;
 import net.noahf.firegen.discord.bot.channels.IncidentBoard;
+import net.noahf.firegen.discord.command.registered.Agencies;
 import net.noahf.firegen.discord.command.registered.UnitInfo;
 import net.noahf.firegen.discord.command.registered.Units;
 import net.noahf.firegen.discord.config.ConfigManager;
@@ -93,7 +94,8 @@ public class BotManager extends Manager<BotManager> {
                 .addEventListeners(
                         new ButtonDetector(), new ModalDetector(),
                         new StringSelectDetector(), new Units.UnitsRefreshButtonDetector(),
-                        new ContextMenuDetector(), new UnitInfo.UnitInfoDetailsListener()
+                        new ContextMenuDetector(), new UnitInfo.UnitInfoDetailsListener(),
+                        new Agencies.AgencyDetailsListener()
                 )
                 .build()
                 .awaitReady();

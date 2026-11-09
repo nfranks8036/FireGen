@@ -118,11 +118,6 @@ public class SetDetails extends Command {
             return;
         }
 
-        OptionMapping unitsOption = event.getOption("units");
-        if (unitsOption != null && CreateIncident.Helper.setUnits(incident, event, unitsOption) == CONTENT) {
-            return;
-        }
-
         OptionMapping timeOption = event.getOption("time");
         OptionMapping dateOption = event.getOption("date");
         if ((timeOption != null || dateOption != null) && CreateIncident.Helper.setDateTime(incident, event, dateOption, timeOption) == CONTENT) {
@@ -134,13 +129,18 @@ public class SetDetails extends Command {
             return;
         }
 
-        OptionMapping statusOption = event.getOption("status");
-        if (statusOption != null && CreateIncident.Helper.setStatus(incident, event, statusOption) == CONTENT) {
+        OptionMapping unitsOption = event.getOption("units");
+        if (unitsOption != null && CreateIncident.Helper.setUnits(incident, event, unitsOption) == CONTENT) {
             return;
         }
 
         OptionMapping publishedOption = event.getOption("published");
         if (publishedOption != null && CreateIncident.Helper.setPublished(incident, event, publishedOption) == CONTENT) {
+            return;
+        }
+
+        OptionMapping statusOption = event.getOption("status");
+        if (statusOption != null && CreateIncident.Helper.setStatus(incident, event, statusOption) == CONTENT) {
             return;
         }
 
