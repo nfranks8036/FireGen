@@ -861,7 +861,7 @@
   },
   "900 PLANTATION RD": {
     "location": "900 Plantation Rd",
-    "common_name": "Hilton Garden Inn Blacksburg",
+    "common_name": "Hilton Garden Inn",
     "venue": "TOWN OF BLACKSBURG"
   },
   "3700 S MAIN ST": {
@@ -902,6 +902,16 @@
   "902 PRICES FORK RD": {
     "location": "902 Prices Fork Rd",
     "common_name": "University Gateway Center",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "650 University City Blvd": {
+    "location": "650 University City Blvd",
+    "common_name": "Hyatt Place",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "413 EAST ROANOKE ST": {
+    "location": "413 Roanoke St E",
+    "common_name": "Lambda Chi Alpha",
     "venue": "TOWN OF BLACKSBURG"
   },
   "830 DAVIS ST": {
@@ -1239,7 +1249,7 @@
     "common_name": "Christ Episcopal Church",
     "venue": "TOWN OF BLACKSBURG"
   },
-  "201 ROANOKE ST E": {
+  "201 E ROANOKE ST": {
     "location": "201 Roanoke St E",
     "common_name": "Blacksburg Jewish Community",
     "venue": "TOWN OF BLACKSBURG"
@@ -1302,6 +1312,11 @@
   "102 NORTH MAIN ST": {
     "location": "102 North Main St",
     "common_name": "Sugar Magnolia",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1020 PLANTATION RD": {
+    "location": "1020 Plantation Rd",
+    "common_name": "Holiday Inn Express",
     "venue": "TOWN OF BLACKSBURG"
   },
   "105 ROANOKE ST E": {
@@ -1407,6 +1422,11 @@
   "301 SOUTH MAIN ST BARBER": {
     "location": "301 South Main St",
     "common_name": "Brownstone Barber Shop",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "608 UCB": {
+    "location": "608 University City Blvd",
+    "common_name": "Your Pie Pizza",
     "venue": "TOWN OF BLACKSBURG"
   },
   "201 SOUTH MAIN ST BOOKS": {
@@ -1534,6 +1554,21 @@
     "common_name": "7-Eleven",
     "venue": "TOWN OF BLACKSBURG"
   },
+  "1201 TOMS CREEK RD": {
+    "location": "1201 Toms Creek Rd",
+    "common_name": "7-Eleven",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1350 NORTH MAIN ST": {
+    "location": "1350 North Main St",
+    "common_name": "7-Eleven",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1704 South Main St": {
+    "location": "1704 South Main St",
+    "common_name": "Sheetz",
+    "venue": "TOWN OF BLACKSBURG"
+  },
   "118 SOUTH MAIN ST": {
     "location": "118 South Main St",
     "common_name": "Rally House",
@@ -1565,17 +1600,17 @@
     "venue": "TOWN OF BLACKSBURG"
   },
   "108 W ROANOKE ST": {
-    "location": "108 W Roanoke St",
+    "location": "108 Roanoke St W",
     "common_name": "Blacksburg Farmers Market",
     "venue": "TOWN OF BLACKSBURG"
   },
   "106 W ROANOKE ST": {
-    "location": "106 W Roanoke St",
+    "location": "106 Roanoke St W",
     "common_name": "High Angle Herbs",
     "venue": "TOWN OF BLACKSBURG"
   },
   "104 W ROANOKE ST": {
-    "location": "104 W Roanoke St",
+    "location": "104 Roanoke St W",
     "common_name": "Ella’s Studio",
     "venue": "TOWN OF BLACKSBURG"
   },
@@ -1607,6 +1642,16 @@
   "115 NORTH MAIN ST": {
     "location": "115 North Main St",
     "common_name": "Nice Dreams",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "115 COLLEGE AVE": {
+    "location": "115 College Ave",
+    "common_name": "Lofts at the Lyric",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "1575 THOMAS LN": {
+    "location": "1575 Thomas Ln",
+    "common_name": "Back to Nature Landscaping & Construction",
     "venue": "TOWN OF BLACKSBURG"
   },
   "117 NORTH MAIN ST": {
@@ -2032,6 +2077,21 @@
   "600 UNIVERSITY CITY BLVD": {
     "location": "600 University City Blvd",
     "common_name": "CVS",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "3620 SOUTH MAIN ST": {
+    "location": "3620 South Main St",
+    "common_name": "Exxon",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "401 PROGRESS ST NE": {
+    "location": "401 Progress St NE",
+    "common_name": "Sigma Nu & Theta Xi",
+    "venue": "TOWN OF BLACKSBURG"
+  },
+  "130 JACKSON ST NW": {
+    "location": "130 Jackson St NW",
+    "common_name": "Olaika Bar",
     "venue": "TOWN OF BLACKSBURG"
   },
 
