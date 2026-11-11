@@ -14,6 +14,8 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
 
     UnitType getType();
 
+    UnitStatus getStatus();
+
     int getNumber();
 
     String getShorthand();
@@ -23,8 +25,6 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
     String getFormatted();
 
     Object getAdditional();
-
-    Set<UnitAssignment> getAssignments();
 
     int ordinal();
 

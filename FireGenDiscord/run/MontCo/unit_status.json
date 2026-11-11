@@ -4,7 +4,8 @@
       "name": "AVAILABLE FOR CALLS",
       "short": "AVC",
       "emoji": "<:AVAILABLE FOR CALLS:1499196518475890818>",
-      "ansi": "WHITE"
+      "ansi": "WHITE",
+      "purpose": "AVAILABLE_FOR_CALLS"
     },
 
     {

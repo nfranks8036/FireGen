@@ -6,21 +6,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface AssignmentStatus extends AutofilledCharSequence, StringSelectors {
-
-    String getName();
-
-    String getShortName();
+public interface AssignmentStatus extends Status {
 
     int ordinal();
 
     @Nullable AssignmentPurpose getPurpose();
 
     List<Secondary> getSecondaries();
-
-    @Override
-    default List<String> asStringSelectors() {
-        return List.of(getName(), getShortName(), String.valueOf(ordinal()));
-    }
 
 }
