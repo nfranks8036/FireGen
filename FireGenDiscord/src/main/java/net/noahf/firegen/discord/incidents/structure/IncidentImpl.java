@@ -205,7 +205,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         }
 
         unitAssignment.assign(contributor, assignment, secondary);
-        ((UnitImpl)unit).assign(unitAssignment);
+        unit.assign(unitAssignment);
         this.refreshStatus();
     }
 

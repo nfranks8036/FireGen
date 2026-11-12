@@ -23,6 +23,8 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
 
     OperationalStatus getOperationalStatus();
 
+    void setOperationalStatus(OperationalStatus status);
+
     int getNumber();
 
     String getShorthand();

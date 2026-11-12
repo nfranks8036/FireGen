@@ -10,6 +10,7 @@ import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +52,7 @@ public class UnitAssignmentImpl implements UnitAssignment {
 
     @Override
     public AssignmentEvent getLatestAssignment() {
+        Log.warn("Assignments Length: " + assignments.size() + ", latest=" + assignments.getLast());
         return this.assignments.getLast();
     }
 
@@ -94,8 +96,16 @@ public class UnitAssignmentImpl implements UnitAssignment {
                 ;
     }
 
+    @SuppressWarnings("ConstantValue")
     @Override
     public int compareTo(@NotNull UnitAssignment o) {
+        if (o == null) {
+            throw new IllegalStateException("Cannot compare objects when one object is null.");
+        }
+
+        Log.info("--- Compare ----");
+        Log.info("Me: " + this + " (latest=" + this.getLatestAssignment() + ", count=" + assignments.size() + ")");
+        Log.info("Other: " + o + " (latest=" + o.getLatestAssignment() + ", count=" + o.getAssignments().size() + ")");
         return Comparator
                 .comparingInt((UnitAssignment ua) -> ua.getLatestAssignment().getStatus().ordinal())
                 .thenComparingInt(ua -> ua.getUnit().ordinal())

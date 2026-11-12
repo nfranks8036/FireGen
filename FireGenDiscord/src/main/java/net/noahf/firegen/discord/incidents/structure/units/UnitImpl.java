@@ -1,9 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -30,7 +27,12 @@ public class UnitImpl implements Unit {
     private final @Getter(value = AccessLevel.NONE) String formatted;
     private @Nullable UnitAssignment currentAssignment = null;
     private final Set<UnitAssignment> previousAssignments = new HashSet<>();
-    private OperationalStatus operationalStatus;
+    private @Setter OperationalStatus operationalStatus = new OperationalStatus() {
+        @Override public int ordinal() { return -1; }
+        @Override public @Nullable OperationalStatusPurpose getPurpose() { return null; }
+        @Override public String getName() { return "NO STATUS"; }
+        @Override public String getShortName() { return "NULL"; }
+    };
     private final transient Emoji emoji;
     private final Agency agency;
     private final UnitType type;
