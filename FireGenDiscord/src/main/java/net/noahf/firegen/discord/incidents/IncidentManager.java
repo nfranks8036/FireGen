@@ -30,7 +30,6 @@ public class IncidentManager {
     private final @Getter ConfigManager config;
 
     @Getter final Set<UnitAssignment> assignments = new LinkedHashSet<>();
-    //</editor-fold>
 
     public IncidentManager(ConfigManager config) {
         this.config = config;

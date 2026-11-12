@@ -155,8 +155,6 @@ public class UnitInfo extends Command {
     }
 
     private static void showUnitOverallStatus(IReplyCallback event, Guild guild, UnitImpl unit) {
-        Set<UnitAssignment> assignments = unit.getAssignments();
-
         List<MessageEmbed> returned = new ArrayList<>();
         List<MessageTopLevelComponent> components = new ArrayList<>();
 
@@ -194,7 +192,9 @@ public class UnitInfo extends Command {
                         .build()
         );
 
-        if (!assignments.isEmpty()) {
+        UnitAssignment unitAssignment = unit.getCurrentAssignment();
+        if (unitAssignment != null) {
+            Set<UnitAssignment> assignments = unit.getPreviousAssignments();
             EmbedBuilder incidentInformation = new EmbedBuilder()
                     .setColor(new Color(90, 90, 255))
                     .setTitle("Associated Incidents (" + assignments.size() + ")")

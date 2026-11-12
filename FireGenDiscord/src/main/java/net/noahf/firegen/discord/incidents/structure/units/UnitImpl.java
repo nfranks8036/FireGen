@@ -9,10 +9,12 @@ import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.IdGenerator;
+import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.config.files.ConfigOperationalStatuses;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -26,6 +28,9 @@ public class UnitImpl implements Unit {
     private final String shorthand;
     private final String longhand;
     private final @Getter(value = AccessLevel.NONE) String formatted;
+    private @Nullable UnitAssignment currentAssignment = null;
+    private final Set<UnitAssignment> previousAssignments = new HashSet<>();
+    private OperationalStatus operationalStatus;
     private final transient Emoji emoji;
     private final Agency agency;
     private final UnitType type;
@@ -35,8 +40,6 @@ public class UnitImpl implements Unit {
 
     private final boolean isPlaceholder;
     private final transient @Getter SelectOption selectOption;
-
-    private transient @Getter final Set<UnitAssignment> assignments = new LinkedHashSet<>();
 
     @Override
     @NotNull
@@ -49,6 +52,8 @@ public class UnitImpl implements Unit {
                 .add("id=" + id)
                 .add("type=" + type)
                 .add("number=" + number)
+                .add("assignment=" + currentAssignment)
+                .add("status=" + operationalStatus)
                 .add("shorthand='" + shorthand + "'")
                 .add("longhand='" + longhand + "'")
                 .add("formatted='" + formatted + "'")
@@ -57,7 +62,6 @@ public class UnitImpl implements Unit {
                 .add("ordinal=" + ordinal)
                 .add("isPlaceholder=" + isPlaceholder)
                 .add("selectOption=" + selectOption)
-                .add("assignments=" + assignments)
                 .toString();
     }
 
@@ -79,18 +83,21 @@ public class UnitImpl implements Unit {
     }
 
     @Override
-    public UnitStatus getStatus() {
-        return null;
-    }
-
-    @Override
     public String getFormatted() {
         return (this.emoji != null ? emoji.getFormatted() + " " : "") +
                 this.formatted;
     }
 
-    void addAssignment(UnitAssignment a) {
-        this.assignments.add(a);
+    public void assign(UnitAssignment assignment) {
+        this.currentAssignment = assignment;
+        this.previousAssignments.add(assignment);
+
+        OperationalStatusPurpose purpose = OperationalStatusPurpose.UNIT_ATTACHED_TO_INCIDENT;
+        if (this.currentAssignment == null) {
+            purpose = OperationalStatusPurpose.UNIT_AVAILABLE_FOR_CALLS;
+        }
+
+        this.operationalStatus = Main.config.get(ConfigOperationalStatuses.class).purposeIs(purpose);
     }
 
     public String getFormattedStatus(AssignmentEvent assignment) {
