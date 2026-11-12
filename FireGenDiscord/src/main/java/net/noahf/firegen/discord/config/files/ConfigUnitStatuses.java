@@ -30,7 +30,13 @@ public class ConfigUnitStatuses extends MultiObjectConfiguration<UnitStatus> {
 
     @Override
     public void importObject(JsonElement element) {
-        JsonObject root = element.getAsJsonObject();
+        JsonArray array = element(element.getAsJsonObject(), "statuses", false).getAsJsonArray();
+        for (JsonElement e : array.asList()) {
+            JsonObject obj = e.getAsJsonObject();
+
+            UnitStatus status =
+        }
+
         log("Imported assignment statuses " + String.join(", ", this.get()));
     }
 }
