@@ -53,6 +53,7 @@ public class ConfigManager extends Manager<ConfigManager> {
                     .venuesFile(asStr(files, "venues"))
                     .municipalityFile(asStr(files, "municipality"))
                     .assignmentStatusFile(asStr(files, "assignment_statuses"))
+                    .unitStatusFile(asStr(files, "unit_statuses"))
                     .incidentStatusFile(asStr(files, "incident_statuses"))
                     .locationPresetsFile(asStr(files, "locations_presets"))
                     .radioChannelsFile(asStr(files, "radio_channels"))

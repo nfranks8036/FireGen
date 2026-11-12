@@ -79,6 +79,11 @@ public class UnitImpl implements Unit {
     }
 
     @Override
+    public UnitStatus getStatus() {
+        return null;
+    }
+
+    @Override
     public String getFormatted() {
         return (this.emoji != null ? emoji.getFormatted() + " " : "") +
                 this.formatted;

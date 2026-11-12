@@ -12,6 +12,7 @@
     "venues": "venues.json",
     "municipality": "municipality.json",
     "assignment_statuses": "assignments.json",
+    "unit_statuses": "unit_statuses.json",
     "incident_statuses": "incident_status.json",
     "locations_presets": "locations.json",
     "radio_channels": "radio_channels.json",
