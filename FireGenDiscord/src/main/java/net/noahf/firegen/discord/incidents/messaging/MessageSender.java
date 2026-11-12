@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter(value = AccessLevel.PROTECTED)
 public abstract class MessageSender {
@@ -82,4 +83,14 @@ public abstract class MessageSender {
         };
     }
 
+    @Override
+    public String toString() {
+        return "MessageSender{" +
+                "incident=" + incident +
+                ", channels=" + channels.stream().map(t -> t.getName() + " @ " + t.getId()).collect(Collectors.joining(", ")) +
+                ", messages=" + messages.stream().map(m -> m.getId()).collect(Collectors.joining(", ")) +
+                ", components=" + components.stream().map(c -> c.getClass().getCanonicalName() + " w/ " + c.getType().toString()).collect(Collectors.joining(", ")) +
+                ", sendRequested=" + sendRequested +
+                '}';
+    }
 }

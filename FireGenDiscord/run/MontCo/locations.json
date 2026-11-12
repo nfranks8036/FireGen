@@ -2135,5 +2135,11 @@
     "location": "4021 Prices Fork Rd",
     "common_name": "Prices Fork Elementary School",
     "venue": "MONTGOMERY COUNTY"
+  },
+
+  "FIREWATCH TEST LOCATION": {
+    "location": "123 Test St",
+    "common_name": "Firewatch at Virginia Tech",
+    "venue": "VIRGINIA TECH"
   }
 }

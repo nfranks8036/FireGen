@@ -28,4 +28,10 @@ public class Log {
         LOGGER.error(message, throwable);
     }
 
+    public static void debug(Class<?> origin, String message) {
+        LOGGER.debug("[" + origin.getCanonicalName() + "] " + message);
+    }
+
+    public static void debug(Class<?> origin, String message, Throwable throwable) { LOGGER.debug("[" + origin.getCanonicalName() + "] " + message, throwable); }
+
 }

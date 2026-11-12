@@ -8,6 +8,7 @@ import net.noahf.firegen.api.utilities.StringSelectors;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class IncidentMessagingService implements StringSelectors {
     public void sendAll() {
         for (MessageSender sender : this.messages) {
             sender.requestSend();
+            Log.debug(this.getClass(), "Request send: " + sender.toString());
         }
         Main.bot.refreshIncidentBoard();
     }

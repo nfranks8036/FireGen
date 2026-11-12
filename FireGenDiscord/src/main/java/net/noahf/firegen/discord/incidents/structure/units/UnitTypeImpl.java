@@ -13,6 +13,9 @@ public class UnitTypeImpl implements UnitType {
     public static final UnitType CUSTOM = new UnitTypeImpl(
             "$CUSTOM", null, null, null, "No description provided."
     );
+    public static final UnitType GENERATED = new UnitTypeImpl(
+            "$GENERATED", null, null, null, "No description provided, this unit was generated on the fly by a contributor."
+    );
     public static final UnitType AGENCY = new UnitTypeImpl(
             "$AGENCY", null, null, null, "An agency placeholder. No description provided."
     );

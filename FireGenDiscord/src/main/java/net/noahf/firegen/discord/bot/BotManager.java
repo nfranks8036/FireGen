@@ -63,6 +63,7 @@ public class BotManager extends Manager<BotManager> {
         Properties prop = (Properties) this.properties;
         Log.info("FireGen environment: " + System.getProperty("os.name") + " (v" + System.getProperty("os.version") + ") and Java " + System.getProperty("java.version") + " (" + System.getProperty("java.vendor") + ")");
         Log.info("FireGen compiled on: " + prop.getProperty("builderOs") + " (v" + prop.getProperty("builderVersion") + ") and Java " + prop.getProperty("currentJavaVersion") + " (" + prop.getProperty("currentJavaVendor") + ")");
+        Log.debug(this.getClass(), "*** FireGen enabled with debug mode enabled. ***");
 
         try {
             token = getExternalInfo("TOKEN");

@@ -40,6 +40,14 @@ public class Units extends Command {
     @Override
     public void command(SlashCommandInteractionEvent event) {
         MessageGenericData reply = createReply(event.getMember());
+        if (reply == null) {
+            // sometimes requires retrying. if it doesn't work this time then it really is null
+            reply = createReply(event.getMember());
+        }
+        if (reply == null) {
+            DiscordMessages.error(event, "An unknown error occurred when generating this reply. Try the command again or report it to staff. (reply==null, retry=2)");
+            return;
+        }
         event.reply(reply.asCreate())
                 .setEphemeral(true)
                 .setComponents(

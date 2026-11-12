@@ -78,6 +78,8 @@ public class AdminMessageSender extends MessageSender {
             return;
         }
 
+        Log.debug(this.getClass(), "Sending initial Admin message");
+
         BotManager bot = Main.bot;
 
         // send a starting message to the admin channels, this will be quickly changed by the following edit THOUGH

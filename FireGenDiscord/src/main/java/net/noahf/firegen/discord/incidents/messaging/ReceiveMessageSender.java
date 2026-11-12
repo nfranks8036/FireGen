@@ -33,6 +33,8 @@ import java.util.stream.Collectors;
 
 public class ReceiveMessageSender extends MessageSender {
 
+    private long alreadySendingInitial = -1L;
+
     public ReceiveMessageSender(IncidentMessagingService service, IncidentImpl incident) {
         super(service, incident);
 
@@ -45,12 +47,22 @@ public class ReceiveMessageSender extends MessageSender {
     @Override
     public void sendInitial() {
         if (super.getIncident().getPublished() != IncidentPublishedStatus.PUBLISHED) {
+            Log.debug(this.getClass(), "Incident is not PUBLISHED, ignoring this sendInitial request.");
             return;
         }
 
         if (!super.getMessages().isEmpty()) {
+            Log.debug(this.getClass(), "Messages is NOT empty, ignoring this sendInitial request.");
             return;
         }
+
+        if (System.currentTimeMillis() - this.alreadySendingInitial < 10_000L) {
+            Log.debug(this.getClass(), "Potentially already sending a receive message (current=" + System.currentTimeMillis() + ", started=" + this.alreadySendingInitial + ", diff=" + (System.currentTimeMillis()-this.alreadySendingInitial) + ")");
+            return;
+        }
+
+        Log.debug(this.getClass(), "Sending initial Receive message");
+        this.alreadySendingInitial = System.currentTimeMillis();
 
         BotManager bot = Main.bot;
 
@@ -97,6 +109,8 @@ public class ReceiveMessageSender extends MessageSender {
                         ": " + exception, exception);
             }
         }
+
+        this.alreadySendingInitial = -1L;
     }
 
     @Override

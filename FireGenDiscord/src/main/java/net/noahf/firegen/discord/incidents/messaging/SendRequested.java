@@ -36,6 +36,10 @@ public class SendRequested {
         this.thread.interrupt();
     }
 
+    public boolean hasRequestedSend() {
+        return (System.currentTimeMillis() < this.sendAt);
+    }
+
     @SuppressWarnings("BusyWait")
     private Thread generateThread() {
         return new Thread(() -> {
@@ -57,4 +61,8 @@ public class SendRequested {
         });
     }
 
+    @Override
+    public String toString() {
+        return "SendRequested{send=" + this.hasRequestedSend() + ", at=" + this.sendAt + ", consumed=" + this.consumed + "}";
+    }
 }

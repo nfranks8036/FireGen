@@ -390,7 +390,7 @@ public class CreateIncident extends Command {
                         }
                         UnitImpl custom = new UnitImpl(
                                 shorthand, longhand.toUpperCase(), formatted,
-                                emoji, agency, UnitTypeImpl.CUSTOM, Integer.MIN_VALUE,
+                                emoji, agency, UnitTypeImpl.GENERATED, Integer.MIN_VALUE,
                                 ((AgencyImpl)agency).getStartUnitOrdinal(), null, false,
                                 SelectOption.of(longhand.toUpperCase(), shorthand)
                                         .withEmoji(emoji)

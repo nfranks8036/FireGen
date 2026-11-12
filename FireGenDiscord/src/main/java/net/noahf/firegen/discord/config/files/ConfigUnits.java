@@ -107,7 +107,6 @@ public class ConfigUnits extends MultiObjectConfiguration<Unit> {
                 throw new IllegalArgumentException("Entered 'type' field but type is not valid \"" + typeStr + "\". Valid fields are: " + types.get());
             }
 
-
             JsonElement numberElement = element(unitObj, "number", true);
             int number = Integer.MIN_VALUE;
             if (numberElement != null) {
