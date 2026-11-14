@@ -209,7 +209,7 @@ public class UnitInfo extends Command {
             Map<AssignmentStatus, Integer> lengthThusFar = new HashMap<>();
             final int MAX_LENGTH = MessageEmbed.VALUE_MAX_LENGTH;
 
-            for (UnitAssignment assignment : assignments.stream().sorted().toList()) {
+            for (UnitAssignment assignment : assignments.stream().filter(Objects::nonNull).sorted().toList()) {
                 IncidentImpl incident = (IncidentImpl) assignment.getIncident();
                 AssignmentStatusImpl status = (AssignmentStatusImpl) assignment.getLatestAssignment().getStatus();
 
