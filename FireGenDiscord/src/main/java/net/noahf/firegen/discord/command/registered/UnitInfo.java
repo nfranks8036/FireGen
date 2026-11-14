@@ -182,7 +182,7 @@ public class UnitInfo extends Command {
                         .setColor(new Color(255, 90, 90))
                         .setAuthor("Unit View")
                         .setTitle(unit.getLonghand())
-                        .addField("Emoji", unit.getEmoji().getFormatted() + " (`:" + unit.getEmoji().getName() + ":`)", true)
+                        .addField("Emoji", unit.getEmoji() != null ? unit.getEmoji().getFormatted() + " (`:" + unit.getEmoji().getName() + ":`)" : "None", true)
                         .addField("Order", "#" + unit.ordinal(), true)
                         .addField("Unit Type (#)", unitType, true)
                         .addField("Names",
