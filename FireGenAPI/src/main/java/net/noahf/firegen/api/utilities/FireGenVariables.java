@@ -2,8 +2,6 @@ package net.noahf.firegen.api.utilities;
 
 import lombok.*;
 import lombok.experimental.Accessors;
-import net.noahf.firegen.api.incidents.location.LocationField;
-import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTagQualifierList;
@@ -39,7 +37,7 @@ public class FireGenVariables {
             this.venuesFile = "venues.json";
             this.municipalityFile = "municipality.json";
             this.assignmentStatusFile = "assignments.json";
-            this.unitStatusFile = "unit_status.json";
+            this.operationalStatusFile = "unit_status.json";
             this.incidentStatusFile = "incident_status.json";
             this.locationPresetsFile = "locations.json";
             this.radioChannelsFile = "radio_channels.json";
@@ -86,7 +84,7 @@ public class FireGenVariables {
     private String venuesFile;
     private String municipalityFile;
     private String assignmentStatusFile;
-    private String unitStatusFile;
+    private String operationalStatusFile;
     private String incidentStatusFile;
     private String locationPresetsFile;
     private String radioChannelsFile;

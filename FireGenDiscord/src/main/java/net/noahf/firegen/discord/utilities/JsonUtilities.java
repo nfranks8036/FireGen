@@ -8,6 +8,7 @@ import net.noahf.firegen.discord.bot.BotManager;
 
 import java.io.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class JsonUtilities {
 
@@ -60,6 +61,18 @@ public class JsonUtilities {
         return element.getAsString();
     }
 
+    public static <R> R element(JsonObject object, String key, boolean optional, Function<JsonElement, R> function) {
+        JsonElement element = element(object, key, optional);
+        if (optional && element == null) {
+            return null;
+        }
+        return function.apply(element);
+    }
+
+    public static <R> R elementStr(JsonObject object, String key, boolean optional, Function<String, R> function) {
+        String string = asStr(object, key, optional);
+        return function.apply(string);
+    }
 
     public static JsonElement element(JsonObject object, String key) {
         return JsonUtilities.element(object, key, false);

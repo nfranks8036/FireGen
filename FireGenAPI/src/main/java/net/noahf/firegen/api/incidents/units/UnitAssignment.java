@@ -21,4 +21,6 @@ public interface UnitAssignment extends AutofilledCharSequence, Comparable<UnitA
 
     void assign(Contributor<?> contributor, AssignmentStatus newAssignment, @Nullable Secondary secondary);
 
+    void clear(Contributor<?> contributor);
+
 }

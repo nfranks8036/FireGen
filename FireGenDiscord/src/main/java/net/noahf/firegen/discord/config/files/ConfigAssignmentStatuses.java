@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.api.incidents.units.AssignmentPurpose;
+import net.noahf.firegen.api.incidents.units.AssignmentStatusPurpose;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.utilities.FireGenVariables;
@@ -22,6 +22,8 @@ import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
 import static net.noahf.firegen.discord.utilities.JsonUtilities.element;
 
 public class ConfigAssignmentStatuses extends MultiObjectConfiguration<AssignmentStatus> {
+
+    private final Map<AssignmentStatusPurpose, AssignmentStatus> purposeToStatus = new HashMap<>();
 
     public ConfigAssignmentStatuses(FireGenVariables vars) {
         super(vars, AssignmentStatus.class, vars.municipality() + "/" + vars.assignmentStatusFile());
@@ -67,7 +69,7 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
             String ansiStr = asStr(object, "ansi");
             AnsiColor ansi = AnsiColor.valueOf(ansiStr.toUpperCase());
             JsonElement purposeElement = element(object, "purpose", true);
-            AssignmentPurpose purpose = purposeElement != null ? AssignmentPurpose.valueOf(purposeElement.getAsString()) : null;
+            AssignmentStatusPurpose purpose = purposeElement != null ? AssignmentStatusPurpose.valueOf(purposeElement.getAsString()) : null;
 
             JsonElement secondaryTagElement = element(object, "tag", true);
             List<Secondary> secondaries = secondaryTagElement != null ?
@@ -99,12 +101,19 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
         return def;
     }
 
-    public AssignmentStatus getFirstFor(AssignmentPurpose purpose) {
+    public AssignmentStatus purposeIs(AssignmentStatusPurpose purpose) {
+        AssignmentStatus storedStatus = purposeToStatus.get(purpose);
+        if (storedStatus != null) {
+            return storedStatus;
+        }
+
         for (AssignmentStatus status : this.get()) {
             if (status.getPurpose() == purpose) {
+                purposeToStatus.put(purpose, status);
                 return status;
             }
         }
+
         throw new IllegalStateException("No assignment statuses were imported with the purpose of '" + purpose.name() + "'");
     }
 }

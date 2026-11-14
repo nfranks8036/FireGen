@@ -192,6 +192,12 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     @Override
     public void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus assignment, @Nullable Secondary secondary) {
+        if (unit.getCurrentAssignment() != null && unit.getCurrentAssignment().getIncident() != this) {
+            throw new IllegalStateException(
+                    "Unit " + unit.getLonghand() + " is already attached to the incident " + unit.getCurrentAssignment().getIncident().toString()
+            );
+        }
+
         UnitAssignment unitAssignment = this.getUnitAssignmentFor(unit);
         if (unitAssignment == null) {
             unitAssignment = new UnitAssignmentImpl(this, unit, contributor);
@@ -199,6 +205,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         }
 
         unitAssignment.assign(contributor, assignment, secondary);
+        unit.assign(unitAssignment);
         this.refreshStatus();
     }
 
@@ -223,17 +230,13 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 .anyMatch(u -> u.getUnit().equals(unit));
     }
 
-    public void removeUnit(Unit unit) {
-        this.removeUnit(unit, true);
-    }
-
-    private void removeUnit(Unit unit, boolean fromAll) {
-        if (fromAll) {
-            Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit) && ua.getIncident().equals(this));
+    public void removeUnit(Contributor<?> contributor, Unit unit) {
+        if (unit.getCurrentAssignment() == null || unit.getCurrentAssignment().getIncident() != this) {
+            return;
         }
 
-        ((UnitImpl)unit).getAssignments().removeIf(ua -> ua.getIncident().equals(this));
-
+        unit.getCurrentAssignment().getAssignments().clear();
+        Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit) && ua.getIncident().equals(this));
         this.unitAssignments.removeIf(a -> a.getUnit().equals(unit));
         this.refreshStatus();
     }
@@ -359,7 +362,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
         Log.warn("Incident " + this.toString() + " has closed due to its staleness!");
 
-        AssignmentStatus clear = Main.config.get(ConfigAssignmentStatuses.class).getFirstFor(AssignmentPurpose.UNIT_CLEAR);
+        AssignmentStatus clear = Main.config.get(ConfigAssignmentStatuses.class).purposeIs(AssignmentStatusPurpose.UNIT_CLEAR);
         String recreateEvents = this.getUnitAssignments().stream()
                 .filter(a -> !a.getLatestAssignment().getStatus().equals(clear))
                 .map(a -> {

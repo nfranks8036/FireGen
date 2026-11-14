@@ -4,6 +4,7 @@ import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.api.utilities.Descriptor;
 import net.noahf.firegen.api.utilities.StringSelectors;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -14,7 +15,15 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
 
     UnitType getType();
 
-    UnitStatus getStatus();
+    @Nullable UnitAssignment getCurrentAssignment();
+
+    Set<UnitAssignment> getPreviousAssignments();
+
+    void assign(UnitAssignment assignment);
+
+    OperationalStatus getOperationalStatus();
+
+    void setOperationalStatus(OperationalStatus status);
 
     int getNumber();
 

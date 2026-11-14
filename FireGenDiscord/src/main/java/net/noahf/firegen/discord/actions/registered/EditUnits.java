@@ -282,7 +282,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         List<Unit> unmodifiedList = new ArrayList<>(units);
         for (Unit unit : unmodifiedList) {
             if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {
-                incident.removeUnit(unit);
+                incident.removeUnit(user, unit);
                 continue;
             }
 

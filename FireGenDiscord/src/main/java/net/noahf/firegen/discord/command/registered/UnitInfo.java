@@ -155,8 +155,6 @@ public class UnitInfo extends Command {
     }
 
     private static void showUnitOverallStatus(IReplyCallback event, Guild guild, UnitImpl unit) {
-        Set<UnitAssignment> assignments = unit.getAssignments();
-
         List<MessageEmbed> returned = new ArrayList<>();
         List<MessageTopLevelComponent> components = new ArrayList<>();
 
@@ -190,11 +188,17 @@ public class UnitInfo extends Command {
                                         "Long: `" + unit.getLonghand() + "`\n" +
                                         "Formatted: " + unit.getFormatted()
                                 , false)
+                        .addField("Current Status",
+                                (unit.getCurrentAssignment() == null ? unit.getOperationalStatus().getName() : unit.getCurrentAssignment().getLatestAssignment().getStatus().getName()),
+                                true
+                                )
                         .addField("Parent Agency", unit.getAgency().getTitle(), false)
                         .build()
         );
 
-        if (!assignments.isEmpty()) {
+        UnitAssignment unitAssignment = unit.getCurrentAssignment();
+        if (unitAssignment != null) {
+            Set<UnitAssignment> assignments = unit.getPreviousAssignments();
             EmbedBuilder incidentInformation = new EmbedBuilder()
                     .setColor(new Color(90, 90, 255))
                     .setTitle("Associated Incidents (" + assignments.size() + ")")
@@ -211,6 +215,18 @@ public class UnitInfo extends Command {
 
                 if (Range.of(MAX_LENGTH-100, MAX_LENGTH+100).contains(lengthThusFar.getOrDefault(status, 0))) {
                     break;
+                }
+
+                options.add(
+                        SelectOption.of(DiscordMessages.truncate(incident.getFormattedId() + ": " + incident.getType().getSelectedName()
+                                                + (incident.getLocation().isSet() ? " @ " + incident.getLocation().format() : ""), SelectOption.LABEL_MAX_LENGTH, "..."),
+                                        createId(event.getUser(), "unitselectinfo", String.valueOf(incident.getId()), String.valueOf(unit.getShorthand()))
+                                )
+                                .withEmoji(status.getEmoji())
+                );
+
+                if (unit.getCurrentAssignment() != null && unit.getCurrentAssignment().equals(assignment)) {
+                    continue;
                 }
 
                 ReceiveMessageSender sender = incident.getMessagingService().get(ReceiveMessageSender.class);
@@ -237,14 +253,6 @@ public class UnitInfo extends Command {
 
                 int valueLength = valueString.length();
                 lengthThusFar.merge(status, valueLength, Integer::sum);
-
-                options.add(
-                        SelectOption.of(DiscordMessages.truncate(incident.getFormattedId() + ": " + incident.getType().getSelectedName()
-                                                + (incident.getLocation().isSet() ? " @ " + incident.getLocation().format() : ""), SelectOption.LABEL_MAX_LENGTH, "..."),
-                                createId(event.getUser(), "unitselectinfo", String.valueOf(incident.getId()), String.valueOf(unit.getShorthand()))
-                        )
-                                .withEmoji(status.getEmoji())
-                );
             }
 
             for (Map.Entry<String, String> entry : statuses.entrySet()) {
@@ -253,11 +261,13 @@ public class UnitInfo extends Command {
             }
 
             returned.add(incidentInformation.build());
-            components.add(ActionRow.of(
-                    StringSelectMenu.create(createId(event.getUser(), "unitselectinfo"))
-                            .addOptions(options)
-                            .build()
-            ));
+            if (!options.isEmpty()) {
+                components.add(ActionRow.of(
+                        StringSelectMenu.create(createId(event.getUser(), "unitselectinfo"))
+                                .addOptions(options)
+                                .build()
+                ));
+            }
         }
 //
 //        returned.add(new EmbedBuilder()

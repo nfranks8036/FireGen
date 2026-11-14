@@ -2,10 +2,18 @@
   "statuses": [
     {
       "name": "AVAILABLE FOR CALLS",
-      "short": "AVC",
+      "short": "AFC",
       "emoji": "<:AVAILABLE FOR CALLS:1499196518475890818>",
       "ansi": "WHITE",
-      "purpose": "AVAILABLE_FOR_CALLS"
+      "purpose": "UNIT_AVAILABLE_FOR_CALLS"
+    },
+
+    {
+      "name": "ASSIGNED TO CALL",
+      "short": "ATC",
+      "emoji": null,
+      "ansi": "WHITE",
+      "purpose": "UNIT_ATTACHED_TO_INCIDENT"
     },
 
     {
@@ -13,6 +21,13 @@
       "short": "OOS",
       "emoji": "<:OUT_OF_SERVICE:1499196518475890818>",
       "ansi": "BACKGROUND_WHITE"
+    },
+
+    {
+      "name": "BUSY",
+      "short": "BSY",
+      "emoji": null,
+      "ansi": "BACKGROUND_RED"
     },
 
 

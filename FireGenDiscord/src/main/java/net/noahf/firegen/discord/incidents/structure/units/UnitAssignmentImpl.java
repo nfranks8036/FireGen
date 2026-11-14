@@ -9,10 +9,13 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
+import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +52,7 @@ public class UnitAssignmentImpl implements UnitAssignment {
 
     @Override
     public AssignmentEvent getLatestAssignment() {
+        Log.warn("Assignments Length: " + assignments.size() + ", latest=" + assignments.getLast());
         return this.assignments.getLast();
     }
 
@@ -56,11 +60,31 @@ public class UnitAssignmentImpl implements UnitAssignment {
         this.assign(new AssignmentEventImpl(LocalDateTime.now(), newAssignment, contributor, secondary));
     }
 
+    @Override
+    public void clear(Contributor<?> contributor) {
+        this.assign(
+                contributor,
+                Main.config.get(ConfigAssignmentStatuses.class).purposeIs(AssignmentStatusPurpose.UNIT_CLEAR),
+                null
+        );
+    }
+
     public void assign(AssignmentEvent newEvent) {
-        ((UnitImpl)unit).addAssignment(this);
-        Main.incidents.getAssignments().add(this);
+        if (unit.getCurrentAssignment() == null) {
+            unit.assign(this);
+            Main.incidents.getAssignments().add(this);
+        }
+
+        if (unit.getCurrentAssignment() != this) {
+            throw new IllegalStateException("Unit " + unit.getLonghand() + " is already assigned to the incident " + unit.getCurrentAssignment().getIncident().toString());
+        }
 
         this.assignments.add(newEvent);
+
+        AssignmentStatusPurpose purpose = newEvent.getStatus().getPurpose();
+        if (purpose != null && purpose.isTerminalState()) {
+            this.unit.assign(null);
+        }
     }
 
     @Override
@@ -72,8 +96,16 @@ public class UnitAssignmentImpl implements UnitAssignment {
                 ;
     }
 
+    @SuppressWarnings("ConstantValue")
     @Override
     public int compareTo(@NotNull UnitAssignment o) {
+        if (o == null) {
+            throw new IllegalStateException("Cannot compare objects when one object is null.");
+        }
+
+        Log.info("--- Compare ----");
+        Log.info("Me: " + this + " (latest=" + this.getLatestAssignment() + ", count=" + assignments.size() + ")");
+        Log.info("Other: " + o + " (latest=" + o.getLatestAssignment() + ", count=" + o.getAssignments().size() + ")");
         return Comparator
                 .comparingInt((UnitAssignment ua) -> ua.getLatestAssignment().getStatus().ordinal())
                 .thenComparingInt(ua -> ua.getUnit().ordinal())
