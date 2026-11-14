@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.incidents.units.Unit;
@@ -23,12 +22,10 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
-import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AssignUnit extends Command {
 
@@ -128,25 +125,7 @@ public class AssignUnit extends Command {
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         return switch (focused.getName()) {
-            case "unit" -> {
-                String arg = focused.getValue();
-                int indexOf = arg.lastIndexOf(',');
-                String prior = indexOf != -1 ? arg.substring(0, indexOf) : "";
-                String after = indexOf != -1 ? arg.substring(indexOf + 1) : "";
-
-                List<Unit> units = Main.config.get(ConfigUnits.class).get();
-                List<String> returned = Stream.concat(
-                                units.stream().map(Unit::getLonghand),
-                                units.stream().map(Unit::getShorthand)
-                        )
-                        .toList();
-
-                returned = Main.commands.autocompleteSearch(indexOf != -1 ? after : arg, returned);
-
-                yield returned.stream().map(s ->
-                        (indexOf != -1 ?  prior + "," : "")
-                        + s).toList();
-            }
+            case "unit" -> SetUnitStatus.autocompleteUnits(focused.getValue());
             case "status" -> {
                 List<AssignmentStatus> statuses = Main.config.get(ConfigAssignmentStatuses.class).get();
 

@@ -291,7 +291,7 @@ public class UnitInfo extends Command {
             return Main.config.get(ConfigUnits.class).get().stream().map(u -> (UnitImpl) u).filter(u -> !u.isPlaceholder()).map(Unit::getLonghand).toList();
         }
         if (focused.getName().equalsIgnoreCase("incident")) {
-            if (lastUpdated > System.currentTimeMillis()) {
+            if (lastUpdated < System.currentTimeMillis()) {
                 incidents.clear();
                 lastUpdated = System.currentTimeMillis() + (20 * 1000L);
                 incidents.addAll(

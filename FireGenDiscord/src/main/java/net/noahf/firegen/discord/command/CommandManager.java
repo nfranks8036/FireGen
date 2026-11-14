@@ -227,7 +227,7 @@ public class CommandManager extends ListenerAdapter {
             ).queue();
 
         } catch (Exception exception) {
-            Log.error("Autocomplete failed for '" + commandString + "': " + exception, exception);
+            Log.error("Autocomplete failed for '" + commandString + "': " + exception);
         }
     }
 

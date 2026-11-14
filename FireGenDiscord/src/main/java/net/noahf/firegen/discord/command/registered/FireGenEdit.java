@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.discord.Main;
@@ -32,10 +31,10 @@ import static net.noahf.firegen.discord.command.registered.CreateIncident.Helper
 import static net.noahf.firegen.discord.command.registered.CreateIncident.TIME_CREATE_FORMAT;
 import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
 
-public class SetDetails extends Command {
+public class FireGenEdit extends Command {
 
-    public SetDetails() {
-        super("set-details", "Sets specific details of an incident. Press 'Edit Mode' on an incident to start editing.",
+    public FireGenEdit() {
+        super("firegen-edit", "Sets details of the FireGen environment. Press 'Edit Mode' on an incident to start editing.",
                 CommandFlags.include()
                         .options(new OptionData[]{
                                 new OptionData(OptionType.STRING, "units", "The new units for this incident. Note this will only affect inputted agencies.", false, true),
@@ -56,7 +55,7 @@ public class SetDetails extends Command {
                                 new OptionData(OptionType.STRING, "status", "The status of the incident, whether it's active, closed, or pending.", false, true),
 
                         })
-                        .aliases(new String[]{"sd"})
+                        .aliases(new String[]{"sd", "fge"})
                         .disableAutocompleteAutoFilter(true)
                         .finish());
     }
@@ -151,7 +150,7 @@ public class SetDetails extends Command {
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         return switch (focused.getName()) {
             case "type" -> Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).asAutocompleteStrings());
-            case "location" -> CreateIncident.Helper.autocompleteLocation(focused);
+            case "location" -> CreateIncident.Helper.autocompleteLocation(focused, true);
             case "units" -> Main.commands.autocompleteSearch(focused.getValue(), CreateIncident.Helper.autocompleteUnits(focused));
             case "published" -> List.of("True", "False");
             case "status" -> Arrays.stream(IncidentStatus.values()).map(IncidentStatus::name).toList();

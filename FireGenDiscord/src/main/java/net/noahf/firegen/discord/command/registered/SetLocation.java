@@ -18,6 +18,7 @@ import net.noahf.firegen.discord.actions.registered.EditMode;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
+import net.noahf.firegen.discord.config.files.ConfigLocationPresets;
 import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -54,6 +55,10 @@ public class SetLocation extends Command {
             subs.add(thisSub);
         }
 
+        subs.add(new SubcommandData("preset", "Sets the location to an already-saved location.")
+                .addOption(OptionType.STRING, "location", "The location to set.", true, true)
+        );
+
         data = subs.toArray(SubcommandData[]::new);
     }
 
@@ -61,6 +66,7 @@ public class SetLocation extends Command {
         super("set-location", "Sets the location of the current incident to a specific spot.",
                 CommandFlags.include()
                         .subcommandData(data)
+                        .aliases(new String[]{"sl"})
                         .finish()
                 );
     }
@@ -82,40 +88,68 @@ public class SetLocation extends Command {
             return;
         }
 
-        String locationTypeStr = event.getSubcommandName();
-        LocationType locationType = LocationType.values().stream()
-                .filter(t -> t.getShortName().equalsIgnoreCase(locationTypeStr))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Expected value location type, got '" + locationTypeStr + "'"));
+        if (event.getSubcommandName() == null) {
+            DiscordMessages.error(event, "Expected a valid subcommand, got 'null'");
+            return;
+        }
 
-        OptionMapping venueMapping = event.getOption(LocationField.VENUE.getId());
-        @Nullable LocationVenue venue = null;
-        if (venueMapping != null) {
-            venue = Main.config.get(ConfigVenues.class).fromName(venueMapping.getAsString());
+        IncidentLocation location;
+        MessageStatus status = MessageStatus.NONE;
+        if (event.getSubcommandName().equalsIgnoreCase("preset")) {
 
-            if (venue == null) {
-                DiscordMessages.error(event, "That venue does not exist: " + venueMapping.getAsString());
+            ConfigLocationPresets presets = Main.config.get(ConfigLocationPresets.class);
+            OptionMapping presetToUseMapping = event.getOption("location");
+
+            if (presetToUseMapping == null) {
+                DiscordMessages.error(event, "Expected a valid 'location' argument, found none.");
                 return;
             }
-        }
 
-        OptionMapping commonNameMapping = event.getOption(LocationField.COMMON_NAME.getId());
-        String commonName = null;
-        if (commonNameMapping != null) {
-            commonName = commonNameMapping.getAsString();
-        }
+            location = presets.fromAnyName(presetToUseMapping.getAsString());
 
-        List<String> data = new LinkedList<>();
-        for (OptionMapping mapping : event.getOptions()) {
-            if (List.of(LocationField.VENUE.getId(), LocationField.COMMON_NAME.getId()).contains(mapping.getName())) {
-                continue;
+            if (location == null) {
+                DiscordMessages.error(event, "That is not a valid preset location: " + presetToUseMapping.getAsString());
+                return;
             }
 
-            data.add(mapping.getAsString());
+        } else {
+
+            String locationTypeStr = event.getSubcommandName();
+            LocationType locationType = LocationType.values().stream()
+                    .filter(t -> t.getShortName().equalsIgnoreCase(locationTypeStr))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Expected value location type, got '" + locationTypeStr + "'"));
+
+            OptionMapping venueMapping = event.getOption(LocationField.VENUE.getId());
+            @Nullable LocationVenue venue = null;
+            if (venueMapping != null) {
+                venue = Main.config.get(ConfigVenues.class).fromName(venueMapping.getAsString());
+
+                if (venue == null) {
+                    DiscordMessages.error(event, "That venue does not exist: " + venueMapping.getAsString());
+                    return;
+                }
+            }
+
+            OptionMapping commonNameMapping = event.getOption(LocationField.COMMON_NAME.getId());
+            String commonName = null;
+            if (commonNameMapping != null) {
+                commonName = commonNameMapping.getAsString();
+            }
+
+            List<String> data = new LinkedList<>();
+            for (OptionMapping mapping : event.getOptions()) {
+                if (List.of(LocationField.VENUE.getId(), LocationField.COMMON_NAME.getId()).contains(mapping.getName())) {
+                    continue;
+                }
+
+                data.add(mapping.getAsString());
+            }
+
+            location = new IncidentLocationImpl(data, locationType, commonName, venue);
+            status = Main.actions.getAction(EditLocation.class).onSubmit(incident, event, locationType, location);
         }
 
-        IncidentLocation location = new IncidentLocationImpl(data, locationType, commonName, venue);
-        MessageStatus status = Main.actions.getAction(EditLocation.class).onSubmit(incident, event, locationType, location);
         if (status != MessageStatus.NONE) return;
         DiscordMessages.selfDestruct(event, 5, "__Set location to:__\n" + location.format("\n", null));
     }
@@ -124,6 +158,11 @@ public class SetLocation extends Command {
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         if (focused.getName().equalsIgnoreCase("venue")) {
             return Main.config.get(ConfigVenues.class).get().stream().map(LocationVenue::getName).toList();
+        }
+        if (event.getSubcommandName() != null
+                && event.getSubcommandName().equalsIgnoreCase("preset")
+                && focused.getName().equalsIgnoreCase("location")) {
+            return CreateIncident.Helper.autocompleteLocation(focused, false);
         }
         return null;
     }

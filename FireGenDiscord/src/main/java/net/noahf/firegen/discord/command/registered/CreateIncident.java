@@ -191,7 +191,7 @@ public class CreateIncident extends Command {
                 Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).asAutocompleteStrings());
 
             case "location" ->
-                    Helper.autocompleteLocation(focused);
+                    Helper.autocompleteLocation(focused, true);
 
             case "units" ->
                     Main.commands.autocompleteSearch(focused.getValue(), Helper.autocompleteUnits(focused));
@@ -687,10 +687,19 @@ public class CreateIncident extends Command {
             // -------- [ ABOVE THIS LINE CONTAINS SOME LLM-WRITTEN OR MODIFIED CODE ] --------
         }
 
-        static List<String> autocompleteLocation(AutoCompleteQuery focused) {
+        static List<String> autocompleteLocation(AutoCompleteQuery focused, boolean includeLocCreation) {
             String input = focused.getValue().toUpperCase();
             List<String> returned = new ArrayList<>(Main.config.get(ConfigLocationPresets.class).asAutocompleteStrings());
 
+            if (includeLocCreation) {
+                returned.addAll(addLocCreation(input));
+            }
+
+            return Main.commands.autocompleteSearch(focused.getValue(), returned);
+        }
+
+        private static List<String> addLocCreation(String input) {
+            List<String> returned;
             if (input.contains(":")) {
 
                 try {
@@ -746,13 +755,12 @@ public class CreateIncident extends Command {
                 }
 
 
-            } else returned.addAll(LocationType.values().stream()
+            } else returned = new ArrayList<>(LocationType.values().stream()
                     .map(LocationType::name)
                     .map(s -> "$" + s + ":")
                     .toList());
 
-
-            return Main.commands.autocompleteSearch(focused.getValue(), returned);
+            return returned;
         }
 
         static @NotNull <T extends FireGenAction> T findAction(Class<T> clazz) {
