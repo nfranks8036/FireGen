@@ -7,6 +7,7 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
@@ -20,7 +21,7 @@ public interface FireGenAction {
 
     String getName();
 
-    void execute(ActionsContext ctx, GenericInteractionCreateEvent event);
+    void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event);
 
     /**
      * Creates a customized callback ID number generally used for JDA interactions that can be used to get to the same

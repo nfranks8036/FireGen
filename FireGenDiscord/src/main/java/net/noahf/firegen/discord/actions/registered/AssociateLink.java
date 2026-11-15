@@ -26,6 +26,8 @@ import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
@@ -51,7 +53,7 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
     }
 
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         if (!this.checkUserPermission(event.getUser(), Permission.ASSOCIATE_LINKS)) {
@@ -122,7 +124,7 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
     }
 
     @Override
-    public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, StringSelectInteractionEvent event) {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         String selected = event.getInteraction().getSelectedOptions().getFirst().getValue();
@@ -197,7 +199,7 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
      * This event occurs when the user presses the complete button on the modal.
      */
     @Override
-    public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ModalInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         if (!this.checkUserPermission(event.getUser(), Permission.ASSOCIATE_LINKS)) {
@@ -221,49 +223,47 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
             index = null;
         }
 
-        MessageStatus status = this.onSubmit(incident, event, index, linkMapping.getAsString(), textMapping.getAsString());
-        DiscordMessages.noMessage(event, status);
+        ServiceResponse<?> response = this.onSubmit(incident, user, index, linkMapping.getAsString(), textMapping.getAsString());
+        DiscordMessages.noMessage(event, response);
     }
 
-    public MessageStatus onSubmit(Incident incidentI, IReplyCallback event, @Nullable Integer index, String link, String title) {
+    public ServiceResponse<?> onSubmit(Incident incidentI, FireGenUser user, @Nullable Integer index, String link, String title) {
         IncidentImpl incident = (IncidentImpl) incidentI;
-        Contributor<User> user = incident.addContributor(event.getUser());
+        incident.addContributor(user);
 
         URL url;
         try {
             url = parseUrl(link);
         } catch (Exception exception) {
-            DiscordMessages.error(event, "An error occurred parsing your URL: " + link, exception);
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "An error occurred parsing your URL: " + link);
         }
 
         if (title.length() > 300) {
-            DiscordMessages.error(event, "Your link title is too long! " + title.length() + " > 300");
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "Your link title is too long! " + title.length() + " > 300");
         }
 
         ImmutablePair<String, String> newLink = ImmutablePair.of(link, title);
         if (index == null) {
             incident.addLink(link, title);
             incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Associated Link " + title.toUpperCase() + " (" + url.getHost() + ")");
-            Log.user(event.getUser().getName() + " associated link: " + newLink.toString());
+            Log.user(user.getName() + " associated link: " + newLink.toString());
         } else {
             ImmutablePair<String, String> original =
                     incident.editLink(index, link, title);
             incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Edited Link " + title.toUpperCase() + " (" + url.getHost() + ")");
-            Log.user(event.getUser().getName() + " edited link: " + original.toString() + " -> " + newLink.toString());
+            Log.user(user.getName() + " edited link: " + original.toString() + " -> " + newLink.toString());
         }
 
         incident.update();
 
-        return MessageStatus.NONE;
+        return ServiceResponse.successNone();
     }
 
     @Override
-    public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
-        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, e); }
+    public void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, user, e); }
     }
 
     private URL parseUrl(String input) throws Exception {

@@ -5,6 +5,7 @@ import lombok.Getter;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.config.ConfigManager;
+import net.noahf.firegen.discord.users.FireGenUser;
 
 import java.util.List;
 
@@ -45,5 +46,7 @@ public class ActionsContext {
      * @see ActionsContext
      */
     private List<String> parameters;
+
+    private FireGenUser fireGenUser;
 
 }

@@ -6,6 +6,8 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.util.Map;
@@ -34,7 +36,7 @@ public class EditMode implements ButtonAction {
      * set a value so the user can edit this incident. It creates a gateway to the `/set-details` command.
      */
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         this.ensureIncidentOpen(event, ctx.getIncident());
@@ -52,6 +54,6 @@ public class EditMode implements ButtonAction {
                             + "Type `/set-details` to change the incident details in command format."
             );
 
-        } else DiscordMessages.noMessage(event, MessageStatus.NONE);
+        } else DiscordMessages.noMessage(event, ServiceResponse.successNone());
     }
 }

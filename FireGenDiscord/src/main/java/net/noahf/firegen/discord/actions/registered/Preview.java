@@ -6,6 +6,7 @@ import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.incidents.messaging.ReceiveMessageSender;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class Preview implements ButtonAction {
     }
 
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         ImmutablePair<String, List<MessageEmbed>> response =
                 ((IncidentImpl)ctx.getIncident()).getMessagingService().get(ReceiveMessageSender.class).getReceivingFormat();
         event.reply(response.getFirstElement()).setEmbeds(response.getSecondElement()).setEphemeral(true).queue();

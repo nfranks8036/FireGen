@@ -1,18 +1,23 @@
 package net.noahf.firegen.discord.incidents.structure.types;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
+import net.noahf.firegen.api.incidents.types.IncidentTypeTagQualifierList;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.web.serializers.IncidentLocationSerializer;
+import net.noahf.firegen.discord.web.serializers.IncidentTypeSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @Getter
 @NoArgsConstructor(force = true)
+@JsonSerialize(using = IncidentTypeSerializer.class)
 public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
 
     private final long id;
@@ -34,14 +39,15 @@ public class IncidentTypeImpl implements IncidentType, AutofilledCharSequence {
 
     @Override
     public String getStringQualifierChoice() {
-        if (qualifierChoice == -1) {
+        IncidentTypeTagQualifierList qualifiers = tag.getQualifiers();
+        if (qualifierChoice == -1 || qualifiers == null) {
             return "None";
         }
         int select = this.getQualifierChoice();
-        if (this.tag.getQualifiers() != null && !this.tag.getQualifiers().isRequired()) {
+        if (!qualifiers.isRequired()) {
             select--;
         }
-        return tag.getQualifiers().getQualifiers().get(select);
+        return qualifiers.getQualifiers().get(select);
     }
 
     @Override

@@ -30,6 +30,8 @@ import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +71,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      * incident to.
      */
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_LOCATION)) {
@@ -91,7 +93,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      * select option. This event opens a modal for the user to more granularly define the location of the incident.
      */
     @Override
-    public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, StringSelectInteractionEvent event) {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         LocationType type;
@@ -124,7 +126,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      * The event that occurs after submitting the modal and validating that the information is valid.
      */
     @Override
-    public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ModalInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         net.noahf.firegen.api.incidents.Incident incident = ctx.getIncident();
@@ -152,20 +154,24 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         // ------- [ COMPLETE AND PACKAGE DATA ] -------
         IncidentLocation location = new IncidentLocationImpl(data, type, commonName, venue);
 
-        MessageStatus status = this.onSubmit(incident, event, type, location);
-        DiscordMessages.noMessage(event, status);
+        ServiceResponse<?> response = this.onSubmit(incident, user, type, location);
+        DiscordMessages.noMessage(event, response);
     }
 
-    public MessageStatus onSubmit(Incident incident, IReplyCallback event, LocationType type, IncidentLocation location) {
+    public ServiceResponse<?> onSubmit(Incident incident, FireGenUser user, LocationType type, IncidentLocation location) {
+        if (!user.hasPermission(Permission.CHANGE_LOCATION)) {
+            return ServiceResponse.fail(user, "You don't have permission to change the incident location.");
+        }
+
         incident.setLocation(location);
 
         String narrative = type.getPrefix() + " Updated: " + location.format().toUpperCase();
 
-        Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
+        incident.addContributor(user);
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
         incident.update();
 
-        return MessageStatus.NONE;
+        return ServiceResponse.successNone();
     }
 
     /**
@@ -196,10 +202,10 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
     }
 
     @Override
-    public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
-        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, e); }
+    public void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, user, e); }
     }
 
 

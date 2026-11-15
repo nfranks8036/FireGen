@@ -10,6 +10,8 @@ import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +24,7 @@ public class Publish implements ButtonAction {
     }
 
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         event.deferEdit().queue();
 
         IncidentImpl incident = ((IncidentImpl) ctx.getIncident());
@@ -37,22 +39,22 @@ public class Publish implements ButtonAction {
             return;
         }
 
-        this.onSubmit(incident, event, null);
+        this.onSubmit(incident, user, null);
     }
 
-    public MessageStatus onSubmit(IncidentImpl incident, IReplyCallback event, @Nullable IncidentPublishedStatus option) {
+    public ServiceResponse<?> onSubmit(IncidentImpl incident, FireGenUser user, @Nullable IncidentPublishedStatus option) {
         IncidentPublishedStatus finalOption = option != null ? option : incident.getPublished().opposite();
         incident.setPublished(finalOption);
 
-        Contributor<User> contributor = incident.addContributor(event.getUser());
+        incident.addContributor(user);
         String name = incident.getPublished().name();
-        incident.addLog(contributor, IncidentLogEntry.EntryType.UPDATE,
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE,
                 "Incident " + name.charAt(0) + name.substring(1).toLowerCase()
         );
 
         incident.update();
         incident.getMessagingService().notifyPublishChange();
 
-        return MessageStatus.NONE;
+        return ServiceResponse.successNone();
     }
 }

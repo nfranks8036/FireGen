@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.JDA;
@@ -59,7 +60,7 @@ public class FireGenUser implements Contributor<User>, Descriptor {
 
     private String displayName;
 
-    private transient User userObject;
+    private transient @JsonIgnore User userObject;
 
     @Accessors(fluent = true)
     private transient final boolean isFromJson;

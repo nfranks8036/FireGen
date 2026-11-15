@@ -31,6 +31,7 @@ import net.noahf.firegen.discord.config.files.*;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.units.*;
+import net.noahf.firegen.discord.services.IncidentService;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
@@ -76,6 +77,8 @@ public class CreateIncident extends Command {
         CUSTOM;
     }
 
+    private final IncidentService service;
+
     public CreateIncident() {
         super("create-incident", "Creates an incident to put in radio activity.",
                 CommandFlags.include()
@@ -112,6 +115,7 @@ public class CreateIncident extends Command {
                         .aliases(new String[]{"ci"})
                         .finish()
         );
+        this.service = new IncidentService();
     }
 
     @Override
@@ -122,25 +126,22 @@ public class CreateIncident extends Command {
             return;
         }
 
-        IncidentImpl incident = Main.incidents.createNewIncident();
+        IncidentService.IncidentCreateRequest request = new IncidentService.IncidentCreateRequest(
+                event.getOption("type", ">NEW<", OptionMapping::getAsString),
+                event.getOption("location", OptionMapping::getAsString),
+                event.getOption("units", OptionMapping::getAsString),
+                event.getOption("date", OptionMapping::getAsString),
+                event.getOption("time", OptionMapping::getAsString),
+                event.getOption("initial-narrative", OptionMapping::getAsString)
+        );
 
-        // ---------- incident type ----------
-        OptionMapping typeOption = event.getOption("type");
-        boolean publish = false;
-        if (typeOption != null) {
-            String typeString = typeOption.getAsString();
+        IncidentImpl incident = (IncidentImpl) service.createIncident(request);
 
-            if (typeString.startsWith("pub-")) {
-                typeString = typeString.substring("pub-".length()).toUpperCase();
-                publish = true;
-            }
+        EditMode.editIncidents.put(event.getUser(), incident);
 
-            incident.setTypeBySearch(typeString);
-        }
-
-        // ---------- incident contributors // begin list ----------
-        Contributor<User> contributor = incident.addContributor(event.getUser());
-        incident.addLog(contributor, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
+        DiscordMessages.selfDestruct(event, 5,
+                "Created new incident with those details. Check an admin channel for more information."
+        );
 
         // ---------- incident location ----------
         OptionMapping locationOption = event.getOption("location");
@@ -163,7 +164,7 @@ public class CreateIncident extends Command {
 
         // ---------- incident initial narrative ----------
         OptionMapping initialNarrativeOption = event.getOption("initial-narrative");
-        if (initialNarrativeOption != null && Helper.setInitialNarrative(incident, event, initialNarrativeOption) == CONTENT) {
+        if (initialNarrativeOption != null && service.narrative(incident, user, initialNarrativeOption) == CONTENT) {
             return;
         }
 
@@ -177,9 +178,7 @@ public class CreateIncident extends Command {
             findAction(Publish.class).onSubmit(incident, event, null);
         }
 
-        DiscordMessages.selfDestruct(event, 5,
-                "Created new incident with those details. Check an admin channel for more information."
-        );
+
     }
 
 
@@ -477,25 +476,6 @@ public class CreateIncident extends Command {
             }
 
             return actions.onSubmit(incident, event, Main.config.getFireGenVariables(), date, time);
-        }
-
-        static MessageStatus setInitialNarrative(IncidentImpl incident, IReplyCallback event, OptionMapping initialNarrative) {
-            if (!Main.users.hasPermission(event.getUser(), Permission.NARRATIVE_ADD)) {
-                DiscordMessages.error(event, "You don't have permission to add to the narrative.");
-                return CONTENT;
-            }
-
-            if (initialNarrative == null) {
-                DiscordMessages.error(event, "Expected narrative to not be null.");
-                return CONTENT;
-            }
-
-            String narrative = initialNarrative.getAsString();
-            if (!narrative.toUpperCase().startsWith("NOTE:")) {
-                return findAction(AddNarrative.class).onSubmit(incident, event, narrative);
-            } else {
-                return findAction(Notate.class).onSubmit(incident, event, narrative);
-            }
         }
 
         static MessageStatus setPublished(IncidentImpl incident, IReplyCallback event, OptionMapping publishedOption) {

@@ -1,5 +1,7 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.web.serializers.UnitAssignmentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +25,7 @@ import java.util.List;
 
 @NoArgsConstructor(force = true)
 @Getter @EqualsAndHashCode(of = {"incident", "unit"})
+@JsonSerialize(using = UnitAssignmentSerializer.class)
 public class UnitAssignmentImpl implements UnitAssignment {
 
     public UnitAssignmentImpl(Incident incident,
@@ -32,6 +36,7 @@ public class UnitAssignmentImpl implements UnitAssignment {
         this.incident = incident;
         this.unit = unit;
         this.assignments = new LinkedList<>();
+        this.radioChannel = new RadioChannelImpl("None Set", "NONE SET", 0);
 
         for (AssignmentStatus event : assignments) {
             this.assign(contributorWhoInitiatedEvent, event, null);
@@ -41,18 +46,28 @@ public class UnitAssignmentImpl implements UnitAssignment {
     private Long id;
 
     @Getter(onMethod_ = {@IgnoreStringSelector})
-    private final Incident incident;
+    private final transient Incident incident;
 
     @Getter(onMethod_ = {@IgnoreStringSelector})
-    private final Unit unit;
+    private final transient Unit unit;
 
     private @Setter RadioChannel radioChannel;
 
     private List<AssignmentEvent> assignments;
 
+    @JsonProperty(value="incident")
+    public String getIncidentNumberString() {
+        return incident.getFormattedId();
+    }
+
+    @JsonProperty(value ="unit")
+    public String getUnitString() {
+        return unit.getShorthand();
+    }
+
     @Override
     public AssignmentEvent getLatestAssignment() {
-        Log.warn("Assignments Length: " + assignments.size() + ", latest=" + assignments.getLast());
+//        Log.warn("Assignments Length: " + assignments.size() + ", latest=" + assignments.getLast());
         return this.assignments.getLast();
     }
 
@@ -99,13 +114,6 @@ public class UnitAssignmentImpl implements UnitAssignment {
     @SuppressWarnings("ConstantValue")
     @Override
     public int compareTo(@NotNull UnitAssignment o) {
-        if (o == null) {
-            throw new IllegalStateException("Cannot compare objects when one object is null.");
-        }
-
-        Log.info("--- Compare ----");
-        Log.info("Me: " + this + " (latest=" + this.getLatestAssignment() + ", count=" + assignments.size() + ")");
-        Log.info("Other: " + o + " (latest=" + o.getLatestAssignment() + ", count=" + o.getAssignments().size() + ")");
         return Comparator
                 .comparingInt((UnitAssignment ua) -> ua.getLatestAssignment().getStatus().ordinal())
                 .thenComparingInt(ua -> ua.getUnit().ordinal())

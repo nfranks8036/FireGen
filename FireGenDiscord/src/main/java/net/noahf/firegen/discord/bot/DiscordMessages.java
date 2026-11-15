@@ -4,8 +4,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.callbacks.IMessageEditCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.utilities.Log;
-import net.noahf.firegen.discord.utilities.MessageStatus;
 import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,9 +80,9 @@ public class DiscordMessages {
                 .queueAfter(selfDestructAfter, TimeUnit.SECONDS);
     }
 
-    public static void noMessage(IReplyCallback event, MessageStatus status) {
+    public static void noMessage(IReplyCallback event, ServiceResponse status) {
         if (event.isAcknowledged()) {
-            if (status == MessageStatus.CONTENT) return;
+            if (status.hasText()) return;
             event.getHook().deleteOriginal().queue();
         } else {
             event.reply(" ").setEphemeral(true).complete().deleteOriginal().queue();

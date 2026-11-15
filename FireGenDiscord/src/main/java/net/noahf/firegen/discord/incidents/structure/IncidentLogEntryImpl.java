@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import net.noahf.firegen.api.utilities.IdGenerator;
 import net.noahf.firegen.api.utilities.IgnoreStringSelector;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
+import net.noahf.firegen.discord.web.serializers.IncidentLogEntrySerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
 
 @NoArgsConstructor(force = true)
 @Getter(onMethod_ = {@IgnoreStringSelector})
+@JsonSerialize(using = IncidentLogEntrySerializer.class)
 public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     public static IncidentLogEntry of(Contributor<?> user, String entry, EntryType type) {
@@ -71,10 +74,15 @@ public class IncidentLogEntryImpl implements IncidentLogEntry {
 
     @Override
     public int compareTo(@NotNull IncidentLogEntry o) {
-        if (this.customTime == null) {
-            return this.getTime().compareTo(o.getTime());
-        }
-        return this.getCustomTime().compareTo(((IncidentLogEntryImpl)o).getCustomTime());
+        IncidentLogEntryImpl other = (IncidentLogEntryImpl) o;
+
+        LocalDateTime thisTime = this.getCustomTime() != null
+                ? this.getCustomTime() : this.getTime();
+
+        LocalDateTime otherTime = other.getCustomTime() != null
+                ? other.getCustomTime() : other.getTime();
+
+        return thisTime.compareTo(otherTime);
     }
 
     public LocalDateTime getCustomTimeOrDefault() {

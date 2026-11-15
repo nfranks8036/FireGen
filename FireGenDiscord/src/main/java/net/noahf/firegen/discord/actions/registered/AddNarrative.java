@@ -21,6 +21,8 @@ import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
@@ -57,7 +59,7 @@ public class AddNarrative implements ButtonAction, ModalAction {
      * This opens the modal for the user to type in their narrative
      */
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         Modal modal = Modal.create(this.callbackId(ctx), "Add Narrative to " + ctx.getIncident().getFormattedId())
@@ -75,7 +77,7 @@ public class AddNarrative implements ButtonAction, ModalAction {
      * This event occurs when the user presses the complete button on the modal.
      */
     @Override
-    public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ModalInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         if (!this.checkUserPermission(event.getUser(), Permission.NARRATIVE_ADD)) {
@@ -93,84 +95,50 @@ public class AddNarrative implements ButtonAction, ModalAction {
             return;
         }
 
-        MessageStatus status = this.onSubmit(incident, event, textMapping.getAsString());
-        DiscordMessages.noMessage(event, status);
+        ServiceResponse<?> response = this.onSubmit(incident, user, textMapping.getAsString());
+        DiscordMessages.noMessage(event, response);
     }
 
-    public MessageStatus onSubmit(Incident incident, IReplyCallback event, String narrative) {
+    public ServiceResponse<?> onSubmit(Incident incident, FireGenUser user, String narrative) {
         FireGenVariables vars = Main.config.getFireGenVariables();
 
         narrative = narrative.toUpperCase();
 
         if (narrative.length() < MIN_NARRATIVE_LENGTH) {
-            DiscordMessages.error(event, "Your narrative is too short! (" + narrative.length() + " < " + MIN_NARRATIVE_LENGTH + ")");
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "Your narrative is too short! (" + narrative.length() + " < " + MIN_NARRATIVE_LENGTH + ")");
         }
 
         if (narrative.length() > MAX_NARRATIVE_LENGTH) {
-            DiscordMessages.error(event, "Your narrative is too long! (" + narrative.length() + " > " + MAX_NARRATIVE_LENGTH + ")");
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "Your narrative is too long! (" + narrative.length() + " > " + MAX_NARRATIVE_LENGTH + ")");
         }
 
-        Contributor<User> user = ((IncidentImpl)incident).addContributor(event.getUser());
-        IncidentLogEntryImpl entry = (IncidentLogEntryImpl) IncidentLogEntryImpl.of(
-                user, narrative, IncidentLogEntry.EntryType.NARRATIVE
-        );
+        incident.addContributor(user);
+        IncidentLogEntryImpl entry = (IncidentLogEntryImpl)
+                IncidentLogEntryImpl.of(user, narrative, IncidentLogEntry.EntryType.NARRATIVE);
         LocalDateTime time = entry.getCustomTimeOrDefault();
         if (time.isAfter(LocalDateTime.now())) {
-            DiscordMessages.error(event, "The time of the current narrative entry cannot be after the current moment!");
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "The time of the current narrative entry cannot be after the current moment!");
         }
 
         LocalDateTime incidentTime = incident.getTime().getDateTime();
         // withSecond(1) and withSecond(0) so that if an incident is at 22:39:30 that a time of 22:39:00 works
         if (time.withSecond(1).isBefore(incidentTime.withSecond(0))) {
-            DiscordMessages.error(event, "The time of the current narrative entry cannot be before the current incident (" + vars.formatTime(incidentTime, true) + ")"
-                    + "\n*Tip: Change the incident time by setting the 'Date & Time' field.*"
+            return ServiceResponse.fail(user,
+                    "The time of the current narrative entry cannot be before the current incident " +
+                            "(" + vars.formatTime(incidentTime, true) + ")"
+                            + "\n*Tip: Change the incident time by setting the 'Date & Time' field.*"
             );
-            return MessageStatus.CONTENT;
         }
 
         incident.addLog(entry);
         incident.update();
 
-        if (narrative.equalsIgnoreCase("DebugFakeLog"))
-            addFakeLog(user, (IncidentImpl) incident);
-
-        return MessageStatus.NONE;
+        return ServiceResponse.successNone();
     }
 
     @Override
-    public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
-        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, e); }
-    }
-
-    public static void addFakeLog(Contributor<User> user, IncidentImpl incident) {
-
-
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Location Updated: US-460 BYP EB @ SMITHFIELD UNDERPASS");
-        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, "Units BFD, BVRS, SUP5, BPD DISPATCHED");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Incident Published");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Location Updated: US-460 BYP EB @ SOUTHGATE, BLACKSBURG, VA");
-        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "EASTBOUND 460 BYPASS, TWO-VEHICLE CRASH, HEAD-ON COLLISION");
-        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "NRV: \"IT SOUNDS REALLY BAD\"");
-        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, "Units VTPD, BPD ENROUTE");
-        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, "Units R51, 106, 500 ENROUTE");
-        incident.addLog(user, IncidentLogEntry.EntryType.UNIT, "Units BPD, BVRS REMOVED");
-        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "IN THE AREA OF THE SMITHFIELD AREA UNDERPASS");
-        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "MULTIPLE CALLERS, ADVISING ONE VEHICLE CROSSED THE MEDIAN AND STRCK THE OTHER VEHICLE HEAD-ON");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit R56 ENROUTE");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit 501 ENROUTE");
-        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "POSSIBLE ENTRAPMENT PER CALLERS ONSCENE");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit SQ51 ENROUTE");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit SUP5 ENROUTE");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit BFD REMOVED");
-        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "SUBJECT TRAPPED UNDER THE STEERING WHEEL IN THE SILVER HONDA");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit E19 ENROUTE");
-        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Unit BPD ONSCENE");
-        incident.addLog(user, IncidentLogEntry.EntryType.NARRATIVE, "<17:20> DRIVER IN A BLACK SEDAN UNRESPONSIVE, GAS LEAKING FROM VEHICLE");
-
-
+    public void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, user, e); }
     }
 }

@@ -31,6 +31,8 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.MessageStatus;
@@ -48,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class EditUnits implements ButtonAction, StringDropdownAction {
 
-    private static final Map<User, UnitsChangeInput> selectedUnits = new ConcurrentHashMap<>();
+    private static final Map<FireGenUser, UnitsChangeInput> selectedUnits = new ConcurrentHashMap<>();
 
     /**
      * The name of the command needed to access this class
@@ -64,7 +66,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         if (selectedStatus == null) {
             selectedOption = new SelectOption[0];
         }
-        UnitsChangeInput unitsInput = selectedUnits.get(ctx.getUser());
+        UnitsChangeInput unitsInput = selectedUnits.get(ctx.getFireGenUser());
 
         List<ActionRow> rows = new ArrayList<>(List.of(
                 ActionRow.of(StringSelectMenu.create(this.callbackId(ctx, "select"))
@@ -142,7 +144,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
      * to the Discord user that allows them to select agencies they wish to append or remove from the incident.
      */
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_UNITS)) {
             DiscordMessages.error(event, "You don't have permission to change unit statuses on an incident.");
             return;
@@ -151,22 +153,22 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         if (!ctx.getParameters().isEmpty()) {
-            MessageStatus status = this.onSubmit(ctx.getIncident(), event, null);
-            if (status == MessageStatus.NONE) {
+            ServiceResponse<?> status = this.onSubmit(ctx.getIncident(), user, null);
+            if (!status.hasText()) {
                 event.deferEdit().queue();
             }
             return;
         }
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
-        selectedUnits.put(event.getUser(),
+        selectedUnits.put(user,
                 new UnitsChangeInput(
                         new ArrayList<>(), null, null
                 )
         );
 
         AssignmentStatus selectedStatus = selectedUnits
-                .getOrDefault(event.getUser(), new UnitsChangeInput(new ArrayList<>(), null, null))
+                .getOrDefault(user, new UnitsChangeInput(new ArrayList<>(), null, null))
                 .newStatus;
         event.reply("Choose units to update their status.")
                 .setEphemeral(true)
@@ -180,7 +182,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
      * The event that occurs after clicking away from the {@link StringSelectMenu} from the event above.
      */
     @Override
-    public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, StringSelectInteractionEvent event) {
         String param = ctx.getParameters().getFirst();
 
         MessageStatus message = MessageStatus.NONE;
@@ -195,14 +197,14 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             }
 
             // this way we can keep track of the selected units for the next step (changing their status)
-            UnitsChangeInput input = selectedUnits.get(event.getUser());
+            UnitsChangeInput input = selectedUnits.get(user);
             if (input == null) {
                 DiscordMessages.error(event, "You are not currently editing incident units.");
                 return;
             }
 
             input.units = units;
-            selectedUnits.put(event.getUser(), input);
+            selectedUnits.put(user, input);
         }
         // SECOND STEP: Select the status
         if (param.equalsIgnoreCase("status")) {
@@ -216,7 +218,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                 return;
             }
 
-            UnitsChangeInput input = selectedUnits.get(event.getUser());
+            UnitsChangeInput input = selectedUnits.get(user);
             if (input == null) {
                 DiscordMessages.error(event, "You are not currently editing incident units.");
                 return;
@@ -226,7 +228,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             message = MessageStatus.CONTENT;
 
             input.newStatus = status;
-            selectedUnits.put(event.getUser(), input);
+            selectedUnits.put(user, input);
         }
 
         if (param.equalsIgnoreCase("secondary")) {
@@ -234,7 +236,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                     event.getSelectedOptions().getFirst().getValue().substring("secondary-".length())
             );
 
-            UnitsChangeInput input = selectedUnits.get(event.getUser());
+            UnitsChangeInput input = selectedUnits.get(user);
             if (input == null) {
                 DiscordMessages.error(event, "You are not currently editing incident units.");
                 return;
@@ -252,7 +254,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             }
 
             input.secondary = secondary;
-            selectedUnits.put(event.getUser(), input);
+            selectedUnits.put(user, input);
         }
 
         if (message == MessageStatus.NONE) {
@@ -260,24 +262,26 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         }
     }
 
-    public MessageStatus onSubmit(Incident incidentValue, IReplyCallback event, @Nullable EditUnits.UnitsChangeInput inputUnits) {
-        UnitsChangeInput input = (inputUnits == null ? selectedUnits.get(event.getUser()) : inputUnits);
+    public ServiceResponse<?> onSubmit(Incident incidentValue, FireGenUser user, @Nullable EditUnits.UnitsChangeInput inputUnits) {
+        if (!user.hasPermission(Permission.CHANGE_UNITS)) {
+            return ServiceResponse.fail(user, "You don't have permission to change unit statuses on an incident.");
+        }
+
+        UnitsChangeInput input = (inputUnits == null ? selectedUnits.get(user) : inputUnits);
         if (input == null) {
-            DiscordMessages.error(event, "You are not currently editing incident units.");
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "You are not currently editing incident units.");
         }
 
         IncidentImpl incident = (IncidentImpl) incidentValue;
         List<Unit> units = input.units;
         AssignmentStatus status = input.newStatus != null ? input.newStatus : AssignmentStatusImpl.ADD_UNIT;
-        Contributor<User> user = incident.addContributor(event.getUser());
+        incident.addContributor(user);
 
         if (units.isEmpty()) {
-            DiscordMessages.error(event, "You cannot set the unit status of zero units.");
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "You cannot set the unit status of zero units.");
         }
 
-        MessageStatus message = MessageStatus.NONE;
+        ServiceResponse<?> message = ServiceResponse.successNone();
 
         List<Unit> unmodifiedList = new ArrayList<>(units);
         for (Unit unit : unmodifiedList) {
@@ -287,12 +291,9 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
             }
 
             if (unit.getAdditional() != null && unit.getAdditional() instanceof PreventUnitAssignment) {
-                message = message.compare(MessageStatus.CONTENT);
                 units.remove(unit);
-                DiscordMessages.error(event, "The unit '" + unit.toString() + "' contains additional context " +
-                        "that means it cannot be added to the incident in its current form."
-                );
-                continue;
+                message = ServiceResponse.fail(user, "The unit '" + unit.toString() + "' contains additional context " +
+                        "that means it cannot be added to the incident in its current form.");
             }
 
             incident.assignUnit(unit, user, status, input.secondary);
@@ -325,9 +326,9 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
     }
 
     @Override
-    public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
-        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, e); }
+    public void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, user, e); }
     }
 
     @Getter @AllArgsConstructor

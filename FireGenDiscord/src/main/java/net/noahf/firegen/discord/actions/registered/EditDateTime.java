@@ -19,6 +19,8 @@ import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
@@ -44,7 +46,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
      * Discord for the user to edit the date/time.
      */
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_DATE_TIME)) {
             DiscordMessages.error(event, "You don't have permission to change the date & time of an incident.");
             return;
@@ -93,7 +95,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
      * The event that occurs after submitting the modal from the event above.
      */
     @Override
-    public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ModalInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
@@ -126,29 +128,30 @@ public class EditDateTime implements ButtonAction, ModalAction {
             date = LocalDate.parse(dateMapping.getAsString(), DateTimeFormatter.ofPattern(dateFormat));
         }
 
-        MessageStatus status = this.onSubmit(incident, event, vars, date, time);
-        DiscordMessages.noMessage(event, status);
+        ServiceResponse<?> response = this.onSubmit(incident, user, vars, date, time);
+        DiscordMessages.noMessage(event, response);
     }
 
-    public MessageStatus onSubmit(Incident incident, IReplyCallback event, FireGenVariables vars, LocalDate date, LocalTime time) {
+    public ServiceResponse<?> onSubmit(Incident incident, FireGenUser user, FireGenVariables vars, LocalDate date, LocalTime time) {
         incident.getTime().setDate(date, time);
 
         String narrative = "Changed Date/Time: " +
                 date.format(DateTimeFormatter.ofPattern(vars.dateFormat())) + " @ " +
                 time.format(DateTimeFormatter.ofPattern(vars.longTimeFormat()));
 
-        Contributor<User> user = ((IncidentImpl) incident).addContributor(event.getUser());
+        incident.addContributor(user);
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
         incident.update();
-        return MessageStatus.NONE;
+
+        return ServiceResponse.successNone();
     }
 
 
 
 
     @Override
-    public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
-        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, e); }
+    public void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, user, e); }
     }
 }

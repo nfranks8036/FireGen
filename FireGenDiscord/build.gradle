@@ -1,15 +1,13 @@
 plugins {
-    id 'application'
+    id 'java'
     id 'com.github.johnrengelman.shadow' version "8.1.1"
+    id 'org.springframework.boot' version '3.5.7'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 String projectName = 'firegen'
 String group = 'net.noahf.firegen.discord'
 String version = '1.0.0'
-
-application {
-    mainClass = "net.noahf.firegen.discord.Main"
-}
 
 repositories {
     mavenCentral()
@@ -30,6 +28,8 @@ dependencies {
 
     // database structuring
     compileOnly("dev.morphia.morphia:morphia-core:2.5.3")
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 tasks.withType(JavaCompile).configureEach {

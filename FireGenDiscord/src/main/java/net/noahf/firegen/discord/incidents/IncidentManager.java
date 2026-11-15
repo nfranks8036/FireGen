@@ -1,6 +1,7 @@
 package net.noahf.firegen.discord.incidents;
 
 import lombok.Getter;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
@@ -9,6 +10,7 @@ import net.noahf.firegen.discord.incidents.structure.location.LocationVenueImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -58,6 +60,19 @@ public class IncidentManager {
             }
         }
         return null;
+    }
+
+    public @Nullable Incident getIncidentBy(String id) {
+        if (id.matches("^\\d{4}-.*")) {
+
+            for (Incident i : this.incidents) {
+                if (i.getFormattedId().equalsIgnoreCase(id)) {
+                    return i;
+                }
+            }
+            return null;
+
+        } else return getIncidentBy(Long.parseLong(id));
     }
 
     public int countIncidents() {

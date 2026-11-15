@@ -1,5 +1,8 @@
 package net.noahf.firegen.discord.incidents.structure;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
@@ -26,6 +29,7 @@ import net.noahf.firegen.discord.users.SystemUser;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
+import net.noahf.firegen.discord.web.serializers.IncidentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,9 +41,10 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Getter @Setter @EqualsAndHashCode(of = {"id"})
+@JsonSerialize(using = IncidentSerializer.class)
 public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
-    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private static final @JsonIgnore ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private final transient @Getter(value = AccessLevel.NONE) @Setter(value = AccessLevel.NONE)
             IncidentManager manager;
@@ -72,12 +77,12 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
 
     private @Setter(value = AccessLevel.NONE) Map<String, String> links;
 
-    private transient @Getter IncidentMessagingService messagingService;
+    private transient @JsonIgnore @Getter IncidentMessagingService messagingService;
 
-    private transient ScheduledFuture<?> staleFuture;
-    private transient ScheduledFuture<?> closedFuture;
-    private transient long unixNextStale = Long.MAX_VALUE;
-    private transient long unixNextClosedDueToStale = Long.MAX_VALUE;
+    private transient @JsonIgnore ScheduledFuture<?> staleFuture;
+    private transient @JsonIgnore ScheduledFuture<?> closedFuture;
+    private long unixNextStale = Long.MAX_VALUE;
+    private long unixNextClosedDueToStale = Long.MAX_VALUE;
 
     public IncidentImpl() {
         this.manager = null;

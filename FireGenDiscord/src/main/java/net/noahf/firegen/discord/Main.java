@@ -12,7 +12,11 @@ import net.noahf.firegen.discord.users.UserManager;
 import net.noahf.firegen.discord.utilities.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
+@SpringBootApplication
 public class Main {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -29,6 +33,8 @@ public class Main {
 
     private static @Getter boolean loading = true;
 
+    private static ConfigurableApplicationContext applicationContext;
+
     public static void main(String[] args) throws InterruptedException, InvalidHandlerException {
         long start = System.currentTimeMillis();
 
@@ -42,6 +48,9 @@ public class Main {
 //        subscribers = new SubscriberManager();
 
         bot.setStatus();
+
+        applicationContext = SpringApplication.run(Main.class, args);
+
         loading = false;
 
         Log.info("Started in " + (System.currentTimeMillis() - start) + "ms!");

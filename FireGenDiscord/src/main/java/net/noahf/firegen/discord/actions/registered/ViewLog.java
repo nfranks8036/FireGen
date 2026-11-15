@@ -5,6 +5,7 @@ import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.listeners.ContextMenuDetector;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
+import net.noahf.firegen.discord.users.FireGenUser;
 
 public class ViewLog implements ButtonAction {
 
@@ -14,7 +15,7 @@ public class ViewLog implements ButtonAction {
     }
 
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
         ContextMenuDetector.createIncidentLog(event, incident, ctx.getConfig().getFireGenVariables(), true);
     }

@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
 import net.noahf.firegen.api.Contributor;
@@ -18,6 +17,8 @@ import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
@@ -49,7 +50,7 @@ public class Notate implements ButtonAction, ModalAction {
      * This opens the modal for the user to type in their note.
      */
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         Modal modal = Modal.create(this.callbackId(ctx), "Add Note to " + ctx.getIncident().getFormattedId())
@@ -67,7 +68,7 @@ public class Notate implements ButtonAction, ModalAction {
      * This event occurs when the user presses the complete button on the modal.
      */
     @Override
-    public void execute(ActionsContext ctx, ModalInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ModalInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         if (!this.checkUserPermission(event.getUser(), Permission.NARRATIVE_ADD)) {
@@ -85,36 +86,30 @@ public class Notate implements ButtonAction, ModalAction {
             return;
         }
 
-        MessageStatus status = this.onSubmit(incident, event, textMapping.getAsString());
+        ServiceResponse<?> status = this.onSubmit(incident, user, textMapping.getAsString());
         DiscordMessages.noMessage(event, status);
     }
 
-    public MessageStatus onSubmit(Incident incident, IReplyCallback event, String note) {
+    public ServiceResponse<?> onSubmit(Incident incident, FireGenUser user, String note) {
         if (note.length() < MIN_NARRATIVE_LENGTH) {
-            DiscordMessages.error(event, "Your note is too short! (" + note.length() + " < " + MIN_NARRATIVE_LENGTH + ")");
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "Your note is too short! (" + note.length() + " < " + MIN_NARRATIVE_LENGTH + ")");
         }
 
         if (note.length() > MAX_NARRATIVE_LENGTH) {
-            DiscordMessages.error(event, "Your note is too long! (" + note.length() + " > " + MAX_NARRATIVE_LENGTH + ")");
-            return MessageStatus.CONTENT;
+            return ServiceResponse.fail(user, "Your note is too long! (" + note.length() + " > " + MAX_NARRATIVE_LENGTH + ")");
         }
 
-        Contributor<User> user = ((IncidentImpl)incident).addContributor(event.getUser());
-        incident.addLog(
-                user,
-                IncidentLogEntryImpl.EntryType.NOTE,
-                note
-        );
-
+        incident.addContributor(user);
+        incident.addLog(user, IncidentLogEntryImpl.EntryType.NOTE, note);
         incident.update();
-        return MessageStatus.NONE;
+
+        return ServiceResponse.successNone();
     }
 
     @Override
-    public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
-        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, e); }
+    public void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  ModalInteractionEvent e) { this.execute(ctx, user, e); }
     }
 
 }

@@ -3,7 +3,6 @@ package net.noahf.firegen.discord.actions.registered;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
-import net.dv8tion.jda.api.interactions.commands.context.MessageContextInteraction;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.discord.actions.ActionsContext;
@@ -11,6 +10,8 @@ import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +36,7 @@ public class ChangeStatus implements ButtonAction {
      * buttons.
      */
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         event.deferEdit().queue();
 
         if (!this.checkUserPermission(event.getUser(), Permission.INCIDENT_STATUS)) {
@@ -45,10 +46,10 @@ public class ChangeStatus implements ButtonAction {
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
 
-        this.onSubmit(incident, event, null);
+        this.onSubmit(incident, user, null);
     }
 
-    public MessageStatus onSubmit(IncidentImpl incident, IReplyCallback event, @Nullable IncidentStatus parameterStatus) {
+    public ServiceResponse<?> onSubmit(IncidentImpl incident, FireGenUser user, @Nullable IncidentStatus parameterStatus) {
         IncidentStatus newStatus = parameterStatus;
         IncidentStatus oldStatus = incident.getStatus();
         if (newStatus == null) {
@@ -56,15 +57,14 @@ public class ChangeStatus implements ButtonAction {
         }
 
         if (newStatus.equals(incident.getStatus())) {
-            DiscordMessages.error(event, "This incident is already set to the " + newStatus.name() + " status.");
-            return CONTENT;
+            return ServiceResponse.fail(user, "This incident is already set to the " + newStatus.name() + " status.");
         }
 
         incident.setStatus(newStatus);
 
         if (parameterStatus == null) incident.refreshStatus();
 
-        Contributor<User> user = incident.addContributor(event.getUser());
+        incident.addContributor(user);
         String narrative = switch (newStatus) {
             case PENDING, ACTIVE -> "Incident Re-opened";
             case CLOSED -> "Incident Closed";
@@ -78,7 +78,7 @@ public class ChangeStatus implements ButtonAction {
         incident.getMessagingService().sendAll();
         incident.getMessagingService().notifyPublishChange();
 
-        return MessageStatus.NONE;
+        return ServiceResponse.successNone();
     }
 
 }

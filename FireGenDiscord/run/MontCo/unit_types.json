@@ -133,6 +133,20 @@
     "description": "A vehicle used by incident commanders to coordinate personnel, resources, and emergency operations."
   },
   {
+    "id": "EMS_BIKE_TEAM",
+    "short": "BIKE",
+    "long": "BIKE TEAM",
+    "format": "Bike Team",
+    "description": "No description provided."
+  },
+  {
+    "id": "EMS_RUNNER",
+    "short": "RUN",
+    "long": "RUNNER",
+    "format": "Runner",
+    "description": "No description provided."
+  },
+  {
     "id": "EMS_MEDICAL_DIRECTOR",
     "short": "OMD",
     "long": "OMD",

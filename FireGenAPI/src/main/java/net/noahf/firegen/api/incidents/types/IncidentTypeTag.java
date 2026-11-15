@@ -2,6 +2,7 @@ package net.noahf.firegen.api.incidents.types;
 
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.api.utilities.StringSelectors;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface IncidentTypeTag extends AutofilledCharSequence, StringSelectors
      * @return the list (as an object {@link IncidentTypeTagQualifierList}) of available qualifiers that a user can
      *         select from
      */
-    IncidentTypeTagQualifierList getQualifiers();
+    @Nullable IncidentTypeTagQualifierList getQualifiers();
 
     /**
      * This method is mainly for importing usage only, but it essentially is meant to provide the base Incident Type

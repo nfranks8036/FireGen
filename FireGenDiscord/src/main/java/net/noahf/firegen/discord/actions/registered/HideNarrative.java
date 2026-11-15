@@ -13,6 +13,8 @@ import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
@@ -62,7 +64,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      * This replies a string select menu where the user can select which narrative to hide.
      */
     @Override
-    public void execute(ActionsContext ctx, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         if (!this.checkUserPermission(event.getUser(), Permission.NARRATIVE_HIDE)) {
@@ -94,7 +96,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      * The event occurs after the user has selected a specific string selection option on which narrative item to hide.
      */
     @Override
-    public void execute(ActionsContext ctx, StringSelectInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser user, StringSelectInteractionEvent event) {
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
         this.ensureIncidentOpen(event, incident);
 
@@ -132,15 +134,15 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
                     );
         }
 
-        DiscordMessages.noMessage(event, MessageStatus.NONE);
+        DiscordMessages.noMessage(event, ServiceResponse.successNone());
 
         incident.addContributor(event.getUser());
         incident.update();
     }
 
     @Override
-    public void execute(ActionsContext ctx, GenericInteractionCreateEvent event) {
-        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, e); }
-        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, e); }
+    public void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+        if (event instanceof  ButtonInteractionEvent e) { this.execute(ctx, user, e); }
+        if (event instanceof  StringSelectInteractionEvent e) { this.execute(ctx, user, e); }
     }
 }
