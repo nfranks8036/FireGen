@@ -38,6 +38,7 @@ public class IncidentService {
 
     public ServiceResponse<?> createIncident(FireGenUser user, IncidentCreateRequest request) {
         IncidentImpl incident = Main.incidents.createNewIncident();
+        ServiceResponse<?> response = ServiceResponse.success(incident);
 
         // ---------- incident type ----------
         boolean publish = false;
@@ -54,14 +55,18 @@ public class IncidentService {
         incident.addLog(user, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
 
         // ---------- incident location ----------
-        if (
-                this.location(incident, user, request.location).) {
-        }
+        response = ServiceResponse.returnFailure(response, this.location(incident, user, request.location));
+
+        response = ServiceResponse.returnFailure(response, this.location(incident, user, request.location));
 
         return ServiceResponse.success(incident);
     }
 
-    public ServiceResponse location(Incident incident, FireGenUser user, String input) {
+    public ServiceResponse<?> location(Incident incident, FireGenUser user, String input) {
+        if (input == null) {
+            return ServiceResponse.failNone();
+        }
+
         if (!user.hasPermission(Permission.CHANGE_LOCATION)) {
             return ServiceResponse.fail(user, "You don't have permission to change the incident location.");
         }

@@ -13,6 +13,8 @@ public record ServiceResponse<T>(
         return new ServiceResponse<>(false, response);
     }
 
+    public static ServiceResponse<Void> failNone() { return new ServiceResponse<>(false, null); }
+
     public static ServiceResponse<String> success(String response) {
         return new ServiceResponse<>(true, response);
     }
@@ -22,6 +24,13 @@ public record ServiceResponse<T>(
     public static ServiceResponse<Void> successNone() {
         return new ServiceResponse<>(true, null);
     }
+
+    public static ServiceResponse<?> returnFailure(ServiceResponse<?> one, ServiceResponse<?> two) {
+        if (!two.success()) return two;
+        return one;
+    }
+
+
 
     public boolean hasText() {
         return response != null;
