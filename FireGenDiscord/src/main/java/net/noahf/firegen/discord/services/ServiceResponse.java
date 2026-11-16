@@ -25,9 +25,9 @@ public record ServiceResponse<T>(
         return new ServiceResponse<>(true, null);
     }
 
-    public static ServiceResponse<?> returnFailure(ServiceResponse<?> one, ServiceResponse<?> two) {
-        if (!two.success()) return two;
-        return one;
+    public static ServiceResponse<?> returnAUnlessBFail(ServiceResponse<?> a, ServiceResponse<?> b) {
+        if (!b.success()) return b;
+        return a;
     }
 
 
