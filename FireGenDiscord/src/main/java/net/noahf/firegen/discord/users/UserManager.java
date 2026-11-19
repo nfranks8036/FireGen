@@ -65,6 +65,19 @@ public class UserManager extends Manager<UserManager> {
         return u;
     }
 
+    public FireGenUser<?> getByUsername(String name, @Nullable String password) {
+        for (FireGenUser<?> user : this.users) {
+            if (!user.getUsername().equals(name)) {
+                continue;
+            }
+            if (user.getPassword() != null && !user.getPassword().equalsIgnoreCase(password)) {
+                throw new UnauthorizedException();
+            }
+            return user;
+        }
+        throw new UnauthorizedException();
+    }
+
     public boolean hasPermission(User user, Permission permission, Permission... andPermissions) {
         DiscordUser fireGenUser = this.getByDiscord(user);
         if (fireGenUser == null) {
@@ -87,7 +100,7 @@ public class UserManager extends Manager<UserManager> {
             for (JsonElement element : array.asList()) {
                 JsonObject userObject = element.getAsJsonObject();
 
-                String name = userObject.get("internal_name").getAsString();
+                String name = userObject.get("username").getAsString();
                 long id = userObject.get("id").getAsLong();
                 Permission[] permissions = this.getPermissionArray(userObject.get("permissions").getAsJsonArray());
                 User discordUser = jda.getUserById(id);

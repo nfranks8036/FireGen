@@ -1,11 +1,11 @@
 [
   {
-    "internal_name": "noah",
+    "username": "noah",
     "id": 351410272256262145,
     "permissions": ["*"]
   },
   {
-    "internal_name": "davisonmars",
+    "username": "davisonmars",
     "id": 321839583937429504,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -24,7 +24,7 @@
     ]
   },
   {
-    "internal_name": "komal",
+    "username": "komal",
     "id": 798257769764618300,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -43,7 +43,7 @@
     ]
   },
   {
-    "internal_name": "caroline",
+    "username": "caroline",
     "id": 631210635509891110,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -62,7 +62,7 @@
     ]
   },
   {
-    "internal_name": "helen",
+    "username": "helen",
     "id": 649014151376797709,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -81,7 +81,7 @@
     ]
   },
   {
-    "internal_name": "lee",
+    "username": "lee",
     "id": 1235961886583820399,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -100,7 +100,7 @@
     ]
   },
   {
-    "internal_name": "emma",
+    "username": "emma",
     "id": 397867964952739843,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -119,7 +119,7 @@
     ]
   },
   {
-    "internal_name": "levi",
+    "username": "levi",
     "id": 747508379844346079,
     "permissions": [
       "CHANGE_CALL_TYPE",
@@ -138,7 +138,7 @@
     ]
   },
   {
-    "internal_name": "nathan",
+    "username": "nathan",
     "id": 667448261245796352,
     "permissions": [
       "CHANGE_CALL_TYPE",
