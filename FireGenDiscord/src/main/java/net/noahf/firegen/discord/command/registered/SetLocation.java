@@ -22,6 +22,8 @@ import net.noahf.firegen.discord.config.files.ConfigLocationPresets;
 import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.DiscordUser;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import javax.annotation.Nullable;
@@ -74,7 +76,8 @@ public class SetLocation extends Command {
     @Override
     public void command(SlashCommandInteractionEvent event) {
         event.deferReply(true).queue();
-        IncidentImpl incident = (IncidentImpl) EditMode.editIncidents.get(event.getUser());
+        DiscordUser user = Main.users.getByDiscordNotNull(event.getUser());
+        IncidentImpl incident = (IncidentImpl) EditMode.editIncidents.get(user);
 
         if (incident == null) {
             DiscordMessages.error(event, "You are not currently editing an incident. " +
@@ -94,7 +97,7 @@ public class SetLocation extends Command {
         }
 
         IncidentLocation location;
-        MessageStatus status = MessageStatus.NONE;
+        ServiceResponse<?> response = ServiceResponse.successNone();
         if (event.getSubcommandName().equalsIgnoreCase("preset")) {
 
             ConfigLocationPresets presets = Main.config.get(ConfigLocationPresets.class);
@@ -147,10 +150,13 @@ public class SetLocation extends Command {
             }
 
             location = new IncidentLocationImpl(data, locationType, commonName, venue);
-            status = Main.actions.getAction(EditLocation.class).onSubmit(incident, event, locationType, location);
+            response = Main.actions.getAction(EditLocation.class).onSubmit(incident, user, locationType, location);
         }
 
-        if (status != MessageStatus.NONE) return;
+        if (!response.success()) {
+            DiscordMessages.error(event, response.response().toString());
+            return;
+        }
         DiscordMessages.selfDestruct(event, 5, "__Set location to:__\n" + location.format("\n", null));
     }
 
@@ -162,7 +168,7 @@ public class SetLocation extends Command {
         if (event.getSubcommandName() != null
                 && event.getSubcommandName().equalsIgnoreCase("preset")
                 && focused.getName().equalsIgnoreCase("location")) {
-            return CreateIncident.Helper.autocompleteLocation(focused, false);
+            return CreateIncident.autocompleteLocation(focused, false);
         }
         return null;
     }

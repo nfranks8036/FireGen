@@ -12,6 +12,7 @@ import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
+import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.FireGenAction;
@@ -67,27 +68,12 @@ public class IncidentService {
         incident.addContributor(user);
         incident.addLog(user, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
 
-        response = ServiceResponse.returnAUnlessBFail(response,
-                this.location(incident, user, request.location)
-        );
+        response = ServiceResponse.returnAUnlessBFail(response, editIncident(user, incident, new IncidentEditRequest(
+                null, request.location, request.units, request.date,
+                request.time, request.initialNarrative, null, null
+        )));
 
-        response = ServiceResponse.returnAUnlessBFail(response,
-                this.units(incident, user, request.units)
-        );
-
-        response = ServiceResponse.returnAUnlessBFail(response,
-                this.dateTime(incident, user, request.date, request.time)
-        );
-
-        response = ServiceResponse.returnAUnlessBFail(response,
-                this.narrative(incident, user, request.initialNarrative)
-        );
-
-        // ---------- post update for first time to channels ----------
         incident.setStatus(IncidentStatus.PENDING);
-        incident.update();
-
-        EditMode.editIncidents.put(user, incident);
 
         if (publish) {
             findAction(Publish.class).onSubmit(incident, user, null);
@@ -96,22 +82,13 @@ public class IncidentService {
         return response;
     }
 
-    public ServiceResponse<?> editIncident(FireGenUser<?> user, IncidentEditRequest request, Incident incident) {
+    public ServiceResponse<?> editIncident(FireGenUser<?> user, Incident incident, IncidentEditRequest request) {
         ServiceResponse<?> response = ServiceResponse.success(incident);
-
-        // ---------- incident type ----------
-        boolean publish = false;
-        String type = request.type;
-        if (type.startsWith("pub-")) {
-            publish = true;
-            type = request.type.substring("pub-".length()).toUpperCase();
-        }
-
-        ((IncidentImpl)incident).setTypeBySearch(type);
-
-        // ---------- incident contributors // begin list ----------
         incident.addContributor(user);
-        incident.addLog(user, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
+
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.type(incident, user, request.type)
+        );
 
         response = ServiceResponse.returnAUnlessBFail(response,
                 this.location(incident, user, request.location)
@@ -126,23 +103,53 @@ public class IncidentService {
         );
 
         response = ServiceResponse.returnAUnlessBFail(response,
-                this.narrative(incident, user, request.initialNarrative)
+                this.narrative(incident, user, request.narrative)
         );
 
-        // ---------- post update for first time to channels ----------
-        incident.setStatus(IncidentStatus.PENDING);
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.published(incident, user,  request.published)
+        );
+
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.status(incident, user, request.status)
+        );
+
         incident.update();
 
         EditMode.editIncidents.put(user, incident);
 
-        if (publish) {
-            findAction(Publish.class).onSubmit(incident, user, null);
-        }
-
         return response;
     }
 
+    public ServiceResponse<?> type(Incident incident, FireGenUser<?> user, String input) {
+        if (input == null) {
+            return ServiceResponse.successNone();
+        }
 
+        if (!user.hasPermission(Permission.CHANGE_CALL_TYPE)) {
+            return ServiceResponse.fail(user, "You don't have permission to change the incident type.");
+        }
+
+        IncidentType oldType = incident.getType();
+        try {
+            ((IncidentImpl)incident).setTypeBySearch(input);
+        } catch (IllegalArgumentException e) {
+            return ServiceResponse.fail(user, "Invalid incident type: " + input);
+        }
+        IncidentType newType = incident.getType();
+
+        if (oldType.equals(newType)) {
+            return ServiceResponse.fail(user, "You cannot change the incident type to the existing incident type!");
+        }
+
+        String narrative = "Changed Incident Type: " + oldType.getSelectedName() + " --> " + newType.getSelectedName();
+        incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, narrative);
+        incident.addContributor(user);
+
+        incident.update();
+
+        return ServiceResponse.successNone();
+    }
 
     public ServiceResponse<?> location(Incident incident, FireGenUser<?> user, String input) {
         if (input == null) {
@@ -434,13 +441,17 @@ public class IncidentService {
         return action.onSubmit(incident, user, Main.config.getFireGenVariables(), date, time);
     }
 
-    public ServiceResponse<?> published(Incident incident, FireGenUser<?> user, String publishInput) {
+    public ServiceResponse<?> published(Incident incident, FireGenUser<?> user, String input) {
+        if (input == null) {
+            return ServiceResponse.successNone();
+        }
+
         if (!user.hasPermission(Permission.INCIDENT_PUBLISH)) {
             return ServiceResponse.fail(user, "You don't have permission to publish an incident!");
         }
 
-        boolean published = publishInput.equalsIgnoreCase("true");
-        if (!List.of("true", "false").contains(publishInput.toLowerCase())) {
+        boolean published = input.equalsIgnoreCase("true");
+        if (!List.of("true", "false").contains(input.toLowerCase())) {
             return ServiceResponse.fail(user, "Expected input to be 'true' or 'false'");
         }
 
@@ -448,27 +459,35 @@ public class IncidentService {
         return findAction(Publish.class).onSubmit(incident, user, status);
     }
 
-    public ServiceResponse<?> status(Incident incident, FireGenUser<?> user, String statusInput) {
+    public ServiceResponse<?> status(Incident incident, FireGenUser<?> user, String input) {
+        if (input == null) {
+            return ServiceResponse.successNone();
+        }
+
         if (!user.hasPermission(Permission.INCIDENT_STATUS)) {
             return ServiceResponse.fail(user, "You don't have permission to change the incident status!");
         }
 
         IncidentStatus status;
         try {
-            status = IncidentStatus.valueOf(statusInput.toUpperCase());
+            status = IncidentStatus.valueOf(input.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return ServiceResponse.fail(user, "That status doesn't exist: " + statusInput);
+            return ServiceResponse.fail(user, "That status doesn't exist: " + input);
         }
 
         return findAction(ChangeStatus.class).onSubmit(incident, user, status);
     }
 
     public ServiceResponse<?> narrative(Incident incident, FireGenUser<?> user, String narrative) {
+        if (narrative == null) {
+            return ServiceResponse.successNone();
+        }
+
         if (!user.hasPermission(Permission.NARRATIVE_ADD)) {
             return ServiceResponse.fail(user, "You don't have permission to add to the narrative.");
         }
 
-        if (narrative == null || narrative.isEmpty()) {
+        if (narrative.isEmpty()) {
             return ServiceResponse.fail(user, "Expected narrative to contain content, found an empty text string.");
         }
 

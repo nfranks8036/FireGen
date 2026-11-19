@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.discord.Main;
@@ -21,6 +22,8 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.services.IncidentService;
+import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.DiscordUser;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
@@ -80,81 +83,32 @@ public class FireGenEdit extends Command {
             return;
         }
 
-        OptionMapping typeOption = event.getOption("type");
-        if (typeOption != null) {
-            if (!Main.users.hasPermission(event.getUser(), Permission.CHANGE_CALL_TYPE)) {
-                DiscordMessages.error(event, "You don't have permission to change the incident type.");
-                return;
-            }
+        IncidentService.IncidentEditRequest request = new IncidentService.IncidentEditRequest(
+                event.getOption("type", ">NEW<", OptionMapping::getAsString),
+                event.getOption("location", OptionMapping::getAsString),
+                event.getOption("units", OptionMapping::getAsString),
+                event.getOption("date", OptionMapping::getAsString),
+                event.getOption("time", OptionMapping::getAsString),
+                event.getOption("narrative", OptionMapping::getAsString),
+                event.getOption("published", OptionMapping::getAsString),
+                event.getOption("status", OptionMapping::getAsString)
+        );
 
-            boolean publish = false;
-            String typeString = typeOption.getAsString();
-
-            if (typeString.startsWith("pub-")) {
-                typeString = typeString.substring("pub-".length()).toUpperCase();
-                publish = true;
-            }
-
-            IncidentType oldType = incident.getType();
-            incident.setTypeBySearch(typeString);
-            IncidentType newType = incident.getType();
-
-            incident.addContributor(user);
-            if (oldType.equals(newType) && !publish) {
-                DiscordMessages.error(event, "An unknown error occurred, the incident type did not change.");
-                return;
-            } else if (!publish) {
-                String narrative = "Changed Incident Type: " + oldType.getSelectedName() + " --> " + newType.getSelectedName();
-                incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
-            }
-
-            incident.update();
-
-            if (publish) {
-                Main.actions.getAction(Publish.class).onSubmit(incident, user, null);
-            }
-        }
-
-        OptionMapping locationOption = event.getOption("location");
-        if (locationOption != null && CreateIncident.Helper.setLocation(incident, event, locationOption) == CONTENT) {
+        ServiceResponse<?> response = Main.services.incidents().editIncident(user, incident, request);
+        if (!response.success() || !response.isResponseType(IncidentImpl.class)) {
+            DiscordMessages.error(event, response.response().toString());
             return;
         }
 
-        OptionMapping timeOption = event.getOption("time");
-        OptionMapping dateOption = event.getOption("date");
-        if ((timeOption != null || dateOption != null) && CreateIncident.Helper.setDateTime(incident, event, dateOption, timeOption) == CONTENT) {
-            return;
-        }
-
-        OptionMapping narrativeOption = event.getOption("narrative");
-        if (narrativeOption != null && CreateIncident.Helper.setInitialNarrative(incident, event, narrativeOption) == CONTENT) {
-            return;
-        }
-
-        OptionMapping unitsOption = event.getOption("units");
-        if (unitsOption != null && CreateIncident.Helper.setUnits(incident, event, unitsOption) == CONTENT) {
-            return;
-        }
-
-        OptionMapping publishedOption = event.getOption("published");
-        if (publishedOption != null && CreateIncident.Helper.setPublished(incident, event, publishedOption) == CONTENT) {
-            return;
-        }
-
-        OptionMapping statusOption = event.getOption("status");
-        if (statusOption != null && CreateIncident.Helper.setStatus(incident, event, statusOption) == CONTENT) {
-            return;
-        }
-
-        DiscordMessages.noMessage(event, MessageStatus.NONE);
+        DiscordMessages.noMessage(event, response);
     }
 
     @Override
     public List<String> autocomplete(CommandAutoCompleteInteractionEvent event, User user, String commandString, AutoCompleteQuery focused) {
         return switch (focused.getName()) {
             case "type" -> Main.commands.autocompleteSearch(focused.getValue(), Main.config.get(ConfigIncidentTypes.class).asAutocompleteStrings());
-            case "location" -> CreateIncident.Helper.autocompleteLocation(focused, true);
-            case "units" -> Main.commands.autocompleteSearch(focused.getValue(), CreateIncident.Helper.autocompleteUnits(focused));
+            case "location" -> CreateIncident.autocompleteLocation(focused, true);
+            case "units" -> Main.commands.autocompleteSearch(focused.getValue(), CreateIncident.autocompleteUnits(focused));
             case "published" -> List.of("True", "False");
             case "status" -> Arrays.stream(IncidentStatus.values()).map(IncidentStatus::name).toList();
             default -> null;

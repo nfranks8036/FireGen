@@ -78,8 +78,6 @@ public class CreateIncident extends Command {
         CUSTOM;
     }
 
-    private final IncidentService service;
-
     public CreateIncident() {
         super("create-incident", "Creates an incident to put in radio activity.",
                 CommandFlags.include()
@@ -116,7 +114,6 @@ public class CreateIncident extends Command {
                         .aliases(new String[]{"ci"})
                         .finish()
         );
-        this.service = new IncidentService();
     }
 
     @Override
@@ -137,18 +134,14 @@ public class CreateIncident extends Command {
                 event.getOption("initial-narrative", OptionMapping::getAsString)
         );
 
-        ServiceResponse<?> response = service.createIncident(user, request);
-        if (!response.isResponseType(Incident.class)) {
+        ServiceResponse<?> response = Main.services.incidents().createIncident(user, request);
+        if (!response.success() || !response.isResponseType(IncidentImpl.class)) {
             DiscordMessages.error(event, response.response().toString());
             return;
         }
 
-        Incident incident = (Incident) response.response();
-
-        EditMode.editIncidents.put(user, incident);
-
         DiscordMessages.selfDestruct(event, 5,
-                "Created new incident with those details. Check an admin channel for more information."
+                "Created new incident: " + response.response().toString() + "\nCheck an admin channel for more information."
         );
     }
 

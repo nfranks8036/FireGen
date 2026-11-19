@@ -66,7 +66,7 @@ public class IncidentController {
             @RequestBody IncidentService.IncidentCreateRequest request,
             @AuthenticationPrincipal FireGenUser<?> user
     ) {
-
+        return ResponseEntity.ok().build();
     }
 
 
