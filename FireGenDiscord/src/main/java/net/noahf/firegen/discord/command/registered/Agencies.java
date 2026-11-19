@@ -2,7 +2,6 @@ package net.noahf.firegen.discord.command.registered;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
-import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -25,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static net.noahf.firegen.discord.users.FireGenUser.createId;
+import static net.noahf.firegen.discord.users.DiscordUser.createId;
 
 public class Agencies extends Command {
 

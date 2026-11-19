@@ -30,6 +30,7 @@ dependencies {
     compileOnly("dev.morphia.morphia:morphia-core:2.5.3")
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 }
 
 tasks.withType(JavaCompile).configureEach {

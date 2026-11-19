@@ -9,10 +9,10 @@ import net.noahf.firegen.discord.users.FireGenUser;
  */
 public interface ButtonAction extends FireGenAction {
 
-    void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event);
+    void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event);
 
     @Override
-    default void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+    default void execute(ActionsContext ctx, FireGenUser<?> user, GenericInteractionCreateEvent event) {
         this.execute(ctx, user, (ButtonInteractionEvent) event);
     }
 }

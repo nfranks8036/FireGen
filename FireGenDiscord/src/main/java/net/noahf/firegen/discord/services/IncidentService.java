@@ -6,10 +6,12 @@ import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
+import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.FireGenAction;
@@ -42,7 +44,12 @@ public class IncidentService {
             String type, String location, String units, String date, String time, String initialNarrative
     ) {  }
 
-    public ServiceResponse<?> createIncident(FireGenUser user, IncidentCreateRequest request) {
+    public record IncidentEditRequest(
+            String type, String location, String units, String date, String time, String narrative,
+            String published, String status
+    ) { }
+
+    public ServiceResponse<?> createIncident(FireGenUser<?> user, IncidentCreateRequest request) {
         IncidentImpl incident = Main.incidents.createNewIncident();
         ServiceResponse<?> response = ServiceResponse.success(incident);
 
@@ -69,13 +76,75 @@ public class IncidentService {
         );
 
         response = ServiceResponse.returnAUnlessBFail(response,
-                this.units(incident, user, request.units)
+                this.dateTime(incident, user, request.date, request.time)
         );
+
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.narrative(incident, user, request.initialNarrative)
+        );
+
+        // ---------- post update for first time to channels ----------
+        incident.setStatus(IncidentStatus.PENDING);
+        incident.update();
+
+        EditMode.editIncidents.put(user, incident);
+
+        if (publish) {
+            findAction(Publish.class).onSubmit(incident, user, null);
+        }
 
         return response;
     }
 
-    public ServiceResponse<?> location(Incident incident, FireGenUser user, String input) {
+    public ServiceResponse<?> editIncident(FireGenUser<?> user, IncidentEditRequest request, Incident incident) {
+        ServiceResponse<?> response = ServiceResponse.success(incident);
+
+        // ---------- incident type ----------
+        boolean publish = false;
+        String type = request.type;
+        if (type.startsWith("pub-")) {
+            publish = true;
+            type = request.type.substring("pub-".length()).toUpperCase();
+        }
+
+        ((IncidentImpl)incident).setTypeBySearch(type);
+
+        // ---------- incident contributors // begin list ----------
+        incident.addContributor(user);
+        incident.addLog(user, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
+
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.location(incident, user, request.location)
+        );
+
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.units(incident, user, request.units)
+        );
+
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.dateTime(incident, user, request.date, request.time)
+        );
+
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.narrative(incident, user, request.initialNarrative)
+        );
+
+        // ---------- post update for first time to channels ----------
+        incident.setStatus(IncidentStatus.PENDING);
+        incident.update();
+
+        EditMode.editIncidents.put(user, incident);
+
+        if (publish) {
+            findAction(Publish.class).onSubmit(incident, user, null);
+        }
+
+        return response;
+    }
+
+
+
+    public ServiceResponse<?> location(Incident incident, FireGenUser<?> user, String input) {
         if (input == null) {
             return ServiceResponse.successNone();
         }
@@ -158,7 +227,7 @@ public class IncidentService {
             return UnitsTargetType.UNIT;
         }
     }
-    public ServiceResponse<?> units(Incident incident, FireGenUser user, String input) {
+    public ServiceResponse<?> units(Incident incident, FireGenUser<?> user, String input) {
         if (input == null) { return ServiceResponse.successNone(); }
 
         if (!user.hasPermission(Permission.CHANGE_UNITS)) {
@@ -203,7 +272,7 @@ public class IncidentService {
         return unitsString;
     }
     private ServiceResponse<?> addUnitItem(
-            Incident incident, String unchangedItem, FireGenUser user, ConfigManager config, ConfigUnits configUnits,
+            Incident incident, String unchangedItem, FireGenUser<?> user, ConfigManager config, ConfigUnits configUnits,
             Map<AssignmentStatus, EditUnits.UnitsChangeInput> units
     ) {
         ServiceResponse<?> response = ServiceResponse.successNone();
@@ -327,7 +396,7 @@ public class IncidentService {
 
     public final String DATE_CREATE_FORMAT = "MM/dd/yyyy";
     public final String TIME_CREATE_FORMAT = "HH:mm";
-    public ServiceResponse<?> dateTime(Incident incident, FireGenUser user, @Nullable String dateInput, String timeInput) {
+    public ServiceResponse<?> dateTime(Incident incident, FireGenUser<?> user, @Nullable String dateInput, String timeInput) {
         if (dateInput == null && timeInput == null) {
             return ServiceResponse.successNone();
         }
@@ -343,7 +412,7 @@ public class IncidentService {
         EditDateTime action = findAction(EditDateTime.class);
 
         LocalDate date = LocalDate.now(); // default to now if no date/time provided
-        LocalTime time = LocalTime.now();
+        LocalTime time;
 
         try {
             time = LocalTime.parse(timeInput, DateTimeFormatter.ofPattern(TIME_CREATE_FORMAT));
@@ -354,15 +423,47 @@ public class IncidentService {
         }
 
         if (dateInput != null) {
-            if (timeInput == null) {
-                return ServiceResponse.fail(user, "You must set a time if you provide a date.");
+            try {
+                date = LocalDate.parse(dateInput, DateTimeFormatter.ofPattern(DATE_CREATE_FORMAT));
+            } catch (DateTimeParseException e) {
+                return ServiceResponse.fail(user, "Failed to parse your date, expected format '" +
+                        DATE_CREATE_FORMAT + "', got '" + dateInput + "'");
             }
-
-
         }
+
+        return action.onSubmit(incident, user, Main.config.getFireGenVariables(), date, time);
     }
 
-    public ServiceResponse<?> narrative(Incident incident, FireGenUser user, String narrative) {
+    public ServiceResponse<?> published(Incident incident, FireGenUser<?> user, String publishInput) {
+        if (!user.hasPermission(Permission.INCIDENT_PUBLISH)) {
+            return ServiceResponse.fail(user, "You don't have permission to publish an incident!");
+        }
+
+        boolean published = publishInput.equalsIgnoreCase("true");
+        if (!List.of("true", "false").contains(publishInput.toLowerCase())) {
+            return ServiceResponse.fail(user, "Expected input to be 'true' or 'false'");
+        }
+
+        IncidentPublishedStatus status = published ? IncidentPublishedStatus.PUBLISHED : IncidentPublishedStatus.UNPUBLISHED;
+        return findAction(Publish.class).onSubmit(incident, user, status);
+    }
+
+    public ServiceResponse<?> status(Incident incident, FireGenUser<?> user, String statusInput) {
+        if (!user.hasPermission(Permission.INCIDENT_STATUS)) {
+            return ServiceResponse.fail(user, "You don't have permission to change the incident status!");
+        }
+
+        IncidentStatus status;
+        try {
+            status = IncidentStatus.valueOf(statusInput.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ServiceResponse.fail(user, "That status doesn't exist: " + statusInput);
+        }
+
+        return findAction(ChangeStatus.class).onSubmit(incident, user, status);
+    }
+
+    public ServiceResponse<?> narrative(Incident incident, FireGenUser<?> user, String narrative) {
         if (!user.hasPermission(Permission.NARRATIVE_ADD)) {
             return ServiceResponse.fail(user, "You don't have permission to add to the narrative.");
         }

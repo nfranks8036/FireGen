@@ -3,14 +3,11 @@ package net.noahf.firegen.discord.actions.registered;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
-import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.actions.ActionsContext;
@@ -22,7 +19,6 @@ import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -46,7 +42,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
      * Discord for the user to edit the date/time.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event) {
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_DATE_TIME)) {
             DiscordMessages.error(event, "You don't have permission to change the date & time of an incident.");
             return;

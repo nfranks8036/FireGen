@@ -3,9 +3,13 @@ package net.noahf.firegen.discord.web;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.command.registered.CreateIncident;
+import net.noahf.firegen.discord.services.IncidentService;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.web.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -59,7 +63,8 @@ public class IncidentController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<?>> createIncident(
-            @RequestBody IncidentCreateRequest request
+            @RequestBody IncidentService.IncidentCreateRequest request,
+            @AuthenticationPrincipal FireGenUser<?> user
     ) {
 
     }

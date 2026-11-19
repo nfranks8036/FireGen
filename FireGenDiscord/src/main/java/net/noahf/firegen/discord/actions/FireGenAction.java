@@ -21,7 +21,7 @@ public interface FireGenAction {
 
     String getName();
 
-    void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event);
+    void execute(ActionsContext ctx, FireGenUser<?> user, GenericInteractionCreateEvent event);
 
     /**
      * Creates a customized callback ID number generally used for JDA interactions that can be used to get to the same

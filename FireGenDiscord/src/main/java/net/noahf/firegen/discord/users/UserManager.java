@@ -21,7 +21,7 @@ import java.util.List;
 @Getter
 public class UserManager extends Manager<UserManager> {
 
-    private final List<FireGenUser> users;
+    private final List<DiscordUser> users;
 
     public UserManager(JDA jda, ConfigManager config) {
         super(UserManager.class, "Users");
@@ -30,19 +30,19 @@ public class UserManager extends Manager<UserManager> {
         this.importUsers(jda, config);
     }
 
-    public void addUser(FireGenUser user) {
+    public void addUser(DiscordUser user) {
         this.users.add(user);
     }
 
     public void addUser(Contributor<User> contributor) {
-        this.users.add(new FireGenUser(
+        this.users.add(new DiscordUser(
                 contributor.getId(), contributor.getName(), contributor.getDisplayName(), contributor.getUserObject(),
                 false
         ));
     }
 
-    public @Nullable FireGenUser getById(long id) {
-        for (FireGenUser user : this.users) {
+    public @Nullable DiscordUser getById(long id) {
+        for (DiscordUser user : this.users) {
             if (user.getId() == id) {
                 user.importIfNot(Main.bot.jda());
                 return user;
@@ -51,22 +51,22 @@ public class UserManager extends Manager<UserManager> {
         return null;
     }
 
-    public @Nullable FireGenUser getByDiscord(User user) {
+    public @Nullable DiscordUser getByDiscord(User user) {
         return this.getById(user.getIdLong());
     }
 
-    public FireGenUser getByDiscordNotNull(User user) {
-        FireGenUser u = this.getByDiscord(user);
+    public DiscordUser getByDiscordNotNull(User user) {
+        DiscordUser u = this.getByDiscord(user);
         if (u != null) {
             return u;
         }
-        u = new FireGenUser(user.getIdLong(), user.getName(), user.getEffectiveName(), user, false);
+        u = new DiscordUser(user.getIdLong(), user.getName(), user.getEffectiveName(), user, false);
         this.users.add(u);
         return u;
     }
 
     public boolean hasPermission(User user, Permission permission, Permission... andPermissions) {
-        FireGenUser fireGenUser = this.getByDiscord(user);
+        DiscordUser fireGenUser = this.getByDiscord(user);
         if (fireGenUser == null) {
             return false;
         }
@@ -92,7 +92,7 @@ public class UserManager extends Manager<UserManager> {
                 Permission[] permissions = this.getPermissionArray(userObject.get("permissions").getAsJsonArray());
                 User discordUser = jda.getUserById(id);
 
-                FireGenUser user = new FireGenUser(id, name, name, discordUser, true);
+                DiscordUser user = new DiscordUser(id, name, name, discordUser, true);
                 user.togglePermissions(permissions);
                 user.togglePermissions(Permission.DEFAULT);
 

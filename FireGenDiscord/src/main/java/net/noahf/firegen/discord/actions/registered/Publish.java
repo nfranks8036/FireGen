@@ -1,9 +1,7 @@
 package net.noahf.firegen.discord.actions.registered;
 
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
-import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.IncidentPublishedStatus;
 import net.noahf.firegen.discord.actions.ActionsContext;
@@ -24,7 +22,7 @@ public class Publish implements ButtonAction {
     }
 
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event) {
         event.deferEdit().queue();
 
         IncidentImpl incident = ((IncidentImpl) ctx.getIncident());
@@ -42,7 +40,7 @@ public class Publish implements ButtonAction {
         this.onSubmit(incident, user, null);
     }
 
-    public ServiceResponse<?> onSubmit(IncidentImpl incident, FireGenUser user, @Nullable IncidentPublishedStatus option) {
+    public ServiceResponse<?> onSubmit(Incident incident, FireGenUser user, @Nullable IncidentPublishedStatus option) {
         IncidentPublishedStatus finalOption = option != null ? option : incident.getPublished().opposite();
         incident.setPublished(finalOption);
 
@@ -53,7 +51,7 @@ public class Publish implements ButtonAction {
         );
 
         incident.update();
-        incident.getMessagingService().notifyPublishChange();
+        ((IncidentImpl)incident).getMessagingService().notifyPublishChange();
 
         return ServiceResponse.successNone();
     }

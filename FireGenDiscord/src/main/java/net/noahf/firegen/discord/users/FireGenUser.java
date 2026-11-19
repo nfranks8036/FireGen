@@ -9,61 +9,32 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.utilities.Descriptor;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("UnusedReturnValue")
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Getter
 @AllArgsConstructor
-public class FireGenUser implements Contributor<User>, Descriptor {
-
-    public static String createId(String command, String... additionalParameters) {
-        String[] commands = Arrays.copyOf(additionalParameters, additionalParameters.length + 1);
-        for (int i = commands.length - 1; i >= 1; i--) {
-            commands[i] = commands[i - 1];
-        }
-        commands[0] = command;
-
-        return String.format("firegenuser-generic-%s", String.join("-", commands));
-    }
-
-    public static String createId(User user, String command, String... additionalParameters) {
-        if (additionalParameters == null || additionalParameters.length == 0) {
-            return createInteractionIdString(user, command);
-        }
-
-        String[] commands = Arrays.copyOf(additionalParameters, additionalParameters.length + 1);
-        for (int i = commands.length - 1; i >= 1; i--) {
-            commands[i] = commands[i - 1];
-        }
-        commands[0] = command;
-        // the name of the command has to come first
-        return createInteractionIdString(user, commands);
-    }
-
-    private static String createInteractionIdString(User user, String... commands) {
-        return String.format(
-                "firegenuser-%s-%s",
-                user.getId(), String.join("-", commands)
-        );
-    }
-
-
-
+public class FireGenUser<T> implements Contributor<T>, Descriptor, UserDetails {
 
     private final long id;
 
-    private String name;
+    protected String name;
 
-    private String displayName;
+    protected String displayName;
 
-    private transient @JsonIgnore User userObject;
+    protected transient @JsonIgnore T userObject;
 
     @Accessors(fluent = true)
     private transient final boolean isFromJson;
+
+    private final String password;
 
     private final List<Permission> permissions = new ArrayList<>(List.of(Permission.DEFAULT));
 
@@ -93,32 +64,6 @@ public class FireGenUser implements Contributor<User>, Descriptor {
         }
     }
 
-    public boolean importIfNot(User user) {
-        if (this.userObject != null) {
-            return false;
-        }
-
-        this.userObject = user;
-        this.name = user.getName();
-        this.displayName = user.getEffectiveName();
-
-
-        Log.info("Imported User: " + this.describe());
-        return true;
-    }
-
-    public boolean importIfNot(JDA jda) {
-        if (this.userObject != null) {
-            return false;
-        }
-
-        User user = jda.retrieveUserById(this.id).complete();
-        if (user == null) {
-            throw new IllegalArgumentException("That user does not exist per Discord: " + this.id);
-        }
-        return this.importIfNot(user);
-    }
-
     @Override
     @NotNull
     public String toString() {
@@ -130,4 +75,19 @@ public class FireGenUser implements Contributor<User>, Descriptor {
     public String describe() {
         return this.getName() + " [ID: " + this.getId() + ", display: " + this.getDisplayName() + ", permission count: " + this.getPermissions().size() + "]";
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.permissions.stream()
+                .map(s -> new SimpleGrantedAuthority(s.name()))
+                .toList();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() { return this.getName(); }
 }

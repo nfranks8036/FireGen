@@ -1,6 +1,5 @@
 package net.noahf.firegen.discord.actions.registered;
 
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.actions.ActionsContext;
@@ -8,7 +7,6 @@ import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.FireGenUser;
-import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +19,7 @@ public class EditMode implements ButtonAction {
     /**
      * Represents the list of users that are currently editing an incident and which incident they're currently editing.
      */
-    public static final Map<User, Incident> editIncidents = new ConcurrentHashMap<>();
+    public static final Map<FireGenUser<?>, Incident> editIncidents = new ConcurrentHashMap<>();
 
     /**
      * The command name required to access this class.
@@ -36,17 +34,17 @@ public class EditMode implements ButtonAction {
      * set a value so the user can edit this incident. It creates a gateway to the `/set-details` command.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         Incident incident = ctx.getIncident();
 
-        editIncidents.put(event.getUser(), incident);
+        editIncidents.put(user, incident);
 
         // we don't need to keep telling the user this
-        if (!editIncidents.containsKey(event.getUser())) {
+        if (!editIncidents.containsKey(user)) {
 
             DiscordMessages.selfDestruct(event, 5,
                     "You're now editing the incident " +

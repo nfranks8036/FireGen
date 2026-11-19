@@ -6,13 +6,10 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
-import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
-import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
@@ -144,7 +141,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
      * to the Discord user that allows them to select agencies they wish to append or remove from the incident.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event) {
         if (!this.checkUserPermission(event.getUser(), Permission.CHANGE_UNITS)) {
             DiscordMessages.error(event, "You don't have permission to change unit statuses on an incident.");
             return;
@@ -154,7 +151,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
 
         if (!ctx.getParameters().isEmpty()) {
             ServiceResponse<?> status = this.onSubmit(ctx.getIncident(), user, null);
-            if (!status.hasText()) {
+            if (!status.hasObject()) {
                 event.deferEdit().queue();
             }
             return;

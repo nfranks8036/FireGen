@@ -6,6 +6,7 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.errors.ActionCommandNotExist;
 import net.noahf.firegen.discord.actions.errors.IncidentNotExist;
+import net.noahf.firegen.discord.users.DiscordUser;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.BotNotLoaded;
 import net.noahf.firegen.discord.utilities.Log;
@@ -124,9 +125,9 @@ public class ActionsManager {
             throw new ActionCommandNotExist(actionTitle);
         }
 
-        FireGenUser user = Main.users.getByDiscord(event.getUser());
+        DiscordUser user = Main.users.getByDiscord(event.getUser());
         if (user == null) {
-            user = new FireGenUser(-1L, "guest", "Guest", null, false);
+            user = new DiscordUser(-1L, "guest", "Guest", null, false);
         }
 
         ActionsContext context = new ActionsContext(

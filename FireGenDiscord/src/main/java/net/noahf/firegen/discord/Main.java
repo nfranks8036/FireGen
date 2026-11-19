@@ -8,6 +8,7 @@ import net.noahf.firegen.discord.command.CommandManager;
 import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.database.DatabaseManager;
 import net.noahf.firegen.discord.incidents.IncidentManager;
+import net.noahf.firegen.discord.services.ServicesManager;
 import net.noahf.firegen.discord.users.UserManager;
 import net.noahf.firegen.discord.utilities.Log;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ public class Main {
     public static BotManager bot;
     public static ConfigManager config;
     public static DatabaseManager database;
+    public static ServicesManager services;
     public static CommandManager commands;
     public static IncidentManager incidents;
     public static ActionsManager actions;
@@ -41,6 +43,7 @@ public class Main {
         bot = new BotManager().startJda();
         config = new ConfigManager(bot).startImport();
         database = new DatabaseManager();
+        services = new ServicesManager();
         incidents = new IncidentManager(config);
         actions = new ActionsManager();
         commands = new CommandManager(bot.jda());

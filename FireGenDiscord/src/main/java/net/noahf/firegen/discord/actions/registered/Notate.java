@@ -3,13 +3,11 @@ package net.noahf.firegen.discord.actions.registered;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
-import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
@@ -20,7 +18,6 @@ import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import static net.noahf.firegen.discord.actions.registered.AddNarrative.MAX_NARRATIVE_LENGTH;
 import static net.noahf.firegen.discord.actions.registered.AddNarrative.MIN_NARRATIVE_LENGTH;
@@ -50,7 +47,7 @@ public class Notate implements ButtonAction, ModalAction {
      * This opens the modal for the user to type in their note.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event) {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
         Modal modal = Modal.create(this.callbackId(ctx), "Add Note to " + ctx.getIncident().getFormattedId())

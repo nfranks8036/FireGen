@@ -11,6 +11,7 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.actions.FireGenAction;
 import net.noahf.firegen.discord.actions.registered.AddNarrative;
 import net.noahf.firegen.discord.actions.registered.EditMode;
 import net.noahf.firegen.discord.actions.registered.Publish;
@@ -20,15 +21,16 @@ import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
+import net.noahf.firegen.discord.users.DiscordUser;
+import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static net.noahf.firegen.discord.command.registered.CreateIncident.DATE_CREATE_FORMAT;
-import static net.noahf.firegen.discord.command.registered.CreateIncident.Helper.findAction;
-import static net.noahf.firegen.discord.command.registered.CreateIncident.TIME_CREATE_FORMAT;
+import static net.noahf.firegen.discord.command.registered.CreateIncident.*;
 import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
 
 public class FireGenEdit extends Command {
@@ -63,7 +65,8 @@ public class FireGenEdit extends Command {
     @Override
     public void command(SlashCommandInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
-        IncidentImpl incident = (IncidentImpl) EditMode.editIncidents.get(event.getUser());
+        DiscordUser user = Main.users.getByDiscordNotNull(event.getUser());
+        IncidentImpl incident = (IncidentImpl) EditMode.editIncidents.get(user);
 
         if (incident == null) {
             DiscordMessages.error(event, "You are not currently editing an incident. " +
@@ -96,7 +99,7 @@ public class FireGenEdit extends Command {
             incident.setTypeBySearch(typeString);
             IncidentType newType = incident.getType();
 
-            Contributor<User> user = incident.addContributor(event.getUser());
+            incident.addContributor(user);
             if (oldType.equals(newType) && !publish) {
                 DiscordMessages.error(event, "An unknown error occurred, the incident type did not change.");
                 return;
@@ -108,7 +111,7 @@ public class FireGenEdit extends Command {
             incident.update();
 
             if (publish) {
-                findAction(Publish.class).onSubmit(incident, event, null);
+                Main.actions.getAction(Publish.class).onSubmit(incident, user, null);
             }
         }
 

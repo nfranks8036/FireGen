@@ -17,7 +17,6 @@ import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
-import net.noahf.firegen.discord.utilities.MessageStatus;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -64,7 +63,7 @@ public class HideNarrative implements ButtonAction, StringDropdownAction {
      * This replies a string select menu where the user can select which narrative to hide.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         if (!this.checkUserPermission(event.getUser(), Permission.NARRATIVE_HIDE)) {

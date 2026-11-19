@@ -38,7 +38,6 @@ import org.apache.commons.lang3.Range;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
-import java.awt.font.NumericShaper;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -46,7 +45,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static net.noahf.firegen.discord.users.FireGenUser.createId;
+import static net.noahf.firegen.discord.users.DiscordUser.createId;
 
 public class UnitInfo extends Command {
 

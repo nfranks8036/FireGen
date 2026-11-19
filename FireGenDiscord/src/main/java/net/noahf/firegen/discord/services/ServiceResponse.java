@@ -32,8 +32,12 @@ public record ServiceResponse<T>(
 
 
 
-    public boolean hasText() {
+    public boolean hasObject() {
         return response != null;
+    }
+
+    public boolean isResponseType(Class<?> clazz) {
+        return response.getClass().isAssignableFrom(clazz);
     }
 
 }

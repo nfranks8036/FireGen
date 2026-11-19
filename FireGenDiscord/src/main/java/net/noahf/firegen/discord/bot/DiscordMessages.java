@@ -82,7 +82,7 @@ public class DiscordMessages {
 
     public static void noMessage(IReplyCallback event, ServiceResponse status) {
         if (event.isAcknowledged()) {
-            if (status.hasText()) return;
+            if (status.hasObject()) return;
             event.getHook().deleteOriginal().queue();
         } else {
             event.reply(" ").setEphemeral(true).complete().deleteOriginal().queue();

@@ -22,7 +22,8 @@ import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
-import net.noahf.firegen.discord.utilities.MessageStatus;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.DiscordUser;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -108,11 +109,17 @@ public class AssignUnit extends Command {
             return;
         }
 
+        DiscordUser user = Main.users.getByDiscord(event.getUser());
+        if (user == null) {
+            DiscordMessages.error(event, "You don't have permission to use this command.\n(UserNotFoundError)");
+            return;
+        }
+
         EditUnits editUnits = Main.actions.getAction(EditUnits.class);
-        MessageStatus s = editUnits.onSubmit(incident, event, new EditUnits.UnitsChangeInput(
+        ServiceResponse<?> s = editUnits.onSubmit(incident, user, new EditUnits.UnitsChangeInput(
                 units, status, secondary
         ));
-        if (s == MessageStatus.CONTENT) return;
+        if (s.hasObject()) return;
 
         DiscordMessages.selfDestruct(event, 5,
                 units.stream().map(u -> (UnitImpl)u).map(u -> u.getFormattedStatus(status, null)).collect(Collectors.joining(", ")) +

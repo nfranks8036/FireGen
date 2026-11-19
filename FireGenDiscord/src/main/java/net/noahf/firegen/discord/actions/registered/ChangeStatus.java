@@ -1,9 +1,7 @@
 package net.noahf.firegen.discord.actions.registered;
 
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
-import net.noahf.firegen.api.Contributor;
+import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.discord.actions.ActionsContext;
 import net.noahf.firegen.discord.actions.ButtonAction;
@@ -13,10 +11,7 @@ import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.utilities.MessageStatus;
 import org.jetbrains.annotations.Nullable;
-
-import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
 
 /**
  * Represents the "Close Incident" or "Re-open Incident" buttons in the Status row.
@@ -36,7 +31,7 @@ public class ChangeStatus implements ButtonAction {
      * buttons.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event) {
         event.deferEdit().queue();
 
         if (!this.checkUserPermission(event.getUser(), Permission.INCIDENT_STATUS)) {
@@ -49,7 +44,9 @@ public class ChangeStatus implements ButtonAction {
         this.onSubmit(incident, user, null);
     }
 
-    public ServiceResponse<?> onSubmit(IncidentImpl incident, FireGenUser user, @Nullable IncidentStatus parameterStatus) {
+    public ServiceResponse<?> onSubmit(Incident iIncident, FireGenUser<?> user, @Nullable IncidentStatus parameterStatus) {
+        IncidentImpl incident = (IncidentImpl) iIncident;
+
         IncidentStatus newStatus = parameterStatus;
         IncidentStatus oldStatus = incident.getStatus();
         if (newStatus == null) {
@@ -62,7 +59,8 @@ public class ChangeStatus implements ButtonAction {
 
         incident.setStatus(newStatus);
 
-        if (parameterStatus == null) incident.refreshStatus();
+        if (parameterStatus == null)
+            incident.refreshStatus();
 
         incident.addContributor(user);
         String narrative = switch (newStatus) {

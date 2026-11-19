@@ -15,7 +15,7 @@ public class ViewLog implements ButtonAction {
     }
 
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ButtonInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ButtonInteractionEvent event) {
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();
         ContextMenuDetector.createIncidentLog(event, incident, ctx.getConfig().getFireGenVariables(), true);
     }
