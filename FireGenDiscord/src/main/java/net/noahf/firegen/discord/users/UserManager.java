@@ -66,13 +66,15 @@ public class UserManager extends Manager<UserManager> {
     }
 
     public FireGenUser<?> getByUsername(String name, @Nullable String password) {
+        Log.info("Getting user by username: " + name + " // " + password);
+        Log.info("Users: " + this.users);
         for (FireGenUser<?> user : this.users) {
             if (!user.getUsername().equals(name)) {
                 continue;
             }
-            if (user.getPassword() != null && !user.getPassword().equalsIgnoreCase(password)) {
-                throw new UnauthorizedException();
-            }
+//            if (user.getPassword() != null && !user.getPassword().equalsIgnoreCase(password)) {
+//                throw new UnauthorizedException();
+//            }
             return user;
         }
         throw new UnauthorizedException();

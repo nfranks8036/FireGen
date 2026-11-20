@@ -1,12 +1,11 @@
-package net.noahf.firegen.discord.web;
+package net.noahf.firegen.discord.web.controllers;
 
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.command.registered.CreateIncident;
 import net.noahf.firegen.discord.services.IncidentService;
 import net.noahf.firegen.discord.users.FireGenUser;
-import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.web.api.ApiRateLimit;
 import net.noahf.firegen.discord.web.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -62,11 +61,14 @@ public class IncidentController {
     }
 
     @PostMapping
+    @ApiRateLimit(capacity = 2, refill = 2)
     public ResponseEntity<ApiResponse<?>> createIncident(
             @RequestBody IncidentService.IncidentCreateRequest request,
             @AuthenticationPrincipal FireGenUser<?> user
     ) {
-        return ResponseEntity.ok().build();
+        return ApiResponse.ofService(
+                Main.services.incidents().createIncident(user, request)
+        );
     }
 
 

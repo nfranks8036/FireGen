@@ -2,6 +2,7 @@ package net.noahf.firegen.discord.services;
 
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.discord.utilities.Log;
+import org.jetbrains.annotations.NotNull;
 
 public record ServiceResponse<T>(
         boolean success,
@@ -13,13 +14,15 @@ public record ServiceResponse<T>(
         return new ServiceResponse<>(false, response);
     }
 
+    public static <T> ServiceResponse<T> fail(T response) { return new ServiceResponse<>(false, response); }
+
     public static ServiceResponse<Void> failNone() { return new ServiceResponse<>(false, null); }
 
     public static ServiceResponse<String> success(String response) {
         return new ServiceResponse<>(true, response);
     }
 
-    public static <T> ServiceResponse<T> success(T input) { return new ServiceResponse<>(true, input); }
+    public static <T> ServiceResponse<T> success(T response) { return new ServiceResponse<>(true, response); }
 
     public static ServiceResponse<Void> successNone() {
         return new ServiceResponse<>(true, null);
@@ -37,7 +40,18 @@ public record ServiceResponse<T>(
     }
 
     public boolean isResponseType(Class<?> clazz) {
+        if (response == null) {
+            return false;
+        }
         return response.getClass().isAssignableFrom(clazz);
     }
 
+    @Override
+    public @NotNull String toString() {
+        return "ServiceResponse{" +
+                "success=" + success +
+                ", response=" + response +
+                ", type=" + (response != null ? response.getClass().getCanonicalName() : "null") +
+                '}';
+    }
 }

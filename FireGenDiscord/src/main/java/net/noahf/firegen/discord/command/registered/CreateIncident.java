@@ -38,9 +38,11 @@ import net.noahf.firegen.discord.users.DiscordUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.MessageStatus;
+import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -125,16 +127,21 @@ public class CreateIncident extends Command {
             return;
         }
 
+        ServiceResponse<?> dateTime = Time.fromInputs(user,
+                event.getOption("date", OptionMapping::getAsString),
+                event.getOption("time", OptionMapping::getAsString)
+        );
+
         IncidentService.IncidentCreateRequest request = new IncidentService.IncidentCreateRequest(
                 event.getOption("type", ">NEW<", OptionMapping::getAsString),
                 event.getOption("location", OptionMapping::getAsString),
-                event.getOption("units", OptionMapping::getAsString),
-                event.getOption("date", OptionMapping::getAsString),
-                event.getOption("time", OptionMapping::getAsString),
+                event.getOption("units", (m) -> m.getAsString().strip().split(",")),
+                dateTime.isResponseType(LocalDateTime.class) ? (LocalDateTime) dateTime.response() : null,
                 event.getOption("initial-narrative", OptionMapping::getAsString)
         );
 
         ServiceResponse<?> response = Main.services.incidents().createIncident(user, request);
+        response = ServiceResponse.returnAUnlessBFail(response, dateTime);
         if (!response.success() || !response.isResponseType(IncidentImpl.class)) {
             DiscordMessages.error(event, response.response().toString());
             return;

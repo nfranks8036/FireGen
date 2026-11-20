@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -42,47 +43,63 @@ import java.util.*;
 public class IncidentService {
 
     public record IncidentCreateRequest(
-            String type, String location, String units, String date, String time, String initialNarrative
+            String type, String location, String[] units, LocalDateTime timestamp, String initialNarrative
     ) {  }
 
     public record IncidentEditRequest(
-            String type, String location, String units, String date, String time, String narrative,
-            String published, String status
+            String type, String location, String[] units, LocalDateTime timestamp, String narrative,
+            Boolean published, String status
     ) { }
 
     public ServiceResponse<?> createIncident(FireGenUser<?> user, IncidentCreateRequest request) {
-        IncidentImpl incident = Main.incidents.createNewIncident();
-        ServiceResponse<?> response = ServiceResponse.success(incident);
-
-        // ---------- incident type ----------
-        boolean publish = false;
-        String type = request.type;
-        if (type.startsWith("pub-")) {
-            publish = true;
-            type = request.type.substring("pub-".length()).toUpperCase();
+        if (request.type == null) {
+            return ServiceResponse.fail(user, "At minimum, incidents must be created with an Incident Type. Found none!");
         }
 
-        incident.setTypeBySearch(type);
+        IncidentImpl incident = Main.incidents.createNewIncident();
+        ServiceResponse<?> response = ServiceResponse.success(incident);
+        try {
+            // ---------- incident type ----------
+            boolean publish = false;
+            String type = request.type;
+            if (type.startsWith("pub-")) {
+                publish = true;
+                type = request.type.substring("pub-".length()).toUpperCase();
+            }
 
-        // ---------- incident contributors // begin list ----------
-        incident.addContributor(user);
-        incident.addLog(user, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
+            incident.setTypeBySearch(type);
 
-        response = ServiceResponse.returnAUnlessBFail(response, editIncident(user, incident, new IncidentEditRequest(
-                null, request.location, request.units, request.date,
-                request.time, request.initialNarrative, null, null
-        )));
+            // ---------- incident contributors // begin list ----------
+            incident.addContributor(user);
+            incident.addLog(user, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
 
-        incident.setStatus(IncidentStatus.PENDING);
+            response = ServiceResponse.returnAUnlessBFail(response, _editIncident(user, incident, new IncidentEditRequest(
+                    null, request.location, request.units, request.timestamp, request.initialNarrative, null, null
+            ), false));
 
-        if (publish) {
-            findAction(Publish.class).onSubmit(incident, user, null);
+            incident.setStatus(IncidentStatus.PENDING);
+
+            if (publish) {
+                findAction(Publish.class).onSubmit(incident, user, null);
+            }
+        } catch (Exception exception) {
+            return ServiceResponse.fail(user, exception.toString());
+        }
+
+        if (response.success()) {
+            incident.update();
+            EditMode.editIncidents.put(user, incident);
+            Main.incidents.commitIncident(incident);
         }
 
         return response;
     }
 
     public ServiceResponse<?> editIncident(FireGenUser<?> user, Incident incident, IncidentEditRequest request) {
+        return _editIncident(user, incident, request, true);
+    }
+
+    private ServiceResponse<?> _editIncident(FireGenUser<?> user, Incident incident, IncidentEditRequest request, boolean editAction) {
         ServiceResponse<?> response = ServiceResponse.success(incident);
         incident.addContributor(user);
 
@@ -99,7 +116,7 @@ public class IncidentService {
         );
 
         response = ServiceResponse.returnAUnlessBFail(response,
-                this.dateTime(incident, user, request.date, request.time)
+                this.dateTime(incident, user, request.timestamp)
         );
 
         response = ServiceResponse.returnAUnlessBFail(response,
@@ -114,9 +131,11 @@ public class IncidentService {
                 this.status(incident, user, request.status)
         );
 
-        incident.update();
+        if (editAction) {
+            incident.update();
 
-        EditMode.editIncidents.put(user, incident);
+            EditMode.editIncidents.put(user, incident);
+        }
 
         return response;
     }
@@ -234,7 +253,7 @@ public class IncidentService {
             return UnitsTargetType.UNIT;
         }
     }
-    public ServiceResponse<?> units(Incident incident, FireGenUser<?> user, String input) {
+    public ServiceResponse<?> units(Incident incident, FireGenUser<?> user, String[] input) {
         if (input == null) { return ServiceResponse.successNone(); }
 
         if (!user.hasPermission(Permission.CHANGE_UNITS)) {
@@ -245,14 +264,9 @@ public class IncidentService {
         ConfigUnits configUnits = config.get(ConfigUnits.class);
         EditUnits action = findAction(EditUnits.class);
 
-        // remove whitespace from the agencies string, we don't care if they put a space or not after a comma
-        String unitsString = removeWhitespaceIfNotCustom(input);
-
-        String[] targetsList = unitsString.split(",");
-
         ServiceResponse<?> response = ServiceResponse.success(incident);
         Map<AssignmentStatus, EditUnits.UnitsChangeInput> units = new HashMap<>();
-        for (String unchangedItem : targetsList) {
+        for (String unchangedItem : input) {
             response = ServiceResponse.returnAUnlessBFail(response,
                     this.addUnitItem(
                             incident, unchangedItem, user, config, configUnits, units
@@ -265,18 +279,6 @@ public class IncidentService {
         }
 
         return response;
-    }
-    private @NotNull String removeWhitespaceIfNotCustom(String unitsString) {
-        if (!unitsString.contains(String.valueOf(UnitsTargetType.CUSTOM.getCharacter()))) {
-            // we don't want to replace whitespace for CUSTOM units because they can actually be used in formatting
-            // so we only remove whitespace if we know that this string does not contain a custom unit
-            unitsString = unitsString.replaceAll("\\s+", "");
-        }
-
-        if (unitsString.endsWith(",") || unitsString.endsWith(":")) {
-            unitsString = unitsString.substring(0, unitsString.length() - 1);
-        }
-        return unitsString;
     }
     private ServiceResponse<?> addUnitItem(
             Incident incident, String unchangedItem, FireGenUser<?> user, ConfigManager config, ConfigUnits configUnits,
@@ -401,47 +403,18 @@ public class IncidentService {
         return response;
     }
 
-    public final String DATE_CREATE_FORMAT = "MM/dd/yyyy";
-    public final String TIME_CREATE_FORMAT = "HH:mm";
-    public ServiceResponse<?> dateTime(Incident incident, FireGenUser<?> user, @Nullable String dateInput, String timeInput) {
-        if (dateInput == null && timeInput == null) {
+    public ServiceResponse<?> dateTime(Incident incident, FireGenUser<?> user, LocalDateTime timestamp) {
+        if (timestamp == null) {
             return ServiceResponse.successNone();
         }
 
-        if (!user.hasPermission(Permission.CHANGE_DATE_TIME)) {
-            return ServiceResponse.fail(user, "You don't have permission to change the incident date & time.");
-        }
-
-        if (timeInput == null) {
-            return ServiceResponse.fail(user, "Expected at minimum a time to be provided, found none.");
-        }
-
-        EditDateTime action = findAction(EditDateTime.class);
-
-        LocalDate date = LocalDate.now(); // default to now if no date/time provided
-        LocalTime time;
-
-        try {
-            time = LocalTime.parse(timeInput, DateTimeFormatter.ofPattern(TIME_CREATE_FORMAT));
-        } catch (DateTimeParseException e) {
-            return ServiceResponse.fail(user, "Failed to parse your time, expected format '" +
-                    TIME_CREATE_FORMAT + "', got '" + timeInput + "'"
-            );
-        }
-
-        if (dateInput != null) {
-            try {
-                date = LocalDate.parse(dateInput, DateTimeFormatter.ofPattern(DATE_CREATE_FORMAT));
-            } catch (DateTimeParseException e) {
-                return ServiceResponse.fail(user, "Failed to parse your date, expected format '" +
-                        DATE_CREATE_FORMAT + "', got '" + dateInput + "'");
-            }
-        }
-
-        return action.onSubmit(incident, user, Main.config.getFireGenVariables(), date, time);
+        return findAction(EditDateTime.class)
+                .onSubmit(
+                        incident, user, Main.config.getFireGenVariables(), timestamp.toLocalDate(), timestamp.toLocalTime()
+                );
     }
 
-    public ServiceResponse<?> published(Incident incident, FireGenUser<?> user, String input) {
+    public ServiceResponse<?> published(Incident incident, FireGenUser<?> user, Boolean input) {
         if (input == null) {
             return ServiceResponse.successNone();
         }
@@ -450,12 +423,7 @@ public class IncidentService {
             return ServiceResponse.fail(user, "You don't have permission to publish an incident!");
         }
 
-        boolean published = input.equalsIgnoreCase("true");
-        if (!List.of("true", "false").contains(input.toLowerCase())) {
-            return ServiceResponse.fail(user, "Expected input to be 'true' or 'false'");
-        }
-
-        IncidentPublishedStatus status = published ? IncidentPublishedStatus.PUBLISHED : IncidentPublishedStatus.UNPUBLISHED;
+        IncidentPublishedStatus status = input ? IncidentPublishedStatus.PUBLISHED : IncidentPublishedStatus.UNPUBLISHED;
         return findAction(Publish.class).onSubmit(incident, user, status);
     }
 

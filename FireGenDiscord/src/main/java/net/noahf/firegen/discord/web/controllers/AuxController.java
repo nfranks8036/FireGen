@@ -1,10 +1,8 @@
-package net.noahf.firegen.discord.web;
+package net.noahf.firegen.discord.web.controllers;
 
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.web.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +16,7 @@ import java.util.Map;
 public class AuxController {
 
     @GetMapping("/me")
-    public ResponseEntity<?> getMe(Authentication authentication) {
-        FireGenUser<?> user = (FireGenUser<?>) authentication.getPrincipal();
+    public ResponseEntity<?> getMe(@AuthenticationPrincipal FireGenUser<?> user) {
         return ApiResponse.ok(
                 new LinkedHashMap<>(
                         Map.of(

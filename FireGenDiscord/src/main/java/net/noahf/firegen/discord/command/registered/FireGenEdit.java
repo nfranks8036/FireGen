@@ -28,8 +28,10 @@ import net.noahf.firegen.discord.users.DiscordUser;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.MessageStatus;
+import net.noahf.firegen.discord.utilities.Time;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,24 +85,29 @@ public class FireGenEdit extends Command {
             return;
         }
 
+        ServiceResponse<?> additionalResponse = Time.fromInputs(user,
+                event.getOption("date", OptionMapping::getAsString),
+                event.getOption("time", OptionMapping::getAsString)
+        );
+
         IncidentService.IncidentEditRequest request = new IncidentService.IncidentEditRequest(
                 event.getOption("type", ">NEW<", OptionMapping::getAsString),
                 event.getOption("location", OptionMapping::getAsString),
-                event.getOption("units", OptionMapping::getAsString),
-                event.getOption("date", OptionMapping::getAsString),
-                event.getOption("time", OptionMapping::getAsString),
+                event.getOption("units", (m) -> m.getAsString().strip().split(",")),
+                additionalResponse.isResponseType(LocalDateTime.class) ? (LocalDateTime) additionalResponse.response() : null,
                 event.getOption("narrative", OptionMapping::getAsString),
-                event.getOption("published", OptionMapping::getAsString),
+                event.getOption("published", (s) -> s.getAsString().equalsIgnoreCase("true")),
                 event.getOption("status", OptionMapping::getAsString)
         );
 
         ServiceResponse<?> response = Main.services.incidents().editIncident(user, incident, request);
+        response = ServiceResponse.returnAUnlessBFail(response, additionalResponse);
         if (!response.success() || !response.isResponseType(IncidentImpl.class)) {
             DiscordMessages.error(event, response.response().toString());
             return;
         }
 
-        DiscordMessages.noMessage(event, response);
+        event.getHook().deleteOriginal().queue();
     }
 
     @Override

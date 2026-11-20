@@ -2,6 +2,7 @@ package net.noahf.firegen.discord.web.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,18 +31,12 @@ import java.util.Base64;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfiguration {
 
     private final ApiAuthenticationEntryPoint authEntryPoint;
     private final ApiAccessDeniedHandler accessDeniedHandler;
-
-    public SecurityConfiguration(
-            ApiAuthenticationEntryPoint authEntryPoint,
-            ApiAccessDeniedHandler accessDeniedHandler
-    ) {
-        this.authEntryPoint = authEntryPoint;
-        this.accessDeniedHandler = accessDeniedHandler;
-    }
+    private final FireGenJwtAuthenticationConverter fireGenJwtAuthenticationConverter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,7 +60,7 @@ public class SecurityConfiguration {
                 )
 
                 .oauth2ResourceServer(oauth -> oauth
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(fireGenJwtAuthenticationConverter))
                 )
 
                 .build();
@@ -76,18 +71,6 @@ public class SecurityConfiguration {
             FireGenAuthenticationProvider provider
     ) {
         return new ProviderManager(provider);
-    }
-
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        authoritiesConverter.setAuthoritiesClaimName("authorities");
-        authoritiesConverter.setAuthorityPrefix("");
-
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
-
-        return converter;
     }
 
     @Bean

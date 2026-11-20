@@ -1,8 +1,14 @@
 package net.noahf.firegen.discord.utilities;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.actions.registered.EditDateTime;
+import net.noahf.firegen.discord.services.ServiceResponse;
+import net.noahf.firegen.discord.users.FireGenUser;
+import net.noahf.firegen.discord.users.Permission;
+
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -66,6 +72,44 @@ public class Time {
             default:
                 throw new IllegalArgumentException("Unknown format");
         }
+    }
+
+    private static final String DATE_CREATE_FORMAT = "MM/dd/yyyy";
+    private static final String TIME_CREATE_FORMAT = "HH:mm";
+    public static ServiceResponse<?> fromInputs(FireGenUser<?> user, String dateInput, String timeInput) {
+        if (dateInput == null && timeInput == null) {
+            return ServiceResponse.successNone();
+        }
+
+        if (!user.hasPermission(Permission.CHANGE_DATE_TIME)) {
+            return ServiceResponse.fail(user, "You don't have permission to change the incident date & time.");
+        }
+
+        if (timeInput == null) {
+            return ServiceResponse.fail(user, "Expected at minimum a time to be provided, found none.");
+        }
+
+        LocalDate date = LocalDate.now(); // default to now if no date/time provided
+        LocalTime time;
+
+        try {
+            time = LocalTime.parse(timeInput, DateTimeFormatter.ofPattern(TIME_CREATE_FORMAT));
+        } catch (DateTimeParseException e) {
+            return ServiceResponse.fail(user, "Failed to parse your time, expected format '" +
+                    TIME_CREATE_FORMAT + "', got '" + timeInput + "'"
+            );
+        }
+
+        if (dateInput != null) {
+            try {
+                date = LocalDate.parse(dateInput, DateTimeFormatter.ofPattern(DATE_CREATE_FORMAT));
+            } catch (DateTimeParseException e) {
+                return ServiceResponse.fail(user, "Failed to parse your date, expected format '" +
+                        DATE_CREATE_FORMAT + "', got '" + dateInput + "'");
+            }
+        }
+
+        return ServiceResponse.success(date.atTime(time));
     }
 
     public enum TimeDiffStyle {

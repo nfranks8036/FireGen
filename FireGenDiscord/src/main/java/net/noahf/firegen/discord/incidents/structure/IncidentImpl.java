@@ -395,6 +395,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     @Override
     public String toString() {
         return "#" + this.getFormattedId() + " (" + this.getType().getSelectedName()
-                + (this.getLocation().isSet() ? " @ " + this.getLocation().format() : "") + ") ";
+                + (this.getLocation().isSet() ? " @ " + this.getLocation().format() : "") + ")";
     }
 }

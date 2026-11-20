@@ -43,9 +43,11 @@ public class IncidentManager {
      * @return a blank Incident class
      */
     public IncidentImpl createNewIncident() {
-        IncidentImpl incident = new IncidentImpl(this);
+        return new IncidentImpl(this);
+    }
+
+    public void commitIncident(Incident incident) {
         this.incidents.add(incident);
-        return incident;
     }
 
     /**

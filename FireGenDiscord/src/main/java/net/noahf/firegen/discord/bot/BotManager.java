@@ -38,6 +38,7 @@ public class BotManager extends Manager<BotManager> {
     private String token = null;
     private @Getter String municipalityFolder = null;
     private @Getter String configPrefix = null;
+    private String jwtSecret;
     private IncidentBoard incidentBoard;
 
     @Getter
@@ -69,6 +70,7 @@ public class BotManager extends Manager<BotManager> {
             token = getExternalInfo("TOKEN");
             municipalityFolder = getExternalInfo("MUNICIPALITY");
             configPrefix = getExternalInfo("CONFIG_PREFIX");
+            jwtSecret = getExternalInfo("JWT_SECRET");
         } catch (Exception exception) {
             Log.error("Failed to find token from environment: " + exception, exception);
         }
@@ -76,6 +78,7 @@ public class BotManager extends Manager<BotManager> {
         Log.info("Checking for required information...");
         assertPropertyNotNull("TOKEN", token);
         assertPropertyNotNull("MUNICIPALITY", municipalityFolder);
+        assertPropertyNotNull("JWT_SECRET", jwtSecret);
 
         configPrefix = getOr(configPrefix, "");
     }

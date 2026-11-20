@@ -35,6 +35,7 @@ public class Main {
 
     private static @Getter boolean loading = true;
 
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private static ConfigurableApplicationContext applicationContext;
 
     public static void main(String[] args) throws InterruptedException, InvalidHandlerException {

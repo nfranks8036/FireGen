@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'com.bucket4j:bucket4j_jdk17-core:8.14.0'
 }
 
 tasks.withType(JavaCompile).configureEach {
