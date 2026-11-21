@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
@@ -8,6 +9,7 @@ import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.utilities.IdGenerator;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigOperationalStatuses;
+import net.noahf.firegen.discord.web.serializers.UnitSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,6 +20,7 @@ import java.util.StringJoiner;
 
 @RequiredArgsConstructor @NoArgsConstructor(force = true)
 @Getter
+@JsonSerialize(using = UnitSerializer.class)
 public class UnitImpl implements Unit {
 
     private final Long id = -1L;

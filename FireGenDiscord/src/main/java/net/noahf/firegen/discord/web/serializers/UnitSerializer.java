@@ -12,7 +12,11 @@ public class UnitSerializer extends JsonSerializer<Unit> {
     public void serialize(Unit unit, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
 
-        gen.writeTitl
+        gen.writeStringField("type", unit.getType().toString());
+        gen.writeNumberField("number", unit.getNumber() != Integer.MIN_VALUE ? unit.getNumber() : -999999);
+        gen.writeStringField("short", unit.getShorthand());
+        gen.writeStringField("long", unit.getLonghand());
+        gen.writeStringField("formatted", unit.getFormatted());
 
         gen.writeEndObject();
     }

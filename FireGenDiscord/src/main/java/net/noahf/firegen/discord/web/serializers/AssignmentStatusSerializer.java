@@ -9,7 +9,7 @@ import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 
 import java.io.IOException;
 
-public class AssignmentStatusSerializer  {
+public class AssignmentStatusSerializer extends JsonSerializer<AssignmentStatus> {
 
     @Override
     public void serialize(AssignmentStatus status, JsonGenerator gen, SerializerProvider serializers) throws IOException {
