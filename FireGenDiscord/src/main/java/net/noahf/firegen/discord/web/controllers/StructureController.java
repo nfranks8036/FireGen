@@ -2,16 +2,13 @@ package net.noahf.firegen.discord.web.controllers;
 
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.SingleObjectConfiguration;
+import net.noahf.firegen.discord.users.FireGenUser;
+import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.web.api.ApiResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/structure")
@@ -51,5 +48,6 @@ public class StructureController {
         }
         return ApiResponse.ok(returned);
     }
+
 
 }

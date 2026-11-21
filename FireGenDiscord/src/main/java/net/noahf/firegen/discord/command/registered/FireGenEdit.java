@@ -91,7 +91,7 @@ public class FireGenEdit extends Command {
         );
 
         IncidentService.IncidentEditRequest request = new IncidentService.IncidentEditRequest(
-                event.getOption("type", ">NEW<", OptionMapping::getAsString),
+                event.getOption("type", OptionMapping::getAsString),
                 event.getOption("location", OptionMapping::getAsString),
                 event.getOption("units", (m) -> m.getAsString().strip().split(",")),
                 additionalResponse.isResponseType(LocalDateTime.class) ? (LocalDateTime) additionalResponse.response() : null,

@@ -1,10 +1,12 @@
 package net.noahf.firegen.discord.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import lombok.experimental.Accessors;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.utilities.Descriptor;
+import net.noahf.firegen.discord.web.serializers.FireGenUserSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Getter
 @AllArgsConstructor
+@JsonSerialize(using = FireGenUserSerializer.class)
 public class FireGenUser<T> implements Contributor<T>, Descriptor, UserDetails {
 
     private final long id;
