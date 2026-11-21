@@ -91,8 +91,8 @@ public class AssignUnit extends Command {
         Secondary secondary = secondaryStr != null ? new SecondaryImpl(secondaryStr, secondaryStr, null) : null;
         if (secondaryStr != null) {
             secondary = status.getSecondaries().stream()
-                    .filter(s -> s.getShortName().equalsIgnoreCase(secondaryStr)
-                            || s.getLongName().equalsIgnoreCase(secondaryStr)
+                    .filter(s -> s.shortName().equalsIgnoreCase(secondaryStr)
+                            || s.longName().equalsIgnoreCase(secondaryStr)
                     )
                     .findFirst().orElse(secondary);
         }
@@ -124,7 +124,7 @@ public class AssignUnit extends Command {
         DiscordMessages.selfDestruct(event, 5,
                 units.stream().map(u -> (UnitImpl)u).map(u -> u.getFormattedStatus(status, null)).collect(Collectors.joining(", ")) +
                         ": " + status.getName() +
-                        (secondary != null ? " (" + secondary.getShortName() + ")" : "")
+                        (secondary != null ? " (" + secondary.shortName() + ")" : "")
                         + "\n-# " + incident.toString()
                 );
     }
@@ -154,7 +154,7 @@ public class AssignUnit extends Command {
                 }
 
                 yield Main.commands.autocompleteSearch(focused.getValue(),
-                        status.getSecondaries().stream().map(Secondary::getLongName).toList()
+                        status.getSecondaries().stream().map(Secondary::longName).toList()
                 );
             }
             default -> null;

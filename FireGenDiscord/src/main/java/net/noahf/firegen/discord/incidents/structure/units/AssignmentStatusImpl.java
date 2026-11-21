@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
@@ -9,6 +10,8 @@ import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
+import net.noahf.firegen.discord.web.serializers.AssignmentStatusSerializer;
+import net.noahf.firegen.discord.web.serializers.IncidentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
+@JsonSerialize(using = AssignmentStatusSerializer.class)
 public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.firegen.api.incidents.units.AssignmentStatus {
 
     public static final AssignmentStatus ADD_UNIT = new AssignmentStatusImpl(

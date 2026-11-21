@@ -243,12 +243,12 @@ public class AssociateLink implements StringDropdownAction, ButtonAction, ModalA
         if (index == null) {
             incident.addLink(link, title);
             incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Associated Link " + title.toUpperCase() + " (" + url.getHost() + ")");
-            Log.user(user.getName() + " associated link: " + newLink.toString());
+            Log.user(user.getUsername() + " associated link: " + newLink.toString());
         } else {
             ImmutablePair<String, String> original =
                     incident.editLink(index, link, title);
             incident.addLog(user, IncidentLogEntry.EntryType.UPDATE, "Edited Link " + title.toUpperCase() + " (" + url.getHost() + ")");
-            Log.user(user.getName() + " edited link: " + original.toString() + " -> " + newLink.toString());
+            Log.user(user.getUsername() + " edited link: " + original.toString() + " -> " + newLink.toString());
         }
 
         incident.update();

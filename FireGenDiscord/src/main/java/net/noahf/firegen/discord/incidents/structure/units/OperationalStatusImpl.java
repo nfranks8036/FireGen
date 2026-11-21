@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -7,11 +8,13 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.OperationalStatus;
 import net.noahf.firegen.api.incidents.units.OperationalStatusPurpose;
 import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
+import net.noahf.firegen.discord.web.serializers.OperationalStatusSerializer;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 @Getter
 @AllArgsConstructor
+@JsonSerialize(using = OperationalStatusSerializer.class)
 public class OperationalStatusImpl implements OperationalStatus {
 
     private String name;

@@ -51,8 +51,6 @@ public class DiscordUser extends FireGenUser<User> {
 
         this.userObject = user;
         this.name = user.getName();
-        this.displayName = user.getEffectiveName();
-
 
         Log.info("Imported User: " + this.describe());
         return true;

@@ -237,8 +237,8 @@ public class AdminMessageSender extends MessageSender {
                     unit.getLonghand().toUpperCase() +
                     (assignment.getSecondary() != null
                             ? " (" +
-                              (Objects.requireNonNull(secondary).getEmoji() != null ? secondary.getEmoji().getFormatted() + " " : "") +
-                              "*" + assignment.getSecondary().getShortName() + "*)"
+                              (Objects.requireNonNull(secondary).emoji() != null ? secondary.emoji().getFormatted() + " " : "") +
+                              "*" + assignment.getSecondary().shortName() + "*)"
                             : ""
                     )
             );

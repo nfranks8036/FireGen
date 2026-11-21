@@ -112,11 +112,11 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                             .addOptions(ImmutablePair.withIndices(selectedStatus.getSecondaries()).stream()
                                     .map(pair -> {
                                         Secondary s = pair.getSecondElement();
-                                        SelectOption option = SelectOption.of(s.getLongName(), "secondary-" + pair.getFirstElement());
+                                        SelectOption option = SelectOption.of(s.longName(), "secondary-" + pair.getFirstElement());
                                         option = option
-                                                .withDescription("(" + s.getShortName() + ")");
-                                        if (((SecondaryImpl)s).getEmoji() != null) {
-                                            option = option.withEmoji(((SecondaryImpl)s).getEmoji());
+                                                .withDescription("(" + s.shortName() + ")");
+                                        if (((SecondaryImpl)s).emoji() != null) {
+                                            option = option.withEmoji(((SecondaryImpl)s).emoji());
                                         }
                                         return option;
                                     })
@@ -304,7 +304,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
                 "Unit" + (units.size() == 1 ? "" : "s") + " " +
                         String.join(", ", units) + " " +
                         status.getName()
-                + (input.secondary != null ? " " + input.secondary.getShortName() : "")
+                + (input.secondary != null ? " " + input.secondary.shortName() : "")
         );
 
         incident.update();

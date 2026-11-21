@@ -1,7 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import net.dv8tion.jda.api.entities.User;
@@ -23,7 +22,6 @@ import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationIm
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
-import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.SystemUser;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
@@ -375,7 +373,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             AssignmentEvent latest = a.getLatestAssignment();
             Secondary secondary = latest.getSecondary();
             return unit.getShorthand() + ":" + latest.getStatus().getShortName()
-                    + (secondary != null ? ">" + secondary.getShortName() : "");
+                    + (secondary != null ? ">" + secondary.shortName() : "");
         }).collect(Collectors.joining(","));
         Log.info("Re-create statuses: " + recreateEvents);
         this.addLog(LocalDateTime.now(), SystemUser.get(), IncidentLogEntry.EntryType.NOTE,

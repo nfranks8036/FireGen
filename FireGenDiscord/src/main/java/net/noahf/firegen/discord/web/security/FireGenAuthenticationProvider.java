@@ -25,7 +25,7 @@ public class FireGenAuthenticationProvider implements AuthenticationProvider {
 
         FireGenUser<?> user;
         try {
-            user = Main.users.getByUsername(username, password);
+            user = Main.users.getByLoginUsername(username, password);
         } catch (UnauthorizedException e) {
             throw new BadCredentialsException(e.getMessage(), e);
         }

@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface Contributor<T> extends Identifiable, AutofilledCharSequence, StringSelectors {
 
-    String getName();
+    String getUsername();
 
-    String getDisplayName();
+    String getLoginUsername();
 
     long getId();
 
@@ -17,7 +17,7 @@ public interface Contributor<T> extends Identifiable, AutofilledCharSequence, St
 
     @Override
     default List<String> asStringSelectors() {
-        return List.of(getName(), getDisplayName(), String.valueOf(getId()));
+        return List.of(getUsername(), getLoginUsername(), String.valueOf(getId()));
     }
 
 }

@@ -144,7 +144,7 @@ public class UnitInfo extends Command {
                     .addField(
                             (status.getEmoji() != null ? status.getEmoji().getFormatted() + " " : "") + status.getName(),
                             "Exact: <t:" + unix + ":f>\nAround: <t:" + unix + ":R>"
-                            + (a.getSecondary() != null ? "\nSecondary: `" + a.getSecondary().getShortName() + "`" : "")
+                            + (a.getSecondary() != null ? "\nSecondary: `" + a.getSecondary().shortName() + "`" : "")
                             ,
                             true
                     );

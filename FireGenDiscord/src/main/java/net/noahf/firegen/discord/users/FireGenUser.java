@@ -3,11 +3,8 @@ package net.noahf.firegen.discord.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.Accessors;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.utilities.Descriptor;
-import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,7 +24,7 @@ public class FireGenUser<T> implements Contributor<T>, Descriptor, UserDetails {
 
     protected String name;
 
-    protected String displayName;
+    protected String loginUsername;
 
     protected transient @JsonIgnore T userObject;
 
@@ -73,7 +70,7 @@ public class FireGenUser<T> implements Contributor<T>, Descriptor, UserDetails {
 
     @Override
     public String describe() {
-        return this.getName() + " [ID: " + this.getId() + ", display: " + this.getDisplayName() + ", permission count: " + this.getPermissions().size() + "]";
+        return this.getUsername() + " [ID: " + this.getId() + ", display: " + this.getLoginUsername() + ", permission count: " + this.getPermissions().size() + "]";
     }
 
     @Override
@@ -89,5 +86,7 @@ public class FireGenUser<T> implements Contributor<T>, Descriptor, UserDetails {
     }
 
     @Override
-    public String getUsername() { return this.getName(); }
+    public String getUsername() {
+        return this.name;
+    }
 }

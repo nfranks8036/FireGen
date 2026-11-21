@@ -3,7 +3,6 @@ package net.noahf.firegen.discord.web.serializers;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
 import net.noahf.firegen.discord.utilities.Time;
@@ -30,7 +29,7 @@ public class UnitAssignmentSerializer  extends JsonSerializer<UnitAssignment> {
             gen.writeNumberField("contributor", event.getContributor().getId());
 
             if (event.getSecondary() != null) {
-                gen.writeStringField("secondary", event.getSecondary().getLongName());
+                gen.writeStringField("secondary", event.getSecondary().longName());
             }
 
             gen.writeEndObject();

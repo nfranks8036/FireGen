@@ -20,7 +20,8 @@ public class AuxController {
         return ApiResponse.ok(
                 new LinkedHashMap<>(
                         Map.of(
-                                "username", user.getName(),
+                                "login", user.getLoginUsername(),
+                                "username", user.getUsername(),
                                 "identifier", user.getId(),
                                 "permissions", user.getPermissions()
                         )

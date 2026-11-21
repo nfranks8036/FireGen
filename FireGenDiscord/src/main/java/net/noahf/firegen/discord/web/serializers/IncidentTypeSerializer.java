@@ -15,8 +15,12 @@ public class IncidentTypeSerializer extends JsonSerializer<IncidentType> {
 
         gen.writeStringField("name", type.getSelectedName());
         gen.writeStringField("nameGeneric", type.getType());
-        gen.writeStringField("selectedQualifier", type.getStringQualifierChoice());
-        gen.writeStringField("priority", "N/A");
+        try {
+            gen.writeStringField("selectedQualifier", type.getStringQualifierChoice());
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+            gen.writeStringField("selectedQualifier", "None");
+        }
+        gen.writeStringField("tag", type.getTag().getTagName());
 
         gen.writeEndObject();
     }

@@ -29,14 +29,9 @@ import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
@@ -316,8 +311,8 @@ public class IncidentService {
         Secondary secondary = null;
         if (secondaryString != null) {
             secondary = status.getSecondaries().stream()
-                    .filter(s -> s.getShortName().equalsIgnoreCase(secondaryString)
-                            || s.getLongName().equalsIgnoreCase(secondaryString)
+                    .filter(s -> s.shortName().equalsIgnoreCase(secondaryString)
+                            || s.longName().equalsIgnoreCase(secondaryString)
                     )
                     .findFirst().orElse(new SecondaryImpl(secondaryString, secondaryString, null));
         }
@@ -365,7 +360,7 @@ public class IncidentService {
                             AgencyType.OTHER, null, Integer.MAX_VALUE,
                             new ArrayList<>(), Integer.MAX_VALUE
                     );
-                    Log.warn("User " + user.getName() + " created a temporary agency: " + agency);
+                    Log.warn("User " + user.getUsername() + " created a temporary agency: " + agency);
                 }
 
                 Emoji emoji;
@@ -383,7 +378,7 @@ public class IncidentService {
                 );
                 configUnits.get().add(custom);
                 agency.getUnits().add(custom);
-                Log.warn("User " + user.getName() + " created a custom unit: " + custom.toStringJava());
+                Log.warn("User " + user.getUsername() + " created a custom unit: " + custom.toStringJava());
                 inputUnits.add(custom);
             }
         }

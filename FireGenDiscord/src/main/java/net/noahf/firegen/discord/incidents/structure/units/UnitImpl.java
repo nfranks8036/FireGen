@@ -119,8 +119,8 @@ public class UnitImpl implements Unit {
         SecondaryImpl secondaryImpl = (SecondaryImpl) secondary;
         if (secondaryImpl != null) {
             returned = returned + " (" +
-                    (secondaryImpl.getEmoji() != null ? secondaryImpl.getEmoji().getFormatted() + " " : "")
-                    + "*" + secondaryImpl.getShortName() + "*)";
+                    (secondaryImpl.emoji() != null ? secondaryImpl.emoji().getFormatted() + " " : "")
+                    + "*" + secondaryImpl.shortName() + "*)";
         }
 
         return returned;

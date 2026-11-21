@@ -1,13 +1,16 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.units.UnitType;
+import net.noahf.firegen.discord.web.serializers.UnitTypeSerializer;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 @Getter
 @AllArgsConstructor
+@JsonSerialize(using = UnitTypeSerializer.class)
 public class UnitTypeImpl implements UnitType {
 
     public static final UnitType CUSTOM = new UnitTypeImpl(

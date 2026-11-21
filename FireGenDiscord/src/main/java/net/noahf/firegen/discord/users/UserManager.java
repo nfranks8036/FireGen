@@ -36,7 +36,7 @@ public class UserManager extends Manager<UserManager> {
 
     public void addUser(Contributor<User> contributor) {
         this.users.add(new DiscordUser(
-                contributor.getId(), contributor.getName(), contributor.getDisplayName(), contributor.getUserObject(),
+                contributor.getId(), contributor.getUsername(), contributor.getLoginUsername(), contributor.getUserObject(),
                 false
         ));
     }
@@ -65,16 +65,24 @@ public class UserManager extends Manager<UserManager> {
         return u;
     }
 
-    public FireGenUser<?> getByUsername(String name, @Nullable String password) {
-        Log.info("Getting user by username: " + name + " // " + password);
-        Log.info("Users: " + this.users);
+    public FireGenUser<?> getByUsername(String name) {
         for (FireGenUser<?> user : this.users) {
             if (!user.getUsername().equals(name)) {
                 continue;
             }
-//            if (user.getPassword() != null && !user.getPassword().equalsIgnoreCase(password)) {
-//                throw new UnauthorizedException();
-//            }
+            return user;
+        }
+        throw new UnauthorizedException();
+    }
+
+    public FireGenUser<?> getByLoginUsername(String name, @Nullable String password) {
+        for (FireGenUser<?> user : this.users) {
+            if (!user.getLoginUsername().equals(name)) {
+                continue;
+            }
+            if (user.getPassword() != null && !user.getPassword().equalsIgnoreCase(password)) {
+                throw new UnauthorizedException();
+            }
             return user;
         }
         throw new UnauthorizedException();
@@ -102,7 +110,7 @@ public class UserManager extends Manager<UserManager> {
             for (JsonElement element : array.asList()) {
                 JsonObject userObject = element.getAsJsonObject();
 
-                String name = userObject.get("username").getAsString();
+                String name = userObject.get("login_username").getAsString();
                 long id = userObject.get("id").getAsLong();
                 Permission[] permissions = this.getPermissionArray(userObject.get("permissions").getAsJsonArray());
                 User discordUser = jda.getUserById(id);

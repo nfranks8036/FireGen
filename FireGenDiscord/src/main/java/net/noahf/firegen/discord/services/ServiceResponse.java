@@ -10,7 +10,7 @@ public record ServiceResponse<T>(
 ) {
 
     public static ServiceResponse<String> fail(Contributor<?> contributor, String response) {
-        Log.error("User " + contributor.getName() + " encountered an error: '" + response + "'");
+        Log.error("User " + contributor.getUsername() + " encountered an error: '" + response + "'");
         return new ServiceResponse<>(false, response);
     }
 
