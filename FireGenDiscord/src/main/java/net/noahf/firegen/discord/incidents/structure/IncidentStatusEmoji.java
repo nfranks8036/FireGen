@@ -1,11 +1,14 @@
 package net.noahf.firegen.discord.incidents.structure;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import net.noahf.firegen.discord.web.serializers.IncidentStatusSerializer;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
+@JsonSerialize(using = IncidentStatusSerializer.class)
 public class IncidentStatusEmoji implements AutofilledCharSequence {
 
     public IncidentStatusEmoji(String name, String leftEmoji, String rightEmoji) {

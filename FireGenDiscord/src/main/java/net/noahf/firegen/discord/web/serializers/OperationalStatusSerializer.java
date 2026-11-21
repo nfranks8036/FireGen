@@ -14,8 +14,9 @@ public class OperationalStatusSerializer extends JsonSerializer<OperationalStatu
         gen.writeStartObject();
 
         gen.writeStringField("name", status.getName());
-        gen.writeStringField("shortName", status.getShortName());
+        gen.writeStringField("short", status.getShortName());
         gen.writeObjectField("purpose", status.getPurpose());
+        gen.writeNumberField("ordinal", status.ordinal());
 
         gen.writeEndObject();
     }

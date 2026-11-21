@@ -15,8 +15,8 @@ public class IncidentLogEntrySerializer extends JsonSerializer<IncidentLogEntry>
     public void serialize(IncidentLogEntry entry, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
 
-        gen.writeNumberField("timeUnix", Time.getUnix(((IncidentLogEntryImpl)entry).getCustomTimeOrDefault()));
-        gen.writeNumberField("trueTimeUnix", Time.getUnix(entry.getTime()));
+        gen.writeNumberField("time", Time.getUnix(((IncidentLogEntryImpl)entry).getCustomTimeOrDefault()));
+        gen.writeNumberField("trueTime", Time.getUnix(entry.getTime()));
         gen.writeNumberField("contributor", entry.getUser().getId());
         gen.writeStringField("type", entry.getType().name());
         gen.writeStringField("text", entry.getEntry());

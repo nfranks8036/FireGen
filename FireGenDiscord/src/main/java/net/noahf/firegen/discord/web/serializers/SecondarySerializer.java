@@ -13,8 +13,8 @@ public class SecondarySerializer extends JsonSerializer<Secondary> {
     public void serialize(Secondary secondary, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
 
-        gen.writeStringField("longName", secondary.longName());
-        gen.writeStringField("shortName", secondary.shortName());
+        gen.writeStringField("long", secondary.longName());
+        gen.writeStringField("short", secondary.shortName());
 
         gen.writeEndObject();
     }

@@ -14,9 +14,10 @@ public class UnitSerializer extends JsonSerializer<Unit> {
 
         gen.writeStringField("type", unit.getType().toString());
         gen.writeNumberField("number", unit.getNumber() != Integer.MIN_VALUE ? unit.getNumber() : -999999);
-        gen.writeStringField("short", unit.getShorthand());
         gen.writeStringField("long", unit.getLonghand());
+        gen.writeStringField("short", unit.getShorthand());
         gen.writeStringField("formatted", unit.getFormatted());
+        gen.writeNumberField("ordinal", unit.ordinal());
 
         gen.writeEndObject();
     }

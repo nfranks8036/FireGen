@@ -18,13 +18,13 @@ public class UnitAssignmentSerializer  extends JsonSerializer<UnitAssignment> {
 
         gen.writeNumberField("unit", assignment.getUnit().getId());
         gen.writeStringField("title", assignment.getUnit().getLonghand());
-        gen.writeStringField("radioChannel", assignment.getRadioChannel().getAlphaTag());
+        gen.writeStringField("channel", assignment.getRadioChannel().getAlphaTag());
 
         gen.writeArrayFieldStart("assignments");
         for (AssignmentEvent event : assignment.getAssignments().stream().filter(Objects::nonNull).sorted().toList()) {
             gen.writeStartObject();
 
-            gen.writeNumberField("timeUnix", Time.getUnix(event.getTimestamp()));
+            gen.writeNumberField("timestamp", Time.getUnix(event.getTimestamp()));
             gen.writeStringField("status", event.getStatus().getName());
             gen.writeNumberField("contributor", event.getContributor().getId());
 

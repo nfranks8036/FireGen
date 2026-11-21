@@ -22,7 +22,7 @@ public class IncidentSerializer extends JsonSerializer<Incident> {
         gen.writeStringField("status", incident.getStatus().name());
         gen.writePOJOField("type", incident.getType());
         gen.writePOJOField("location", incident.getLocation());
-        gen.writeNumberField("timeUnix", incident.getTime().getUnix());
+        gen.writeNumberField("time", incident.getTime().getUnix());
         gen.writeStringField("publishStatus", incident.getPublished().name());
 
         gen.writeArrayFieldStart("units");
@@ -54,8 +54,8 @@ public class IncidentSerializer extends JsonSerializer<Incident> {
         }
         gen.writeEndArray();
 
-        gen.writeNumberField("nextStaleUnix", (long)incident.getUnixNextStale());
-        gen.writeNumberField("nextClosedDueToStaleUnix", (long)incident.getUnixNextClosedDueToStale());
+        gen.writeNumberField("nextStale", (long)incident.getUnixNextStale());
+        gen.writeNumberField("nextClosedDueToStale", (long)incident.getUnixNextClosedDueToStale());
 
         gen.writeEndObject();
     }

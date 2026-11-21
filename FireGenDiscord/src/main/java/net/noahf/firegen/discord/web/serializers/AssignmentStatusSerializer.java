@@ -16,7 +16,7 @@ public class AssignmentStatusSerializer extends JsonSerializer<AssignmentStatus>
         gen.writeStartObject();
 
         gen.writeStringField("name", status.getName());
-        gen.writeStringField("shortName", status.getShortName());
+        gen.writeStringField("short", status.getShortName());
         gen.writeNumberField("ordinal", status.ordinal());
         gen.writePOJOField("secondaries", status.getSecondaries());
 

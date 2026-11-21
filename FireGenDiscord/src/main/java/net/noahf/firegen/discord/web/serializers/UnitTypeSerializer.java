@@ -13,9 +13,9 @@ public class UnitTypeSerializer extends JsonSerializer<UnitType> {
         gen.writeStartObject();
 
         gen.writeStringField("id", type.getId());
-        gen.writeStringField("longName", type.getLonghand());
-        gen.writeStringField("shortName", type.getShorthand());
-        gen.writeStringField("formattedName", type.getFormatted());
+        gen.writeStringField("long", type.getLonghand());
+        gen.writeStringField("short", type.getShorthand());
+        gen.writeStringField("formatted", type.getFormatted());
         gen.writeStringField("description", type.getDescription());
 
         gen.writeEndObject();

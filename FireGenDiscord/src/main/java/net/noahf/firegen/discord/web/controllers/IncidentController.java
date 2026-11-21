@@ -60,6 +60,21 @@ public class IncidentController {
         return ApiResponse.ok(incident);
     }
 
+    @PostMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> editIncident(
+            @PathVariable String id,
+            @RequestBody IncidentService.IncidentEditRequest request,
+            @AuthenticationPrincipal FireGenUser<?> user
+    ) {
+        Incident incident = Main.incidents.getIncidentBy(id);
+        if (incident == null) {
+            return ApiResponse.fail("No incident exist with ID '" + id + "'");
+        }
+        return ApiResponse.ofService(
+                Main.services.incidents().editIncident(user, incident, request)
+        );
+    }
+
     @PostMapping
     @ApiRateLimit(capacity = 2, refill = 2)
     public ResponseEntity<ApiResponse<?>> createIncident(
