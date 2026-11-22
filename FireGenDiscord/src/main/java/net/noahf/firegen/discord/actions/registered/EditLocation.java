@@ -143,14 +143,14 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         DiscordMessages.noMessage(event, response);
     }
 
-    public ServiceResponse<?> onSubmit(Incident incident, FireGenUser user, LocationType type, IncidentLocation location) {
+    public ServiceResponse<?> onSubmit(Incident incident, FireGenUser<?> user, LocationType type, IncidentLocation location) {
         if (!user.hasPermission(Permission.CHANGE_LOCATION)) {
             return ServiceResponse.fail(user, "You don't have permission to change the incident location.");
         }
 
         incident.setLocation(location);
 
-        String narrative = type.getPrefix() + " Updated: " + location.format().toUpperCase();
+        String narrative = "Location Updated: " + location.format().toUpperCase();
 
         incident.addContributor(user);
         incident.addLog(user, IncidentLogEntryImpl.EntryType.UPDATE, narrative);
@@ -213,13 +213,31 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
 
     private Label convertToLabel(LocationField field, Incident incident) {
         return Label.of(field.getTitle(), DiscordMessages.truncate(field.getDescription(), Label.DESCRIPTION_MAX_LENGTH, "..."),
-                TextInput.create(field.getId(), TextInputStyle.valueOf(field.getType().name()))
+                TextInput.create(field.getId(), TextInputStyle.SHORT)
                         .setRequired(field.isRequired())
                         .setMinLength(field.getMinLength())
                         .setMaxLength(field.getMaxLength())
                         .setPlaceholder(field.getPlaceholder())
-                        .setValue(field.getAutofill().apply(incident))
+                        .setValue(autofill(field, incident))
                         .build()
         );
+    }
+
+    private String autofill(LocationField field, Incident incident) {
+        try {
+            final int VENUE_INDEX = 99;
+            final int COMMON_NAME_INDEX = 98;
+
+            int index = field.getAutofillIndex();
+            if (index == VENUE_INDEX) {
+                return incident.getLocation().getVenue().getName();
+            } else if (index == COMMON_NAME_INDEX) {
+                return incident.getLocation().getCommonName();
+            }
+
+            return incident.getLocation().getData().get(index);
+        } catch (Exception exception) {
+            return null;
+        }
     }
 }

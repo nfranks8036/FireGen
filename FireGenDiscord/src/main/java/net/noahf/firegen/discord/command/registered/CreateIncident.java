@@ -19,10 +19,7 @@ import net.noahf.firegen.discord.actions.registered.AddNarrative;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
-import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
-import net.noahf.firegen.discord.config.files.ConfigLocationPresets;
-import net.noahf.firegen.discord.config.files.ConfigUnits;
+import net.noahf.firegen.discord.config.files.*;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.services.IncidentService;
 import net.noahf.firegen.discord.services.ServiceResponse;
@@ -89,6 +86,10 @@ public class CreateIncident extends Command {
                                         "The location of the incident.",
                                         false, true
                                 ),
+                                new OptionData(OptionType.STRING, "cross-streets",
+                                        "The cross-streets of the call, separated with a comma.",
+                                        false, true
+                                ),
                                 new OptionData(OptionType.STRING, "units",
                                         "Any units attached, separated with a comma.",
                                         false, true
@@ -124,7 +125,8 @@ public class CreateIncident extends Command {
                 event.getOption("location", OptionMapping::getAsString),
                 event.getOption("units", (m) -> m.getAsString().strip().split(",")),
                 dateTime.isResponseType(LocalDateTime.class) ? (LocalDateTime) dateTime.response() : null,
-                event.getOption("initial-narrative", OptionMapping::getAsString)
+                event.getOption("initial-narrative", OptionMapping::getAsString),
+                event.getOption("cross-streets", (m) -> m.getAsString().split(","))
         );
 
         ServiceResponse<?> response = Main.services.incidents().createIncident(user, request);
@@ -323,12 +325,13 @@ public class CreateIncident extends Command {
 
     private static List<String> addLocCreation(String input) {
         List<String> returned;
+        ConfigLocationTypes locationTypes = Main.config.get(ConfigLocationTypes.class);
         if (input.contains(":")) {
 
             try {
                 String[] split = input.split(":", 2);
 
-                LocationType type = LocationType.valueOf(split[0].toUpperCase().substring(1));
+                LocationType type = locationTypes.fromId(split[0].toUpperCase().substring(1));
                 String fieldData = split.length > 1 ? split[1] : "";
 
                 LocationField[] fields = type.getFields();
@@ -344,7 +347,7 @@ public class CreateIncident extends Command {
                 }
 
                 StringBuilder suggestion = new StringBuilder();
-                suggestion.append(type.name()).append(":");
+                suggestion.append(type.getId()).append(":");
 
                 // Add all completed fields
                 for (int i = 0; i < currentIndex; i++) {
@@ -378,8 +381,8 @@ public class CreateIncident extends Command {
             }
 
 
-        } else returned = new ArrayList<>(LocationType.values().stream()
-                .map(LocationType::name)
+        } else returned = new ArrayList<>(locationTypes.get().stream()
+                .map(LocationType::getId)
                 .map(s -> "$" + s + ":")
                 .toList());
 

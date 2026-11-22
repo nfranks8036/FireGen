@@ -22,11 +22,15 @@ import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationIm
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitAssignmentImpl;
+import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.users.DiscordUser;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.SystemUser;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
+import net.noahf.firegen.discord.utilities.errors.ErrorCode;
+import net.noahf.firegen.discord.utilities.errors.FireGenError;
 import net.noahf.firegen.discord.web.serializers.IncidentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,6 +67,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     private IncidentLocation location;
 
     @NotNull
+    private List<String> crossStreets;
+
+    @NotNull
     private IncidentTime time;
 
     @NotNull
@@ -93,6 +100,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         this.status = IncidentStatus.PENDING;
         this.type = Main.config.getFireGenVariables().defaultType();
         this.location = new IncidentLocationImpl(new ArrayList<>());
+        this.crossStreets = new LinkedList<>();
         this.time = new IncidentTimeImpl(LocalDateTime.now());
         this.published = IncidentPublishedStatus.UNPUBLISHED;
 
@@ -113,7 +121,9 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         }
 
         if (newType == null) {
-            throw new IllegalArgumentException("Expected a valid incident type from file, got '" + type + "'");
+            throw new FireGenError(ErrorCode.INCIDENT_TYPE_NOT_VALID,
+                    "Expected a valid incident type from file, got '" + type + "'"
+            );
         }
 
         this.setType(newType);
@@ -159,7 +169,7 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
     }
 
     public Contributor<User> addContributor(User user) {
-        FireGenUser fireGenUser = Main.users.getByDiscord(user);
+        DiscordUser fireGenUser = Main.users.getByDiscord(user);
         this.addContributor(fireGenUser);
         return fireGenUser;
     }
@@ -190,13 +200,15 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             this.log.set(i, entry);
             return;
         }
-        throw new IllegalStateException("Narrative with ID '" + entry.getId() + "' does not exist in the incident with ID '" + this.getFormattedId() + "'");
+        throw new FireGenError(
+                ErrorCode.NARRATIVE_ID_NOT_EXIST,
+                "Narrative with ID '" + entry.getId() + "' does not exist in the incident with ID '" + this.getFormattedId() + "'");
     }
 
     @Override
     public void assignUnit(Unit unit, Contributor<?> contributor, AssignmentStatus assignment, @Nullable Secondary secondary) {
         if (unit.getCurrentAssignment() != null && unit.getCurrentAssignment().getIncident() != this) {
-            throw new IllegalStateException(
+            throw new FireGenError(ErrorCode.UNIT_ALREADY_ASSIGNED_TO_OTHER_INCIDENT,
                     "Unit " + unit.getLonghand() + " is already attached to the incident " + unit.getCurrentAssignment().getIncident().toString()
             );
         }
@@ -208,7 +220,6 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
         }
 
         unitAssignment.assign(contributor, assignment, secondary);
-        unit.assign(unitAssignment);
         this.refreshStatus();
     }
 
@@ -233,15 +244,18 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
                 .anyMatch(u -> u.getUnit().equals(unit));
     }
 
-    public void removeUnit(Contributor<?> contributor, Unit unit) {
+    public void removeUnit(Unit unit) {
+        Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit) && ua.getIncident().equals(this));
+        this.unitAssignments.removeIf(a -> a.getUnit().equals(unit));
+        this.refreshStatus();
+        unit.getPreviousAssignments().removeIf(a -> a.getIncident().equals(this));
+
         if (unit.getCurrentAssignment() == null || unit.getCurrentAssignment().getIncident() != this) {
             return;
         }
 
         unit.getCurrentAssignment().getAssignments().clear();
-        Main.incidents.getAssignments().removeIf(ua -> ua.getUnit().equals(unit) && ua.getIncident().equals(this));
-        this.unitAssignments.removeIf(a -> a.getUnit().equals(unit));
-        this.refreshStatus();
+        unit.assign(null);
     }
 
     public List<UnitAssignment> getSortedAssignments() {
@@ -270,6 +284,11 @@ public class IncidentImpl implements net.noahf.firegen.api.incidents.Incident {
             location = new IncidentLocationImpl(new ArrayList<>());
         }
         this.location = location;
+    }
+
+    @Override
+    public String formatCrossStreets() {
+        return String.join(" / ", this.getCrossStreets());
     }
 
     public String createInteractionIdString(String... commands) {

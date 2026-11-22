@@ -4,6 +4,7 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.registered.ChangeStatus;
+import net.noahf.firegen.discord.services.IncidentLocationService;
 import net.noahf.firegen.discord.services.IncidentService;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.web.api.ApiRateLimit;
@@ -62,7 +63,7 @@ public class IncidentController {
         return ApiResponse.ok(incident);
     }
 
-    @PostMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<?>> editIncident(
             @PathVariable String id,
             @RequestBody IncidentService.IncidentEditRequest request,
@@ -77,6 +78,20 @@ public class IncidentController {
         );
     }
 
+    @PatchMapping("/{id}/location")
+    public ResponseEntity<ApiResponse<?>> setLocation(
+            @PathVariable String id,
+            @RequestBody IncidentLocationService.IncidentLocationUpdate request,
+            @AuthenticationPrincipal FireGenUser<?> user) {
+        Incident incident = Main.incidents.getIncidentBy(id);
+        if (incident == null) {
+            return ApiResponse.fail("No incident exist with ID '" + id + "'");
+        }
+        return ApiResponse.ofService(
+                Main.services.incidentLocation().editLocation(user, incident, request)
+        );
+    }
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<ApiResponse<?>> toggleStatus(@PathVariable String id, @AuthenticationPrincipal FireGenUser<?> user) {
         Incident incident = Main.incidents.getIncidentBy(id);
@@ -84,7 +99,11 @@ public class IncidentController {
             return ApiResponse.fail("No incident exist with ID '" + id + "'");
         }
         Main.actions.getAction(ChangeStatus.class).onSubmit(incident, user, null);
-        return ApiResponse.ok(Map.of("newStatus", incident.getStatus().name(), "incident", incident.getFormattedId()));
+        return ApiResponse.ok(Map.of(
+                "newStatus", incident.getStatus().name(),
+                "isInProgress", incident.getStatus().isInProgress(),
+                "incident", incident.getFormattedId()
+        ));
     }
 
     @PostMapping("/create")

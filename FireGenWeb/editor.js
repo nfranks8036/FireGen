@@ -1,9 +1,11 @@
 // =========================================================================
 // Incident editor (editor.html)
-//   - log in:  POST /api/auth/login            {"username","password"}  ->  {"token"}   (no wrapper)
-//   - create:  POST /api/incidents/create      Bearer token; only "type" is required
-//   - edit:    POST /api/incidents/{id}        Bearer token; every field optional. The edit page
-//                                              is "live": each change is sent as soon as you apply it.
+//   - log in:   POST  /api/auth/login               {"username","password"}  ->  {"token"}   (no wrapper)
+//   - create:   POST  /api/incidents/create         Bearer token; only "type" is required
+//   - edit:     PATCH /api/incidents/{id}           type / units / timestamp / narrative / published
+//   - location: PATCH /api/incidents/{id}/location  {"data","type","commonName","venue"}
+//   - close:    PATCH /api/incidents/{id}/status
+// The edit page is "live": each change is sent as soon as you apply it.
 // This page is self-contained; it repeats a few small helpers from app.js.
 // =========================================================================
 
@@ -22,7 +24,10 @@ const cfg = {
   loaded: false,
   types: [],          // [{value, label, sub}]  incident types
   defaultType: "",    // first type tagged NEW_INCIDENT
-  locations: [],      // known locations
+  locations: [],      // known locations: {value (the formatted text), label, sub, loc (the location object)}
+  locTypes: [],       // location types (config: location_types.json)
+  venues: [],         // venue names (config: venues.json)
+  venueDisplay: {},   // venue name -> "Blacksburg, VA"
   unitOptions: [],    // units (short names)
   unitLong: {},       // short -> long name
   assignOptions: [],  // unit assignment statuses (short names, e.g. ENR)
@@ -30,7 +35,6 @@ const cfg = {
   secondaries: {},    // status short -> [{value, label, sub}]  (suggestions only, e.g. LEF -> hospitals)
   removeShort: "REM",
   addShort: "ADD",
-  incStatuses: [],    // incident statuses
 };
 
 let token = localStorage.getItem(TOKEN_KEY) || "";
@@ -44,6 +48,7 @@ let view = "loading";        // loading | login | list | form
 let statusFilter = "ALL";
 let repaintNarrative = null; // set while an incident page is open
 let liveSync = null;         // set while the live edit page is open
+let autoReopen = null;       // incident id whose "Re-open" box should open as soon as its page loads
 
 const users = {};
 const userFetching = new Set();
@@ -195,13 +200,26 @@ async function loadConfig() {
   // new incidents start as the first type tagged NEW_INCIDENT
   cfg.defaultType = (get("incident_types.json").find((t) => t.tag === "NEW_INCIDENT") || {}).name || "";
 
-  // known locations
+  // location types (ADDRESS, INTERSECTION, ...). Not under the municipality folder; look in both places.
+  let locTypes = all["location_types.json"] || all[`${CONFIG_PREFIX}/location_types.json`];
+  if (!locTypes) {
+    try { locTypes = await request("/api/structure/configs?file=location_types.json"); } catch { /* handled below */ }
+  }
+  cfg.locTypes = Array.isArray(locTypes) ? locTypes : [];
+
+  // venues
+  get("venues.json").forEach((v) => {
+    cfg.venues.push(v.name);
+    cfg.venueDisplay[v.name] = v.display || "";
+  });
+
+  // known locations (used to quick-fill the location fields)
   const seenL = new Set();
   get("locations.json").forEach((l) => {
     const f = (l.format || "").trim();
     if (!f || seenL.has(f)) return;
     seenL.add(f);
-    cfg.locations.push({ value: f, label: f, sub: l.venue || "" });
+    cfg.locations.push({ value: f, label: f, sub: l.venue || "", loc: l });
   });
 
   // units (short names)
@@ -221,10 +239,6 @@ async function loadConfig() {
   });
   cfg.removeShort = cfg.statusShort["REMOVED"] || "REM";
   cfg.addShort = cfg.statusShort["ADDED"] || "ADD";
-
-  // incident statuses live at the top level (no prefix)
-  cfg.incStatuses = (all["incident_status.json"] || ["PENDING", "ACTIVE", "STALE", "CLOSED"])
-    .map((s) => ({ value: s, label: s }));
 
   const muni = all[`${CONFIG_PREFIX}/municipality.json`];
   if (muni) $("place").textContent = `${muni.name}, ${muni.state.abbreviation}`;
@@ -383,7 +397,7 @@ function entryRows(list) {
 // ---- Autocomplete dropdown ---------------------------------------------
 // Type to filter, arrow keys to move, Enter (or click) to pick, Esc to cancel.
 //   options     an array, or a function returning an array (for lists that change)
-//   allowCustom free text is accepted (locations, new units, secondaries)
+//   allowCustom free text is accepted (new units, secondaries)
 //   onChange    called on every edit
 //   onCommit    called when a value is picked, or Enter is pressed on a valid value
 //   onCancel    called on Esc (use it to put the old value back)
@@ -437,9 +451,21 @@ function makeCombo({ options, value = "", placeholder = "", allowCustom = false,
     list.children[active]?.scrollIntoView({ block: "nearest" });
   }
 
-  function open() {
-    items = filter(input.value);
-    active = allowCustom ? -1 : (items.length ? 0 : -1);
+  const isExact = () => {
+    const v = input.value.trim();
+    return !!v && opts().some((o) => o.value === v);
+  };
+  let selectPending = false;
+
+  // showAll: when the box already holds one of the options, list every option (handy for switching)
+  function open(showAll = false) {
+    if (showAll && isExact()) {
+      items = opts().slice(0, 300);
+      active = items.findIndex((o) => o.value === input.value.trim());
+    } else {
+      items = filter(input.value);
+      active = allowCustom ? -1 : (items.length ? 0 : -1);
+    }
     list.hidden = false;
     paint();
   }
@@ -452,9 +478,14 @@ function makeCombo({ options, value = "", placeholder = "", allowCustom = false,
     onCommit(input.value.trim());
   }
 
-  input.addEventListener("focus", open);
+  input.addEventListener("focus", () => {
+    open(true);
+    if (isExact()) { input.select(); selectPending = true; }   // so typing replaces the current value
+  });
+  input.addEventListener("mouseup", (e) => { if (selectPending) { e.preventDefault(); selectPending = false; } });
   input.addEventListener("input", () => { open(); mark(); onChange(input.value.trim()); });
   input.addEventListener("blur", () => {
+    selectPending = false;
     close();
     const v = input.value.trim();
     const m = opts().find((o) => o.value.toLowerCase() === v.toLowerCase());
@@ -465,7 +496,7 @@ function makeCombo({ options, value = "", placeholder = "", allowCustom = false,
   input.addEventListener("keydown", (e) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      if (list.hidden) open();
+      if (list.hidden) open(true);
       else { active = Math.min(active + 1, items.length - 1); paint(); }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
@@ -509,6 +540,187 @@ function resolveSecondary(statusShort, val) {
   const v = String(val);
   const m = secFor(statusShort).find((o) => o.value.toLowerCase() === v.toLowerCase() || (o.sub || "").toLowerCase() === v.toLowerCase());
   return m ? m.value : v;
+}
+
+// ---- Location editor ---------------------------------------------------
+// A location is a type (ADDRESS, INTERSECTION, ...) plus a list of strings that the type
+// interprets (e.g. ADDRESS: ["630", "Washington St SW"]), and optionally a common name and venue.
+// The fields shown for each type come from the location_types.json config.
+
+const SPECIAL_FIELDS = ["venue", "common"];   // sent as "venue" / "commonName", not in the data list
+const locTypeById = (id) => cfg.locTypes.find((t) => t.id === id) || null;
+const locTypeByTitle = (title) => cfg.locTypes.find((t) => t.title.toLowerCase() === String(title || "").trim().toLowerCase()) || null;
+const dataFieldsOf = (t) => (t?.fields || []).filter((f) => !SPECIAL_FIELDS.includes(f.id)).sort((a, b) => a.autofillIndex - b.autofillIndex);
+
+// A stable text form of a location, to tell whether it changed.
+function locSigOf(loc) {
+  const data = [...(loc?.data || [])].map((s) => String(s).trim());
+  while (data.length && data[data.length - 1] === "") data.pop();
+  return JSON.stringify({
+    type: loc?.type ?? null,
+    data,
+    commonName: (loc?.commonName || "").trim() || null,
+    venue: (loc?.venue || "").trim() || null,
+  });
+}
+
+function frow(label, control, hint) {
+  return el("div", { class: "frow" }, el("label", {}, label), el("div", { class: "ctl" }, control, hint ? el("div", { class: "hint" }, hint) : null));
+}
+
+function group(title, ...kids) {
+  return el("div", { class: "group" }, title ? el("div", { class: "sub-label", style: "margin:0 0 8px" }, title) : null, ...kids);
+}
+
+function makeLocationEditor({ initial = null, showQuickFill = true, onChange = () => {}, onEnter = () => {} }) {
+  let type = locTypeById(initial?.type) || null;     // blank until a type is chosen
+  const vals = {};                       // field id -> text
+  let venueCombo = null;
+  const fieldsBox = el("div", {});
+  const previewEl = el("div", { class: "hint loc-preview" });
+
+  const typeCombo = makeCombo({
+    options: cfg.locTypes.map((t) => ({ value: t.title, label: t.title, sub: t.shortName })),
+    placeholder: "Select a location type…",
+    onChange: (v) => {
+      const t = locTypeByTitle(v);
+      if (t && t !== type) switchType(t);
+      else if (!v.trim() && type) switchType(null);    // cleared: hide the fields
+      onChange();
+    },
+  });
+
+  const known = makeCombo({
+    options: cfg.locations,
+    placeholder: "Search known locations to fill in the fields below…",
+    onCommit: (v) => {
+      const o = cfg.locations.find((x) => x.value === v);
+      if (!o) return;
+      load(o.loc);
+      known.set("");
+      onChange();
+    },
+  });
+
+  function read() {
+    const data = dataFieldsOf(type).map((f) => (vals[f.id] || "").trim());
+    while (data.length && data[data.length - 1] === "") data.pop();
+    const hasCommon = !!type?.fields.some((f) => f.id === "common");
+    const hasVenue = !!type?.fields.some((f) => f.id === "venue");
+    return {
+      type: type?.id ?? null,
+      data,
+      commonName: hasCommon && (vals.common || "").trim() ? vals.common.trim() : null,
+      venue: hasVenue && (vals.venue || "").trim() ? vals.venue.trim() : null,
+    };
+  }
+
+  function refreshPreview() {
+    const r = read();
+    if (!type || !r.data.length) { previewEl.textContent = ""; return; }
+    const text = [r.commonName, r.data.join(type.defaultDataDelimiter), r.venue ? cfg.venueDisplay[r.venue] || "" : ""].filter(Boolean).join(", ");
+    previewEl.textContent = `Will read as: ${text}`;
+  }
+
+  const labelOf = (f) => f.title + (f.required && (f.minLength > 0 || f.autofillIndex === 0) ? " *" : "");
+
+  function textInput(f) {
+    const input = el("input", {
+      class: "text", type: "text", value: vals[f.id] || "", placeholder: f.placeholder || "",
+      maxlength: f.maxLength > 0 ? String(f.maxLength) : null,
+    });
+    input.addEventListener("input", () => { vals[f.id] = input.value; refreshPreview(); onChange(); });
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } });
+    return input;
+  }
+
+  function paintFields() {
+    fieldsBox.replaceChildren();
+    venueCombo = null;
+    if (!type) {                 // no type chosen: no fields
+      refreshPreview();
+      return;
+    }
+    dataFieldsOf(type).forEach((f) => fieldsBox.append(frow(labelOf(f), textInput(f), f.description)));
+
+    const common = type.fields.find((f) => f.id === "common");
+    if (common) fieldsBox.append(frow(common.title, textInput(common), common.description));
+
+    const venueField = type.fields.find((f) => f.id === "venue");
+    if (venueField) {
+      venueCombo = makeCombo({
+        options: cfg.venues.map((n) => ({ value: n, label: n, sub: cfg.venueDisplay[n] })),
+        value: vals.venue || "",
+        placeholder: "(none)",
+        onChange: (v) => { vals.venue = v; refreshPreview(); onChange(); },
+      });
+      fieldsBox.append(frow(venueField.title, venueCombo.el, venueField.description));
+    }
+    refreshPreview();
+  }
+
+  // load a location object: {type, data, commonName, venue}
+  function load(loc) {
+    type = locTypeById(loc?.type) || null;
+    Object.keys(vals).forEach((k) => delete vals[k]);
+    dataFieldsOf(type).forEach((f, i) => { vals[f.id] = String((loc?.data || [])[i] ?? ""); });
+    vals.venue = loc?.venue ?? "";
+    vals.common = loc?.commonName ?? "";
+    typeCombo.set(type?.title ?? "");
+    paintFields();
+  }
+
+  // Changing the type starts the data fields over (each type reads them differently).
+  // Only the venue, and the common name where the new type has one, carry across.
+  function switchType(t) {
+    const venue = vals.venue || "";
+    const common = vals.common || "";
+    type = t;
+    Object.keys(vals).forEach((k) => delete vals[k]);
+    vals.venue = venue;
+    if (t?.fields.some((f) => f.id === "common")) vals.common = common;
+    paintFields();
+  }
+
+  function validate() {
+    const errors = [];
+    if (!type || !locTypeByTitle(typeCombo.get())) {
+      errors.push("Pick a location type from the list.");
+      return errors;
+    }
+    for (const f of dataFieldsOf(type)) {
+      const v = (vals[f.id] || "").trim();
+      if (!v) {
+        if (f.required && f.minLength > 0) errors.push(`${f.title} is required.`);
+        continue;
+      }
+      if (f.minLength > 0 && v.length < f.minLength) errors.push(`${f.title} must be at least ${f.minLength} characters.`);
+      if (f.maxLength > 0 && v.length > f.maxLength) errors.push(`${f.title} can be at most ${f.maxLength} characters.`);
+      if (type.id === "LATITUDE_LONGITUDE" && (f.id === "latitude" || f.id === "longitude") && isNaN(Number(v))) errors.push(`${f.title} must be a number (decimal degrees).`);
+    }
+    if (!read().data.length) errors.push("Enter the location details.");
+    const common = type.fields.find((f) => f.id === "common");
+    if (common && common.maxLength > 0 && (vals.common || "").trim().length > common.maxLength) errors.push(`${common.title} can be at most ${common.maxLength} characters.`);
+    if (venueCombo && !venueCombo.valid()) errors.push("Venue must be chosen from the list.");
+    return errors;
+  }
+
+  const root = el("div", { class: "loc-editor" },
+    showQuickFill ? frow("Quick fill", known.el) : null,
+    frow("Location Type", typeCombo.el),
+    fieldsBox,
+    previewEl);
+
+  load(initial);
+
+  return {
+    el: root,
+    read,
+    validate,
+    set: load,
+    sig: () => JSON.stringify(read()),
+    isEmpty: () => { const r = read(); return !r.data.length && !r.commonName && !r.venue; },
+  };
 }
 
 // ---- Views -------------------------------------------------------------
@@ -579,8 +791,9 @@ function renderList() {
       return `<span class="chip" style="${styleAttr(a?.style)}" title="${a ? esc(a.status) : ""}"><b>${esc(unitShort(u))}</b>${a ? `<span class="st">${esc(cfg.statusShort[a.status] || a.status)}</span>` : ""}</span>`;
     }).join("");
 
+    const closed = i.status === "CLOSED";   // closed incidents can't be edited
     return `
-      <tr class="click cat-${cat} ${i.status === "PENDING" ? "pending" : ""}" data-edit="${esc(i.id)}" tabindex="0">
+      <tr class="click cat-${cat} ${i.status === "PENDING" ? "pending" : ""} ${closed ? "closed" : ""}" ${closed ? "" : `data-edit="${esc(i.id)}" tabindex="0"`}>
         <td>${statusPill(i.status)}</td>
         <td>
           <div class="typecell">
@@ -591,7 +804,7 @@ function renderList() {
         <td>${address ? esc(address) : '<span class="sub">—</span>'}</td>
         <td>${esc(common)}</td>
         <td><div class="chips">${chips}</div></td>
-        <td><button class="btn small" data-edit="${esc(i.id)}">✎ Edit</button></td>
+        <td>${closed ? `<button class="btn small" data-reopen="${esc(i.id)}">↺ Re-open</button>` : `<button class="btn small" data-edit="${esc(i.id)}">✎ Edit</button>`}</td>
       </tr>`;
   }).join("");
 
@@ -615,6 +828,8 @@ $("view").addEventListener("click", (e) => {
     return;
   }
   if (e.target.closest("[data-new]")) { location.hash = "new"; return; }
+  const ro = e.target.closest("[data-reopen]");
+  if (ro) { autoReopen = ro.dataset.reopen; location.hash = `edit=${ro.dataset.reopen}`; return; }
   const ed = e.target.closest("[data-edit]");
   if (ed) location.hash = `edit=${ed.dataset.edit}`;
 });
@@ -647,21 +862,13 @@ function openForm(r) {
   buildEditPage(inc);
 }
 
-function frow(label, control, hint) {
-  return el("div", { class: "frow" }, el("label", {}, label), el("div", { class: "ctl" }, control, hint ? el("div", { class: "hint" }, hint) : null));
-}
-
-function group(title, ...kids) {
-  return el("div", { class: "group" }, title ? el("div", { class: "sub-label", style: "margin:0 0 8px" }, title) : null, ...kids);
-}
-
 // -- CREATE: one form, sent with a single button --
 
 function buildCreateForm() {
   view = "form";
 
   const typeCombo = makeCombo({ options: cfg.types, value: cfg.defaultType, placeholder: "Search incident types…", onChange: () => update() });
-  const locCombo = makeCombo({ options: cfg.locations, allowCustom: true, placeholder: "Search known locations, or type a custom one…", onChange: () => update() });
+  const locEditor = makeLocationEditor({ onChange: () => update() });
   const tsInput = el("input", { class: "text", type: "text", placeholder: "YYYY-MM-DD HH:MM:SS", oninput: () => update() });
   const tsNow = el("button", { class: "btn small", type: "button", onclick: () => { tsInput.value = fmtTs(Math.floor(Date.now() / 1000)); update(); } }, "Now");
   const narrative = el("input", { class: "text", type: "text", placeholder: "Initial narrative (optional)", oninput: () => update() });
@@ -719,9 +926,6 @@ function buildCreateForm() {
     else if (!t) errors.push("Pick an incident type.");
     else p.type = t;                                   // the only required field
 
-    const loc = locCombo.get();
-    if (loc) p.location = loc;
-
     if (rows.length) {
       p.units = [];
       for (const r of rows) {
@@ -740,28 +944,58 @@ function buildCreateForm() {
     const n = narrative.value.trim();
     if (n) p.initialNarrative = n;
 
-    return { p, errors };
+    // The location is optional. If filled in, it's set (PATCH .../location) right after the incident is created.
+    let locBody = null;
+    if (!locEditor.isEmpty()) {
+      const locErrors = locEditor.validate();
+      errors.push(...locErrors);
+      if (!locErrors.length) locBody = locEditor.read();
+    }
+
+    return { p, errors, locBody };
   }
 
   function update() {
-    const { p, errors } = compute();
+    const { p, errors, locBody } = compute();
     errBox.hidden = !errors.length;
     errBox.textContent = errors.join(" ");
     saveBtn.disabled = errors.length > 0 || !p.type;
-    summary.textContent = `Will send: ${Object.keys(p).join(", ") || "nothing yet"}`;
-    preview.textContent = `POST ${CREATE_PATH}\n${JSON.stringify(p, null, 2)}`;
+    summary.textContent = `Will send: ${Object.keys(p).join(", ") || "nothing yet"}${locBody ? " + location" : ""}`;
+    preview.textContent = `POST ${CREATE_PATH}\n${JSON.stringify(p, null, 2)}`
+      + (locBody ? `\n\nthen PATCH /api/incidents/{new id}/location\n${JSON.stringify(locBody, null, 2)}` : "");
   }
 
   saveBtn.addEventListener("click", async () => {
-    const { p, errors } = compute();
+    const { p, errors, locBody } = compute();
     if (errors.length || !p.type) return;
     saveBtn.disabled = true;
     resetBtn.disabled = true;
     try {
+      const before = new Set(incidents.map((i) => String(i.id)));
       const res = await request(CREATE_PATH, { method: "POST", json: p, auth: true });
       toast("Incident created.");
       incidents = await request("/api/incidents");
-      const nid = res && typeof res === "object" ? (res.id ?? res.incident?.id ?? res.incidentId) : null;
+
+      // find the new incident: use the response if it has a numeric id, otherwise the one that just appeared
+      let nid = null;
+      const rid = res && typeof res === "object" ? (res.id ?? res.incident?.id ?? res.incidentId) : null;
+      if (rid != null && /^\d+$/.test(String(rid))) nid = String(rid);
+      else {
+        const fresh = incidents.filter((i) => !before.has(String(i.id))).sort((a, b) => b.time - a.time);
+        if (fresh.length) nid = String(fresh[0].id);
+      }
+
+      if (locBody) {
+        if (!nid) toast("Incident created, but I couldn't tell which one it is, so the location wasn't set. Set it from the edit page.", "error");
+        else {
+          try {
+            await request(`/api/incidents/${nid}/location`, { method: "PATCH", json: locBody, auth: true });
+            incidents = await request("/api/incidents");
+          } catch (ex) {
+            toast(`Incident created, but the location wasn't set: ${ex.message}`, "error");
+          }
+        }
+      }
       location.hash = nid ? `edit=${nid}` : "list";
     } catch (ex) {
       toast(ex.message, "error");
@@ -779,9 +1013,12 @@ function buildCreateForm() {
 
     group("Incident",
       frow("Type", typeCombo.el, "Required. Starts as the new-incident type; type to search."),
-      frow("Location", locCombo.el, "Pick a known location, or type a custom one."),
       frow("Timestamp", el("div", { class: "inline" }, tsInput, tsNow), "Leave blank for the current time. 24-hour, your local time."),
       frow("Initial Narrative", narrative)),
+
+    group("Location (optional)",
+      locEditor.el,
+      el("div", { class: "hint" }, "Set right after the incident is created. Needs the CHANGE_LOCATION permission (USE_CUSTOM_LOCATION for the custom type).")),
 
     group("Units",
       unitsBox,
@@ -808,16 +1045,14 @@ function buildEditPage(inc) {
 
   const snapshot = () => ({
     type: cur.type?.name ?? "",
-    status: cur.status ?? "",
-    location: (cur.location?.format || "").trim(),
     ts: cur.time != null ? fmtTs(cur.time) : "",
   });
   let base = snapshot();            // what the server had the last time we synced
 
-  // Send one change, then reload so the page shows what the server now has.
-  async function send(body, okMsg = "Saved") {
+  // Send one change (PATCH), then reload so the page shows what the server now has.
+  async function send(body, okMsg = "Saved", sub = "") {
     try {
-      await request(path, { method: "POST", json: body, auth: true });
+      await request(path + sub, { method: "PATCH", json: body, auth: true });
       toast(okMsg);
     } catch (ex) {
       toast(ex.message, "error");
@@ -836,8 +1071,6 @@ function buildEditPage(inc) {
   const flag = (combo, baseVal) => combo.el.classList.toggle("dirty", combo.get() !== baseVal);
   const flagAll = () => {
     flag(typeCombo, base.type);
-    flag(statusCombo, base.status);
-    flag(locCombo, base.location);
     tsInput.classList.toggle("dirty", tsInput.value.trim() !== base.ts);
   };
 
@@ -847,18 +1080,102 @@ function buildEditPage(inc) {
     onCommit: (v) => { if (v && v !== base.type) send({ type: v }, "Type updated"); },
     onCancel: () => { typeCombo.set(base.type); flagAll(); },
   });
-  const statusCombo = makeCombo({
-    options: cfg.incStatuses, value: base.status,
-    onChange: flagAll,
-    onCommit: (v) => { if (v && v !== base.status) send({ status: v }, "Status updated"); },
-    onCancel: () => { statusCombo.set(base.status); flagAll(); },
+
+  // Status isn't editable. The only action is closing the incident (PATCH .../status),
+  // and a closed incident is locked.
+  const statusBox = el("span", {});
+  statusBox.innerHTML = statusPill(cur.status);
+  let confirming = false;
+  let confirmTimer;
+  const disarm = () => {
+    confirming = false;
+    clearTimeout(confirmTimer);
+    closeBtn.textContent = "Close Incident";
+    closeBtn.classList.remove("armed");
+  };
+  const closeBtn = el("button", {
+    class: "btn danger small",
+    type: "button",
+    onclick: async () => {
+      if (!confirming) {           // first click arms it, a second click confirms
+        confirming = true;
+        closeBtn.textContent = "Click again to close";
+        closeBtn.classList.add("armed");
+        confirmTimer = setTimeout(disarm, 4000);
+        return;
+      }
+      disarm();
+      closeBtn.disabled = true;
+      try {
+        const res = await request(`${path}/status`, { method: "PATCH", auth: true });
+        toast(`Incident ${res?.incident ?? id} is now ${res?.newStatus ?? "updated"}.`);
+        incidents = await request("/api/incidents");
+        if (String(res?.newStatus).toUpperCase() === "CLOSED") location.hash = "list";
+        else apply();
+      } catch (ex) {
+        toast(ex.message, "error");
+      }
+      closeBtn.disabled = false;
+    },
+  }, "Close Incident");
+
+  // A closed incident is locked. The only thing you can do is re-open it, with a reason:
+  // the status is toggled back, then "Reopen Reason: <text>" is added as a narrative.
+  const reopenBtn = el("button", { class: "btn small", type: "button", onclick: () => openReopen() }, "↺ Re-open");
+  const reasonInput = el("input", {
+    class: "text", type: "text", placeholder: "Reason for re-opening (required)",
+    onkeydown: (e) => {
+      if (e.key === "Enter") { e.preventDefault(); doReopen(); }
+      else if (e.key === "Escape") closeReopen();
+    },
   });
-  const locCombo = makeCombo({
-    options: cfg.locations, value: base.location, allowCustom: true, placeholder: "Search known locations, or type a custom one…",
-    onChange: flagAll,
-    onCommit: (v) => { if (v && v !== base.location) send({ location: v }, "Location updated"); },
-    onCancel: () => { locCombo.set(base.location); flagAll(); },
-  });
+  const reasonConfirm = el("button", { class: "btn primary small", type: "button", onclick: () => doReopen() }, "Confirm Re-open");
+  const reasonCancel = el("button", { class: "btn small", type: "button", onclick: () => closeReopen() }, "Cancel");
+  const reasonRow = el("div", { class: "reopen-row", hidden: true }, reasonInput, reasonConfirm, reasonCancel);
+  const lockNote = el("div", { class: "locknote", hidden: true, "data-keep": "" },
+    el("div", { class: "lock-line" }, el("span", {}, "🔒 This incident is closed and can't be edited."), reopenBtn),
+    reasonRow);
+
+  function openReopen() { reopenBtn.hidden = true; reasonRow.hidden = false; reasonInput.focus(); }
+  function closeReopen() { reasonRow.hidden = true; reopenBtn.hidden = false; reasonInput.value = ""; }
+
+  async function doReopen() {
+    const reason = reasonInput.value.trim();
+    if (!reason) { toast("Enter a reason for re-opening.", "error"); reasonInput.focus(); return; }
+    reasonConfirm.disabled = true;
+    try {
+      const res = await request(`${path}/status`, { method: "PATCH", auth: true });
+      if (String(res?.newStatus).toUpperCase() === "CLOSED") throw new Error("The incident is still closed. Nothing was changed.");
+      toast(`Incident ${res?.incident ?? id} re-opened.`);
+      // separate request: the reason goes into the narrative
+      try {
+        await request(path, { method: "PATCH", json: { narrative: `Reopen Reason: ${reason}` }, auth: true });
+      } catch (ex) {
+        toast(`Re-opened, but the reason wasn't saved: ${ex.message}`, "error");
+      }
+      closeReopen();
+      await pull().catch(() => {});
+    } catch (ex) {
+      toast(ex.message, "error");
+    }
+    reasonConfirm.disabled = false;
+  }
+
+  let wasLocked = false;
+  function lockAll(on) {
+    page.querySelectorAll("input, textarea, button").forEach((n) => { if (!n.closest("[data-keep]")) n.disabled = on; });
+  }
+  function refreshLock() {
+    const locked = cur.status === "CLOSED";
+    lockNote.hidden = !locked;
+    closeBtn.hidden = locked;
+    if (locked) { lockAll(true); wasLocked = true; }
+    else if (wasLocked) {          // just re-opened: unlock the page again
+      lockAll(false);
+      wasLocked = false;
+      updateLocState();
+    }
+  }
 
   const commitTs = () => {
     const t = tsInput.value.trim();
@@ -879,6 +1196,33 @@ function buildEditPage(inc) {
 
   const pub = el("input", { type: "checkbox", onchange: () => send({ published: pub.checked }, pub.checked ? "Published" : "Unpublished") });
   pub.checked = cur.publishStatus === "PUBLISHED";
+
+  // ----- location (applies as a whole: Enter in a field, or the Update Location button) -----
+  let baseLoc = locSigOf(cur.location);
+  const locState = el("span", { class: "hint" });
+  const locApply = el("button", { class: "btn primary small", type: "button", disabled: true, onclick: () => applyLocation() }, "Update Location");
+  const locEditor = makeLocationEditor({ initial: cur.location, onChange: () => updateLocState(), onEnter: () => applyLocation() });
+  const locGroup = group("Location",
+    locEditor.el,
+    el("div", { class: "loc-actions" }, locApply, locState),
+    el("div", { class: "hint" }, "Needs the CHANGE_LOCATION permission (USE_CUSTOM_LOCATION for the custom type). Asterisk (*) = required."));
+
+  function locDirty() { return locEditor.sig() !== baseLoc; }
+  function updateLocState() {
+    const dirty = locDirty();
+    if (cur.status !== "CLOSED") locApply.disabled = !dirty;
+    locState.textContent = dirty ? "Unapplied changes — press Enter in a field, or click Update Location." : "";
+    locGroup.classList.toggle("dirty-group", dirty);
+  }
+  async function applyLocation() {
+    if (cur.status === "CLOSED" || !locDirty()) return;
+    const errors = locEditor.validate();
+    if (errors.length) { toast(errors[0], "error"); return; }
+    const r = locEditor.read();
+    locApply.disabled = true;
+    await send({ data: r.data, type: r.type, commonName: r.commonName, venue: r.venue }, "Location updated", "/location");
+    updateLocState();
+  }
 
   // ----- units -----
   const unitsBox = el("div", {});
@@ -980,33 +1324,41 @@ function buildEditPage(inc) {
     const nb = snapshot();
     // a box is only updated if you haven't typed something different into it
     if (typeCombo.get() === base.type) typeCombo.set(nb.type);
-    if (statusCombo.get() === base.status) statusCombo.set(nb.status);
-    if (locCombo.get() === base.location) locCombo.set(nb.location);
     if (tsInput.value.trim() === base.ts) tsInput.value = nb.ts;
     base = nb;
+    statusBox.innerHTML = statusPill(cur.status);
     pub.checked = cur.publishStatus === "PUBLISHED";
     title.textContent = `Edit ${nb.type || "Incident"}`;
     flagAll();
 
+    // location: follow the server unless you've changed something
+    const nbLoc = locSigOf(cur.location);
+    if (!locDirty() && nbLoc !== baseLoc) locEditor.set(cur.location);
+    baseLoc = nbLoc;
+    updateLocState();
+
     if (sigOf(cur) !== unitSig && !unitsBox.contains(document.activeElement)) paintUnits();
     repaintNarrative();
+    refreshLock();
   }
   liveSync = apply;
 
   const page = el("div", { class: "page" },
-    el("div", { class: "subhead" },
+    el("div", { class: "subhead", "data-keep": "" },
       el("button", { class: "back", onclick: () => { location.hash = "list"; } }, "‹ Incidents"),
       el("span", { class: "gray" }, `Incident #${id}`),
       el("a", { class: "link", href: `index.html#incident=${id}`, target: "_blank", rel: "noopener" }, "View in viewer ↗")),
     el("div", { class: "page-title" }, title),
     el("div", { class: "live-note" }, "Live edit — changes are sent the moment you pick a value or press Enter. An orange outline means it's typed but not applied yet (Esc undoes it)."),
+    lockNote,
 
     group("Details",
       frow("Type", typeCombo.el),
-      frow("Status", statusCombo.el),
+      frow("Status", el("div", { class: "inline" }, statusBox, closeBtn), "Status can't be edited. Closing is final — a closed incident can't be edited."),
       frow("Published", el("label", { class: "check" }, pub, "Published")),
-      frow("Location", locCombo.el),
       frow("Timestamp", el("div", { class: "inline" }, tsInput, tsNow))),
+
+    locGroup,
 
     group("Units",
       unitsBox,
@@ -1023,6 +1375,10 @@ function buildEditPage(inc) {
   paintUnits();
   repaintNarrative();
   flagAll();
+  updateLocState();
+  refreshLock();
+  if (autoReopen === String(id) && cur.status === "CLOSED") openReopen();   // came from the list's Re-open button
+  autoReopen = null;
 }
 
 // ---- Refresh loop ------------------------------------------------------

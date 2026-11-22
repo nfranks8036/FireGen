@@ -29,6 +29,30 @@
 .btn.primary:hover { filter: brightness(1.1); }
 .btn.small { padding: .2em .7em; font-size: .85em; }
 .btn:disabled { opacity: .4; cursor: not-allowed; filter: none; }
+.btn[hidden] { display: none; }
+
+/* Close Incident: red, and "armed" after the first click */
+.btn.danger { color: #fecaca; background: #3b1519; border-color: #7f1d1d; }
+.btn.danger:hover { background: #4d1a1f; }
+.btn.danger.armed { color: #fff; background: #b91c1c; border-color: #f87171; }
+
+.locknote {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  color: var(--soft);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.locknote[hidden] { display: none; }
+.lock-line { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.reopen-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.reopen-row[hidden] { display: none; }
+.reopen-row .text { flex: 1; min-width: 220px; max-width: 520px; }
+
+/* closed incidents in the list can't be opened for editing */
+.grid tr.closed { cursor: default; opacity: .6; }
+.grid tr.closed:hover { background: none; }
 
 .text {
   width: 100%;
@@ -112,6 +136,16 @@ textarea.text { min-height: 96px; resize: vertical; }
 .live-note { margin: 0 0 12px; color: var(--label); font-size: .9em; }
 .narr-add { padding: 12px 18px; border-bottom: 1px solid var(--line); }
 .group.flush .narr-add .text { max-width: none; }
+
+/* location editor */
+.loc-editor .frow { padding: 4px 0; }
+.loc-preview { padding: 6px 0 0 176px; color: var(--soft); }
+.loc-actions { display: flex; align-items: center; gap: 12px; margin: 10px 0 4px 176px; }
+.loc-actions .hint { margin: 0; }
+.group.dirty-group { border-color: var(--orange); }
+@media (max-width: 640px) {
+  .loc-preview, .loc-actions { margin-left: 0; padding-left: 0; }
+}
 
 /* validation messages float over the page so they never move anything */
 .formerr.floating {

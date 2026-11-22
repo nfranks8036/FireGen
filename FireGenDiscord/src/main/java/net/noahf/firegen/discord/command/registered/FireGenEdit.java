@@ -38,6 +38,7 @@ public class FireGenEdit extends Command {
                                 new OptionData(OptionType.STRING, "narrative", "Add a new line to the narrative.", false, false)
                                         .setRequiredLength(AddNarrative.MIN_NARRATIVE_LENGTH, AddNarrative.MAX_NARRATIVE_LENGTH),
                                 new OptionData(OptionType.STRING, "location", "The new present location for this incident.", false, true),
+                                new OptionData(OptionType.STRING, "cross-streets", "The new cross-streets for the incident, separated with a comma.", false, false),
                                 new OptionData(OptionType.STRING, "type", "The new incident type for this incident.", false, true),
                                 new OptionData(OptionType.STRING, "time",
                                         "The new time (" + TIME_CREATE_FORMAT +") of the incident",
@@ -87,7 +88,8 @@ public class FireGenEdit extends Command {
                 additionalResponse.isResponseType(LocalDateTime.class) ? (LocalDateTime) additionalResponse.response() : null,
                 event.getOption("narrative", OptionMapping::getAsString),
                 event.getOption("published", (s) -> s.getAsString().equalsIgnoreCase("true")),
-                event.getOption("status", OptionMapping::getAsString)
+                event.getOption("status", OptionMapping::getAsString),
+                event.getOption("cross-streets", (m) -> m.getAsString().split(","))
         );
 
         ServiceResponse<?> response = Main.services.incidents().editIncident(user, incident, request);

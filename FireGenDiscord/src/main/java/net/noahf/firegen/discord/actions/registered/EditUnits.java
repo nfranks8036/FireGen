@@ -34,6 +34,7 @@ import net.noahf.firegen.discord.users.Permission;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.MessageStatus;
 import net.noahf.firegen.discord.utilities.PreventUnitAssignment;
+import net.noahf.firegen.discord.utilities.errors.ErrorCode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -259,14 +260,14 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         }
     }
 
-    public ServiceResponse<?> onSubmit(Incident incidentValue, FireGenUser user, @Nullable EditUnits.UnitsChangeInput inputUnits) {
+    public ServiceResponse<?> onSubmit(Incident incidentValue, FireGenUser<?> user, @Nullable EditUnits.UnitsChangeInput inputUnits) {
         if (!user.hasPermission(Permission.CHANGE_UNITS)) {
-            return ServiceResponse.fail(user, "You don't have permission to change unit statuses on an incident.");
+            return ServiceResponse.fail(user, ErrorCode.NO_PERMISSION, "You don't have permission to change unit statuses on an incident.");
         }
 
         UnitsChangeInput input = (inputUnits == null ? selectedUnits.get(user) : inputUnits);
         if (input == null) {
-            return ServiceResponse.fail(user, "You are not currently editing incident units.");
+            return ServiceResponse.fail(user, ErrorCode.NOT_CURRENTLY_EDITING, "You are not currently editing incident units.");
         }
 
         IncidentImpl incident = (IncidentImpl) incidentValue;
@@ -275,7 +276,7 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         incident.addContributor(user);
 
         if (units.isEmpty()) {
-            return ServiceResponse.fail(user, "You cannot set the unit status of zero units.");
+            return ServiceResponse.fail(user, ErrorCode.UNIT_ATTEMPT_SET_ZERO_UNITS, "You cannot set the unit status of zero units.");
         }
 
         ServiceResponse<?> message = ServiceResponse.successNone();
@@ -283,13 +284,14 @@ public class EditUnits implements ButtonAction, StringDropdownAction {
         List<Unit> unmodifiedList = new ArrayList<>(units);
         for (Unit unit : unmodifiedList) {
             if (status.equals(AssignmentStatusImpl.REMOVE_UNIT)) {
-                incident.removeUnit(user, unit);
+                incident.removeUnit(unit);
                 continue;
             }
 
             if (unit.getAdditional() != null && unit.getAdditional() instanceof PreventUnitAssignment) {
                 units.remove(unit);
-                message = ServiceResponse.fail(user, "The unit '" + unit.toString() + "' contains additional context " +
+                message = ServiceResponse.fail(user, ErrorCode.UNIT_HAS_CONTEXT_PREVENT_ADD,
+                        "The unit '" + unit.toString() + "' contains additional context " +
                         "that means it cannot be added to the incident in its current form.");
             }
 

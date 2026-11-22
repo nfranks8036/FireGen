@@ -53,6 +53,12 @@ public class IncidentSerializer extends JsonSerializer<Incident> {
         }
         gen.writeEndArray();
 
+        gen.writeArrayFieldStart("crossStreets");
+        for (String street : incident.getCrossStreets()) {
+            gen.writeString(street);
+        }
+        gen.writeEndArray();
+
         gen.writeNumberField("nextStale", (long)incident.getUnixNextStale());
         gen.writeNumberField("nextClosedDueToStale", (long)incident.getUnixNextClosedDueToStale());
 

@@ -145,16 +145,23 @@ public class ReceiveMessageSender extends MessageSender {
                                     .map(e -> "[" + e.getValue() + "](<" + e.getKey() + ">)")
                                     .collect(Collectors.joining(", "));
 
+        String locationFormat = "\n**Location:** ";
+        if (location.isSet()) {
+            locationFormat = locationFormat + location.format() +
+                    (location.isSet() && !location.getType().isFallback() ? " [  ↗  ](<" + locationLink + ">)" : "");
+        }
+
+        if (!incident.getCrossStreets().isEmpty()) {
+            locationFormat = (location.isSet() ? locationFormat + "\n": "\n") + "**Cross-streets:** " + incident.formatCrossStreets();
+        }
+
         String stringForm =
                 "# " + status.getEmojisFormattedCombined() + " " + incident.getType().getSelectedName() + "\n" +
                         "[`" + time.formatDate(Main.config.getFireGenVariables()) + "` @ `" +
                             time.formatTimeShort(Main.config.getFireGenVariables()) + "` // " +
                         "<t:" + time.getUnix() + ":R>]\n\n" +
 
-                        "**Units:** " + this.getUnitsFormatted() + "\n" +
-                        "**" + location.getType().getPrefix() + ":** " + location.format() +
-                        (location.isSet() && location.getType() != LocationType.CUSTOM ? " [  ↗  ](<" + locationLink + ">)" : "") + links +
-
+                        "**Units:** " + this.getUnitsFormatted() + locationFormat + links +
                         (!log.isEmpty() ? "\n\n**Narrative:**\n" + String.join("\n", log) : "");
 
         List<MessageEmbed> embedForm = new ArrayList<>();

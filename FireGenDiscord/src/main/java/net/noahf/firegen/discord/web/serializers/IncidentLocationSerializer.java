@@ -15,7 +15,7 @@ public class IncidentLocationSerializer extends JsonSerializer<IncidentLocation>
 
         gen.writeStringField("format", location.format());
 
-        gen.writeStringField("type", location.getType().name());
+        gen.writeStringField("type", location.getType().getId());
         gen.writeStringField("commonName", location.getCommonName());
         gen.writeStringField("venue", (location.getVenue() != null ? location.getVenue().getName() : null));
 

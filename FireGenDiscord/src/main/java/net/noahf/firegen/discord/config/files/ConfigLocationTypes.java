@@ -10,6 +10,7 @@ import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.location.LocationTypeImpl;
+import net.noahf.firegen.discord.utilities.Log;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,10 +21,11 @@ import java.util.stream.Collectors;
 import static net.noahf.firegen.discord.utilities.JsonUtilities.asStr;
 import static net.noahf.firegen.discord.utilities.JsonUtilities.element;
 
+@Getter
 public class ConfigLocationTypes extends MultiObjectConfiguration<LocationType> {
 
     private LocationType fallback = null;
-    private @Getter final List<SelectOption> selectOptions = new ArrayList<>();
+    private final List<SelectOption> selectOptions = new ArrayList<>();
 
     public ConfigLocationTypes(FireGenVariables vars) {
         super(vars, LocationType.class, "location_types.json");
@@ -59,7 +61,7 @@ public class ConfigLocationTypes extends MultiObjectConfiguration<LocationType> 
                 Boolean required = element(obj, "required", false, JsonElement::getAsBoolean);
                 Integer minLength = element(obj, "minLength", false, JsonElement::getAsInt);
                 Integer maxLength = element(obj, "maxLength", false, JsonElement::getAsInt);
-                String placeholder = asStr(obj, "placeholder");
+                String placeholder = element(obj, "placeholder", true, JsonElement::getAsString);
                 Integer autofillDataIndex = element(obj, "autofillDataIndex", false, JsonElement::getAsInt);
 
                 LocationField.LocationFieldBuilder builder = LocationField.newField(fieldTitle, fieldDesc, fieldId)
@@ -74,7 +76,8 @@ public class ConfigLocationTypes extends MultiObjectConfiguration<LocationType> 
             }
 
             LocationType type = new LocationTypeImpl(
-                    "Location", id, title, shortName, description, defaultDataDelimiter, fields.toArray(LocationField[]::new)
+                    "Location", id, title, shortName, description,
+                    defaultDataDelimiter, fallback, fields.toArray(LocationField[]::new)
             );
             this.add(type);
 
@@ -83,12 +86,10 @@ public class ConfigLocationTypes extends MultiObjectConfiguration<LocationType> 
                             .withDescription(type.getDescription())
             );
 
-            if (fallback && type.getFields().length == 1) {
-                this.fallback = type;
-            }
+            if (fallback) this.fallback = type;
         }
 
-        if (fallback == null) {
+        if (this.fallback == null) {
             throw new IllegalStateException(
                     "Need at least one Location Type where 'fallback' is true in which only one field exists: " +
                             "a text box. This Location Type is used as fallback if the data cannot be interpreted."
@@ -99,6 +100,8 @@ public class ConfigLocationTypes extends MultiObjectConfiguration<LocationType> 
     }
 
     public LocationType fromId(String id) {
+        if (id == null) return null;
+
         for (LocationType type : this.get()) {
             if (type.getId().equalsIgnoreCase(id)) {
                 return type;

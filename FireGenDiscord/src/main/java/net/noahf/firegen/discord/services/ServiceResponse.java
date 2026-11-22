@@ -2,6 +2,8 @@ package net.noahf.firegen.discord.services;
 
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.errors.ErrorBolus;
+import net.noahf.firegen.discord.utilities.errors.ErrorCode;
 import org.jetbrains.annotations.NotNull;
 
 public record ServiceResponse<T>(
@@ -9,12 +11,16 @@ public record ServiceResponse<T>(
         T response
 ) {
 
-    public static ServiceResponse<String> fail(Contributor<?> contributor, String response) {
-        Log.error("User " + contributor.getUsername() + " encountered an error: '" + response + "'");
+    public static <T> ServiceResponse<T> fail(Contributor<?> contributor, T response) {
+        Log.error("User " + contributor.getUsername() + " encountered an error: '" + response.toString() + "'");
         return new ServiceResponse<>(false, response);
     }
 
     public static <T> ServiceResponse<T> fail(T response) { return new ServiceResponse<>(false, response); }
+
+    public static ServiceResponse<ErrorBolus> fail(Contributor<?> contributor, ErrorCode code, String message) { return fail(contributor, ErrorBolus.of(code, message)); }
+
+    public static ServiceResponse<ErrorBolus> fail(Contributor<?> contributor, ErrorCode code, String message, Throwable throwable) { return fail(contributor, ErrorBolus.of(code, message, throwable)); }
 
     public static ServiceResponse<Void> failNone() { return new ServiceResponse<>(false, null); }
 

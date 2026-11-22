@@ -91,7 +91,7 @@ public class EditDateTime implements ButtonAction, ModalAction {
      * The event that occurs after submitting the modal from the event above.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ModalInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ModalInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         IncidentImpl incident = (IncidentImpl) ctx.getIncident();

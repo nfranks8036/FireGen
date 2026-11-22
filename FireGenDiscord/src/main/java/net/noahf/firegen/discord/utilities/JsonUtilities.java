@@ -63,7 +63,7 @@ public class JsonUtilities {
 
     public static <R> R element(JsonObject object, String key, boolean optional, Function<JsonElement, R> function) {
         JsonElement element = element(object, key, optional);
-        if (optional && element == null) {
+        if (optional && (element == null || element.isJsonNull())) {
             return null;
         }
         return function.apply(element);

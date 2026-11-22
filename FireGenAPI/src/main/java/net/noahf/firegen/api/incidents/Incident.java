@@ -30,6 +30,12 @@ public interface Incident extends Identifiable, StringSelectors {
 
     void setLocation(IncidentLocation location);
 
+    List<String> getCrossStreets();
+
+    void setCrossStreets(List<String> crossStreets);
+
+    String formatCrossStreets();
+
     IncidentType getType();
 
     void setType(IncidentType type);

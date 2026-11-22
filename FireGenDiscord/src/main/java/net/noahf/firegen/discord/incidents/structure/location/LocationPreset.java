@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.discord.config.files.ConfigLocationTypes;
 import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 
@@ -14,8 +15,8 @@ import java.util.stream.Stream;
 
 public class LocationPreset extends IncidentLocationImpl {
 
-    public LocationPreset(String key, JsonObject object, ConfigVenues venues) {
-        super(new ArrayList<>(List.of(key)));
+    public LocationPreset(String key, JsonObject object, ConfigVenues venues, ConfigLocationTypes types) {
+        super(new ArrayList<>(List.of(key)), null, null, null, types);
         try {
             JsonElement locationElement  = JsonUtilities.element(object, "location");
 
@@ -47,11 +48,11 @@ public class LocationPreset extends IncidentLocationImpl {
             }
 
             if (!numerics.isEmpty()) {
-                this.setType(LocationType.ADDRESS);
+                this.setType(types.fromId("ADDRESS"));
                 this.setData(List.of(numerics, street));
                 this.setCommonName(commonName);
             } else {
-                this.setType(LocationType.MILE_MARKER);
+                this.setType(types.fromId("MILE_MARKER"));
                 this.setData(Stream.of(commonName, street).filter(Objects::nonNull).toList());
             }
 

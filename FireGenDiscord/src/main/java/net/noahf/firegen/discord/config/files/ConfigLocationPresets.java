@@ -19,7 +19,7 @@ public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPres
 
     public ConfigLocationPresets(FireGenVariables vars) {
         super(vars, LocationPreset.class, vars.municipality() + "/" + vars.locationPresetsFile(),
-                new DependencyRequest().dependOn(ConfigVenues.class)
+                new DependencyRequest().dependOn(ConfigVenues.class).dependOn(ConfigLocationTypes.class)
         );
     }
 
@@ -30,7 +30,9 @@ public class ConfigLocationPresets extends MultiObjectConfiguration<LocationPres
             String key = entry.getKey();
             JsonObject value = entry.getValue().getAsJsonObject();
 
-            LocationPreset preset = new LocationPreset(key, value, this.getDependencies().get(ConfigVenues.class));
+            LocationPreset preset = new LocationPreset(
+                    key, value, this.getDependencies().get(ConfigVenues.class), this.getDependencies().get(ConfigLocationTypes.class)
+            );
             this.add(preset);
         }
 

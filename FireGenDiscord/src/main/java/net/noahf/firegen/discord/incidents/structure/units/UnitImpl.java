@@ -1,10 +1,7 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -13,6 +10,7 @@ import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.api.style.StatusStyle;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigOperationalStatuses;
+import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Time;
 import net.noahf.firegen.discord.web.serializers.UnitSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +22,7 @@ import java.util.*;
 @RequiredArgsConstructor @NoArgsConstructor(force = true)
 @Getter
 @JsonSerialize(using = UnitSerializer.class)
+@EqualsAndHashCode(of = {"id", "shorthand", "number"})
 public class UnitImpl implements Unit {
 
     private final Long id = -1L;
@@ -81,18 +80,6 @@ public class UnitImpl implements Unit {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        UnitImpl unit = (UnitImpl) o;
-        return getNumber() == unit.getNumber() && ordinal == unit.ordinal && isPlaceholder() == unit.isPlaceholder() && Objects.equals(getShorthand(), unit.getShorthand()) && Objects.equals(getLonghand(), unit.getLonghand()) && Objects.equals(getFormatted(), unit.getFormatted()) && Objects.equals(getAgency(), unit.getAgency()) && Objects.equals(getType(), unit.getType()) && Objects.equals(getAdditional(), unit.getAdditional());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getShorthand(), getLonghand(), getFormatted(), getAgency(), getType(), getNumber(), ordinal, getAdditional(), isPlaceholder());
-    }
-
-    @Override
     public String getFormatted() {
         return (this.emoji != null ? emoji.getFormatted() + " " : "") +
                 this.formatted;
@@ -100,15 +87,15 @@ public class UnitImpl implements Unit {
 
     public void assign(UnitAssignment assignment) {
         this.currentAssignment = assignment;
-        this.previousAssignments.add(assignment);
 
         OperationalStatusPurpose purpose = OperationalStatusPurpose.UNIT_ATTACHED_TO_INCIDENT;
         if (this.currentAssignment == null) {
             purpose = OperationalStatusPurpose.UNIT_AVAILABLE_FOR_CALLS;
         }
 
-        this.operationalStatus = Main.config.get(ConfigOperationalStatuses.class).purposeIs(purpose);
+        this.previousAssignments.add(assignment);
 
+        this.operationalStatus = Main.config.get(ConfigOperationalStatuses.class).purposeIs(purpose);
         this.statusLastUpdate = Time.getUnix();
     }
 

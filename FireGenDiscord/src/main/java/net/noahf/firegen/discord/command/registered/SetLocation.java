@@ -18,6 +18,7 @@ import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.config.files.ConfigLocationPresets;
+import net.noahf.firegen.discord.config.files.ConfigLocationTypes;
 import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -33,11 +34,18 @@ import static net.noahf.firegen.discord.bot.DiscordMessages.truncate;
 
 public class SetLocation extends Command {
 
-    private static SubcommandData[] data;
+    public SetLocation() {
+        super("set-location", "Sets the location of the current incident to a specific spot.",
+                CommandFlags.include()
+                        .subcommandData(getData(Main.config.get(ConfigLocationTypes.class)))
+                        .aliases(new String[]{"sl"})
+                        .finish()
+                );
+    }
 
-    static {
+    private static SubcommandData[] getData(ConfigLocationTypes types) {
         List<SubcommandData> subs = new ArrayList<>();
-        for (LocationType type : LocationType.values()) {
+        for (LocationType type : types.get()) {
             SubcommandData thisSub = new SubcommandData(type.getShortName(), type.getDescription());
             for (LocationField field : type.getFields()) {
                 String id = field.getId();
@@ -57,16 +65,7 @@ public class SetLocation extends Command {
                 .addOption(OptionType.STRING, "location", "The location to set.", true, true)
         );
 
-        data = subs.toArray(SubcommandData[]::new);
-    }
-
-    public SetLocation() {
-        super("set-location", "Sets the location of the current incident to a specific spot.",
-                CommandFlags.include()
-                        .subcommandData(data)
-                        .aliases(new String[]{"sl"})
-                        .finish()
-                );
+        return subs.toArray(SubcommandData[]::new);
     }
 
     @Override
@@ -114,7 +113,7 @@ public class SetLocation extends Command {
         } else {
 
             String locationTypeStr = event.getSubcommandName();
-            LocationType locationType = LocationType.values().stream()
+            LocationType locationType = Main.config.get(ConfigLocationTypes.class).get().stream()
                     .filter(t -> t.getShortName().equalsIgnoreCase(locationTypeStr))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Expected value location type, got '" + locationTypeStr + "'"));

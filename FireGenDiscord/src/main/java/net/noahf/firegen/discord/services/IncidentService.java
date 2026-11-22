@@ -18,10 +18,7 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.FireGenAction;
 import net.noahf.firegen.discord.actions.registered.*;
 import net.noahf.firegen.discord.config.ConfigManager;
-import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
-import net.noahf.firegen.discord.config.files.ConfigLocationPresets;
-import net.noahf.firegen.discord.config.files.ConfigUnits;
-import net.noahf.firegen.discord.config.files.ConfigVenues;
+import net.noahf.firegen.discord.config.files.*;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.units.*;
@@ -38,12 +35,13 @@ import java.util.*;
 public class IncidentService {
 
     public record IncidentCreateRequest(
-            String type, String location, String[] units, LocalDateTime timestamp, String initialNarrative
+            String type, String location, String[] units, LocalDateTime timestamp, String initialNarrative,
+            String[] crossStreets
     ) {  }
 
     public record IncidentEditRequest(
             String type, String location, String[] units, LocalDateTime timestamp, String narrative,
-            Boolean published, String status
+            Boolean published, String status, String[] crossStreets
     ) { }
 
     public ServiceResponse<?> createIncident(FireGenUser<?> user, IncidentCreateRequest request) {
@@ -69,7 +67,8 @@ public class IncidentService {
             incident.addLog(user, IncidentLogEntry.EntryType.CREATE, "New Incident: " + incident.getType().getSelectedName());
 
             response = ServiceResponse.returnAUnlessBFail(response, _editIncident(user, incident, new IncidentEditRequest(
-                    null, request.location, request.units, request.timestamp, request.initialNarrative, null, null
+                    null, request.location, request.units, request.timestamp,
+                    request.initialNarrative, null, null, request.crossStreets
             ), false));
 
             incident.setStatus(IncidentStatus.PENDING);
@@ -104,6 +103,10 @@ public class IncidentService {
 
         response = ServiceResponse.returnAUnlessBFail(response,
                 this.location(incident, user, request.location)
+        );
+
+        response = ServiceResponse.returnAUnlessBFail(response,
+                this.crossStreets(incident, user, request.crossStreets)
         );
 
         response = ServiceResponse.returnAUnlessBFail(response,
@@ -205,7 +208,7 @@ public class IncidentService {
             );
         }
 
-        LocationType type = LocationType.valueOf(typeVsData[0].toUpperCase());
+        LocationType type = Main.config.get(ConfigLocationTypes.class).fromId(typeVsData[0].toUpperCase());
         List<String> dataString = new ArrayList<>(Arrays.stream(typeVsData[1].split(";", -1)).toList());
 
         List<Integer> remove = new ArrayList<>();
@@ -236,6 +239,19 @@ public class IncidentService {
         }
 
         return new IncidentLocationImpl(dataString, type, common, venue);
+    }
+
+    public ServiceResponse<?> crossStreets(Incident incident, FireGenUser<?> user, String[] crossStreets) {
+        if (crossStreets == null) {
+            return ServiceResponse.successNone();
+        }
+
+        if (!user.hasPermission(Permission.CHANGE_CROSS_STREETS)) {
+            return ServiceResponse.fail(user, "You don't have permission to change the incident cross-streets.");
+        }
+
+        EditCrossStreets action = findAction(EditCrossStreets.class);
+        return action.onSubmit(incident, user, Arrays.stream(crossStreets).toList());
     }
 
     @AllArgsConstructor @Getter enum UnitsTargetType {

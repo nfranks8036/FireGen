@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
@@ -41,7 +42,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getMe(@AuthenticationPrincipal FireGenUser<?> user) {
-        return ApiResponse.ok(user);
+        return Objects.requireNonNullElse(ApiResponse.ok(user), ApiResponse.fail("You cannot be found. Where did you go?"));
     }
 
 }

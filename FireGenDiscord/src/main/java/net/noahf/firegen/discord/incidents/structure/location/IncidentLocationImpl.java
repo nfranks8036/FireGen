@@ -9,12 +9,16 @@ import net.noahf.firegen.api.AutofilledCharSequence;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
+import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.config.files.ConfigLocationTypes;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.web.serializers.IncidentLocationSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -26,15 +30,19 @@ import java.util.StringJoiner;
 public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSequence {
 
     /**
-     * Creates a location of type {@link LocationType#CUSTOM} with custom data, the data will be shown as written.
+     * Creates a location of type {@link LocationType} with custom data, the data will be shown as written.
      */
     public IncidentLocationImpl(List<String> custom) {
-        this(custom, LocationType.CUSTOM, null, null);
+        this(custom, null, null, null);
     }
 
     public IncidentLocationImpl(List<String> data, LocationType type, @Nullable String commonName, @Nullable LocationVenue venue) {
+        this(data, type, commonName, venue, Main.config.get(ConfigLocationTypes.class));
+    }
+
+    IncidentLocationImpl(List<String> data, LocationType type, @Nullable String commonName, @Nullable LocationVenue venue, ConfigLocationTypes types) {
         this.data = data;
-        this.type = type;
+        this.type = Objects.requireNonNullElse(type, types.getFallback());
         this.commonName = commonName;
         this.venue = venue;
     }
@@ -129,9 +137,9 @@ public class IncidentLocationImpl implements IncidentLocation, AutofilledCharSeq
 
     public String getRequiredData(@Nullable String dataDelimiter) {
         String delimiter = returnUnlessNull(dataDelimiter, this.getType().getDefaultDataDelimiter());
-        if (this.getType().equals(ADDRESS) || this.getType().equals(MILE_MARKER)) {
-            return data.get(0) + delimiter + data.get(1);
-        }
+//        if (this.getType().equals(ADDRESS) || this.getType().equals(MILE_MARKER)) {
+//            return data.get(0) + delimiter + data.get(1);
+//        }
         return String.join(delimiter, data);
     }
 

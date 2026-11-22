@@ -12,6 +12,9 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.*;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
+import net.noahf.firegen.discord.utilities.Log;
+import net.noahf.firegen.discord.utilities.errors.ErrorCode;
+import net.noahf.firegen.discord.utilities.errors.FireGenError;
 import net.noahf.firegen.discord.web.serializers.UnitAssignmentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,13 +92,18 @@ public class UnitAssignmentImpl implements UnitAssignment {
         }
 
         if (unit.getCurrentAssignment() != this) {
-            throw new IllegalStateException("Unit " + unit.getLonghand() + " is already assigned to the incident " + unit.getCurrentAssignment().getIncident().toString());
+            throw new FireGenError(
+                    ErrorCode.UNIT_ALREADY_ASSIGNED_TO_OTHER_INCIDENT,
+                    "Unit " + unit.getLonghand() + " is already assigned to the incident " + unit.getCurrentAssignment().getIncident().toString()
+            );
         }
 
         this.assignments.add(newEvent);
 
         AssignmentStatusPurpose purpose = newEvent.getStatus().getPurpose();
+        Log.info("Purpose of " + newEvent.getStatus().getName() + ": " + purpose);
         if (purpose != null && purpose.isTerminalState()) {
+            Log.info("Assign To Null");
             this.unit.assign(null);
         }
     }

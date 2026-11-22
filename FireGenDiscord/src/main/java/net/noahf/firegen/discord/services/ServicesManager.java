@@ -7,5 +7,6 @@ import lombok.experimental.Accessors;
 public class ServicesManager {
 
     private final IncidentService incidents = new IncidentService();
+    private final IncidentLocationService incidentLocation = new IncidentLocationService();
 
 }

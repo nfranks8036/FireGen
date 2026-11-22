@@ -55,6 +55,7 @@ public class AdminMessageSender extends MessageSender {
                 ActionRow.of(
                         Button.secondary("firegen-disabled-incident2", "Edit:").asDisabled(),
                         Button.primary(super.getIncident().createInteractionIdString("location"), "Location"),
+                        Button.primary(super.getIncident().createInteractionIdString("cross"), "Cross"),
                         Button.primary(super.getIncident().createInteractionIdString("units"), "Units")
                 ),
                 ActionRow.of(
@@ -191,11 +192,11 @@ public class AdminMessageSender extends MessageSender {
                         , true
                 )
                 .addField("Location",
-                        "Type: `" + location.getType().name() + "`\n" +
+                        "Type: `" + location.getType().getId() + "`\n" +
                                 "Data: " + String.join(", ", location.getData().stream().map(s -> "`" + s + "`").toList()) + "\n" +
                                 "Common Name: `" + (location.getCommonName() != null ? location.getCommonName() : " ") + "`\n" +
                                 "Venue: `" + (location.getVenue() != null ? location.getVenue() : " ") + "`\n" +
-                                "Formatted: `" + location + "`",
+                                "Cross-streets: `" + incident.formatCrossStreets() + "`",
                         true
                 )
                 .setColor(color)
