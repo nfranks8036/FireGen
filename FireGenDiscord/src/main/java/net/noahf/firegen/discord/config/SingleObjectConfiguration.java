@@ -3,7 +3,7 @@ package net.noahf.firegen.discord.config;
 import com.google.gson.JsonElement;
 import lombok.AccessLevel;
 import lombok.Getter;
-import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.api.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 import net.noahf.firegen.discord.utilities.Log;

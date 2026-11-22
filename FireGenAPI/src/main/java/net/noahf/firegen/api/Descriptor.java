@@ -1,4 +1,4 @@
-package net.noahf.firegen.api.utilities;
+package net.noahf.firegen.api;
 
 public interface Descriptor {
 

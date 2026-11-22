@@ -18,17 +18,17 @@ import java.util.Arrays;
 public class UserController {
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<?>> user(@PathVariable String idStr) {
-        long id;
+    public ResponseEntity<ApiResponse<?>> user(@PathVariable String id) {
+        long numId;
         try {
-            id = Long.parseLong(idStr);
+            numId = Long.parseLong(id);
         } catch (NumberFormatException ignored) {
-            return ApiResponse.fail("Expected ID to be a number, not '" + idStr + "'");
+            return ApiResponse.fail("Expected ID to be a number, not '" + id + "'");
         }
 
-        FireGenUser<?> user = Main.users.getById(id);
+        FireGenUser<?> user = Main.users.getById(numId);
         if (user == null) {
-            return ApiResponse.fail("User does not exist: " + id);
+            return ApiResponse.fail("User does not exist: " + numId);
         }
 
         return ApiResponse.ok(user);

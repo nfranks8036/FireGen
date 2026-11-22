@@ -1,4 +1,4 @@
-package net.noahf.firegen.api.utilities;
+package net.noahf.firegen.api;
 
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -20,8 +20,8 @@ import java.util.List;
 @ToString
 public class FireGenVariables {
 
-    public static FireGenVariablesBuilder createFromFolder(String municipality) {
-        return new FireGenVariablesBuilder()
+    public static FireGenVariables.FireGenVariablesBuilder createFromFolder(String municipality) {
+        return new FireGenVariables.FireGenVariablesBuilder()
                 .municipality(municipality);
     }
 

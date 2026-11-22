@@ -1,15 +1,15 @@
 package net.noahf.firegen.api.incidents.units;
 
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
-import net.noahf.firegen.api.utilities.Descriptor;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.AutofilledCharSequence;
+import net.noahf.firegen.api.Descriptor;
+import net.noahf.firegen.api.StringSelectors;
 
 import java.util.List;
 
 /**
  * Represents an agency that usually houses multiple {@link Unit units}.
  */
-public interface Agency extends StringSelectors, Descriptor, AutofilledCharSequence {
+public interface Agency extends StringSelectors, Descriptor, AutofilledCharSequence, Comparable<Agency> {
 
     /**
      * @return the agency title, typically the entire legal name of the agency (e.g., 'Blacksburg Fire Department')

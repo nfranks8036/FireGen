@@ -1,22 +1,25 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.noahf.firegen.api.IdGenerator;
 import net.noahf.firegen.api.incidents.units.*;
-import net.noahf.firegen.api.utilities.IdGenerator;
+import net.noahf.firegen.api.style.StatusStyle;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.files.ConfigOperationalStatuses;
+import net.noahf.firegen.discord.utilities.Time;
 import net.noahf.firegen.discord.web.serializers.UnitSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 @RequiredArgsConstructor @NoArgsConstructor(force = true)
 @Getter
@@ -30,12 +33,14 @@ public class UnitImpl implements Unit {
     private final @Getter(value = AccessLevel.NONE) String formatted;
     private @Nullable UnitAssignment currentAssignment = null;
     private final Set<UnitAssignment> previousAssignments = new HashSet<>();
-    private @Setter OperationalStatus operationalStatus = new OperationalStatus() {
+    private OperationalStatus operationalStatus = new OperationalStatus() {
+        @Override public StatusStyle getStyle() { return StatusStyle.ofDefault(); }
         @Override public int ordinal() { return -1; }
         @Override public @Nullable OperationalStatusPurpose getPurpose() { return null; }
         @Override public String getName() { return "NO STATUS"; }
         @Override public String getShortName() { return "NULL"; }
     };
+    private long statusLastUpdate;
     private final transient Emoji emoji;
     private final Agency agency;
     private final UnitType type;
@@ -103,6 +108,14 @@ public class UnitImpl implements Unit {
         }
 
         this.operationalStatus = Main.config.get(ConfigOperationalStatuses.class).purposeIs(purpose);
+
+        this.statusLastUpdate = Time.getUnix();
+    }
+
+    @Override
+    public void setOperationalStatus(OperationalStatus status) {
+        this.operationalStatus = status;
+        this.statusLastUpdate = Time.getUnix();
     }
 
     public String getFormattedStatus(AssignmentEvent assignment) {
@@ -127,5 +140,20 @@ public class UnitImpl implements Unit {
         }
 
         return returned;
+    }
+
+    @Override
+    public int compareTo(@NonNull Unit other) {
+        return Comparator
+                .comparingLong(Unit::getStatusLastUpdate)
+                .reversed()
+                .thenComparing((a, b) -> {
+                    if (a.getType() != null && a.getType().getId().startsWith("$")) {
+                        // reverse agencies so they're in order of ordinal (they go from smallest -> biggest)
+                        return Integer.compare(b.ordinal(), a.ordinal());
+                    }
+                    return Integer.compare(a.ordinal(), b.ordinal());
+                })
+                .compare(this, other);
     }
 }

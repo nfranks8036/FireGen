@@ -2,9 +2,9 @@ package net.noahf.firegen.discord.incidents.messaging;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import net.noahf.firegen.api.StringSelectors;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
-import net.noahf.firegen.api.utilities.StringSelectors;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;

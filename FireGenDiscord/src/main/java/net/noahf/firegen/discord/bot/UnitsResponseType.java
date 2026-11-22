@@ -9,14 +9,14 @@ import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.units.AssignmentEvent;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
+import net.noahf.firegen.api.style.StatusBackground;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
+import net.noahf.firegen.discord.utilities.AnsiTableBuilder;
 import net.noahf.firegen.discord.utilities.ImmutablePair;
 import net.noahf.firegen.discord.utilities.Time;
-import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
-import net.noahf.firegen.discord.utilities.ansi.AnsiTableBuilder;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -45,7 +45,7 @@ public enum UnitsResponseType {
             AssignmentStatusImpl status = (AssignmentStatusImpl) e.getStatus();
 
             table = table
-                    .row(time.toEpochSecond(ZoneOffset.UTC), status.getAnsiColor(),
+                    .row(time.toEpochSecond(ZoneOffset.UTC), status.getStyle().color(),
                             time.format(DateTimeFormatter.ofPattern(
                                     Main.config.getFireGenVariables().dateFormat() + " " +
                                             Main.config.getFireGenVariables().longTimeFormat()
@@ -73,7 +73,7 @@ public enum UnitsResponseType {
     },
             () -> MessageGenericData.fromMessage(
                     "Returned `0` unit statuses from FireGen as of <t:" + Time.getUnix() + ":R>.\n" +
-                            "```ansi\n" + AnsiColor.BACKGROUND_RED.wrap("No units have been assigned to any incidents right now. Try again later.") +
+                            "```ansi\n" + StatusBackground.RED.wrap("No units have been assigned to any incidents right now. Try again later.") +
                             "```\n"
             )
             ),

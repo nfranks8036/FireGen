@@ -2,8 +2,8 @@ package net.noahf.firegen.discord.config.files;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.noahf.firegen.api.FireGenVariables;
 import net.noahf.firegen.api.incidents.SystemMunicipality;
-import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.config.SingleObjectConfiguration;
 import net.noahf.firegen.discord.incidents.SystemMunicipalityImpl;
 import net.noahf.firegen.discord.utilities.JsonUtilities;

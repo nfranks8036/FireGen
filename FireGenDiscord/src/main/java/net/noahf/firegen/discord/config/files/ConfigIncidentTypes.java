@@ -2,9 +2,9 @@ package net.noahf.firegen.discord.config.files;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.noahf.firegen.api.FireGenVariables;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
-import net.noahf.firegen.api.utilities.FireGenVariables;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeImpl;
 import net.noahf.firegen.discord.incidents.structure.types.IncidentTypeTagImpl;

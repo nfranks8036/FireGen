@@ -1,7 +1,7 @@
 package net.noahf.firegen.api.incidents.types;
 
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.AutofilledCharSequence;
+import net.noahf.firegen.api.StringSelectors;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

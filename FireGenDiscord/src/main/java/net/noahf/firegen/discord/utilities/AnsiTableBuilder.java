@@ -1,7 +1,7 @@
-package net.noahf.firegen.discord.utilities.ansi;
+package net.noahf.firegen.discord.utilities;
 
 import lombok.AllArgsConstructor;
-import net.noahf.firegen.discord.utilities.ImmutablePair;
+import net.noahf.firegen.api.style.StatusColor;
 
 import java.util.*;
 
@@ -12,7 +12,7 @@ public class AnsiTableBuilder {
     @AllArgsConstructor
     private static class Row {
         String[] cols;
-        AnsiColor[] colors;
+        StatusColor[] colors;
         long sortValue;
     }
 
@@ -30,15 +30,15 @@ public class AnsiTableBuilder {
         return row(null, cols);
     }
 
-    public AnsiTableBuilder row(AnsiColor color, String... cols) {
+    public AnsiTableBuilder row(StatusColor color, String... cols) {
         return row(Long.MIN_VALUE, color, cols);
     }
 
-    public AnsiTableBuilder row(long sortedValue, AnsiColor color, String... cols) {
-        return this.row(sortedValue, new AnsiColor[] {color}, cols);
+    public AnsiTableBuilder row(long sortedValue, StatusColor color, String... cols) {
+        return this.row(sortedValue, new StatusColor[] {color}, cols);
     }
 
-    public AnsiTableBuilder row(long sortedValue, AnsiColor[] color, String... cols) {
+    public AnsiTableBuilder row(long sortedValue, StatusColor[] color, String... cols) {
         rows.add(new Row(cols, color, (sortedValue != Long.MIN_VALUE ? sortedValue : rows.size())));
         return this;
     }
@@ -124,7 +124,7 @@ public class AnsiTableBuilder {
         return sb.toString();
     }
 
-    private String formatRow(String[] row, int[] widths, AnsiColor... colors) {
+    private String formatRow(String[] row, int[] widths, StatusColor... colors) {
         StringBuilder content = new StringBuilder();
 
         for (int i = 0; i < widths.length; i++) {
@@ -135,7 +135,7 @@ public class AnsiTableBuilder {
         String line = content.toString();
 
         if (colors.length > 0) {
-            for (AnsiColor c : colors) {
+            for (StatusColor c : colors) {
                 line = c.wrap(line);
             }
             return line;

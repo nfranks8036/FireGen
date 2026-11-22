@@ -2,7 +2,7 @@ package net.noahf.firegen.discord.config;
 
 import com.google.gson.JsonObject;
 import lombok.Getter;
-import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.api.FireGenVariables;
 import net.noahf.firegen.discord.bot.BotManager;
 import net.noahf.firegen.discord.utilities.Log;
 import net.noahf.firegen.discord.utilities.Manager;

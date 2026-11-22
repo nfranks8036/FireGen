@@ -4,7 +4,7 @@
       "name": "AVAILABLE FOR CALLS",
       "short": "AFC",
       "emoji": "<:AVAILABLE FOR CALLS:1499196518475890818>",
-      "ansi": "WHITE",
+      "style": "WHITE",
       "purpose": "UNIT_AVAILABLE_FOR_CALLS"
     },
 
@@ -12,7 +12,7 @@
       "name": "ASSIGNED TO CALL",
       "short": "ATC",
       "emoji": null,
-      "ansi": "WHITE",
+      "style": "WHITE",
       "purpose": "UNIT_ATTACHED_TO_INCIDENT"
     },
 
@@ -20,14 +20,14 @@
       "name": "OUT OF SERVICE",
       "short": "OOS",
       "emoji": "<:OUT_OF_SERVICE:1499196518475890818>",
-      "ansi": "BACKGROUND_WHITE"
+      "style": "BACKGROUND_WHITE"
     },
 
     {
       "name": "BUSY",
       "short": "BSY",
       "emoji": null,
-      "ansi": "BACKGROUND_RED"
+      "style": "BACKGROUND_RED"
     },
 
 
@@ -35,7 +35,7 @@
       "name": "SPECIAL ASSIGNMENT",
       "short": "SPE",
       "emoji": "<:SPECIAL_ASSIGNMENT:1499196518475890818>",
-      "ansi": "BRIGHT_BLUE"
+      "style": "BRIGHT_BLUE"
     }
   ]
 }

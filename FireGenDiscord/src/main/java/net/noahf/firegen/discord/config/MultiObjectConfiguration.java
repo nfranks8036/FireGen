@@ -1,7 +1,7 @@
 package net.noahf.firegen.discord.config;
 
 import lombok.Getter;
-import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.api.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
 

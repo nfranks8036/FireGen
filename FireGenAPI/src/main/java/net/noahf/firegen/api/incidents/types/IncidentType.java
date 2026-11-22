@@ -1,7 +1,7 @@
 package net.noahf.firegen.api.incidents.types;
 
 import net.noahf.firegen.api.Identifiable;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.StringSelectors;
 
 import java.util.List;
 

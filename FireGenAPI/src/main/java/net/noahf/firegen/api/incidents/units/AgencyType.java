@@ -2,7 +2,7 @@ package net.noahf.firegen.api.incidents.units;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.StringSelectors;
 
 import java.util.List;
 

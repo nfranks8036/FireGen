@@ -1,7 +1,5 @@
-package net.noahf.firegen.api.utilities;
+package net.noahf.firegen.api;
 
-import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.Identifiable;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.location.LocationVenue;

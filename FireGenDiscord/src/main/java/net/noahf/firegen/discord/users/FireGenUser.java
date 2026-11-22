@@ -2,10 +2,13 @@ package net.noahf.firegen.discord.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.utilities.Descriptor;
+import net.noahf.firegen.api.Descriptor;
 import net.noahf.firegen.discord.web.serializers.FireGenUserSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;

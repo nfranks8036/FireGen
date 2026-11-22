@@ -7,36 +7,26 @@ import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
-import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.actions.FireGenAction;
 import net.noahf.firegen.discord.actions.registered.AddNarrative;
 import net.noahf.firegen.discord.actions.registered.EditMode;
-import net.noahf.firegen.discord.actions.registered.Publish;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
 import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
-import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.services.IncidentService;
 import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.DiscordUser;
-import net.noahf.firegen.discord.users.FireGenUser;
-import net.noahf.firegen.discord.users.Permission;
-import net.noahf.firegen.discord.utilities.MessageStatus;
 import net.noahf.firegen.discord.utilities.Time;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.noahf.firegen.discord.command.registered.CreateIncident.*;
-import static net.noahf.firegen.discord.utilities.MessageStatus.CONTENT;
+import static net.noahf.firegen.discord.command.registered.CreateIncident.DATE_CREATE_FORMAT;
+import static net.noahf.firegen.discord.command.registered.CreateIncident.TIME_CREATE_FORMAT;
 
 public class FireGenEdit extends Command {
 

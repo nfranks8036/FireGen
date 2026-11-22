@@ -17,7 +17,7 @@ public class UnitAssignmentSerializer  extends JsonSerializer<UnitAssignment> {
         gen.writeStartObject();
 
         gen.writeNumberField("unit", assignment.getUnit().getId());
-        gen.writeStringField("title", assignment.getUnit().getLonghand());
+        gen.writeStringField("short", assignment.getUnit().getShorthand());
         gen.writeStringField("channel", assignment.getRadioChannel().getAlphaTag());
 
         gen.writeArrayFieldStart("assignments");
@@ -29,8 +29,10 @@ public class UnitAssignmentSerializer  extends JsonSerializer<UnitAssignment> {
             gen.writeNumberField("contributor", event.getContributor().getId());
 
             if (event.getSecondary() != null) {
-                gen.writeStringField("secondary", event.getSecondary().longName());
+                gen.writeStringField("secondary", event.getSecondary().shortName());
             }
+
+            gen.writeObjectField("style", event.getStatus().getStyle());
 
             gen.writeEndObject();
         }

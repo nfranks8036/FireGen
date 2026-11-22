@@ -2,7 +2,7 @@ package net.noahf.firegen.api.incidents;
 
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.StringSelectors;
 
 import java.time.LocalDateTime;
 import java.util.List;

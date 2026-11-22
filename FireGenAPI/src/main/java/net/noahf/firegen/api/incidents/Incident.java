@@ -2,6 +2,7 @@ package net.noahf.firegen.api.incidents;
 
 import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.Identifiable;
+import net.noahf.firegen.api.StringSelectors;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.api.incidents.types.IncidentType;
@@ -9,7 +10,6 @@ import net.noahf.firegen.api.incidents.units.AssignmentStatus;
 import net.noahf.firegen.api.incidents.units.Secondary;
 import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
-import net.noahf.firegen.api.utilities.StringSelectors;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

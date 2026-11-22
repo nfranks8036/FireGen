@@ -1,6 +1,6 @@
 package net.noahf.firegen.api.incidents;
 
-import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.api.FireGenVariables;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

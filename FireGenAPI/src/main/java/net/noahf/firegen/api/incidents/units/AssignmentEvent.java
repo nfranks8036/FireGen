@@ -1,7 +1,7 @@
 package net.noahf.firegen.api.incidents.units;
 
+import net.noahf.firegen.api.AutofilledCharSequence;
 import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

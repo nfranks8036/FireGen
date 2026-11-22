@@ -23,6 +23,7 @@ import net.noahf.firegen.discord.actions.ButtonAction;
 import net.noahf.firegen.discord.actions.ModalAction;
 import net.noahf.firegen.discord.actions.StringDropdownAction;
 import net.noahf.firegen.discord.bot.DiscordMessages;
+import net.noahf.firegen.discord.config.files.ConfigLocationTypes;
 import net.noahf.firegen.discord.config.files.ConfigVenues;
 import net.noahf.firegen.discord.incidents.structure.IncidentLogEntryImpl;
 import net.noahf.firegen.discord.incidents.structure.location.IncidentLocationImpl;
@@ -39,18 +40,6 @@ import java.util.stream.Collectors;
  * Represents the "Location" button in the "Edit:" second row.
  */
 public class EditLocation implements ButtonAction, StringDropdownAction, ModalAction {
-
-    /**
-     * Represents the list of {@link LocationType} as {@link SelectOption Discord SelectOptions} that can be used in
-     * a {@link StringSelectMenu}
-     */
-    private static final List<SelectOption> LOCATION_SELECT_OPTIONS =
-            LocationType.values().stream()
-                    .map(lt ->
-                            SelectOption.of(lt.getTitle(), lt.name())
-                                    .withDescription(lt.getDescription())
-                    )
-                    .toList();
 
     /**
      * The name of the command needed to access this class.
@@ -77,26 +66,27 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         event.getHook().editOriginal("Choose a new location type")
                 .setComponents(ActionRow.of(
                         StringSelectMenu.create(this.callbackId(ctx))
-                                .addOptions(LOCATION_SELECT_OPTIONS)
+                                .addOptions(Main.config.get(ConfigLocationTypes.class).getSelectOptions())
                                 .build()
                 ))
                 .complete();
     }
 
     /**
-     * The event that occurs after pressing the appropriate {@link EditLocation#LOCATION_SELECT_OPTIONS Location}
+     * The event that occurs after pressing the appropriate {@link EditLocation Location}
      * select option. This event opens a modal for the user to more granularly define the location of the incident.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, StringSelectInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, StringSelectInteractionEvent event) {
         this.ensureIncidentOpen(event, ctx.getIncident());
 
-        LocationType type;
+        ConfigLocationTypes types = Main.config.get(ConfigLocationTypes.class);
+
         // get(0) because only one option is allowed, so there should never be >0
         String selected = event.getInteraction().getSelectedOptions().getFirst().getValue();
-        try {
-            type = LocationType.valueOf(selected);
-        } catch (IllegalArgumentException argumentException) {
+        LocationType type = types.fromId(selected);
+
+        if (type == null) {
             DiscordMessages.error(event, "Unable to find location type by '" + selected + "'");
             return;
         }
@@ -104,7 +94,7 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
         event.getHook().deleteOriginal().queue();
 
         Modal modal = Modal.create(
-                        this.callbackId(ctx, type.name()),
+                        this.callbackId(ctx, type.getId()),
                         DiscordMessages.truncate(
                                 "Location of " + ctx.getIncident().getFormattedId() + " - " + type.getTitle(),
                                 45,
@@ -121,13 +111,13 @@ public class EditLocation implements ButtonAction, StringDropdownAction, ModalAc
      * The event that occurs after submitting the modal and validating that the information is valid.
      */
     @Override
-    public void execute(ActionsContext ctx, FireGenUser user, ModalInteractionEvent event) {
+    public void execute(ActionsContext ctx, FireGenUser<?> user, ModalInteractionEvent event) {
         event.deferReply().setEphemeral(true).queue();
 
         net.noahf.firegen.api.incidents.Incident incident = ctx.getIncident();
-        LocationType type = LocationType.valueOf(ctx.getParameters().getFirst());
+        LocationType type = Main.config.get(ConfigLocationTypes.class).fromId(ctx.getParameters().getFirst());
 
-        if (type == LocationType.CUSTOM && !this.checkUserPermission(event.getUser(), Permission.USE_CUSTOM_LOCATION)) {
+        if (type.getId().equalsIgnoreCase("CUSTOM") && !this.checkUserPermission(event.getUser(), Permission.USE_CUSTOM_LOCATION)) {
             DiscordMessages.error(event, "You don't have permission to set custom locations.");
             return;
         }

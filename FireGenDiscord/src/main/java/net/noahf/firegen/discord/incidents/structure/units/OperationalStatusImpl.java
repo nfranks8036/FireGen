@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.OperationalStatus;
 import net.noahf.firegen.api.incidents.units.OperationalStatusPurpose;
-import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
+import net.noahf.firegen.api.style.StatusStyle;
 import net.noahf.firegen.discord.web.serializers.OperationalStatusSerializer;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -25,7 +25,7 @@ public class OperationalStatusImpl implements OperationalStatus {
 
     private @Nullable OperationalStatusPurpose purpose;
 
-    private AnsiColor ansiColor;
+    private StatusStyle style;
 
     private String emojiString;
     private Emoji emoji;

@@ -3,6 +3,7 @@ package net.noahf.firegen.discord.web.controllers;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.status.IncidentStatus;
 import net.noahf.firegen.discord.Main;
+import net.noahf.firegen.discord.actions.registered.ChangeStatus;
 import net.noahf.firegen.discord.services.IncidentService;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.web.api.ApiRateLimit;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/incidents")
@@ -75,7 +77,17 @@ public class IncidentController {
         );
     }
 
-    @PostMapping
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<?>> toggleStatus(@PathVariable String id, @AuthenticationPrincipal FireGenUser<?> user) {
+        Incident incident = Main.incidents.getIncidentBy(id);
+        if (incident == null) {
+            return ApiResponse.fail("No incident exist with ID '" + id + "'");
+        }
+        Main.actions.getAction(ChangeStatus.class).onSubmit(incident, user, null);
+        return ApiResponse.ok(Map.of("newStatus", incident.getStatus().name(), "incident", incident.getFormattedId()));
+    }
+
+    @PostMapping("/create")
     @ApiRateLimit(capacity = 2, refill = 2)
     public ResponseEntity<ApiResponse<?>> createIncident(
             @RequestBody IncidentService.IncidentCreateRequest request,

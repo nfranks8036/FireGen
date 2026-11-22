@@ -19,7 +19,10 @@ public class FireGenJwtAuthenticationConverter implements Converter<Jwt, Abstrac
 
     @Override
     public AbstractAuthenticationToken convert(Jwt source) {
-        FireGenUser<?> user = users.getByLoginUsername(source.getSubject(), null);
+        FireGenUser<?> user = users.get(source.getSubject());
+        if (user == null) {
+            throw new IllegalStateException("User " + source.getSubject() + " does not exist.");
+        }
 
         return new FireGenJwtAuthenticationToken(user, source, user.getAuthorities());
     }

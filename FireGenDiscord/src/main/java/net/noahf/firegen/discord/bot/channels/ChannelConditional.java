@@ -2,8 +2,8 @@ package net.noahf.firegen.discord.bot.channels;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.noahf.firegen.api.StringSelectors;
 import net.noahf.firegen.api.incidents.Incident;
-import net.noahf.firegen.api.utilities.StringSelectors;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -9,10 +9,10 @@ import net.noahf.firegen.discord.users.FireGenUser;
  */
 public interface StringDropdownAction extends FireGenAction {
 
-    void execute(ActionsContext ctx, FireGenUser user, StringSelectInteractionEvent event);
+    void execute(ActionsContext ctx, FireGenUser<?> user, StringSelectInteractionEvent event);
 
     @Override
-    default void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+    default void execute(ActionsContext ctx, FireGenUser<?> user, GenericInteractionCreateEvent event) {
         this.execute(ctx, user, (StringSelectInteractionEvent) event);
     }
 

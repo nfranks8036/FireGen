@@ -5,18 +5,18 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.api.incidents.units.AssignmentStatusPurpose;
+import net.noahf.firegen.api.AutofilledCharSequence;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.AssignmentStatusPurpose;
 import net.noahf.firegen.api.incidents.units.Secondary;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
-import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
+import net.noahf.firegen.api.style.StatusBackground;
+import net.noahf.firegen.api.style.StatusColor;
+import net.noahf.firegen.api.style.StatusStyle;
 import net.noahf.firegen.discord.web.serializers.AssignmentStatusSerializer;
-import net.noahf.firegen.discord.web.serializers.IncidentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -24,23 +24,17 @@ import java.util.List;
 public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.firegen.api.incidents.units.AssignmentStatus {
 
     public static final AssignmentStatus ADD_UNIT = new AssignmentStatusImpl(
-            "ADDED", "ADD", null, new AnsiColor[] {AnsiColor.BACKGROUND_WHITE, AnsiColor.BLACK}, Integer.MIN_VALUE, AssignmentStatusPurpose.UNIT_ATTACHED,
+            "ADDED", "ADD", StatusStyle.of(StatusColor.BLACK, StatusBackground.WHITE), null, Integer.MIN_VALUE, AssignmentStatusPurpose.UNIT_ATTACHED,
             new ArrayList<>()
     );
 
     public static final AssignmentStatus REMOVE_UNIT = new AssignmentStatusImpl(
-            "REMOVED", "REM", null, new AnsiColor[] {AnsiColor.BACKGROUND_BLACK, AnsiColor.WHITE}, Integer.MAX_VALUE, AssignmentStatusPurpose.UNIT_REMOVED,
+            "REMOVED", "REM", StatusStyle.ofDefault(), null, Integer.MAX_VALUE, AssignmentStatusPurpose.UNIT_REMOVED,
             new ArrayList<>()
     );
 
-    public AssignmentStatusImpl(String name, String shortName, Emoji emoji, AnsiColor[] ansiColor, int ordinal, @Nullable AssignmentStatusPurpose purpose, List<Secondary> secondaries) {
-        this(name, shortName,
-                (emoji != null ? emoji.getFormatted() : null),
-                Arrays.stream(ansiColor).map(Enum::name).toArray(String[]::new),
-                ordinal,
-                purpose,
-                secondaries
-        );
+    public AssignmentStatusImpl(String name, String shortName, StatusStyle style, Emoji emoji, int ordinal, @Nullable AssignmentStatusPurpose purpose, List<Secondary> secondaries) {
+        this(name, shortName, style, ordinal, purpose, (emoji != null ? emoji.getFormatted() : null), secondaries);
     }
 
     private @Getter long id;
@@ -48,14 +42,13 @@ public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.f
     private final @Getter String name;
     private final @Getter String shortName;
 
-    private final String emojiString;
-    private final String[] ansiColorStrings;
-
+    private final @Getter StatusStyle style;
     private final @Getter @Accessors(fluent = true) int ordinal;
     private final @Getter @Nullable AssignmentStatusPurpose purpose;
 
+    private final String emojiString;
+
     private transient Emoji emoji = null;
-    private transient AnsiColor[] ansiColor = null;
 
     private @Getter final List<Secondary> secondaries;
 
@@ -66,18 +59,6 @@ public class AssignmentStatusImpl implements AutofilledCharSequence, net.noahf.f
             this.emoji = Emoji.fromFormatted(this.emojiString);
         }
         return this.emoji;
-    }
-
-    public AnsiColor[] getAnsiColor() {
-        if (ansiColor == null) {
-            if (ansiColorStrings == null) return null;
-
-            this.ansiColor = new AnsiColor[ansiColorStrings.length];
-            for (int i = 0; i < this.ansiColor.length; i++) {
-                this.ansiColor[i] = AnsiColor.valueOf(this.ansiColorStrings[i]);
-            }
-        }
-        return this.ansiColor;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.noahf.firegen.discord.incidents.structure.units;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
@@ -7,14 +8,18 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.noahf.firegen.api.incidents.units.Agency;
 import net.noahf.firegen.api.incidents.units.AgencyType;
 import net.noahf.firegen.api.incidents.units.Unit;
+import net.noahf.firegen.discord.web.serializers.AgencySerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringJoiner;
 
 @Getter
 @RequiredArgsConstructor
+@JsonSerialize(using = AgencySerializer.class)
 public class AgencyImpl implements Agency {
 
     private final String title;
@@ -50,5 +55,12 @@ public class AgencyImpl implements Agency {
     @NotNull
     public String toString() {
         return this.getTitle();
+    }
+
+    @Override
+    public int compareTo(@NonNull Agency o) {
+        return Comparator
+                .comparingLong(Agency::ordinal)
+                .compare(this, o);
     }
 }

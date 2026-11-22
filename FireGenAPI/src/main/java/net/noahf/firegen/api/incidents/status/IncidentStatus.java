@@ -2,8 +2,8 @@ package net.noahf.firegen.api.incidents.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.noahf.firegen.api.utilities.IgnoreStringSelector;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.StringSelectors;
+import net.noahf.firegen.api.annotations.IgnoreStringSelector;
 
 import java.util.List;
 

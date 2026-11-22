@@ -1,7 +1,7 @@
 package net.noahf.firegen.api.incidents;
 
+import net.noahf.firegen.api.Descriptor;
 import net.noahf.firegen.api.incidents.location.State;
-import net.noahf.firegen.api.utilities.Descriptor;
 
 public interface SystemMunicipality extends Descriptor {
 

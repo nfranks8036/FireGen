@@ -1,0 +1,173 @@
+[
+  {
+    "id": "ADDRESS",
+    "title": "Address",
+    "short": "addr",
+    "description": "A numeric address. Requires: Street address, including numerics. Allows: Common name, venue.",
+    "defaultDataDelimiter": " ",
+    "fields": [
+      {
+        "id": "numerics",
+        "title": "Address Numerics",
+        "description": "The numbers representing the address.",
+        "required": true,
+        "minLength": 2,
+        "maxLength": 8,
+        "placeholder": "Ex: 2800",
+        "autofillDataIndex": 0
+      },
+      {
+        "id": "street",
+        "title": "Street Name",
+        "description": "The name of the street the numeric address is on.",
+        "required": true,
+        "minLength": 2,
+        "maxLength": 100,
+        "placeholder": "Ex: Commerce St",
+        "autofillDataIndex": 1
+      },
+      {
+        "use": ["VENUE", "COMMON_NAME"]
+      }
+    ]
+  },
+  {
+    "id": "MILE_MARKER",
+    "title": "Mile-Marker / Landmark",
+    "short": "marker",
+    "description": "A mile-marker or landmark on a road. Requires: Mile marker/landmark, road name. Allows: Venue.",
+    "defaultDataDelimiter": " @ ",
+    "fields": [
+      {
+        "id": "roadname",
+        "title": "Road Name",
+        "description": "The road the call is on. Use 'US-' for US routes and 'I-' for interstates. Add direction of travel.",
+        "required": true,
+        "minLength": 2,
+        "maxLength": 20,
+        "placeholder": "Ex: I-81 NB",
+        "autofillDataIndex": 0
+      },
+      {
+        "id": "landmark",
+        "title": "Mile-Marker / Landmark",
+        "description": "The mile-marker or landmark. Add 'MM' before a mile-marker.",
+        "required": true,
+        "minLength": 1,
+        "maxLength": 40,
+        "placeholder": "Ex: MM 114 *OR* Exit 5",
+        "autofillDataIndex": 1
+      },
+      {
+        "use": ["VENUE"]
+      }
+    ]
+  },
+  {
+    "id": "LATITUDE_LONGITUDE",
+    "title": "Latitude & Longitude",
+    "short": "latlong",
+    "description": "A latitude and longitude. Requires: Two float values. Allows: Additional information, venue.",
+    "defaultDataDelimiter": ", ",
+    "fields": [
+      {
+        "id": "latitude",
+        "title": "Latitude",
+        "description": "The latitude, in *DECIMAL DEGREES*, of the incident.",
+        "required": true,
+        "minLength": 1,
+        "maxLength": 10,
+        "placeholder": "Ex: 37.197523",
+        "autofillDataIndex": 0
+      },
+      {
+        "id": "longitude",
+        "title": "Longitude",
+        "description": "The longitude, in *DECIMAL DEGREES*, of the incident.",
+        "required": true,
+        "minLength": 1,
+        "maxLength": 10,
+        "placeholder": "Ex: -80.395021",
+        "autofillDataIndex": 1
+      },
+      {
+        "id": "additional",
+        "title": "Additional Information",
+        "description": "OPTIONAL: More information on what is at this location.",
+        "required": false,
+        "minLength": 0,
+        "maxLength": 200,
+        "placeholder": "Ex: Parking Lot of Blacksburg Transit",
+        "autofillDataIndex": 2
+      },
+      {
+        "use": ["VENUE"]
+      }
+    ]
+  },
+  {
+    "id": "INTERSECTION",
+    "title": "Intersection",
+    "short": "intersection",
+    "description": "An intersection of two roads. Requires: Two or more roads. Allows: Multiple roads.",
+    "defaultDataDelimiter": " / ",
+    "fields": [
+      {
+        "id": "road1",
+        "title": "Intersection: Road #1",
+        "description": "The first road of the intersection.",
+        "required": true,
+        "minLength": 0,
+        "maxLength": 20,
+        "placeholder": "Ex: N Main St",
+        "autofillDataIndex": 0
+      },
+      {
+        "id": "road2",
+        "title": "Intersection: Road #2",
+        "description": "The second road of the intersection.",
+        "required": true,
+        "minLength": 0,
+        "maxLength": 20,
+        "placeholder": "Ex: Progress St",
+        "autofillDataIndex": 1
+      },
+      {
+        "id": "road3",
+        "title": "Intersection: Road #3",
+        "description": "The third road of the intersection.",
+        "required": true,
+        "minLength": 0,
+        "maxLength": 20,
+        "placeholder": "Ex: McDonald St",
+        "autofillDataIndex": 2
+      },
+      {
+        "use": ["VENUE"]
+      }
+    ]
+  },
+  {
+    "id": "CUSTOM",
+    "title": "Custom Location",
+    "short": "custom",
+    "description": "Custom text to describe the location if none of the above fit.",
+    "defaultDataDelimiter": ", ",
+    "fallback": true,
+    "fields": [
+      {
+        "id": "text",
+        "title": "Custom Text",
+        "description": "Enter the custom location that doesn't fit other formats.",
+        "required": true,
+        "minLength": 0,
+        "maxLength": 200,
+        "placeholder": null,
+        "autofillDataIndex": 0
+      },
+      {
+        "use": ["VENUE"]
+      }
+    ]
+  }
+]

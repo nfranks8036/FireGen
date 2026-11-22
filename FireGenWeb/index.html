@@ -2,38 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Active Incidents</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <title>Incidents</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1 id="title">Active Incidents</h1>
-    <div class="meta">
-      <span id="count">0 incidents</span>
+  <header class="topbar">
+    <nav id="tabs" class="tabs">
+      <button data-view="incidents">Incidents</button>
+      <button data-view="units">Units</button>
+      <button data-view="maps">Maps</button>
+    </nav>
+    <div class="status">
+      <a class="editlink" href="editor.html">Editor ✎</a>
+      <span id="place"></span>
       <span id="updated">Loading…</span>
+      <span id="live" class="live" title="Connection status"></span>
     </div>
   </header>
 
   <div id="error" class="error" hidden></div>
 
-  <main>
-    <table id="incidents">
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Incident</th>
-          <th>Location</th>
-          <th>Units</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-    </table>
-    <p id="empty" class="empty" hidden>No active incidents.</p>
-  </main>
-
-  <div id="detail" class="overlay" hidden></div>
+  <main id="view"></main>
 
   <script src="app.js"></script>
 </body>

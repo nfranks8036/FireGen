@@ -25,7 +25,8 @@ import net.noahf.firegen.discord.incidents.structure.units.UnitImpl;
 import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.DiscordUser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class AssignUnit extends Command {

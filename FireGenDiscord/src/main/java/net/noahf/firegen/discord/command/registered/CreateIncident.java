@@ -10,13 +10,19 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.noahf.firegen.api.incidents.location.LocationField;
 import net.noahf.firegen.api.incidents.location.LocationType;
-import net.noahf.firegen.api.incidents.units.*;
+import net.noahf.firegen.api.incidents.units.Agency;
+import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.Secondary;
+import net.noahf.firegen.api.incidents.units.Unit;
 import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.actions.registered.*;
+import net.noahf.firegen.discord.actions.registered.AddNarrative;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;
 import net.noahf.firegen.discord.command.CommandFlags;
-import net.noahf.firegen.discord.config.files.*;
+import net.noahf.firegen.discord.config.files.ConfigAssignmentStatuses;
+import net.noahf.firegen.discord.config.files.ConfigIncidentTypes;
+import net.noahf.firegen.discord.config.files.ConfigLocationPresets;
+import net.noahf.firegen.discord.config.files.ConfigUnits;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.services.IncidentService;
 import net.noahf.firegen.discord.services.ServiceResponse;
@@ -27,7 +33,8 @@ import net.noahf.firegen.discord.utilities.Time;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**

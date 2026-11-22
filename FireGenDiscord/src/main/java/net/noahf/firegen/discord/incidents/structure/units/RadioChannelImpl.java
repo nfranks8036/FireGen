@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 @JsonSerialize(using = RadioChannelSerializer.class)
 public class RadioChannelImpl implements RadioChannel {
 
-    private long id;
-
     private final String name;
 
     private final String alphaTag;

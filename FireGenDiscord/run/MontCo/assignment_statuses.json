@@ -4,52 +4,52 @@
       "name": "DISPATCHED",
       "short": "DSP",
       "emoji": "<:DISPATCHED:1499196518475890818>",
-      "ansi": "BLUE"
+      "style": "BLUE"
     },
     {
       "name": "ENROUTE",
       "short": "ENR",
       "emoji": "<:ENROUTE:1499197412995239987>",
-      "ansi": "YELLOW"
+      "style": "YELLOW"
     },
     {
       "name": "ONSCENE",
       "short": "ONS",
       "emoji": "<:ONSCENE:1499197432624578701>",
-      "ansi": "GREEN"
+      "style": "GREEN"
     },
     {
       "name": "STAGED",
       "short": "STG",
       "emoji": "<:STAGED:1524543350286581951>",
-      "ansi": "BACKGROUND_GREEN"
+      "style": "BACKGROUND_GREEN"
     },
     {
       "name": "LEFT FOR SECONDARY",
       "short": "LEF",
       "emoji": "<:LEFT_FOR_SECONDARY:1499197449716240384>",
-      "ansi": "MAGENTA",
+      "style": "MAGENTA",
       "tag": "HOSPITALS"
     },
     {
       "name": "ARRIVED SECONDARY",
       "short": "ARR",
       "emoji": "<:ARRIVED_SECONDARY:1499197466606571571>",
-      "ansi": "RED",
+      "style": "RED",
       "tag": "HOSPITALS"
     },
     {
       "name": "CLEAR",
       "short": "CLR",
       "emoji": "<:CLEAR:1499197493689188352>",
-      "ansi": "WHITE",
+      "style": "WHITE",
       "purpose": "UNIT_CLEAR"
     },
     {
       "name": "ADVISED",
       "short": "ADV",
       "emoji": "<:ADVISED:1502511917707694184>",
-      "ansi": "CYAN"
+      "style": "CYAN"
     }
   ],
 

@@ -1,7 +1,7 @@
 package net.noahf.firegen.api.incidents;
 
-import net.noahf.firegen.api.utilities.IgnoreStringSelector;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.StringSelectors;
+import net.noahf.firegen.api.annotations.IgnoreStringSelector;
 
 import java.util.List;
 

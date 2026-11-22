@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.noahf.firegen.api.utilities.Descriptor;
+import net.noahf.firegen.api.Descriptor;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.bot.DiscordMessages;
 import net.noahf.firegen.discord.command.Command;

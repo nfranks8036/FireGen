@@ -7,7 +7,6 @@ import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.actions.errors.ActionCommandNotExist;
 import net.noahf.firegen.discord.actions.errors.IncidentNotExist;
 import net.noahf.firegen.discord.users.DiscordUser;
-import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.utilities.BotNotLoaded;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;

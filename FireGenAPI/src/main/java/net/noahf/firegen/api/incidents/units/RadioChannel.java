@@ -1,9 +1,9 @@
 package net.noahf.firegen.api.incidents.units;
 
+import net.noahf.firegen.api.AutofilledCharSequence;
+import net.noahf.firegen.api.Descriptor;
 import net.noahf.firegen.api.Identifiable;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
-import net.noahf.firegen.api.utilities.Descriptor;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.StringSelectors;
 
 import java.util.List;
 

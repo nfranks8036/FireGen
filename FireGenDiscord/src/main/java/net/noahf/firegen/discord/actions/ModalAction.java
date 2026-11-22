@@ -9,10 +9,10 @@ import net.noahf.firegen.discord.users.FireGenUser;
  */
 public interface ModalAction extends FireGenAction {
 
-    void execute(ActionsContext ctx, FireGenUser user, ModalInteractionEvent event);
+    void execute(ActionsContext ctx, FireGenUser<?> user, ModalInteractionEvent event);
 
     @Override
-    default void execute(ActionsContext ctx, FireGenUser user, GenericInteractionCreateEvent event) {
+    default void execute(ActionsContext ctx, FireGenUser<?> user, GenericInteractionCreateEvent event) {
         this.execute(ctx, user, (ModalInteractionEvent) event);
     }
 

@@ -7,7 +7,7 @@ import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.noahf.firegen.api.Contributor;
-import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.api.FireGenVariables;
 import net.noahf.firegen.discord.Main;
 import net.noahf.firegen.discord.config.ConfigManager;
 import net.noahf.firegen.discord.utilities.JsonUtilities;
@@ -76,6 +76,7 @@ public class UserManager extends Manager<UserManager> {
     }
 
     public FireGenUser<?> getByLoginUsername(String name, @Nullable String password) {
+        Log.info("Get Login: " + name + " :: " + password);
         for (FireGenUser<?> user : this.users) {
             if (!user.getLoginUsername().equals(name)) {
                 continue;
@@ -86,6 +87,17 @@ public class UserManager extends Manager<UserManager> {
             return user;
         }
         throw new UnauthorizedException();
+    }
+
+    public FireGenUser<?> get(String loginUsername) {
+        Log.info("Get: " + loginUsername);
+        for (FireGenUser<?> user : this.users) {
+            if (!user.getLoginUsername().equals(loginUsername)) {
+                continue;
+            }
+            return user;
+        }
+        return null;
     }
 
     public boolean hasPermission(User user, Permission permission, Permission... andPermissions) {

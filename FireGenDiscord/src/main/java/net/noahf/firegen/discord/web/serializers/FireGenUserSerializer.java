@@ -20,7 +20,7 @@ public class FireGenUserSerializer extends JsonSerializer<FireGenUser<?>> {
         gen.writeStringField("name", user.getName());
         gen.writeStringField("login", user.getLoginUsername());
 
-        gen.writeStartArray();
+        gen.writeArrayFieldStart("permissions");
         List<Permission> permissions = user.getPermissions();
         if (permissions.size() == 1 && permissions.getFirst().equals(Permission.ADMIN)) {
             permissions.clear();

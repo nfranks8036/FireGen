@@ -1,7 +1,5 @@
 package net.noahf.firegen.discord.utilities;
 
-import net.noahf.firegen.discord.Main;
-import net.noahf.firegen.discord.actions.registered.EditDateTime;
 import net.noahf.firegen.discord.services.ServiceResponse;
 import net.noahf.firegen.discord.users.FireGenUser;
 import net.noahf.firegen.discord.users.Permission;

@@ -37,6 +37,12 @@ public record ApiResponse<T>(
         );
     }
 
+    public static ResponseEntity<ApiResponse<?>> status(HttpStatus status, boolean success, String message) {
+        return ResponseEntity.status(status).body(
+                new ApiResponse<>(status, success, message)
+        );
+    }
+
     public static ResponseEntity<ApiResponse<?>> ofService(ServiceResponse<?> service) {
         HttpStatus status = service.success() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(

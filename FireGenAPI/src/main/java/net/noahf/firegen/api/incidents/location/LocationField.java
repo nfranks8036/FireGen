@@ -6,9 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 import net.noahf.firegen.api.incidents.Incident;
 
-import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Represents a desired {@link IncidentLocation} input field, which is useful for determining what the user UI for the
@@ -21,40 +19,17 @@ import java.util.stream.Collectors;
 public class LocationField {
 
     /**
-     * Requires a specific venue type before this function will be utilized. This is useful for auto-filling UI fields
-     * so that the UI will not interpret data liberally.
-     * @param function the parent function
-     * @param type the required type (the enum name of {@link LocationType})
-     * @return the function with the added requirement of the {@link LocationType}=={@code type}
-     */
-    public static Function<Incident, String> requireType(Function<IncidentLocation, String> function, String type) {
-        return (i) -> {
-            try {
-                IncidentLocation location = i.getLocation();
-                if (!location.getType().name().equalsIgnoreCase(type)) {
-                    return null;
-                }
-                return function.apply(location);
-            } catch (Exception exception) {
-                return null;
-            }
-        };
-    }
-
-    /**
      * Creates a new {@link LocationField} based on some presets.
      * @param title see {@link LocationField#getTitle()}
      * @param description see {@link LocationField#getDescription()}
      * @param id see {@link LocationField#getId()}
-     * @param type see {@link LocationField#getType()}
      */
-    public static LocationFieldBuilder newField(String title, String description, String id, TextType type) {
+    public static LocationFieldBuilder newField(String title, String description, String id) {
         return new LocationFieldBuilder()
                 // inputted required values
                 .setTitle(title)
                 .setDescription(description)
                 .setId(id)
-                .setType(type)
 
                 // default values
                 .setRequired(true)
@@ -69,15 +44,10 @@ public class LocationField {
     public static LocationField VENUE = LocationField.newField(
             "Venue",
             "OPTIONAL: The general area that provides additional location information and completes an address.",
-            "venue",
-            TextType.SHORT
+            "venue"
     )
             .setRequired(false)
-            .setAutofill((i) -> {
-                IncidentLocation location = i.getLocation();
-                if (location.getVenue() == null) return null;
-                return location.getVenue().getName();
-            })
+            .setAutofillIndex(99)
             .build();
 
     /**
@@ -86,13 +56,12 @@ public class LocationField {
     public static final LocationField COMMON_NAME = LocationField.newField(
             "Common Name",
             "OPTIONAL: The name the general public refers to this location as.",
-            "common-name",
-            TextType.SHORT
+            "common"
     )
             .setRequired(false)
             .setMaxLength(100)
             .setPlaceholder("Ex: Municipal Building")
-            .setAutofill((i) -> i.getLocation().getCommonName())
+            .setAutofillIndex(98)
             .build();
 
     /**
@@ -110,11 +79,6 @@ public class LocationField {
      * the LocationType in it before the "-" (in this case, "address" is the location type).
      */
     private final String id;
-
-    /**
-     * Represents the input field type as a {@link TextType}, view that class for more information.
-     */
-    private final TextType type;
 
     /**
      * Represents if the field is required for the {@link LocationType} to function.
@@ -138,18 +102,8 @@ public class LocationField {
     private String placeholder = null;
 
     /**
-     * Represents what text would already be in the field, typically a value already set in the {@link Incident}
+     * Represents what text would already be in the field at what index in the data.
      */
-    private Function<Incident, String> autofill = null;
-
-
-    /**
-     * The TextType represents how the text box is formatted for the end-user. Noteably, this has <b>no effect</b>
-     * on the minimum or maximum text length, that detail is set in the {@link LocationField#getMaxLength()} and
-     * {@link LocationField#getMinLength()}.
-     */
-    public enum TextType {
-        SHORT, PARAGRAPH
-    }
+    private int autofillIndex;
 
 }

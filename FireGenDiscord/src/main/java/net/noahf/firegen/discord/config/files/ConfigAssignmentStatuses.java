@@ -4,14 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.noahf.firegen.api.incidents.units.AssignmentStatusPurpose;
+import net.noahf.firegen.api.FireGenVariables;
 import net.noahf.firegen.api.incidents.units.AssignmentStatus;
+import net.noahf.firegen.api.incidents.units.AssignmentStatusPurpose;
 import net.noahf.firegen.api.incidents.units.Secondary;
-import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.api.style.StatusStyle;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.units.AssignmentStatusImpl;
 import net.noahf.firegen.discord.incidents.structure.units.SecondaryImpl;
-import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,8 +66,8 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
             String shortName = asStr(object, "short");
             String emojiStr = asStr(object, "emoji");
             Emoji emoji = Emoji.fromFormatted(emojiStr);
-            String ansiStr = asStr(object, "ansi");
-            AnsiColor ansi = AnsiColor.valueOf(ansiStr.toUpperCase());
+            String styleStr = asStr(object, "style");
+            StatusStyle style = StatusStyle.fromString(styleStr);
             JsonElement purposeElement = element(object, "purpose", true);
             AssignmentStatusPurpose purpose = purposeElement != null ? AssignmentStatusPurpose.valueOf(purposeElement.getAsString()) : null;
 
@@ -76,7 +76,7 @@ public class ConfigAssignmentStatuses extends MultiObjectConfiguration<Assignmen
                     tags.getOrDefault(secondaryTagElement.getAsString(), new ArrayList<>()) :
                     new ArrayList<>();
 
-            AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, emoji, new AnsiColor[]{ansi}, i, purpose, secondaries);
+            AssignmentStatusImpl status = new AssignmentStatusImpl(name, shortName, style, emoji, i, purpose, secondaries);
             this.add(status);
         }
 

@@ -3,13 +3,11 @@ package net.noahf.firegen.discord.incidents.structure.types;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.noahf.firegen.api.AutofilledCharSequence;
+import net.noahf.firegen.api.IdGenerator;
 import net.noahf.firegen.api.incidents.types.IncidentType;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTag;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTagQualifierList;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
-import net.noahf.firegen.api.utilities.IdGenerator;
-import net.noahf.firegen.discord.utilities.Log;
-import net.noahf.firegen.discord.web.serializers.IncidentLocationSerializer;
 import net.noahf.firegen.discord.web.serializers.IncidentTypeSerializer;
 import org.jetbrains.annotations.NotNull;
 

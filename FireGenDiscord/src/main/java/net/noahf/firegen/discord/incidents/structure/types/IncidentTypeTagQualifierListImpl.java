@@ -1,8 +1,8 @@
 package net.noahf.firegen.discord.incidents.structure.types;
 
 import lombok.*;
+import net.noahf.firegen.api.AutofilledCharSequence;
 import net.noahf.firegen.api.incidents.types.IncidentTypeTagQualifierList;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 
 import java.util.List;
 

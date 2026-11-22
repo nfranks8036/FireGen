@@ -1,6 +1,6 @@
 package net.noahf.firegen.discord.users;
 
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
+import net.noahf.firegen.api.AutofilledCharSequence;
 import org.jetbrains.annotations.NotNull;
 
 public enum Permission implements AutofilledCharSequence {

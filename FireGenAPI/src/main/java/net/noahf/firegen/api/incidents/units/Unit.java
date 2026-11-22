@@ -1,15 +1,15 @@
 package net.noahf.firegen.api.incidents.units;
 
+import net.noahf.firegen.api.AutofilledCharSequence;
+import net.noahf.firegen.api.Descriptor;
 import net.noahf.firegen.api.Identifiable;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
-import net.noahf.firegen.api.utilities.Descriptor;
-import net.noahf.firegen.api.utilities.StringSelectors;
+import net.noahf.firegen.api.StringSelectors;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
 
-public interface Unit extends Identifiable, AutofilledCharSequence, StringSelectors, Descriptor {
+public interface Unit extends Identifiable, AutofilledCharSequence, StringSelectors, Descriptor, Comparable<Unit> {
 
     Agency getAgency();
 
@@ -24,6 +24,8 @@ public interface Unit extends Identifiable, AutofilledCharSequence, StringSelect
     OperationalStatus getOperationalStatus();
 
     void setOperationalStatus(OperationalStatus status);
+
+    long getStatusLastUpdate();
 
     int getNumber();
 

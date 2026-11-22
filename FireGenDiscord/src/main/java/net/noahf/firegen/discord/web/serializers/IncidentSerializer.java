@@ -7,7 +7,6 @@ import net.noahf.firegen.api.Contributor;
 import net.noahf.firegen.api.incidents.Incident;
 import net.noahf.firegen.api.incidents.IncidentLogEntry;
 import net.noahf.firegen.api.incidents.units.UnitAssignment;
-import net.noahf.firegen.discord.utilities.Log;
 
 import java.io.IOException;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class IncidentSerializer extends JsonSerializer<Incident> {
 
         gen.writeArrayFieldStart("units");
         for (UnitAssignment assignment : incident.getUnitAssignments().stream().sorted().toList()) {
-            gen.writeObject(assignment);
+            gen.writePOJO(assignment);
         }
         gen.writeEndArray();
 

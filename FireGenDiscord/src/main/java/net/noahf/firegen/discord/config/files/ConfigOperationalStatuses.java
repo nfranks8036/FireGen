@@ -3,11 +3,12 @@ package net.noahf.firegen.discord.config.files;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.noahf.firegen.api.incidents.units.*;
-import net.noahf.firegen.api.utilities.FireGenVariables;
+import net.noahf.firegen.api.FireGenVariables;
+import net.noahf.firegen.api.incidents.units.OperationalStatus;
+import net.noahf.firegen.api.incidents.units.OperationalStatusPurpose;
+import net.noahf.firegen.api.style.StatusStyle;
 import net.noahf.firegen.discord.config.MultiObjectConfiguration;
 import net.noahf.firegen.discord.incidents.structure.units.OperationalStatusImpl;
-import net.noahf.firegen.discord.utilities.ansi.AnsiColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +32,11 @@ public class ConfigOperationalStatuses extends MultiObjectConfiguration<Operatio
             String name = asStr(obj, "name", false);
             String shortName = asStr(obj, "short", false);
             String emojiStr = asStr(obj, "emoji", false);
-            AnsiColor ansi = element(obj, "ansi", false, (f) -> AnsiColor.valueOf(f.getAsString()));
+            StatusStyle style = element(obj, "style", false, (f) -> StatusStyle.fromString(f.getAsString()));
             OperationalStatusPurpose purpose = element(obj, "purpose", true, (f) -> OperationalStatusPurpose.valueOf(f.getAsString()));
 
             OperationalStatus status = new OperationalStatusImpl(
-                    name, shortName, index, purpose, ansi, emojiStr, null
+                    name, shortName, index, purpose, style, emojiStr, null
             );
             this.add(status);
 

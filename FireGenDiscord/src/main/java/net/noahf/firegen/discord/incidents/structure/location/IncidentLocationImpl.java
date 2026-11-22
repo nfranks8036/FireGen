@@ -5,10 +5,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.noahf.firegen.api.AutofilledCharSequence;
 import net.noahf.firegen.api.incidents.location.IncidentLocation;
 import net.noahf.firegen.api.incidents.location.LocationType;
 import net.noahf.firegen.api.incidents.location.LocationVenue;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.discord.incidents.structure.IncidentImpl;
 import net.noahf.firegen.discord.web.serializers.IncidentLocationSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.StringJoiner;
-
-import static net.noahf.firegen.api.incidents.location.LocationType.ADDRESS;
-import static net.noahf.firegen.api.incidents.location.LocationType.MILE_MARKER;
 
 /**
  * Represents a location of an {@link IncidentImpl Incident}.

@@ -3,8 +3,8 @@ package net.noahf.firegen.discord.bot.channels;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.noahf.firegen.api.AutofilledCharSequence;
 import net.noahf.firegen.api.incidents.Incident;
-import net.noahf.firegen.api.utilities.AutofilledCharSequence;
 import net.noahf.firegen.discord.utilities.Log;
 import org.jetbrains.annotations.NotNull;
 
